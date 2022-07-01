@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation(project(":domain"))
+    implementation(project(":model"))
 
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation(kotlin("stdlib"))
