@@ -9,3 +9,4 @@
 
 rootProject.name = "fabXaccess"
 include("app")
+include("domain")
