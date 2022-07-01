@@ -8,5 +8,4 @@
  */
 
 rootProject.name = "fabXaccess"
-include("app")
-include("domain")
+include("app", "domain")

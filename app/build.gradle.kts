@@ -14,12 +14,16 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":domain"))
+
     implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
     implementation(kotlin("stdlib"))
     implementation("io.ktor:ktor-server-core:1.6.0")
     implementation("io.ktor:ktor-server-netty:1.6.0")
     implementation("ch.qos.logback:logback-classic:1.2.3")
+
     testImplementation(kotlin("test"))
+    testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
 }
 
 application {
