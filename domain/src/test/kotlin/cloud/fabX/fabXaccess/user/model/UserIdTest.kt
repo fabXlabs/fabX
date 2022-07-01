@@ -1,4 +1,4 @@
-package cloud.fabX.fabXaccess
+package cloud.fabX.fabXaccess.user.model
 
 import assertk.assertThat
 import assertk.assertions.isNotNull

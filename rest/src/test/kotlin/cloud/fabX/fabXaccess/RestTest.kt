@@ -3,19 +3,13 @@ package cloud.fabX.fabXaccess
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 
-class AppTest {
-    @Test
-    fun appHasAGreeting() {
-        val classUnderTest = App()
-        assertNotNull(classUnderTest.greeting, "app should have a greeting")
-    }
+class RestTest {
 
     @Test
-    fun `app can use domain module`() {
+    fun `rest can use domain module`() {
         // given
-        val testee = App()
+        val testee = RestClass()
 
         // when
         val user = testee.useDomain()
