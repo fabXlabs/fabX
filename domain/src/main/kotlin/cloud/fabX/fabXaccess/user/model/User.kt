@@ -7,7 +7,7 @@ class User(
     val firstName: String,
     val lastName: String,
     val wikiName: String,
-    val phoneNumber: String,
+    val phoneNumber: String?,
     val locked: Boolean,
     val lockedReason: String?
 ) : Entity<UserId> {
