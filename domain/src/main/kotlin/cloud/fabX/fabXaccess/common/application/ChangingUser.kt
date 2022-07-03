@@ -2,6 +2,9 @@ package cloud.fabX.fabXaccess.common.application
 
 import cloud.fabX.fabXaccess.user.model.UserId
 
+/**
+ * Service to handle changing user properties.
+ */
 class ChangingUser {
 
     private val log = logger()
