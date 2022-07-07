@@ -5,7 +5,7 @@ import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.user.model.newUserId
 import kotlin.test.Test
 
-class UserIdTest {
+internal class UserIdTest {
 
     @Test
     fun `when getting new UserId then returns new instance with random UUID`() {

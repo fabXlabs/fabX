@@ -1,4 +1,4 @@
-package cloud.fabX.fabXaccess.common.application
+package cloud.fabX.fabXaccess.user.application
 
 import assertk.assertThat
 import assertk.assertions.isTrue
@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 
 @MockitoSettings
-class ChangingUserTest {
+internal class ChangingUserTest {
 
     private var logger: Logger? = null
     private var testee: ChangingUser? = null

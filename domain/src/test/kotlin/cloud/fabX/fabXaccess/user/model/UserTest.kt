@@ -5,7 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import kotlin.test.Test
 
-class UserTest {
+internal class UserTest {
 
     @Test
     fun `given valid values when constructing user then user is constructed`() {
