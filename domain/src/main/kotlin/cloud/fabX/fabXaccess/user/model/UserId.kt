@@ -13,6 +13,6 @@ data class UserId(override val value: UUID) : EntityId<UUID>
  *
  * @return a UserId of a random UUID.
  */
-fun newUserId(): UserId {
+internal fun newUserId(): UserId {
     return UserId(UUID.randomUUID())
 }

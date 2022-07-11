@@ -4,6 +4,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import isLeft
+import isRight
 import kotlin.test.Test
 
 internal class UserTest {
@@ -22,6 +26,9 @@ internal class UserTest {
             "nick",
             "00491234567890",
             false,
+            null,
+            Member(listOf()),
+            null,
             null
         )
 
@@ -77,6 +84,78 @@ internal class UserTest {
     }
 
     @Test
+    fun `given any user when getting as member then returns member`() {
+        // given
+        val qualifications = listOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
+        val user = UserFixture.arbitraryUser(userId, memberQualifications = qualifications)
+
+        // when
+        val result = user.asMember()
+
+        // then
+        assertThat(result.qualifications).isEqualTo(qualifications)
+    }
+
+    @Test
+    fun `given user without instructor when getting as instructor then returns error`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, instructorQualifications = null)
+
+        // when
+        val result = user.asInstructor()
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserNotInstructor("User $userId is not an instructor."))
+    }
+
+    @Test
+    fun `given user with instructor when getting as instructor then returns instructor`() {
+        // given
+        val qualification1 = QualificationIdFixture.arbitraryId()
+        val qualification2 = QualificationIdFixture.arbitraryId()
+
+        val user = UserFixture.arbitraryUser(userId, instructorQualifications = listOf(qualification1, qualification2))
+
+        // when
+        val result = user.asInstructor()
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Instructor(listOf(qualification1, qualification2)))
+    }
+
+    @Test
+    fun `given user without admin when getting as admin then returns error`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, isAdmin = false)
+
+        // when
+        val result = user.asAdmin()
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserNotAdmin("User $userId is not an admin."))
+    }
+
+    @Test
+    fun `given user with admin when getting as admin then returns admin`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, isAdmin = true)
+
+        // when
+        val result = user.asAdmin()
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Admin())
+    }
+
+    @Test
     fun `given valid user when stringifying then result is correct`() {
         // given
         val user = User(
@@ -86,7 +165,10 @@ internal class UserTest {
             "nick",
             "00491234567890",
             false,
-            null
+            null,
+            Member(listOf(QualificationIdFixture.staticId(43))),
+            Instructor(listOf(QualificationIdFixture.staticId(44))),
+            Admin()
         )
 
         // when
@@ -100,7 +182,10 @@ internal class UserTest {
                     "wikiName=nick, " +
                     "phoneNumber=00491234567890, " +
                     "locked=false, " +
-                    "notes=null)"
+                    "notes=null, " +
+                    "member=Member(qualifications=[QualificationId(value=6ecbc07c-382b-3e04-a9b3-a86909f10e64)]), " +
+                    "instructor=Instructor(qualifications=[QualificationId(value=a3dd6fd6-61a5-3c37-810c-8c68fe610bec)]), " +
+                    "admin=Admin())"
         )
     }
 }
