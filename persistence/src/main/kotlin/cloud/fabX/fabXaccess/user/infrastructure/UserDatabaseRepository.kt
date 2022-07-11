@@ -1,6 +1,9 @@
 package cloud.fabX.fabXaccess.user.infrastructure
 
 import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
 import arrow.core.left
 import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.Error
@@ -20,19 +23,35 @@ class UserDatabaseRepository : UserRepository {
         return if (e.isNotEmpty()) {
             User.fromSourcingEvents(id, e).right()
         } else {
-            Error.UserNotFoundError("User with id $id not found").left()
+            Error.UserNotFound("User with id $id not found.").left()
         }
     }
 
-    override fun store(event: UserSourcingEvent) {
-        TODO("get previous aggregate version number if exists")
-        TODO("check if aggregate version number of event is previous+1")
+    override fun store(event: UserSourcingEvent): Option<Error> {
+        // TODO get previous aggregate version number if exists
+        // TODO check if aggregate version number of event is previous+1
         // TODO if not return error, NOT throw
         //      -> user should see some kind of error message
-        events.add(event)
+        val previousVersion = getVersionById(event.aggregateRootId)
+
+        return if (previousVersion != null
+            && event.aggregateVersion != previousVersion + 1
+        ) {
+            Some(
+                Error.VersionConflict(
+                    "Previous version of user ${event.aggregateRootId} is $previousVersion, " +
+                            "desired new version is ${event.aggregateVersion}."
+                )
+            )
+        } else {
+            events.add(event)
+            None
+        }
     }
 
     private fun getVersionById(id: UserId): Long? {
-        TODO()
+        return events
+            .filter { it.aggregateRootId == id }
+            .maxOfOrNull { it.aggregateVersion }
     }
 }

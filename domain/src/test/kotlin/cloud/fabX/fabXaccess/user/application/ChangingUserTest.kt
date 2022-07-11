@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import arrow.core.None
 import arrow.core.right
 import assertk.assertThat
 import cloud.fabX.fabXaccess.DomainModule
@@ -65,6 +66,9 @@ internal class ChangingUserTest {
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
 
+        whenever(userRepository!!.store(eq(expectedSourcingEvent)))
+            .thenReturn(None)
+
         // when
         val result = testee!!.changePersonalInformation(
             userId,
@@ -101,6 +105,9 @@ internal class ChangingUserTest {
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
+
+        whenever(userRepository!!.store(eq(expectedSourcingEvent)))
+            .thenReturn(None)
 
         // when
         val result = testee!!.changeLockState(

@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.Either
+import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -33,7 +34,11 @@ class ChangingUser {
                     phoneNumber
                 )
             }
-            .map { userRepository.store(it) }
+            .flatMap {
+                userRepository.store(it)
+                    .toEither { }
+                    .swap()
+            }
             .tap { log.debug("...changePersonalInformation done") }
     }
 
@@ -46,7 +51,11 @@ class ChangingUser {
 
         return userRepository.getById(userId)
             .map { it.changeLockState(locked, notes) }
-            .map { userRepository.store(it) }
+            .flatMap {
+                userRepository.store(it)
+                    .toEither { }
+                    .swap()
+            }
             .tap { log.debug("...changeLockState done") }
     }
 }

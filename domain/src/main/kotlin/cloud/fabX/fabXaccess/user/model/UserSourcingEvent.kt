@@ -16,6 +16,8 @@ sealed class UserSourcingEvent(
     }
 }
 
+// TODO UserCreated sourcing event
+
 data class UserPersonalInformationChanged(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
