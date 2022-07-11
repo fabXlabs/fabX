@@ -9,6 +9,20 @@ interface SourcingEvent {
     val timestamp: Instant
 }
 
+fun <E : SourcingEvent> Iterable<E>.assertIsNotEmpty() {
+    if (count() == 0) {
+        throw IterableIsEmpty("No sourcing events contained in iterable.")
+    }
+}
+
+fun <E : SourcingEvent> Iterable<E>.assertAggregateVersionStartsWithOne() {
+    if (first().aggregateVersion != 1L) {
+        throw AggregateVersionDoesNotStartWithOne(
+            "Aggregate version starts with ${first().aggregateVersion} but has to start with 1."
+        )
+    }
+}
+
 fun <E : SourcingEvent> Iterable<E>.assertAggregateVersionIncreasesOneByOne() {
     val list = toList()
 
@@ -18,4 +32,6 @@ fun <E : SourcingEvent> Iterable<E>.assertAggregateVersionIncreasesOneByOne() {
     }
 }
 
+class IterableIsEmpty(message: String) : Exception(message)
+class AggregateVersionDoesNotStartWithOne(message: String) : Exception(message)
 class AggregateVersionDoesNotIncreaseOneByOne(message: String) : Exception(message)

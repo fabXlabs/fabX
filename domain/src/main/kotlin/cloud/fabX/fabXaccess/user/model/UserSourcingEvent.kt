@@ -16,12 +16,26 @@ sealed class UserSourcingEvent(
     abstract fun processBy(eventHandler: EventHandler, user: User): User
 
     interface EventHandler {
+        fun handle(event: UserCreated, user: User): User
         fun handle(event: UserPersonalInformationChanged, user: User): User
         fun handle(event: UserLockStateChanged, user: User): User
     }
 }
 
-// TODO UserCreated sourcing event
+data class UserCreated(
+    override val aggregateRootId: UserId = newUserId(),
+    override val aggregateVersion: Long = 1,
+    override val actorId: ActorId,
+    val firstName: String,
+    val lastName: String,
+    val wikiName: String,
+    val phoneNumber: String?
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: User): User =
+        eventHandler.handle(this, user)
+
+}
 
 data class UserPersonalInformationChanged(
     override val aggregateRootId: UserId,
@@ -48,3 +62,13 @@ data class UserLockStateChanged(
     override fun processBy(eventHandler: EventHandler, user: User): User =
         eventHandler.handle(this, user)
 }
+
+fun Iterable<UserSourcingEvent>.assertStartsWithUserCreatedEvent() {
+    when (first()) {
+        is UserCreated -> {
+        }
+        else -> throw EventHistoryDoesNotStartWithUserCreated("Event history starts with ${first()}, not a UserCreated event.")
+    }
+}
+
+class EventHistoryDoesNotStartWithUserCreated(message: String) : Exception(message)

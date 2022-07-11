@@ -7,9 +7,9 @@ import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
-import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import isLeft
 import isNone
 import isRight
@@ -47,14 +47,14 @@ internal class UserDatabaseRepositoryTest {
         fun setup() {
             repository = UserDatabaseRepository()
 
-            val event1 = UserPersonalInformationChanged(
+            val event1 = UserCreated(
                 userId,
                 1,
                 actorId,
-                firstName = ChangeableValue.ChangeToValue("first"),
-                lastName = ChangeableValue.ChangeToValue("last"),
-                wikiName = ChangeableValue.ChangeToValue("wiki"),
-                phoneNumber = ChangeableValue.ChangeToValue(null)
+                firstName = "first",
+                lastName = "last",
+                wikiName = "wiki",
+                phoneNumber = null
             )
             repository!!.store(event1)
 

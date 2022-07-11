@@ -21,7 +21,7 @@ class UserDatabaseRepository : UserRepository {
             .sortedBy { it.aggregateVersion }
 
         return if (e.isNotEmpty()) {
-            User.fromSourcingEvents(id, e).right()
+            User.fromSourcingEvents(e).right()
         } else {
             Error.UserNotFound("User with id $id not found.").left()
         }

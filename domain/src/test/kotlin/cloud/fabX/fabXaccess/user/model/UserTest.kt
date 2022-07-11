@@ -1,20 +1,17 @@
 package cloud.fabX.fabXaccess.user.model
 
-import arrow.core.getOrElse
 import assertk.assertThat
-import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
 import isRight
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.CsvSource
 
 internal class UserTest {
 
@@ -52,59 +49,19 @@ internal class UserTest {
         // given
 
         // when
-        val exception = assertThrows<User.Companion.UserNotHasMandatoryDefaultValuesReplaced> {
-            User.fromSourcingEvents(UserIdFixture.arbitraryId(), listOf())
+        val exception = assertThrows<IterableIsEmpty> {
+            User.fromSourcingEvents(listOf())
         }
 
         // then
         assertThat(exception.message)
-            .isNotNull()
-            .contains("has default values after applying all sourcing events")
-    }
-
-    @ParameterizedTest
-    @CsvSource(
-        value = [
-            "false, true,  true",
-            "true,  false, true",
-            "true,  true,  false",
-            "true, false, false",
-            "false, true, false",
-            "false, false, true",
-            "false, false, false"
-        ]
-    )
-    fun `given sourcing events without replacing all default values when constructing user from sourcing events then throws exception`(
-        changeFirstName: Boolean,
-        changeLastName: Boolean,
-        changeWikiName: Boolean
-    ) {
-        // given
-        val sourcingEvent = UserPersonalInformationChanged(
-            userId,
-            1,
-            adminActor.id,
-            firstName = if (changeFirstName) ChangeableValue.ChangeToValue("first") else ChangeableValue.LeaveAsIs,
-            lastName = if (changeLastName) ChangeableValue.ChangeToValue("last") else ChangeableValue.LeaveAsIs,
-            wikiName = if (changeWikiName) ChangeableValue.ChangeToValue("wiki") else ChangeableValue.LeaveAsIs,
-            phoneNumber = ChangeableValue.LeaveAsIs
-        )
-
-        // when
-        val exception = assertThrows<User.Companion.UserNotHasMandatoryDefaultValuesReplaced> {
-            User.fromSourcingEvents(userId, listOf(sourcingEvent))
-        }
-
-        // then
-        assertThat(exception.message)
-            .isNotNull()
-            .contains("has default values after applying all sourcing events")
+            .isEqualTo("No sourcing events contained in iterable.")
     }
 
     @Test
-    fun `given sourcing events with replacing all default values when constructing user from sourcing event then returns user`() {
+    fun `given no UserCreatedEvent when constructing user from sourcing events then throws exception`() {
         // given
-        val personalInformationChanged = UserPersonalInformationChanged(
+        val event = UserPersonalInformationChanged(
             userId,
             1,
             adminActor.id,
@@ -115,7 +72,65 @@ internal class UserTest {
         )
 
         // when
-        val result = User.fromSourcingEvents(userId, listOf(personalInformationChanged))
+        val exception = assertThrows<EventHistoryDoesNotStartWithUserCreated> {
+            User.fromSourcingEvents(listOf(event))
+        }
+
+        // then
+        assertThat(exception.message)
+            .isNotNull()
+            .isEqualTo("Event history starts with $event, not a UserCreated event.")
+    }
+
+    @Test
+    fun `given out-of-order UserCreatedEvent when constructing user from sourcing events then throws exception`() {
+        // given
+        val event1 = UserPersonalInformationChanged(
+            userId,
+            1,
+            adminActor.id,
+            firstName = ChangeableValue.ChangeToValue("first"),
+            lastName = ChangeableValue.ChangeToValue("last"),
+            wikiName = ChangeableValue.ChangeToValue("wiki"),
+            phoneNumber = ChangeableValue.ChangeToValue("1")
+        )
+
+        val event2 = UserCreated(
+            userId,
+            2,
+            adminActor.id,
+            firstName = "first",
+            lastName = "last",
+            wikiName = "wiki",
+            phoneNumber = null
+        )
+
+        // when
+        val exception = assertThrows<EventHistoryDoesNotStartWithUserCreated> {
+            User.fromSourcingEvents(listOf(event1, event2))
+        }
+
+        // then
+        assertThat(exception.message)
+            .isNotNull()
+            .isEqualTo("Event history starts with $event1, not a UserCreated event.")
+    }
+
+    @Test
+    fun `given UserCreatedEvent when constructing user from sourcing event then returns user`() {
+        // given
+        val userCreated = UserCreated(
+            userId,
+            1,
+            adminActor.id,
+            firstName = "first",
+            lastName = "last",
+            wikiName = "wiki",
+            phoneNumber = null
+        )
+
+        // when
+        val result = User.fromSourcingEvents(listOf(userCreated))
 
         // then
         assertThat(result).isEqualTo(
@@ -138,52 +153,61 @@ internal class UserTest {
     @Test
     fun `given multiple in-order sourcing events when constructing user from sourcing event then applies all`() {
         // given
-        val event1 = UserPersonalInformationChanged(
+        val event1 = UserCreated(
             userId,
             1,
             adminActor.id,
-            firstName = ChangeableValue.ChangeToValue("first1"),
-            lastName = ChangeableValue.ChangeToValue("last1"),
-            wikiName = ChangeableValue.ChangeToValue("wiki1"),
-            phoneNumber = ChangeableValue.ChangeToValue("1")
+            firstName = "first1",
+            lastName = "last1",
+            wikiName = "wiki1",
+            phoneNumber = "1"
         )
-        val event2 = UserLockStateChanged(
+        val event2 = UserPersonalInformationChanged(
             userId,
             2,
             adminActor.id,
-            locked = ChangeableValue.ChangeToValue(true),
-            notes = ChangeableValue.ChangeToValue("some notes")
+            firstName = ChangeableValue.ChangeToValue("first2"),
+            lastName = ChangeableValue.ChangeToValue("last2"),
+            wikiName = ChangeableValue.ChangeToValue("wiki2"),
+            phoneNumber = ChangeableValue.ChangeToValue("2")
         )
-        val event3 = UserPersonalInformationChanged(
+        val event3 = UserLockStateChanged(
             userId,
             3,
             adminActor.id,
-            firstName = ChangeableValue.ChangeToValue("first2"),
-            lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("wiki2"),
-            phoneNumber = ChangeableValue.LeaveAsIs
+            locked = ChangeableValue.ChangeToValue(true),
+            notes = ChangeableValue.ChangeToValue("some notes")
         )
         val event4 = UserPersonalInformationChanged(
             userId,
             4,
             adminActor.id,
+            firstName = ChangeableValue.ChangeToValue("first4"),
+            lastName = ChangeableValue.LeaveAsIs,
+            wikiName = ChangeableValue.ChangeToValue("wiki4"),
+            phoneNumber = ChangeableValue.LeaveAsIs
+        )
+        val event5 = UserPersonalInformationChanged(
+            userId,
+            5,
+            adminActor.id,
             firstName = ChangeableValue.LeaveAsIs,
-            lastName = ChangeableValue.ChangeToValue("last3"),
-            wikiName = ChangeableValue.ChangeToValue("wiki3"),
+            lastName = ChangeableValue.ChangeToValue("last5"),
+            wikiName = ChangeableValue.ChangeToValue("wiki5"),
             phoneNumber = ChangeableValue.ChangeToValue(null)
         )
 
         // when
-        val result = User.fromSourcingEvents(userId, listOf(event1, event2, event3, event4))
+        val result = User.fromSourcingEvents(listOf(event1, event2, event3, event4, event5))
 
         // then
         assertThat(result).isEqualTo(
             User(
                 userId,
-                4,
-                "first2",
-                "last3",
-                "wiki3",
+                5,
+                "first4",
+                "last5",
+                "wiki5",
                 null,
                 true,
                 "some notes",
@@ -197,14 +221,14 @@ internal class UserTest {
     @Test
     fun `given multiple out-of-order sourcing events when constructing user then throws exception`() {
         // given
-        val event1 = UserPersonalInformationChanged(
+        val event1 = UserCreated(
             userId,
             1,
             adminActor.id,
-            firstName = ChangeableValue.ChangeToValue("first1"),
-            lastName = ChangeableValue.ChangeToValue("last1"),
-            wikiName = ChangeableValue.ChangeToValue("wiki1"),
-            phoneNumber = ChangeableValue.ChangeToValue("1")
+            firstName = "first1",
+            lastName = "last1",
+            wikiName = "wiki1",
+            phoneNumber = "1"
         )
         val event3 = UserPersonalInformationChanged(
             userId,
@@ -225,7 +249,7 @@ internal class UserTest {
 
         // then
         val exception = assertThrows<AggregateVersionDoesNotIncreaseOneByOne> {
-            User.fromSourcingEvents(userId, listOf(event1, event3, event2))
+            User.fromSourcingEvents(listOf(event1, event3, event2))
         }
 
         // then

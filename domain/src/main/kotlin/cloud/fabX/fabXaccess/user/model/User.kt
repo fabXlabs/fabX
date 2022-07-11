@@ -7,6 +7,8 @@ import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
+import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
+import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
@@ -28,21 +30,28 @@ data class User internal constructor(
         get() = "$firstName $lastName"
 
     companion object {
-        fun fromSourcingEvents(id: UserId, events: Iterable<UserSourcingEvent>): User {
-            val defaultFirstName = "defaultFirstName"
-            val defaultLastName = "defaultLastName"
-            val defaultWikiName = "defaultWikiName"
-
+        fun fromSourcingEvents(events: Iterable<UserSourcingEvent>): User {
+            events.assertIsNotEmpty()
+            events.assertAggregateVersionStartsWithOne()
             events.assertAggregateVersionIncreasesOneByOne()
+            events.assertStartsWithUserCreatedEvent()
 
-            val user = events.fold(
+            val userCreatedEvent = events.first()
+
+            if (userCreatedEvent !is UserCreated) {
+                throw EventHistoryDoesNotStartWithUserCreated(
+                    "event history starts with ${userCreatedEvent}, not a UserCreated event."
+                )
+            }
+
+            return events.fold(
                 User(
-                    id,
-                    -1L,
-                    defaultFirstName,
-                    defaultLastName,
-                    defaultWikiName,
-                    null,
+                    userCreatedEvent.aggregateRootId,
+                    userCreatedEvent.aggregateVersion,
+                    userCreatedEvent.firstName,
+                    userCreatedEvent.lastName,
+                    userCreatedEvent.wikiName,
+                    userCreatedEvent.phoneNumber,
                     false,
                     null,
                     listOf(),
@@ -52,19 +61,7 @@ data class User internal constructor(
             ) { user, event ->
                 user.apply(event)
             }
-
-            if (user.aggregateVersion == -1L
-                || user.firstName == defaultFirstName
-                || user.lastName == defaultLastName
-                || user.wikiName == defaultWikiName
-            ) {
-                throw UserNotHasMandatoryDefaultValuesReplaced("User $user has default values after applying all sourcing events.")
-            }
-
-            return user
         }
-
-        class UserNotHasMandatoryDefaultValuesReplaced(message: String) : Exception(message)
     }
 
     fun apply(sourcingEvent: UserSourcingEvent): User = sourcingEvent.processBy(EventHandler(), this)
@@ -109,6 +106,21 @@ data class User internal constructor(
     )
 
     private class EventHandler : UserSourcingEvent.EventHandler {
+
+        override fun handle(event: UserCreated, user: User): User = User(
+            id = event.aggregateRootId,
+            aggregateVersion = event.aggregateVersion,
+            firstName = event.firstName,
+            lastName = event.lastName,
+            wikiName = event.wikiName,
+            phoneNumber = event.phoneNumber,
+            locked = false,
+            notes = null,
+            memberQualifications = listOf(),
+            instructorQualifications = null,
+            isAdmin = false
+        )
+
         override fun handle(event: UserPersonalInformationChanged, user: User): User =
             requireSameUserIdAnd(event, user) { e, u ->
                 u.copy(
