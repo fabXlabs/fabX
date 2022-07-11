@@ -7,13 +7,16 @@ sealed class UserSourcingEvent(override val aggregateRootId: UserId) : SourcingE
     abstract fun processBy(eventHandler: EventHandler, dao: MutableList<User>)
 
     interface EventHandler {
-        fun handle(event: UserValuesChanged, dao: MutableList<User>)
+        fun handle(event: UserPersonalInformationChanged, dao: MutableList<User>)
     }
 }
 
-data class UserValuesChanged(
+data class UserPersonalInformationChanged(
     override val aggregateRootId: UserId,
-    val firstName: ChangeableValue<String>
+    val firstName: ChangeableValue<String>,
+    val lastName: ChangeableValue<String>,
+    val wikiName: ChangeableValue<String>,
+    val phoneNumber: ChangeableValue<String?>
 ) : UserSourcingEvent(aggregateRootId) {
     override fun processBy(eventHandler: EventHandler, dao: MutableList<User>) {
         eventHandler.handle(this, dao)

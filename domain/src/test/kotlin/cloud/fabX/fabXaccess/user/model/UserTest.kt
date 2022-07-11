@@ -27,4 +27,24 @@ internal class UserTest {
         assertThat(user).isNotNull()
         assertThat(user.id).isEqualTo(id)
     }
+
+    @Test
+    fun `given valid user when stringifying then result is correct`() {
+        // given
+        val user = User(
+            UserIdFixture.staticId(42),
+            "Nikola",
+            "Tesla",
+            "nick",
+            "00491234567890",
+            false,
+            null
+        )
+
+        // when
+        val result = user.toString()
+
+        // then
+        println(result)
+    }
 }

@@ -7,8 +7,8 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UserValuesChanged
 import isRight
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -48,21 +48,36 @@ internal class ChangingUserTest {
         val user = UserFixture.arbitraryUser(userId)
 
         val newFirstName = ChangeableValue.ChangeToValue("aFirstName")
-        val expectedSourcingEvent = UserValuesChanged(userId, newFirstName)
+        val newLastName = ChangeableValue.ChangeToValue("aLastName")
+        val newWikiName = ChangeableValue.ChangeToValue("aWikiName")
+        val newPhoneNumber = ChangeableValue.ChangeToValue("0123")
+
+        val expectedSourcingEvent = UserPersonalInformationChanged(
+            userId,
+            newFirstName,
+            newLastName,
+            newWikiName,
+            newPhoneNumber
+        )
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.changeUser(userId, newFirstName)
+        val result = testee!!.changePersonalInformation(userId,
+            newFirstName,
+            newLastName,
+            newWikiName,
+            newPhoneNumber
+        )
 
         // then
         assertThat(result).isRight()
 
         val inOrder = inOrder(logger!!, userRepository!!)
-        inOrder.verify(logger!!).debug("changeUser...")
+        inOrder.verify(logger!!).debug("changePersonalInformation...")
         inOrder.verify(userRepository!!).getById(userId)
         inOrder.verify(userRepository!!).store(eq(expectedSourcingEvent))
-        inOrder.verify(logger!!).debug("...changeUser done")
+        inOrder.verify(logger!!).debug("...changePersonalInformation done")
     }
 }

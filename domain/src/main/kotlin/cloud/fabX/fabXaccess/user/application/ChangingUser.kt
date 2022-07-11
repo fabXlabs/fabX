@@ -15,12 +15,25 @@ class ChangingUser {
     private val log = logger()
     private val userRepository = DomainModule.userRepository()
 
-    fun changeUser(userId: UserId, firstName: ChangeableValue<String>): Either<Error, Unit> {
-        log.debug("changeUser...")
+    fun changePersonalInformation(
+        userId: UserId,
+        firstName: ChangeableValue<String>,
+        lastName: ChangeableValue<String>,
+        wikiName: ChangeableValue<String>,
+        phoneNumber: ChangeableValue<String?>
+    ): Either<Error, Unit> {
+        log.debug("changePersonalInformation...")
 
         return userRepository.getById(userId)
-            .map { it.changeValues(firstName) }
+            .map {
+                it.changePersonalInformation(
+                    firstName,
+                    lastName,
+                    wikiName,
+                    phoneNumber
+                )
+            }
             .map { userRepository.store(it) }
-            .tap { log.debug("...changeUser done") }
+            .tap { log.debug("...changePersonalInformation done") }
     }
 }

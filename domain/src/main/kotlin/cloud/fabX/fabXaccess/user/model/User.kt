@@ -10,22 +10,15 @@ data class User(
     val wikiName: String,
     val phoneNumber: String?,
     val locked: Boolean,
-    val lockedReason: String?
+    val notes: String?
 ) : Entity<UserId> {
 
-    fun changeValues(firstName: ChangeableValue<String>): UserSourcingEvent {
-        return UserValuesChanged(id, firstName)
-    }
-
-    override fun toString(): String {
-        return "User(" +
-                "id=$id, " +
-                "firstName='$firstName', " +
-                "lastName='$lastName', " +
-                "wikiName='$wikiName', " +
-                "phoneNumber='$phoneNumber', " +
-                "locked=$locked, " +
-                "lockedReason=$lockedReason" +
-                ")"
+    fun changePersonalInformation(
+        firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
+        lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
+        wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
+        phoneNumber: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
+    ): UserSourcingEvent {
+        return UserPersonalInformationChanged(id, firstName, lastName, wikiName, phoneNumber)
     }
 }
