@@ -28,10 +28,6 @@ class UserDatabaseRepository : UserRepository {
     }
 
     override fun store(event: UserSourcingEvent): Option<Error> {
-        // TODO get previous aggregate version number if exists
-        // TODO check if aggregate version number of event is previous+1
-        // TODO if not return error, NOT throw
-        //      -> user should see some kind of error message
         val previousVersion = getVersionById(event.aggregateRootId)
 
         return if (previousVersion != null
