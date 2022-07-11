@@ -2,14 +2,16 @@ package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.Either
 import arrow.core.Option
+import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
-import cloud.fabX.fabXaccess.common.model.Entity
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
 data class User internal constructor(
     override val id: UserId,
+    override val aggregateVersion: Long,
     val firstName: String,
     val lastName: String,
     val wikiName: String,
@@ -19,7 +21,7 @@ data class User internal constructor(
     private val memberQualifications: List<QualificationId>,
     private val instructorQualifications: List<QualificationId>?,
     private val isAdmin: Boolean
-) : Entity<UserId> {
+) : AggregateRootEntity<UserId> {
 
     companion object {
         fun fromSourcingEvents(id: UserId, events: Iterable<UserSourcingEvent>): User {
@@ -27,11 +29,12 @@ data class User internal constructor(
             val defaultLastName = "defaultLastName"
             val defaultWikiName = "defaultWikiName"
 
-            // TODO enforce correct ordering of sourcing events
+            events.assertAggregateVersionIncreasesOneByOne()
 
             val user = events.fold(
                 User(
                     id,
+                    -1L,
                     defaultFirstName,
                     defaultLastName,
                     defaultWikiName,
@@ -46,7 +49,8 @@ data class User internal constructor(
                 user.apply(event)
             }
 
-            if (user.firstName == defaultFirstName
+            if (user.aggregateVersion == -1L
+                || user.firstName == defaultFirstName
                 || user.lastName == defaultLastName
                 || user.wikiName == defaultWikiName) {
                 throw UserNotHasMandatoryDefaultValuesReplaced("User $user has default values after applying all sourcing events.")
@@ -66,14 +70,14 @@ data class User internal constructor(
         wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         phoneNumber: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {
-        return UserPersonalInformationChanged(id, firstName, lastName, wikiName, phoneNumber)
+        return UserPersonalInformationChanged(id, aggregateVersion + 1, firstName, lastName, wikiName, phoneNumber)
     }
 
     fun changeLockState(
         locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
         notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {
-        return UserLockStateChanged(id, locked, notes)
+        return UserLockStateChanged(id, aggregateVersion + 1, locked, notes)
     }
 
     fun asMember(): Member = Member(id, memberQualifications)
@@ -93,6 +97,7 @@ data class User internal constructor(
         override fun handle(event: UserPersonalInformationChanged, user: User): User =
             requireSameUserIdAnd(event, user) { e, u ->
                 u.copy(
+                    aggregateVersion = e.aggregateVersion,
                     firstName = e.firstName.valueToChangeTo(u.firstName),
                     lastName = e.lastName.valueToChangeTo(u.lastName),
                     wikiName = e.wikiName.valueToChangeTo(u.wikiName),
@@ -103,6 +108,7 @@ data class User internal constructor(
         override fun handle(event: UserLockStateChanged, user: User): User =
             requireSameUserIdAnd(event, user) { e, u ->
                 u.copy(
+                    aggregateVersion = e.aggregateVersion,
                     locked = e.locked.valueToChangeTo(u.locked),
                     notes = e.notes.valueToChangeTo(u.notes)
                 )

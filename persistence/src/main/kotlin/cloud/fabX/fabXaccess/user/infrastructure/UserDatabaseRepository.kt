@@ -13,7 +13,9 @@ class UserDatabaseRepository : UserRepository {
     private var events = mutableListOf<UserSourcingEvent>()
 
     override fun getById(id: UserId): Either<Error, User> {
-        val e = events.filter { it.aggregateRootId == id }
+        val e = events
+            .filter { it.aggregateRootId == id }
+            .sortedBy { it.aggregateVersion }
 
         return if (e.isNotEmpty()) {
             User.fromSourcingEvents(id, e).right()
@@ -23,6 +25,14 @@ class UserDatabaseRepository : UserRepository {
     }
 
     override fun store(event: UserSourcingEvent) {
+        TODO("get previous aggregate version number if exists")
+        TODO("check if aggregate version number of event is previous+1")
+        // TODO if not return error, NOT throw
+        //      -> user should see some kind of error message
         events.add(event)
+    }
+
+    private fun getVersionById(id: UserId): Long? {
+        TODO()
     }
 }

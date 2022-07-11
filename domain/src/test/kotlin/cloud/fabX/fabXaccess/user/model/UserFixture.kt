@@ -7,6 +7,7 @@ object UserFixture {
 
     fun arbitraryUser(
         userId: UserId = UserIdFixture.arbitraryId(),
+        aggregateVersion: Long = 1,
         firstName: String = "first",
         lastName: String = "last",
         wikiName: String = "wiki",
@@ -18,6 +19,7 @@ object UserFixture {
         isAdmin: Boolean = false
     ): User = User(
         userId,
+        aggregateVersion,
         firstName,
         lastName,
         wikiName,

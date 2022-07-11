@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -17,6 +18,7 @@ import org.junit.jupiter.params.provider.CsvSource
 internal class UserTest {
 
     private val userId = UserIdFixture.arbitraryId()
+    private val aggregateVersion = 42L
 
     @Test
     fun `given valid values when constructing user then user is constructed`() {
@@ -25,6 +27,7 @@ internal class UserTest {
         // when
         val user = User(
             userId,
+            aggregateVersion,
             "Nikola",
             "Tesla",
             "nick",
@@ -57,15 +60,17 @@ internal class UserTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = [
-        "false, true,  true",
-        "true,  false, true",
-        "true,  true,  false",
-        "true, false, false",
-        "false, true, false",
-        "false, false, true",
-        "false, false, false"
-    ])
+    @CsvSource(
+        value = [
+            "false, true,  true",
+            "true,  false, true",
+            "true,  true,  false",
+            "true, false, false",
+            "false, true, false",
+            "false, false, true",
+            "false, false, false"
+        ]
+    )
     fun `given sourcing events without replacing all default values when constructing user from sourcing events then throws exception`(
         changeFirstName: Boolean,
         changeLastName: Boolean,
@@ -74,6 +79,7 @@ internal class UserTest {
         // given
         val sourcingEvent = UserPersonalInformationChanged(
             userId,
+            1,
             firstName = if (changeFirstName) ChangeableValue.ChangeToValue("first") else ChangeableValue.LeaveAsIs,
             lastName = if (changeLastName) ChangeableValue.ChangeToValue("last") else ChangeableValue.LeaveAsIs,
             wikiName = if (changeWikiName) ChangeableValue.ChangeToValue("wiki") else ChangeableValue.LeaveAsIs,
@@ -96,6 +102,7 @@ internal class UserTest {
         // given
         val personalInformationChanged = UserPersonalInformationChanged(
             userId,
+            1,
             firstName = ChangeableValue.ChangeToValue("first"),
             lastName = ChangeableValue.ChangeToValue("last"),
             wikiName = ChangeableValue.ChangeToValue("wiki"),
@@ -106,25 +113,29 @@ internal class UserTest {
         val result = User.fromSourcingEvents(userId, listOf(personalInformationChanged))
 
         // then
-        assertThat(result).isEqualTo(User(
-            userId,
-            "first",
-            "last",
-            "wiki",
-            null,
-            false,
-            null,
-            listOf(),
-            null,
-            false
-        ))
+        assertThat(result).isEqualTo(
+            User(
+                userId,
+                1,
+                "first",
+                "last",
+                "wiki",
+                null,
+                false,
+                null,
+                listOf(),
+                null,
+                false
+            )
+        )
     }
 
     @Test
-    fun `given multiple sourcing events when constructing user from sourcing event then applies all`() {
+    fun `given multiple in-order sourcing events when constructing user from sourcing event then applies all`() {
         // given
         val event1 = UserPersonalInformationChanged(
             userId,
+            1,
             firstName = ChangeableValue.ChangeToValue("first1"),
             lastName = ChangeableValue.ChangeToValue("last1"),
             wikiName = ChangeableValue.ChangeToValue("wiki1"),
@@ -132,11 +143,13 @@ internal class UserTest {
         )
         val event2 = UserLockStateChanged(
             userId,
+            2,
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue("some notes")
         )
         val event3 = UserPersonalInformationChanged(
             userId,
+            3,
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("wiki2"),
@@ -144,6 +157,7 @@ internal class UserTest {
         )
         val event4 = UserPersonalInformationChanged(
             userId,
+            4,
             firstName = ChangeableValue.LeaveAsIs,
             lastName = ChangeableValue.ChangeToValue("last3"),
             wikiName = ChangeableValue.ChangeToValue("wiki3"),
@@ -154,27 +168,68 @@ internal class UserTest {
         val result = User.fromSourcingEvents(userId, listOf(event1, event2, event3, event4))
 
         // then
-        assertThat(result).isEqualTo(User(
+        assertThat(result).isEqualTo(
+            User(
+                userId,
+                4,
+                "first2",
+                "last3",
+                "wiki3",
+                null,
+                true,
+                "some notes",
+                listOf(),
+                null,
+                false
+            )
+        )
+    }
+
+    @Test
+    fun `given multiple out-of-order sourcing events when constructing user then throws exception`() {
+        // given
+        val event1 = UserPersonalInformationChanged(
             userId,
-            "first2",
-            "last3",
-            "wiki3",
-            null,
-            true,
-            "some notes",
-            listOf(),
-            null,
-            false
-        ))
+            1,
+            firstName = ChangeableValue.ChangeToValue("first1"),
+            lastName = ChangeableValue.ChangeToValue("last1"),
+            wikiName = ChangeableValue.ChangeToValue("wiki1"),
+            phoneNumber = ChangeableValue.ChangeToValue("1")
+        )
+        val event3 = UserPersonalInformationChanged(
+            userId,
+            3,
+            firstName = ChangeableValue.ChangeToValue("first2"),
+            lastName = ChangeableValue.LeaveAsIs,
+            wikiName = ChangeableValue.ChangeToValue("wiki2"),
+            phoneNumber = ChangeableValue.LeaveAsIs
+        )
+        val event2 = UserLockStateChanged(
+            userId,
+            2,
+            locked = ChangeableValue.ChangeToValue(true),
+            notes = ChangeableValue.ChangeToValue("some notes")
+        )
+
+        // then
+        val exception = assertThrows<AggregateVersionDoesNotIncreaseOneByOne> {
+            User.fromSourcingEvents(userId, listOf(event1, event3, event2))
+        }
+
+        // then
+        assertThat(exception.message)
+            .isNotNull()
+            .isEqualTo("Aggregate version does not increase one by one for ${listOf(event1, event3, event2)}.")
     }
 
     @Test
     fun `when changing personal information then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId)
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UserPersonalInformationChanged(
             aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("newWikiName"),
@@ -196,10 +251,11 @@ internal class UserTest {
     @Test
     fun `when changing lock state then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId)
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UserLockStateChanged(
             aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue(null)
         )
@@ -291,6 +347,7 @@ internal class UserTest {
         // given
         val user = User(
             UserIdFixture.staticId(42),
+            123,
             "Nikola",
             "Tesla",
             "nick",
@@ -308,6 +365,7 @@ internal class UserTest {
         // then
         assertThat(result).isEqualTo(
             "User(id=UserId(value=f4a3f34c-e12a-395c-9fd2-23e167422c32), " +
+                    "aggregateVersion=123, " +
                     "firstName=Nikola, " +
                     "lastName=Tesla, " +
                     "wikiName=nick, " +
