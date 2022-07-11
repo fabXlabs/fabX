@@ -7,5 +7,6 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationId
  * An acting instructor.
  */
 data class Instructor internal constructor(
+    val userId: UserId,
     val qualifications: List<QualificationId>
 ) : Actor

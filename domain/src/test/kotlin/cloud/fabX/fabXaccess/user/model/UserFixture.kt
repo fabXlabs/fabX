@@ -24,8 +24,8 @@ object UserFixture {
         phoneNumber,
         locked,
         notes,
-        Member(memberQualifications),
-        if (instructorQualifications != null) Instructor(instructorQualifications) else null,
-        if (isAdmin) Admin() else null
+        memberQualifications,
+        instructorQualifications,
+        isAdmin
     )
 }

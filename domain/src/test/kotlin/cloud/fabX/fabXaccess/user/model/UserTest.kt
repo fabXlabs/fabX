@@ -27,9 +27,9 @@ internal class UserTest {
             "00491234567890",
             false,
             null,
-            Member(listOf()),
+            listOf(),
             null,
-            null
+            false
         )
 
         // then
@@ -93,7 +93,7 @@ internal class UserTest {
         val result = user.asMember()
 
         // then
-        assertThat(result.qualifications).isEqualTo(qualifications)
+        assertThat(result).isEqualTo(Member(userId, qualifications))
     }
 
     @Test
@@ -124,7 +124,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isRight()
-            .isEqualTo(Instructor(listOf(qualification1, qualification2)))
+            .isEqualTo(Instructor(userId, listOf(qualification1, qualification2)))
     }
 
     @Test
@@ -152,7 +152,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isRight()
-            .isEqualTo(Admin())
+            .isEqualTo(Admin(userId))
     }
 
     @Test
@@ -166,9 +166,9 @@ internal class UserTest {
             "00491234567890",
             false,
             null,
-            Member(listOf(QualificationIdFixture.staticId(43))),
-            Instructor(listOf(QualificationIdFixture.staticId(44))),
-            Admin()
+            listOf(QualificationIdFixture.staticId(43)),
+            listOf(QualificationIdFixture.staticId(44)),
+            true
         )
 
         // when
@@ -183,9 +183,9 @@ internal class UserTest {
                     "phoneNumber=00491234567890, " +
                     "locked=false, " +
                     "notes=null, " +
-                    "member=Member(qualifications=[QualificationId(value=6ecbc07c-382b-3e04-a9b3-a86909f10e64)]), " +
-                    "instructor=Instructor(qualifications=[QualificationId(value=a3dd6fd6-61a5-3c37-810c-8c68fe610bec)]), " +
-                    "admin=Admin())"
+                    "memberQualifications=[QualificationId(value=6ecbc07c-382b-3e04-a9b3-a86909f10e64)], " +
+                    "instructorQualifications=[QualificationId(value=a3dd6fd6-61a5-3c37-810c-8c68fe610bec)], " +
+                    "isAdmin=true)"
         )
     }
 }

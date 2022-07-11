@@ -5,6 +5,7 @@ import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Entity
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
 data class User(
     override val id: UserId,
@@ -14,9 +15,9 @@ data class User(
     val phoneNumber: String?,
     val locked: Boolean,
     val notes: String?,
-    private val member: Member,
-    private val instructor: Instructor?,
-    private val admin: Admin?
+    private val memberQualifications: List<QualificationId>,
+    private val instructorQualifications: List<QualificationId>?,
+    private val isAdmin: Boolean
 ) : Entity<UserId> {
 
     fun changePersonalInformation(
@@ -35,13 +36,16 @@ data class User(
         return UserLockStateChanged(id, locked, notes)
     }
 
-    fun asMember(): Member = member
+    fun asMember(): Member = Member(id, memberQualifications)
 
     fun asInstructor(): Either<Error, Instructor> =
-        Option.fromNullable(instructor)
+        Option.fromNullable(instructorQualifications)
+            .map { Instructor(id, it) }
             .toEither { Error.UserNotInstructor("User $id is not an instructor.") }
 
-    fun asAdmin(): Either<Error, Admin> =
-        Option.fromNullable(admin)
-            .toEither { Error.UserNotAdmin("User $id is not an admin.") }
+    fun asAdmin(): Either<Error, Admin> = Either.conditionally(
+        isAdmin,
+        { Error.UserNotAdmin("User $id is not an admin.") },
+        { Admin(id) }
+    )
 }
