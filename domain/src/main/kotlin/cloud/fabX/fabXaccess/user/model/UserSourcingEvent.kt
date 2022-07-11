@@ -4,11 +4,11 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
 
 sealed class UserSourcingEvent(override val aggregateRootId: UserId) : SourcingEvent {
-    abstract fun processBy(eventHandler: EventHandler, dao: MutableList<User>)
+    abstract fun processBy(eventHandler: EventHandler, user: User): User
 
     interface EventHandler {
-        fun handle(event: UserPersonalInformationChanged, dao: MutableList<User>)
-        fun handle(event: UserLockStateChanged, dao: MutableList<User>)
+        fun handle(event: UserPersonalInformationChanged, user: User): User
+        fun handle(event: UserLockStateChanged, user: User): User
     }
 }
 
@@ -19,9 +19,8 @@ data class UserPersonalInformationChanged(
     val wikiName: ChangeableValue<String>,
     val phoneNumber: ChangeableValue<String?>
 ) : UserSourcingEvent(aggregateRootId) {
-    override fun processBy(eventHandler: EventHandler, dao: MutableList<User>) {
-        eventHandler.handle(this, dao)
-    }
+    override fun processBy(eventHandler: EventHandler, user: User): User =
+        eventHandler.handle(this, user)
 }
 
 data class UserLockStateChanged(
@@ -29,7 +28,6 @@ data class UserLockStateChanged(
     val locked: ChangeableValue<Boolean>,
     val notes: ChangeableValue<String?>
 ) : UserSourcingEvent(aggregateRootId) {
-    override fun processBy(eventHandler: EventHandler, dao: MutableList<User>) {
-        eventHandler.handle(this, dao)
-    }
+    override fun processBy(eventHandler: EventHandler, user: User): User =
+        eventHandler.handle(this, user)
 }

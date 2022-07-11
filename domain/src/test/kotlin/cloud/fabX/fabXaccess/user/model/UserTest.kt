@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.user.model
 
 import assertk.assertThat
+import assertk.assertions.contains
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -9,6 +10,9 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
 import isRight
 import kotlin.test.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 internal class UserTest {
 
@@ -35,6 +39,133 @@ internal class UserTest {
         // then
         assertThat(user).isNotNull()
         assertThat(user.id).isEqualTo(userId)
+    }
+
+    @Test
+    fun `given no sourcing events when constructing user from sourcing events then throws exception`() {
+        // given
+
+        // when
+        val exception = assertThrows<User.Companion.UserNotHasMandatoryDefaultValuesReplaced> {
+            User.fromSourcingEvents(UserIdFixture.arbitraryId(), listOf())
+        }
+
+        // then
+        assertThat(exception.message)
+            .isNotNull()
+            .contains("has default values after applying all sourcing events")
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = [
+        "false, true,  true",
+        "true,  false, true",
+        "true,  true,  false",
+        "true, false, false",
+        "false, true, false",
+        "false, false, true",
+        "false, false, false"
+    ])
+    fun `given sourcing events without replacing all default values when constructing user from sourcing events then throws exception`(
+        changeFirstName: Boolean,
+        changeLastName: Boolean,
+        changeWikiName: Boolean
+    ) {
+        // given
+        val sourcingEvent = UserPersonalInformationChanged(
+            userId,
+            firstName = if (changeFirstName) ChangeableValue.ChangeToValue("first") else ChangeableValue.LeaveAsIs,
+            lastName = if (changeLastName) ChangeableValue.ChangeToValue("last") else ChangeableValue.LeaveAsIs,
+            wikiName = if (changeWikiName) ChangeableValue.ChangeToValue("wiki") else ChangeableValue.LeaveAsIs,
+            phoneNumber = ChangeableValue.LeaveAsIs
+        )
+
+        // when
+        val exception = assertThrows<User.Companion.UserNotHasMandatoryDefaultValuesReplaced> {
+            User.fromSourcingEvents(userId, listOf(sourcingEvent))
+        }
+
+        // then
+        assertThat(exception.message)
+            .isNotNull()
+            .contains("has default values after applying all sourcing events")
+    }
+
+    @Test
+    fun `given sourcing events with replacing all default values when constructing user from sourcing event then returns user`() {
+        // given
+        val personalInformationChanged = UserPersonalInformationChanged(
+            userId,
+            firstName = ChangeableValue.ChangeToValue("first"),
+            lastName = ChangeableValue.ChangeToValue("last"),
+            wikiName = ChangeableValue.ChangeToValue("wiki"),
+            phoneNumber = ChangeableValue.ChangeToValue(null)
+        )
+
+        // when
+        val result = User.fromSourcingEvents(userId, listOf(personalInformationChanged))
+
+        // then
+        assertThat(result).isEqualTo(User(
+            userId,
+            "first",
+            "last",
+            "wiki",
+            null,
+            false,
+            null,
+            listOf(),
+            null,
+            false
+        ))
+    }
+
+    @Test
+    fun `given multiple sourcing events when constructing user from sourcing event then applies all`() {
+        // given
+        val event1 = UserPersonalInformationChanged(
+            userId,
+            firstName = ChangeableValue.ChangeToValue("first1"),
+            lastName = ChangeableValue.ChangeToValue("last1"),
+            wikiName = ChangeableValue.ChangeToValue("wiki1"),
+            phoneNumber = ChangeableValue.ChangeToValue("1")
+        )
+        val event2 = UserLockStateChanged(
+            userId,
+            locked = ChangeableValue.ChangeToValue(true),
+            notes = ChangeableValue.ChangeToValue("some notes")
+        )
+        val event3 = UserPersonalInformationChanged(
+            userId,
+            firstName = ChangeableValue.ChangeToValue("first2"),
+            lastName = ChangeableValue.LeaveAsIs,
+            wikiName = ChangeableValue.ChangeToValue("wiki2"),
+            phoneNumber = ChangeableValue.LeaveAsIs
+        )
+        val event4 = UserPersonalInformationChanged(
+            userId,
+            firstName = ChangeableValue.LeaveAsIs,
+            lastName = ChangeableValue.ChangeToValue("last3"),
+            wikiName = ChangeableValue.ChangeToValue("wiki3"),
+            phoneNumber = ChangeableValue.ChangeToValue(null)
+        )
+
+        // when
+        val result = User.fromSourcingEvents(userId, listOf(event1, event2, event3, event4))
+
+        // then
+        assertThat(result).isEqualTo(User(
+            userId,
+            "first2",
+            "last3",
+            "wiki3",
+            null,
+            true,
+            "some notes",
+            listOf(),
+            null,
+            false
+        ))
     }
 
     @Test

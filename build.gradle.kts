@@ -4,7 +4,7 @@ val arrowVersion: String by project
 
 plugins {
     base
-    kotlin("jvm") version "1.5.20"
+    kotlin("jvm") version "1.5.30"
 }
 
 allprojects {
@@ -41,8 +41,9 @@ allprojects {
 
         testImplementation(kotlin("test"))
         testImplementation(kotlin("test-junit5"))
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
+        testImplementation("org.junit.jupiter:junit-jupiter-params")
+        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
         testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
         testImplementation("org.mockito:mockito-junit-jupiter:3.11.2")
     }

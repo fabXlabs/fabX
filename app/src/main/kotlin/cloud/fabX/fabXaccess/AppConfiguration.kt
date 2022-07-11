@@ -12,7 +12,7 @@ object AppConfiguration {
 
     init {
         loggerFactory = LogbackLoggerFactory()
-        userRepository = UserDatabaseRepository(UserDatabaseRepository.EventHandler())
+        userRepository = UserDatabaseRepository()
 
         configureDomain()
     }
