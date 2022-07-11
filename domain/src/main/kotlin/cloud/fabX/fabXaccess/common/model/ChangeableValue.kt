@@ -11,3 +11,8 @@ sealed class ChangeableValue<out T> {
     }
     data class ChangeToValue<T>(val value: T) : ChangeableValue<T>()
 }
+
+fun <T> ChangeableValue<T>.valueToChangeTo(previous: T): T = when(this) {
+    is ChangeableValue.ChangeToValue -> value
+    ChangeableValue.LeaveAsIs -> previous
+}

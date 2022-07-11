@@ -1,8 +1,9 @@
 package cloud.fabX.fabXaccess.user.model
 
+import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Entity
 
-class User(
+data class User(
     override val id: UserId,
     val firstName: String,
     val lastName: String,
@@ -11,6 +12,10 @@ class User(
     val locked: Boolean,
     val lockedReason: String?
 ) : Entity<UserId> {
+
+    fun changeValues(firstName: ChangeableValue<String>): UserSourcingEvent {
+        return UserValuesChanged(id, firstName)
+    }
 
     override fun toString(): String {
         return "User(" +

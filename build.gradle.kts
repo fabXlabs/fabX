@@ -1,5 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
+val arrowVersion: String by project
+
 plugins {
     base
     kotlin("jvm") version "1.5.20"
@@ -13,6 +15,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -34,6 +37,7 @@ allprojects {
     dependencies {
         implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
         implementation(kotlin("stdlib"))
+        implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
         testImplementation(kotlin("test"))
         testImplementation(kotlin("test-junit5"))
