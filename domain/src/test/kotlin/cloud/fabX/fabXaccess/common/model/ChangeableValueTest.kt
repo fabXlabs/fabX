@@ -2,9 +2,10 @@ package cloud.fabX.fabXaccess.common.model
 
 import assertk.assertThat
 import assertk.assertions.isTrue
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 internal class ChangeableValueTest {
+
     @Test
     fun `when creating ChangeToValue then it pattern matches correctly`() {
         // when

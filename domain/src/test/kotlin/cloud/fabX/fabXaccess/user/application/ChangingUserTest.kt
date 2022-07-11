@@ -12,8 +12,8 @@ import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isRight
-import kotlin.test.BeforeTest
-import kotlin.test.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.eq
@@ -30,7 +30,7 @@ internal class ChangingUserTest {
 
     private var testee: ChangingUser? = null
 
-    @BeforeTest
+    @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
         @Mock userRepository: UserRepository
