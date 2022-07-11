@@ -22,6 +22,7 @@ import org.junit.jupiter.params.provider.ValueSource
 
 internal class UserDatabaseRepositoryTest {
     val userId = UserIdFixture.staticId(1234)
+    val actorId = UserIdFixture.staticId(1)
 
     @Test
     fun `given empty repository when getting user by id then returns user not found error`() {
@@ -49,6 +50,7 @@ internal class UserDatabaseRepositoryTest {
             val event1 = UserPersonalInformationChanged(
                 userId,
                 1,
+                actorId,
                 firstName = ChangeableValue.ChangeToValue("first"),
                 lastName = ChangeableValue.ChangeToValue("last"),
                 wikiName = ChangeableValue.ChangeToValue("wiki"),
@@ -59,6 +61,7 @@ internal class UserDatabaseRepositoryTest {
             val event2 = UserLockStateChanged(
                 userId,
                 2,
+                actorId,
                 locked = ChangeableValue.ChangeToValue(true),
                 notes = ChangeableValue.ChangeToValue("some notes")
             )
@@ -96,6 +99,7 @@ internal class UserDatabaseRepositoryTest {
             val event = UserLockStateChanged(
                 userId,
                 3,
+                actorId,
                 locked = ChangeableValue.ChangeToValue(false),
                 notes = ChangeableValue.ChangeToValue(null)
             )
@@ -122,6 +126,7 @@ internal class UserDatabaseRepositoryTest {
             val event = UserLockStateChanged(
                 userId,
                 version,
+                actorId,
                 locked = ChangeableValue.ChangeToValue(false),
                 notes = ChangeableValue.ChangeToValue(null)
             )

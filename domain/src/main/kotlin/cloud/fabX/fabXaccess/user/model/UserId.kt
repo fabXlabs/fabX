@@ -1,12 +1,13 @@
 package cloud.fabX.fabXaccess.user.model
 
+import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.EntityId
 import java.util.UUID
 
 /**
  * Technical (artificial) ID of a User.
  */
-data class UserId(override val value: UUID) : EntityId<UUID>
+data class UserId(override val value: UUID) : EntityId<UUID>, ActorId
 
 /**
  * Returns a new UserId.

@@ -3,8 +3,8 @@ package cloud.fabX.fabXaccess.common.model
 interface SourcingEvent {
     val aggregateRootId: EntityId<*>
     val aggregateVersion: Long
+    val actorId: ActorId
     // TODO add timestamp?
-    // TODO add causing actor (id)
 }
 
 fun <E : SourcingEvent> Iterable<E>.assertAggregateVersionIncreasesOneByOne() {

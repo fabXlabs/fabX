@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.Either
 import arrow.core.Option
+import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
@@ -22,6 +23,9 @@ data class User internal constructor(
     private val instructorQualifications: List<QualificationId>?,
     private val isAdmin: Boolean
 ) : AggregateRootEntity<UserId> {
+
+    private val name: String
+        get() = "$firstName $lastName"
 
     companion object {
         fun fromSourcingEvents(id: UserId, events: Iterable<UserSourcingEvent>): User {
@@ -52,45 +56,56 @@ data class User internal constructor(
             if (user.aggregateVersion == -1L
                 || user.firstName == defaultFirstName
                 || user.lastName == defaultLastName
-                || user.wikiName == defaultWikiName) {
+                || user.wikiName == defaultWikiName
+            ) {
                 throw UserNotHasMandatoryDefaultValuesReplaced("User $user has default values after applying all sourcing events.")
             }
 
             return user
         }
 
-        class UserNotHasMandatoryDefaultValuesReplaced(message: String): Exception(message)
+        class UserNotHasMandatoryDefaultValuesReplaced(message: String) : Exception(message)
     }
 
     fun apply(sourcingEvent: UserSourcingEvent): User = sourcingEvent.processBy(EventHandler(), this)
 
     fun changePersonalInformation(
+        actor: Actor,
         firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         phoneNumber: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {
-        return UserPersonalInformationChanged(id, aggregateVersion + 1, firstName, lastName, wikiName, phoneNumber)
+        return UserPersonalInformationChanged(
+            id,
+            aggregateVersion + 1,
+            actor.id,
+            firstName,
+            lastName,
+            wikiName,
+            phoneNumber
+        )
     }
 
     fun changeLockState(
+        actor: Actor,
         locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
         notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {
-        return UserLockStateChanged(id, aggregateVersion + 1, locked, notes)
+        return UserLockStateChanged(id, aggregateVersion + 1, actor.id, locked, notes)
     }
 
-    fun asMember(): Member = Member(id, memberQualifications)
+    fun asMember(): Member = Member(id, name, memberQualifications)
 
     fun asInstructor(): Either<Error, Instructor> =
         Option.fromNullable(instructorQualifications)
-            .map { Instructor(id, it) }
+            .map { Instructor(id, name, it) }
             .toEither { Error.UserNotInstructor("User $id is not an instructor.") }
 
     fun asAdmin(): Either<Error, Admin> = Either.conditionally(
         isAdmin,
         { Error.UserNotAdmin("User $id is not an admin.") },
-        { Admin(id) }
+        { Admin(id, name) }
     )
 
     private class EventHandler : UserSourcingEvent.EventHandler {

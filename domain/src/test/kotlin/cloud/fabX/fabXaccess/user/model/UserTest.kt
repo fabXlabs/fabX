@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.model
 
+import arrow.core.getOrElse
 import assertk.assertThat
 import assertk.assertions.contains
 import assertk.assertions.isEqualTo
@@ -19,6 +20,8 @@ internal class UserTest {
 
     private val userId = UserIdFixture.arbitraryId()
     private val aggregateVersion = 42L
+
+    private val adminActor = AdminFixture.arbitraryAdmin()
 
     @Test
     fun `given valid values when constructing user then user is constructed`() {
@@ -80,6 +83,7 @@ internal class UserTest {
         val sourcingEvent = UserPersonalInformationChanged(
             userId,
             1,
+            adminActor.id,
             firstName = if (changeFirstName) ChangeableValue.ChangeToValue("first") else ChangeableValue.LeaveAsIs,
             lastName = if (changeLastName) ChangeableValue.ChangeToValue("last") else ChangeableValue.LeaveAsIs,
             wikiName = if (changeWikiName) ChangeableValue.ChangeToValue("wiki") else ChangeableValue.LeaveAsIs,
@@ -103,6 +107,7 @@ internal class UserTest {
         val personalInformationChanged = UserPersonalInformationChanged(
             userId,
             1,
+            adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first"),
             lastName = ChangeableValue.ChangeToValue("last"),
             wikiName = ChangeableValue.ChangeToValue("wiki"),
@@ -136,6 +141,7 @@ internal class UserTest {
         val event1 = UserPersonalInformationChanged(
             userId,
             1,
+            adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first1"),
             lastName = ChangeableValue.ChangeToValue("last1"),
             wikiName = ChangeableValue.ChangeToValue("wiki1"),
@@ -144,12 +150,14 @@ internal class UserTest {
         val event2 = UserLockStateChanged(
             userId,
             2,
+            adminActor.id,
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue("some notes")
         )
         val event3 = UserPersonalInformationChanged(
             userId,
             3,
+            adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("wiki2"),
@@ -158,6 +166,7 @@ internal class UserTest {
         val event4 = UserPersonalInformationChanged(
             userId,
             4,
+            adminActor.id,
             firstName = ChangeableValue.LeaveAsIs,
             lastName = ChangeableValue.ChangeToValue("last3"),
             wikiName = ChangeableValue.ChangeToValue("wiki3"),
@@ -191,6 +200,7 @@ internal class UserTest {
         val event1 = UserPersonalInformationChanged(
             userId,
             1,
+            adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first1"),
             lastName = ChangeableValue.ChangeToValue("last1"),
             wikiName = ChangeableValue.ChangeToValue("wiki1"),
@@ -199,6 +209,7 @@ internal class UserTest {
         val event3 = UserPersonalInformationChanged(
             userId,
             3,
+            adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("wiki2"),
@@ -207,6 +218,7 @@ internal class UserTest {
         val event2 = UserLockStateChanged(
             userId,
             2,
+            adminActor.id,
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue("some notes")
         )
@@ -230,6 +242,7 @@ internal class UserTest {
         val expectedSourcingEvent = UserPersonalInformationChanged(
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("newWikiName"),
@@ -238,6 +251,7 @@ internal class UserTest {
 
         // when
         val result = user.changePersonalInformation(
+            actor = adminActor,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("newWikiName"),
@@ -254,6 +268,7 @@ internal class UserTest {
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UserLockStateChanged(
+            actorId = adminActor.id,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             locked = ChangeableValue.ChangeToValue(true),
@@ -262,6 +277,7 @@ internal class UserTest {
 
         // when
         val result = user.changeLockState(
+            actor = adminActor,
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue(null)
         )
@@ -274,13 +290,18 @@ internal class UserTest {
     fun `given any user when getting as member then returns member`() {
         // given
         val qualifications = listOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
-        val user = UserFixture.arbitraryUser(userId, memberQualifications = qualifications)
+        val user = UserFixture.arbitraryUser(
+            userId,
+            memberQualifications = qualifications,
+            firstName = "firstName",
+            lastName = "lastName"
+        )
 
         // when
         val result = user.asMember()
 
         // then
-        assertThat(result).isEqualTo(Member(userId, qualifications))
+        assertThat(result).isEqualTo(Member(userId, "firstName lastName", qualifications))
     }
 
     @Test
@@ -303,7 +324,12 @@ internal class UserTest {
         val qualification1 = QualificationIdFixture.arbitraryId()
         val qualification2 = QualificationIdFixture.arbitraryId()
 
-        val user = UserFixture.arbitraryUser(userId, instructorQualifications = listOf(qualification1, qualification2))
+        val user = UserFixture.arbitraryUser(
+            userId,
+            instructorQualifications = listOf(qualification1, qualification2),
+            firstName = "first",
+            lastName = "last"
+        )
 
         // when
         val result = user.asInstructor()
@@ -311,7 +337,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isRight()
-            .isEqualTo(Instructor(userId, listOf(qualification1, qualification2)))
+            .isEqualTo(Instructor(userId, "first last", listOf(qualification1, qualification2)))
     }
 
     @Test
@@ -331,7 +357,12 @@ internal class UserTest {
     @Test
     fun `given user with admin when getting as admin then returns admin`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, isAdmin = true)
+        val user = UserFixture.arbitraryUser(
+            userId,
+            firstName = "first",
+            lastName = "last",
+            isAdmin = true
+        )
 
         // when
         val result = user.asAdmin()
@@ -339,7 +370,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isRight()
-            .isEqualTo(Admin(userId))
+            .isEqualTo(Admin(userId, "first last"))
     }
 
     @Test

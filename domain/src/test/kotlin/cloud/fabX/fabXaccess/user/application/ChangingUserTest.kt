@@ -1,11 +1,13 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.None
+import arrow.core.getOrElse
 import arrow.core.right
 import assertk.assertThat
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
@@ -22,6 +24,8 @@ import org.mockito.kotlin.whenever
 
 @MockitoSettings
 internal class ChangingUserTest {
+
+    private val adminActor = AdminFixture.arbitraryAdmin()
 
     private val userId = UserIdFixture.arbitraryId()
 
@@ -57,6 +61,7 @@ internal class ChangingUserTest {
         val expectedSourcingEvent = UserPersonalInformationChanged(
             userId,
             2,
+            adminActor.id,
             newFirstName,
             newLastName,
             newWikiName,
@@ -71,6 +76,7 @@ internal class ChangingUserTest {
 
         // when
         val result = testee!!.changePersonalInformation(
+            adminActor,
             userId,
             newFirstName,
             newLastName,
@@ -99,6 +105,7 @@ internal class ChangingUserTest {
         val expectedSourcingEvent = UserLockStateChanged(
             userId,
             4,
+            adminActor.id,
             newLocked,
             newNotes
         )
@@ -111,6 +118,7 @@ internal class ChangingUserTest {
 
         // when
         val result = testee!!.changeLockState(
+            adminActor,
             userId,
             newLocked,
             newNotes
