@@ -40,11 +40,11 @@ allprojects {
 
     dependencies {
         implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom"))
-        implementation(kotlin("stdlib"))
+        implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
-        testImplementation(kotlin("test"))
-        testImplementation(kotlin("test-junit5"))
+        testImplementation("org.jetbrains.kotlin:kotlin-test")
+        testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
         testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
         testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
         testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
