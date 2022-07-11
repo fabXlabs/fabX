@@ -21,4 +21,11 @@ data class User(
     ): UserSourcingEvent {
         return UserPersonalInformationChanged(id, firstName, lastName, wikiName, phoneNumber)
     }
+
+    fun changeLockState(
+        locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
+        notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
+    ): UserSourcingEvent {
+        return UserLockStateChanged(id, locked, notes)
+    }
 }

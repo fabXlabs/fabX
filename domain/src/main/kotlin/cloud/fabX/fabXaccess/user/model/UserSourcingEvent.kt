@@ -8,6 +8,7 @@ sealed class UserSourcingEvent(override val aggregateRootId: UserId) : SourcingE
 
     interface EventHandler {
         fun handle(event: UserPersonalInformationChanged, dao: MutableList<User>)
+        fun handle(event: UserLockStateChanged, dao: MutableList<User>)
     }
 }
 
@@ -17,6 +18,16 @@ data class UserPersonalInformationChanged(
     val lastName: ChangeableValue<String>,
     val wikiName: ChangeableValue<String>,
     val phoneNumber: ChangeableValue<String?>
+) : UserSourcingEvent(aggregateRootId) {
+    override fun processBy(eventHandler: EventHandler, dao: MutableList<User>) {
+        eventHandler.handle(this, dao)
+    }
+}
+
+data class UserLockStateChanged(
+    override val aggregateRootId: UserId,
+    val locked: ChangeableValue<Boolean>,
+    val notes: ChangeableValue<String?>
 ) : UserSourcingEvent(aggregateRootId) {
     override fun processBy(eventHandler: EventHandler, dao: MutableList<User>) {
         eventHandler.handle(this, dao)

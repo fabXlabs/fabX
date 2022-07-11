@@ -36,4 +36,17 @@ class ChangingUser {
             .map { userRepository.store(it) }
             .tap { log.debug("...changePersonalInformation done") }
     }
+
+    fun changeLockState(
+        userId: UserId,
+        locked: ChangeableValue<Boolean>,
+        notes: ChangeableValue<String?>
+    ): Either<Error, Unit> {
+        log.debug("changeLockState...")
+
+        return userRepository.getById(userId)
+            .map { it.changeLockState(locked, notes) }
+            .map { userRepository.store(it) }
+            .tap { log.debug("...changeLockState done") }
+    }
 }

@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserId
+import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
@@ -31,6 +32,18 @@ class UserDatabaseRepository(private val eventHandler: EventHandler) : UserRepos
                 lastName = event.lastName.valueToChangeTo(originalUser.lastName),
                 wikiName = event.wikiName.valueToChangeTo(originalUser.wikiName),
                 phoneNumber = event.phoneNumber.valueToChangeTo(originalUser.phoneNumber)
+            )
+
+            dao.remove(originalUser)
+            dao.add(updatedUser)
+        }
+
+        override fun handle(event: UserLockStateChanged, dao: MutableList<User>) {
+            val originalUser = dao.first { it.id == event.aggregateRootId }
+
+            val updatedUser = originalUser.copy(
+                locked = event.locked.valueToChangeTo(originalUser.locked),
+                notes = event.notes.valueToChangeTo(originalUser.notes)
             )
 
             dao.remove(originalUser)

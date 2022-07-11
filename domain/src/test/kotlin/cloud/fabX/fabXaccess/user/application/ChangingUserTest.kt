@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isRight
@@ -43,7 +44,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given user can be found when changing user then SourcingEvent is created and stored`() {
+    fun `given user can be found when changing user then sourcing event is created and stored`() {
         // given
         val user = UserFixture.arbitraryUser(userId)
 
@@ -64,7 +65,8 @@ internal class ChangingUserTest {
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.changePersonalInformation(userId,
+        val result = testee!!.changePersonalInformation(
+            userId,
             newFirstName,
             newLastName,
             newWikiName,
@@ -79,5 +81,39 @@ internal class ChangingUserTest {
         inOrder.verify(userRepository!!).getById(userId)
         inOrder.verify(userRepository!!).store(eq(expectedSourcingEvent))
         inOrder.verify(logger!!).debug("...changePersonalInformation done")
+    }
+
+    @Test
+    fun `given user can be found when changing lock state then sourcing event is created and stored`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId)
+
+        val newLocked = ChangeableValue.ChangeToValue(true)
+        val newNotes = ChangeableValue.ChangeToValue("some notes")
+
+        val expectedSourcingEvent = UserLockStateChanged(
+            userId,
+            newLocked,
+            newNotes
+        )
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        // when
+        val result = testee!!.changeLockState(
+            userId,
+            newLocked,
+            newNotes
+        )
+
+        // then
+        assertThat(result).isRight()
+
+        val inOrder = inOrder(logger!!, userRepository!!)
+        inOrder.verify(logger!!).debug("changeLockState...")
+        inOrder.verify(userRepository!!).getById(userId)
+        inOrder.verify(userRepository!!).store(eq(expectedSourcingEvent))
+        inOrder.verify(logger!!).debug("...changeLockState done")
     }
 }
