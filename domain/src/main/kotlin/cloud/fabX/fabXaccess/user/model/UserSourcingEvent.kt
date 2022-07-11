@@ -3,11 +3,14 @@ package cloud.fabX.fabXaccess.user.model
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 
 sealed class UserSourcingEvent(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
-    override val actorId: ActorId
+    override val actorId: ActorId,
+    override val timestamp: Instant = Clock.System.now()
 ) : SourcingEvent {
 
     abstract fun processBy(eventHandler: EventHandler, user: User): User

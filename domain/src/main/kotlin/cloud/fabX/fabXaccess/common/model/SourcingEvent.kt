@@ -1,10 +1,12 @@
 package cloud.fabX.fabXaccess.common.model
 
+import kotlinx.datetime.Instant
+
 interface SourcingEvent {
     val aggregateRootId: EntityId<*>
     val aggregateVersion: Long
     val actorId: ActorId
-    // TODO add timestamp?
+    val timestamp: Instant
 }
 
 fun <E : SourcingEvent> Iterable<E>.assertAggregateVersionIncreasesOneByOne() {

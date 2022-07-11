@@ -1,4 +1,5 @@
 val arrowVersion: String by project
+val kotlinxDateTimeVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -6,6 +7,8 @@ plugins {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+
     testFixturesImplementation("io.arrow-kt:arrow-core:$arrowVersion")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
 }
