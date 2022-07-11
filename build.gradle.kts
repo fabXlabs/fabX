@@ -1,6 +1,10 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 val arrowVersion: String by project
+val junitVersion: String by project
+val assertKVersion: String by project
+val mockitoKotlinVersion: String by project
+val mockitoJunitVersion: String by project
 
 plugins {
     base
@@ -35,16 +39,16 @@ allprojects {
     }
 
     dependencies {
-        implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
+        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom"))
         implementation(kotlin("stdlib"))
         implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
         testImplementation(kotlin("test"))
         testImplementation(kotlin("test-junit5"))
-        testImplementation("org.junit.jupiter:junit-jupiter-engine")
-        testImplementation("org.junit.jupiter:junit-jupiter-params")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.24")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
-        testImplementation("org.mockito:mockito-junit-jupiter:3.11.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+        testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
+        testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitVersion")
     }
 }
