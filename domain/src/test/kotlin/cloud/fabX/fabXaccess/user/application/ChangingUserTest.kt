@@ -1,10 +1,13 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.None
+import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
+import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -13,7 +16,7 @@ import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
-import isRight
+import isSome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -50,7 +53,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given user can be found when changing user then sourcing event is created and stored`() {
+    fun `given user can be found when changing personal information then sourcing event is created and stored`() {
         // given
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = 1)
 
@@ -96,8 +99,27 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given user cannot be found when changing user then returns error`() {
-        // TOOD
+    fun `given user cannot be found when changing personal information then returns error`() {
+        // given
+        val error = Error.UserNotFound("message", userId)
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(error.left())
+
+        // when
+        val result = testee!!.changePersonalInformation(
+            adminActor,
+            userId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(error)
     }
 
     @Test
@@ -142,6 +164,23 @@ internal class ChangingUserTest {
 
     @Test
     fun `given user cannot be found when changing lock state then returns error`() {
-        // TODO
+        // given
+        val error = Error.UserNotFound("message", userId)
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(error.left())
+
+        // when
+        val result = testee!!.changeLockState(
+            adminActor,
+            userId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(error)
     }
 }
