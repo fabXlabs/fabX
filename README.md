@@ -6,10 +6,14 @@ Backend for fabX access system. Written using [ktor](https://ktor.io) and [expos
 
 * [Kotlin](https://kotlinlang.org) on JVM
 * [Arrow Core](https://arrow-kt.io/docs/core/)
+* [Ktor](https://ktor.io) framework (in rest module)
+* [Exposed](https://github.com/JetBrains/Exposed) framework (in persistence module)
+* [PostgreSQL](https://www.postgresql.org) database (recommended but others [should be supported](https://github.com/JetBrains/Exposed#supported-databases))
 * Testing
-    * [kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/) API for test annotations (e.g. `@Test`)
+    * [kotlin.test](https://kotlinlang.org/api/latest/kotlin.test/)
     * [JUnit 5](https://junit.org/junit5/) as test runner
     * [assertk](https://github.com/willowtreeapps/assertk) assertion library
+    * [H2](http://www.h2database.com) in-memory database
 
 ## 🏛 Software Architecture
 
@@ -21,7 +25,6 @@ Modules:
 * rest (driver port)
     * offers REST API
     * controllers
-    * [Ktor](https://ktor.io) framework
 * domain
     * structured into different aggregates
     * domain model classes
@@ -32,9 +35,7 @@ Modules:
         * call aggregate root to change values within aggregate, persist `SourcingEvent(s)`
     * interfaces for ports
 * persistence (driven port)
-    * responsible for persisting domain model into database
-    * [Exposed](https://github.com/JetBrains/Exposed) framework
-    * PostgreSQL (and H2 for testing)
+    * responsible for persisting sourcing events into database
 * app
     * configures other modules
     * contains `main()` method
