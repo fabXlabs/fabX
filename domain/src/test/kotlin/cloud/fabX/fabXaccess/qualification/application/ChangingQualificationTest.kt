@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.qualification.application
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
+import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
@@ -50,7 +51,7 @@ internal class ChangingQualificationTest {
     }
 
     @Test
-    fun `given qualification can be found when changing qualification then sourcing event is created and stored`() {
+    fun `given qualification can be found when changing qualification details then sourcing event is created and stored`() {
         // given
         val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = 1)
 
@@ -96,12 +97,51 @@ internal class ChangingQualificationTest {
     }
 
     @Test
-    fun `given qualification cannot be found when changing qualification then returns error`() {
+    fun `given qualification cannot be found when changing qualification details then returns error`() {
         // given
         val error = Error.QualificationNotFound("message", qualificationId)
 
         whenever(qualificationRepository!!.getById(qualificationId))
             .thenReturn(error.left())
+
+        // when
+        val result = testee!!.changeQualificationDetails(
+            adminActor,
+            qualificationId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given sourcing event cannot be stored when changing qualification details then returns error`() {
+        // given
+        val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = 1)
+
+        val event = QualificationDetailsChanged(
+            qualificationId,
+            2,
+            adminActor.id,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        val error = Error.VersionConflict("message")
+
+        whenever(qualificationRepository!!.getById(qualificationId))
+            .thenReturn(qualification.right())
+
+        whenever(qualificationRepository!!.store(event))
+            .thenReturn(error.some())
 
         // when
         val result = testee!!.changeQualificationDetails(
