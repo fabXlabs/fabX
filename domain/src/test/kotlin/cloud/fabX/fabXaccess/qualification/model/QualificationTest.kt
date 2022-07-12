@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOn
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -109,16 +110,18 @@ internal class QualificationTest {
         val result = Qualification.fromSourcingEvents(listOf(event1, event2, event3))
 
         // then
-        assertThat(result).isEqualTo(
-            Qualification(
-                qualificationId,
-                3,
-                "name2",
-                "description3",
-                "#000003",
-                1
+        assertThat(result)
+            .isSome()
+            .isEqualTo(
+                Qualification(
+                    qualificationId,
+                    3,
+                    "name2",
+                    "description3",
+                    "#000003",
+                    1
+                )
             )
-        )
     }
 
     @Test

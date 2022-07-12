@@ -21,7 +21,13 @@ class QualificationDatabaseRepository : QualificationRepository {
             .sortedBy { it.aggregateVersion }
 
         return if (e.isNotEmpty()) {
-            Qualification.fromSourcingEvents(e).right()
+            Qualification.fromSourcingEvents(e)
+                .toEither {
+                    Error.QualificationNotFound(
+                        "Qualification with id $id not found.",
+                        id
+                    )
+                }
         } else {
             Error.QualificationNotFound(
                 "Qualification with id $id not found.",

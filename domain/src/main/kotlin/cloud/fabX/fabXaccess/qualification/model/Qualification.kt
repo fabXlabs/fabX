@@ -1,5 +1,10 @@
 package cloud.fabX.fabXaccess.qualification.model
 
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.getOrElse
+import arrow.core.orElse
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
@@ -18,11 +23,7 @@ data class Qualification internal constructor(
 ) : AggregateRootEntity<QualificationId> {
 
     companion object {
-        // TODO return Option<Qualification> (e.g. None if Qualification was deleted)
-        //      potentially handle(QualificationSourcingEvent) methods have to return Option<Qualification> as well
-        //      then fold can start with None and Created event can create Qualification
-
-        fun fromSourcingEvents(events: Iterable<QualificationSourcingEvent>): Qualification {
+        fun fromSourcingEvents(events: Iterable<QualificationSourcingEvent>): Option<Qualification> {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()
             events.assertAggregateVersionIncreasesOneByOne()
@@ -36,21 +37,15 @@ data class Qualification internal constructor(
             }
 
             return events.fold(
-                Qualification(
-                    qualificationCreatedEvent.aggregateRootId,
-                    qualificationCreatedEvent.aggregateVersion,
-                    qualificationCreatedEvent.name,
-                    qualificationCreatedEvent.description,
-                    qualificationCreatedEvent.colour,
-                    qualificationCreatedEvent.orderNr
-                )
-            ) { qualification, event ->
-                qualification.apply(event)
+                None
+            ) { result: Option<Qualification>, event ->
+                event.processBy(EventHandler(), result)
             }
         }
     }
 
-    fun apply(sourcingEvent: QualificationSourcingEvent): Qualification = sourcingEvent.processBy(EventHandler(), this)
+    fun apply(sourcingEvent: QualificationSourcingEvent): Option<Qualification> =
+        sourcingEvent.processBy(EventHandler(), Some(this))
 
     fun changeDetails(
         actor: Admin,
@@ -71,17 +66,30 @@ data class Qualification internal constructor(
     }
 
     private class EventHandler : QualificationSourcingEvent.EventHandler {
-        override fun handle(event: QualificationCreated, qualification: Qualification): Qualification = Qualification(
-            id = event.aggregateRootId,
-            aggregateVersion = event.aggregateVersion,
-            name = event.name,
-            description = event.description,
-            colour = event.colour,
-            orderNr = event.orderNr
-        )
+        override fun handle(event: QualificationCreated, qualification: Option<Qualification>): Option<Qualification> {
+            if (qualification.isDefined()) {
+                throw AccumulatorNotEmptyForQualificationCreatedEventHandler(
+                    "Handler for QualificationCreated is given $qualification."
+                )
+            }
 
-        override fun handle(event: QualificationDetailsChanged, qualification: Qualification): Qualification =
-            requireSameQualificationIdAnd(event, qualification) { e, q ->
+            return Some(
+                Qualification(
+                    id = event.aggregateRootId,
+                    aggregateVersion = event.aggregateVersion,
+                    name = event.name,
+                    description = event.description,
+                    colour = event.colour,
+                    orderNr = event.orderNr
+                )
+            )
+        }
+
+        override fun handle(
+            event: QualificationDetailsChanged,
+            qualification: Option<Qualification>
+        ): Option<Qualification> = requireSomeQualificationWithSameIdAnd(event, qualification) { e, q ->
+            Some(
                 q.copy(
                     aggregateVersion = e.aggregateVersion,
                     name = e.name.valueToChangeTo(q.name),
@@ -89,20 +97,26 @@ data class Qualification internal constructor(
                     colour = e.colour.valueToChangeTo(q.colour),
                     orderNr = e.orderNr.valueToChangeTo(q.orderNr)
                 )
-            }
+            )
+        }
 
-        private fun <E : QualificationSourcingEvent> requireSameQualificationIdAnd(
+        private fun <E : QualificationSourcingEvent> requireSomeQualificationWithSameIdAnd(
             event: E,
-            qualification: Qualification,
-            and: (E, Qualification) -> Qualification
-        ): Qualification {
-            if (event.aggregateRootId != qualification.id) {
+            qualification: Option<Qualification>,
+            and: (E, Qualification) -> Option<Qualification>
+        ): Option<Qualification> {
+            if (qualification.map { it.id != event.aggregateRootId }.getOrElse { false }) {
                 throw EventAggregateRootIdDoesNotMatchQualificationId("Event $event cannot be applied to $qualification.")
             }
-            return and(event, qualification)
+
+            return qualification.flatMap { and(event, it) }.orElse {
+                throw AccumulatorEmptyForQualificationEventHandler("Event handler for $event expects full accumulator but is empty.")
+            }
         }
 
         class EventAggregateRootIdDoesNotMatchQualificationId(message: String) : Exception(message)
+        class AccumulatorNotEmptyForQualificationCreatedEventHandler(message: String) : Exception(message)
+        class AccumulatorEmptyForQualificationEventHandler(message: String) : Exception(message)
     }
 
     class EventHistoryDoesNotStartWithQualificationCreated(message: String) : Exception(message)

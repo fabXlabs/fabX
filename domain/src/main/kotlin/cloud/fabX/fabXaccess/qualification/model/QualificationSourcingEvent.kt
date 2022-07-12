@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.model
 
+import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
@@ -13,11 +14,11 @@ sealed class QualificationSourcingEvent(
     override val timestamp: Instant = Clock.System.now()
 ) : SourcingEvent {
 
-    abstract fun processBy(eventHandler: EventHandler, qualification: Qualification): Qualification
+    abstract fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification>
 
     interface EventHandler {
-        fun handle(event: QualificationCreated, qualification: Qualification): Qualification
-        fun handle(event: QualificationDetailsChanged, qualification: Qualification): Qualification
+        fun handle(event: QualificationCreated, qualification: Option<Qualification>): Option<Qualification>
+        fun handle(event: QualificationDetailsChanged, qualification: Option<Qualification>): Option<Qualification>
     }
 }
 
@@ -30,7 +31,7 @@ data class QualificationCreated(
     val orderNr: Int
 ) : QualificationSourcingEvent(aggregateRootId, 1, actorId) {
 
-    override fun processBy(eventHandler: EventHandler, qualification: Qualification): Qualification =
+    override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
         eventHandler.handle(this, qualification)
 }
 
@@ -43,7 +44,6 @@ data class QualificationDetailsChanged(
     val colour: ChangeableValue<String>,
     val orderNr: ChangeableValue<Int>
 ) : QualificationSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
-
-    override fun processBy(eventHandler: EventHandler, qualification: Qualification): Qualification =
+    override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
         eventHandler.handle(this, qualification)
 }
