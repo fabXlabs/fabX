@@ -2,7 +2,6 @@ package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.Either
 import arrow.core.Option
-import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
@@ -67,7 +66,7 @@ data class User internal constructor(
     fun apply(sourcingEvent: UserSourcingEvent): User = sourcingEvent.processBy(EventHandler(), this)
 
     fun changePersonalInformation(
-        actor: Actor,
+        actor: Admin,
         firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
@@ -85,7 +84,7 @@ data class User internal constructor(
     }
 
     fun changeLockState(
-        actor: Actor,
+        actor: Admin,
         locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
         notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {

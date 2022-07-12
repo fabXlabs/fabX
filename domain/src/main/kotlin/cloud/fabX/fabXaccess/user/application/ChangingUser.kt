@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserId
 
 /**
@@ -18,7 +19,7 @@ class ChangingUser {
     private val userRepository = DomainModule.userRepository()
 
     fun changePersonalInformation(
-        actor: Actor,
+        actor: Admin,
         userId: UserId,
         firstName: ChangeableValue<String>,
         lastName: ChangeableValue<String>,
@@ -46,7 +47,7 @@ class ChangingUser {
     }
 
     fun changeLockState(
-        actor: Actor,
+        actor: Admin,
         userId: UserId,
         locked: ChangeableValue<Boolean>,
         notes: ChangeableValue<String?>
