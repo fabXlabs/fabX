@@ -8,8 +8,11 @@ import cloud.fabX.fabXaccess.common.model.ActorId
  */
 data class DeviceActor(
     val deviceId: DeviceId,
-    override val name: String
+    val mac: String
 ) : Actor {
     override val id: ActorId
         get() = deviceId
+
+    override val name: String
+        get() = mac
 }
