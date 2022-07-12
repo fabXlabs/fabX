@@ -6,6 +6,9 @@
         </encoder>
     </appender>
 
+    <logger name="org.eclipse.jetty" level="INFO"/>
+    <logger name="io.netty" level="INFO"/>
+
     <root level="debug">
         <appender-ref ref="STDOUT" />
     </root>
