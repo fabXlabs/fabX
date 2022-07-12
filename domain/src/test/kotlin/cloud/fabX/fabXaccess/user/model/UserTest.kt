@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
+import isNone
 import isRight
 import isSome
 import org.junit.jupiter.api.Test
@@ -228,6 +229,32 @@ internal class UserTest {
     }
 
     @Test
+    fun `given sourcing events including UserDeleted event when constructing user then returns None`() {
+        // given
+        val event1 = UserCreated(
+            userId,
+            adminActor.id,
+            firstName = "first1",
+            lastName = "last1",
+            wikiName = "wiki1",
+            phoneNumber = "1"
+        )
+
+        val event2 = UserDeleted(
+            userId,
+            2,
+            adminActor.id
+        )
+
+        // when
+        val result = User.fromSourcingEvents(listOf(event1, event2))
+
+        // then
+        assertThat(result)
+            .isNone()
+    }
+
+    @Test
     fun `when changing personal information then expected sourcing event is returned`() {
         // given
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
@@ -364,6 +391,24 @@ internal class UserTest {
         assertThat(result)
             .isRight()
             .isEqualTo(Admin(userId, "first last"))
+    }
+
+    @Test
+    fun `when deleting then expected sourcing event is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = UserDeleted(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id
+        )
+
+        // when
+        val result = user.delete(adminActor)
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
     }
 
     @Test

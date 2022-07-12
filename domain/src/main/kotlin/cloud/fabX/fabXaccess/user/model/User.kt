@@ -79,6 +79,12 @@ data class User internal constructor(
         return UserLockStateChanged(id, aggregateVersion + 1, actor.id, locked, notes)
     }
 
+    fun delete(
+        actor: Admin
+    ): UserSourcingEvent {
+        return UserDeleted(id, aggregateVersion + 1, actor.id)
+    }
+
     fun asMember(): Member = Member(id, name, memberQualifications)
 
     fun asInstructor(): Either<Error, Instructor> =
@@ -143,6 +149,11 @@ data class User internal constructor(
                         notes = e.notes.valueToChangeTo(u.notes)
                     )
                 )
+            }
+
+        override fun handle(event: UserDeleted, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { _, _ ->
+                None
             }
 
         private fun <E : UserSourcingEvent> requireSomeUserWithSameIdAnd(
