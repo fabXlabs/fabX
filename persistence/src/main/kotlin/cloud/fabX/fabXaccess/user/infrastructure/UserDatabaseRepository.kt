@@ -23,7 +23,10 @@ class UserDatabaseRepository : UserRepository {
         return if (e.isNotEmpty()) {
             User.fromSourcingEvents(e).right()
         } else {
-            Error.UserNotFound("User with id $id not found.").left()
+            Error.UserNotFound(
+                "User with id $id not found.",
+                id
+            ).left()
         }
     }
 

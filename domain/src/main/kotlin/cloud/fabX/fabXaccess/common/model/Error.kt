@@ -1,8 +1,21 @@
 package cloud.fabX.fabXaccess.common.model
 
-sealed class Error {
-    data class UserNotFound(val message: String, val parameters: Map<String, String> = emptyMap()): Error()
-    data class UserNotInstructor(val message: String): Error()
-    data class UserNotAdmin(val message: String): Error()
-    data class VersionConflict(val message: String): Error()
+import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.user.model.UserId
+
+sealed class Error(open val message: String, val parameters: Map<String, String> = emptyMap()) {
+    data class UserNotFound(
+        override val message: String,
+        val userId: UserId
+    ) : Error(message, mapOf("userId" to userId.toString()))
+
+    data class UserNotInstructor(override val message: String) : Error(message)
+    data class UserNotAdmin(override val message: String) : Error(message)
+
+    data class QualificationNotFound(
+        override val message: String,
+        val qualificationId: QualificationId
+    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+
+    data class VersionConflict(override val message: String) : Error(message)
 }

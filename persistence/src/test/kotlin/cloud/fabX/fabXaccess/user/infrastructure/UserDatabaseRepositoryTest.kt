@@ -35,7 +35,10 @@ internal class UserDatabaseRepositoryTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.UserNotFound("User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found."))
+            .isEqualTo(Error.UserNotFound(
+                "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                userId
+            ))
     }
 
     @Nested

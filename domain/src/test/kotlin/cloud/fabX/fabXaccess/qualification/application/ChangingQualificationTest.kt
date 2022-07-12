@@ -1,10 +1,13 @@
 package cloud.fabX.fabXaccess.qualification.application
 
 import arrow.core.None
+import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
+import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationDetailsChanged
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
@@ -12,6 +15,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
+import isSome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -93,6 +97,25 @@ internal class ChangingQualificationTest {
 
     @Test
     fun `given qualification cannot be found when changing qualification then returns error`() {
-        // TODO
+        // given
+        val error = Error.QualificationNotFound("message", qualificationId)
+
+        whenever(qualificationRepository!!.getById(qualificationId))
+            .thenReturn(error.left())
+
+        // when
+        val result = testee!!.changeQualificationDetails(
+            adminActor,
+            qualificationId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(error)
     }
 }
