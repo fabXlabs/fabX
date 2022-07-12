@@ -14,6 +14,8 @@ import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
+// TODO UsernamePasswordIdentification
+
 data class User internal constructor(
     override val id: UserId,
     override val aggregateVersion: Long,

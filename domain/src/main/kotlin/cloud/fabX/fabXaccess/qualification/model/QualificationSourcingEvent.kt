@@ -45,6 +45,7 @@ data class QualificationDetailsChanged(
     val colour: ChangeableValue<String>,
     val orderNr: ChangeableValue<Int>
 ) : QualificationSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
     override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
         eventHandler.handle(this, qualification)
 }
@@ -54,6 +55,7 @@ data class QualificationDeleted(
     override val aggregateVersion: Long,
     override val actorId: ActorId
 ) : QualificationSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
     override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
         eventHandler.handle(this, qualification)
 }

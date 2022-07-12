@@ -9,6 +9,9 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
 
+// TODO CreatingQualification service
+// TODO DeletingQualification service
+
 /**
  * Service to handle changing qualification properties.
  */

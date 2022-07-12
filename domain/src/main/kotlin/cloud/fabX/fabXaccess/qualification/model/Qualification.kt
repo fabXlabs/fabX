@@ -35,9 +35,7 @@ data class Qualification internal constructor(
                 )
             }
 
-            return events.fold(
-                None
-            ) { result: Option<Qualification>, event ->
+            return events.fold(None) { result: Option<Qualification>, event ->
                 event.processBy(EventHandler(), result)
             }
         }
