@@ -1,0 +1,56 @@
+package cloud.fabX.fabXaccess.qualification.infrastructure
+
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
+import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.qualification.model.Qualification
+import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
+
+class QualificationDatabaseRepository : QualificationRepository {
+    private val events = mutableListOf<QualificationSourcingEvent>()
+
+    override fun getById(id: QualificationId): Either<Error, Qualification> {
+        val e = events
+            .filter { it.aggregateRootId == id }
+            .sortedBy { it.aggregateVersion }
+
+        return if (e.isNotEmpty()) {
+            Qualification.fromSourcingEvents(e).right()
+        } else {
+            Error.QualificationNotFound(
+                "Qualification with id $id not found.",
+                id
+            ).left()
+        }
+    }
+
+    override fun store(event: QualificationSourcingEvent): Option<Error> {
+        val previousVersion = getVersionById(event.aggregateRootId)
+
+        return if (previousVersion != null
+            && event.aggregateVersion != previousVersion + 1
+        ) {
+            Some(
+                Error.VersionConflict(
+                    "Previous version of qualification ${event.aggregateRootId} is $previousVersion, " +
+                            "desired new version is ${event.aggregateVersion}."
+                )
+            )
+        } else {
+            events.add(event)
+            None
+        }
+    }
+
+    private fun getVersionById(id: QualificationId): Long? {
+        return events
+            .filter { it.aggregateRootId == id }
+            .maxOfOrNull { it.aggregateVersion }
+    }
+}

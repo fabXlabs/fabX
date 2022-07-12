@@ -23,13 +23,12 @@ sealed class QualificationSourcingEvent(
 
 data class QualificationCreated(
     override val aggregateRootId: QualificationId,
-    override val aggregateVersion: Long,
     override val actorId: ActorId,
     val name: String,
     val description: String,
     val colour: String,
     val orderNr: Int
-) : QualificationSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+) : QualificationSourcingEvent(aggregateRootId, 1, actorId) {
 
     override fun processBy(eventHandler: EventHandler, qualification: Qualification): Qualification =
         eventHandler.handle(this, qualification)

@@ -84,45 +84,10 @@ internal class UserTest {
     }
 
     @Test
-    fun `given out-of-order UserCreated event when constructing user from sourcing events then throws exception`() {
-        // given
-        val event1 = UserPersonalInformationChanged(
-            userId,
-            1,
-            adminActor.id,
-            firstName = ChangeableValue.ChangeToValue("first"),
-            lastName = ChangeableValue.ChangeToValue("last"),
-            wikiName = ChangeableValue.ChangeToValue("wiki"),
-            phoneNumber = ChangeableValue.ChangeToValue("1")
-        )
-
-        val event2 = UserCreated(
-            userId,
-            2,
-            adminActor.id,
-            firstName = "first",
-            lastName = "last",
-            wikiName = "wiki",
-            phoneNumber = null
-        )
-
-        // when
-        val exception = assertThrows<User.EventHistoryDoesNotStartWithUserCreated> {
-            User.fromSourcingEvents(listOf(event1, event2))
-        }
-
-        // then
-        assertThat(exception.message)
-            .isNotNull()
-            .isEqualTo("Event history starts with $event1, not a UserCreated event.")
-    }
-
-    @Test
     fun `given UserCreated event when constructing user from sourcing events then returns user`() {
         // given
         val userCreated = UserCreated(
             userId,
-            1,
             adminActor.id,
             firstName = "first",
             lastName = "last",
@@ -156,7 +121,6 @@ internal class UserTest {
         // given
         val event1 = UserCreated(
             userId,
-            1,
             adminActor.id,
             firstName = "first1",
             lastName = "last1",
@@ -224,7 +188,6 @@ internal class UserTest {
         // given
         val event1 = UserCreated(
             userId,
-            1,
             adminActor.id,
             firstName = "first1",
             lastName = "last1",

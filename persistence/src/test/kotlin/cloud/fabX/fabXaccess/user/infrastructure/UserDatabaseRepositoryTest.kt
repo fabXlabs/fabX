@@ -52,7 +52,6 @@ internal class UserDatabaseRepositoryTest {
 
             val event1 = UserCreated(
                 userId,
-                1,
                 actorId,
                 firstName = "first",
                 lastName = "last",

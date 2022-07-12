@@ -29,6 +29,7 @@ data class User internal constructor(
         get() = "$firstName $lastName"
 
     companion object {
+        // TODO return Option<User> (e.g. None if User was deleted)
         fun fromSourcingEvents(events: Iterable<UserSourcingEvent>): User {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()

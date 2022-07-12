@@ -76,45 +76,10 @@ internal class QualificationTest {
     }
 
     @Test
-    fun `given out-of-order QualificationCreated event when constructing qualification then throws exception`() {
-        // given
-        val event1 = QualificationDetailsChanged(
-            qualificationId,
-            1,
-            adminActor.id,
-            name = ChangeableValue.ChangeToValue("quali"),
-            description = ChangeableValue.ChangeToValue("quali description"),
-            colour = ChangeableValue.ChangeToValue("#000000"),
-            orderNr = ChangeableValue.ChangeToValue(42)
-        )
-
-        val event2 = QualificationCreated(
-            qualificationId,
-            2,
-            adminActor.id,
-            "Door Shop",
-            "Door of the workshop",
-            "#ff40ff",
-            50
-        )
-
-        // when
-        val exception = assertThrows<Qualification.EventHistoryDoesNotStartWithQualificationCreated> {
-            Qualification.fromSourcingEvents(listOf(event1, event2))
-        }
-
-        // then
-        assertThat(exception.message)
-            .isNotNull()
-            .isEqualTo("Event history starts with $event1, not a QualificationCreated event.")
-    }
-
-    @Test
     fun `given multiple in-order sourcing events when constructing qualification then applies all`() {
         // given
         val event1 = QualificationCreated(
             qualificationId,
-            1,
             adminActor.id,
             "name1",
             "description1",
@@ -161,7 +126,6 @@ internal class QualificationTest {
         // given
         val event1 = QualificationCreated(
             qualificationId,
-            1,
             adminActor.id,
             "name1",
             "description1",
@@ -201,7 +165,8 @@ internal class QualificationTest {
     @Test
     fun `when changing details when expected sourcing event is returned`() {
         // given
-        val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = aggregateVersion)
+        val qualification =
+            QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = QualificationDetailsChanged(
             aggregateRootId = qualificationId,

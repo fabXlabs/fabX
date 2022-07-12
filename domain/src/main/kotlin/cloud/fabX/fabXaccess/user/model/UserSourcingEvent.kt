@@ -24,13 +24,12 @@ sealed class UserSourcingEvent(
 
 data class UserCreated(
     override val aggregateRootId: UserId = newUserId(),
-    override val aggregateVersion: Long = 1,
     override val actorId: ActorId,
     val firstName: String,
     val lastName: String,
     val wikiName: String,
     val phoneNumber: String?
-) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+) : UserSourcingEvent(aggregateRootId, 1, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: User): User =
         eventHandler.handle(this, user)

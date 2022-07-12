@@ -18,6 +18,10 @@ data class Qualification internal constructor(
 ) : AggregateRootEntity<QualificationId> {
 
     companion object {
+        // TODO return Option<Qualification> (e.g. None if Qualification was deleted)
+        //      potentially handle(QualificationSourcingEvent) methods have to return Option<Qualification> as well
+        //      then fold can start with None and Created event can create Qualification
+
         fun fromSourcingEvents(events: Iterable<QualificationSourcingEvent>): Qualification {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()
