@@ -9,16 +9,20 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 object AppConfiguration {
     internal val loggerFactory: LoggerFactory
     private val userRepository: UserRepository
+//    private val qualificationRepository: QualificationRepository
 
     init {
         loggerFactory = LogbackLoggerFactory()
         userRepository = UserDatabaseRepository()
+//        qualificationRepository = TODO()
 
         configureDomain()
     }
 
     private fun configureDomain() {
-        DomainModule.configure(loggerFactory, userRepository)
+        DomainModule.configure(loggerFactory)
+        DomainModule.configure(userRepository)
+//        DomainModule.configure(qualificationRepository)
     }
 
 }

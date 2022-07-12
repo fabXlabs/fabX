@@ -11,7 +11,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isRight
+import isNone
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -82,12 +82,17 @@ internal class ChangingQualificationTest {
         )
 
         // then
-        assertThat(result).isRight()
+        assertThat(result).isNone()
 
         val inOrder = inOrder(logger!!, qualificationRepository!!)
         inOrder.verify(logger!!).debug("changeQualificationDetails...")
         inOrder.verify(qualificationRepository!!).getById(qualificationId)
         inOrder.verify(qualificationRepository!!).store(expectedSourcingEvent)
         inOrder.verify(logger!!).debug("...changeQualificationDetails done")
+    }
+
+    @Test
+    fun `given qualification cannot be found when changing qualification then returns error`() {
+        // TODO
     }
 }

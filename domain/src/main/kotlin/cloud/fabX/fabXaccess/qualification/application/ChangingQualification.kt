@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.application
 
-import arrow.core.Either
+import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
@@ -16,7 +16,6 @@ class ChangingQualification {
     private val log = logger()
     private val qualificationRepository = DomainModule.qualificationRepository()
 
-    // TODO change return type to Option<Error>
     fun changeQualificationDetails(
         actor: Admin,
         qualificationId: QualificationId,
@@ -24,7 +23,7 @@ class ChangingQualification {
         description: ChangeableValue<String>,
         colour: ChangeableValue<String>,
         orderNr: ChangeableValue<Int>
-    ): Either<Error, Unit> {
+    ): Option<Error> {
         log.debug("changeQualificationDetails...")
 
         return qualificationRepository.getById(qualificationId)
@@ -33,10 +32,13 @@ class ChangingQualification {
             }
             .flatMap {
                 qualificationRepository.store(it)
-                    .toEither {  }
+                    .toEither { }
                     .swap()
             }
-            .tap { log.debug("...changeQualificationDetails done") }
+            .swap()
+            .orNone()
+            .tapNone { log.debug("...changeQualificationDetails done") }
+            .tap { log.error("...changeQualificationDetails error: $it") }
     }
 
 }

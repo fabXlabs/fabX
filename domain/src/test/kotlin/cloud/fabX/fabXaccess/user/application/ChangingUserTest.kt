@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.None
-import arrow.core.getOrElse
 import arrow.core.right
 import assertk.assertThat
 import cloud.fabX.fabXaccess.DomainModule
@@ -13,6 +12,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import isNone
 import isRight
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -86,13 +86,18 @@ internal class ChangingUserTest {
         )
 
         // then
-        assertThat(result).isRight()
+        assertThat(result).isNone()
 
         val inOrder = inOrder(logger!!, userRepository!!)
         inOrder.verify(logger!!).debug("changePersonalInformation...")
         inOrder.verify(userRepository!!).getById(userId)
         inOrder.verify(userRepository!!).store(expectedSourcingEvent)
         inOrder.verify(logger!!).debug("...changePersonalInformation done")
+    }
+
+    @Test
+    fun `given user cannot be found when changing user then returns error`() {
+        // TOOD
     }
 
     @Test
@@ -126,12 +131,17 @@ internal class ChangingUserTest {
         )
 
         // then
-        assertThat(result).isRight()
+        assertThat(result).isNone()
 
         val inOrder = inOrder(logger!!, userRepository!!)
         inOrder.verify(logger!!).debug("changeLockState...")
         inOrder.verify(userRepository!!).getById(userId)
         inOrder.verify(userRepository!!).store(eq(expectedSourcingEvent))
         inOrder.verify(logger!!).debug("...changeLockState done")
+    }
+
+    @Test
+    fun `given user cannot be found when changing lock state then returns error`() {
+        // TODO
     }
 }

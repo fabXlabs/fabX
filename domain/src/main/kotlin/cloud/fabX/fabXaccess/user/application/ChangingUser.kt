@@ -1,10 +1,9 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Either
+import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
-import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
@@ -25,7 +24,7 @@ class ChangingUser {
         lastName: ChangeableValue<String>,
         wikiName: ChangeableValue<String>,
         phoneNumber: ChangeableValue<String?>
-    ): Either<Error, Unit> {
+    ): Option<Error> {
         log.debug("changePersonalInformation...")
 
         return userRepository.getById(userId)
@@ -43,7 +42,10 @@ class ChangingUser {
                     .toEither { }
                     .swap()
             }
-            .tap { log.debug("...changePersonalInformation done") }
+            .swap()
+            .orNone()
+            .tapNone { log.debug("...changePersonalInformation done") }
+            .tap { log.error("...changePersonalInformation error: $it") }
     }
 
     fun changeLockState(
@@ -51,7 +53,7 @@ class ChangingUser {
         userId: UserId,
         locked: ChangeableValue<Boolean>,
         notes: ChangeableValue<String?>
-    ): Either<Error, Unit> {
+    ): Option<Error> {
         log.debug("changeLockState...")
 
         return userRepository.getById(userId)
@@ -61,6 +63,9 @@ class ChangingUser {
                     .toEither { }
                     .swap()
             }
-            .tap { log.debug("...changeLockState done") }
+            .swap()
+            .orNone()
+            .tapNone { log.debug("...changeLockState done") }
+            .tap { log.debug("...changeLockState error: $it") }
     }
 }
