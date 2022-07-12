@@ -10,13 +10,7 @@ class App {
         log.warn("hello world warn")
         log.error("hello world error")
 
-//        if (!DomainModule.isFullyConfigured()) {
-//            log.error("DomainModule not fully configured!")
-//            exitProcess(-1)
-//        }
-
-        val rest = RestConfiguration()
-        rest.start()
+        RestModule.start()
     }
 }
 
