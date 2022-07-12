@@ -43,7 +43,8 @@ internal class ChangingUserTest {
 
         this.logger = logger
         this.userRepository = userRepository
-        DomainModule.configure({ logger }, userRepository)
+        DomainModule.configure { logger }
+        DomainModule.configure(userRepository)
 
         testee = ChangingUser()
     }
@@ -71,7 +72,7 @@ internal class ChangingUserTest {
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(eq(expectedSourcingEvent)))
+        whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
@@ -90,7 +91,7 @@ internal class ChangingUserTest {
         val inOrder = inOrder(logger!!, userRepository!!)
         inOrder.verify(logger!!).debug("changePersonalInformation...")
         inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(eq(expectedSourcingEvent))
+        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
         inOrder.verify(logger!!).debug("...changePersonalInformation done")
     }
 

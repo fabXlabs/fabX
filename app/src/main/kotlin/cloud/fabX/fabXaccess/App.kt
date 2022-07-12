@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess
 
+import kotlin.system.exitProcess
+
 class App {
     private val log = logger()
 
@@ -9,6 +11,11 @@ class App {
         log.info("hello world info")
         log.warn("hello world warn")
         log.error("hello world error")
+
+        if (!DomainModule.isFullyConfigured()) {
+            log.error("DomainModule not fully configured!")
+            exitProcess(-1)
+        }
     }
 }
 
