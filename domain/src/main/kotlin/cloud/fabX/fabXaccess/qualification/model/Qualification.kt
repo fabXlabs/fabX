@@ -64,6 +64,16 @@ data class Qualification internal constructor(
         )
     }
 
+    fun delete(
+        actor: Admin
+    ): QualificationSourcingEvent {
+        return QualificationDeleted(
+            id,
+            aggregateVersion + 1,
+            actor.id
+        )
+    }
+
     private class EventHandler : QualificationSourcingEvent.EventHandler {
 
         override fun handle(event: QualificationCreated, qualification: Option<Qualification>): Option<Qualification> {
@@ -98,6 +108,13 @@ data class Qualification internal constructor(
                     orderNr = e.orderNr.valueToChangeTo(q.orderNr)
                 )
             )
+        }
+
+        override fun handle(
+            event: QualificationDeleted,
+            qualification: Option<Qualification>
+        ): Option<Qualification> = requireSomeQualificationWithSameIdAnd(event, qualification) { _, _ ->
+            None
         }
 
         private fun <E : QualificationSourcingEvent> requireSomeQualificationWithSameIdAnd(

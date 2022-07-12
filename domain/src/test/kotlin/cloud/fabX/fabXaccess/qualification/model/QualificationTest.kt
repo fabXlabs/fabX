@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOn
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import isNone
 import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -166,7 +167,33 @@ internal class QualificationTest {
     }
 
     @Test
-    fun `when changing details when expected sourcing event is returned`() {
+    fun `given sourcing events including QualificationDeleted event when constructing qualification then returns None`() {
+        // given
+        val event1 = QualificationCreated(
+            qualificationId,
+            adminActor.id,
+            "name1",
+            "description1",
+            "#000001",
+            1
+        )
+
+        val event2 = QualificationDeleted(
+            qualificationId,
+            2,
+            adminActor.id
+        )
+
+        // when
+        val result = Qualification.fromSourcingEvents(listOf(event1, event2))
+
+        // then
+        assertThat(result)
+            .isNone()
+    }
+
+    @Test
+    fun `when changing details then expected sourcing event is returned`() {
         // given
         val qualification =
             QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = aggregateVersion)
@@ -189,6 +216,25 @@ internal class QualificationTest {
             colour = ChangeableValue.ChangeToValue("#000042"),
             orderNr = ChangeableValue.LeaveAsIs
         )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `when deleting then expected sourcing event is returned`() {
+        // given
+        val qualification =
+            QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = QualificationDeleted(
+            aggregateRootId = qualificationId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id
+        )
+
+        // when
+        val result = qualification.delete(adminActor)
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)

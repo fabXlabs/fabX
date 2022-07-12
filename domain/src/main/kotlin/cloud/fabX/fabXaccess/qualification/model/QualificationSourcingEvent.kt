@@ -19,6 +19,7 @@ sealed class QualificationSourcingEvent(
     interface EventHandler {
         fun handle(event: QualificationCreated, qualification: Option<Qualification>): Option<Qualification>
         fun handle(event: QualificationDetailsChanged, qualification: Option<Qualification>): Option<Qualification>
+        fun handle(event: QualificationDeleted, qualification: Option<Qualification>): Option<Qualification>
     }
 }
 
@@ -43,6 +44,15 @@ data class QualificationDetailsChanged(
     val description: ChangeableValue<String>,
     val colour: ChangeableValue<String>,
     val orderNr: ChangeableValue<Int>
+) : QualificationSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+    override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
+        eventHandler.handle(this, qualification)
+}
+
+data class QualificationDeleted(
+    override val aggregateRootId: QualificationId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId
 ) : QualificationSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
     override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
         eventHandler.handle(this, qualification)
