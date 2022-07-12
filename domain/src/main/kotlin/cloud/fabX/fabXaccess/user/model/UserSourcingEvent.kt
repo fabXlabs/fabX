@@ -62,13 +62,3 @@ data class UserLockStateChanged(
     override fun processBy(eventHandler: EventHandler, user: User): User =
         eventHandler.handle(this, user)
 }
-
-fun Iterable<UserSourcingEvent>.assertStartsWithUserCreatedEvent() {
-    when (first()) {
-        is UserCreated -> {
-        }
-        else -> throw EventHistoryDoesNotStartWithUserCreated("Event history starts with ${first()}, not a UserCreated event.")
-    }
-}
-
-class EventHistoryDoesNotStartWithUserCreated(message: String) : Exception(message)

@@ -42,6 +42,7 @@ internal class UserTest {
         // then
         assertThat(user).isNotNull()
         assertThat(user.id).isEqualTo(userId)
+        assertThat(user.aggregateVersion).isEqualTo(aggregateVersion)
     }
 
     @Test
@@ -59,7 +60,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given no UserCreatedEvent when constructing user from sourcing events then throws exception`() {
+    fun `given no UserCreated event when constructing user from sourcing events then throws exception`() {
         // given
         val event = UserPersonalInformationChanged(
             userId,
@@ -72,7 +73,7 @@ internal class UserTest {
         )
 
         // when
-        val exception = assertThrows<EventHistoryDoesNotStartWithUserCreated> {
+        val exception = assertThrows<User.EventHistoryDoesNotStartWithUserCreated> {
             User.fromSourcingEvents(listOf(event))
         }
 
@@ -83,7 +84,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given out-of-order UserCreatedEvent when constructing user from sourcing events then throws exception`() {
+    fun `given out-of-order UserCreated event when constructing user from sourcing events then throws exception`() {
         // given
         val event1 = UserPersonalInformationChanged(
             userId,
@@ -106,7 +107,7 @@ internal class UserTest {
         )
 
         // when
-        val exception = assertThrows<EventHistoryDoesNotStartWithUserCreated> {
+        val exception = assertThrows<User.EventHistoryDoesNotStartWithUserCreated> {
             User.fromSourcingEvents(listOf(event1, event2))
         }
 
@@ -117,7 +118,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given UserCreatedEvent when constructing user from sourcing event then returns user`() {
+    fun `given UserCreated event when constructing user from sourcing events then returns user`() {
         // given
         val userCreated = UserCreated(
             userId,
@@ -151,7 +152,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given multiple in-order sourcing events when constructing user from sourcing event then applies all`() {
+    fun `given multiple in-order sourcing events when constructing user then applies all`() {
         // given
         val event1 = UserCreated(
             userId,

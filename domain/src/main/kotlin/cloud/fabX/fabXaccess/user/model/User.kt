@@ -33,13 +33,12 @@ data class User internal constructor(
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()
             events.assertAggregateVersionIncreasesOneByOne()
-            events.assertStartsWithUserCreatedEvent()
 
             val userCreatedEvent = events.first()
 
             if (userCreatedEvent !is UserCreated) {
                 throw EventHistoryDoesNotStartWithUserCreated(
-                    "event history starts with ${userCreatedEvent}, not a UserCreated event."
+                    "Event history starts with ${userCreatedEvent}, not a UserCreated event."
                 )
             }
 
@@ -149,4 +148,6 @@ data class User internal constructor(
 
         class EventAggregateRootIdDoesNotMatchUserId(message: String) : Exception(message)
     }
+
+    class EventHistoryDoesNotStartWithUserCreated(message: String) : Exception(message)
 }
