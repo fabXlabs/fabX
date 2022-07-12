@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.user.application
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
+import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
@@ -123,6 +124,45 @@ internal class ChangingUserTest {
     }
 
     @Test
+    fun `given sourcing event cannot be stored when changing personal information then returns error`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 1)
+
+        val event = UserPersonalInformationChanged(
+            userId,
+            2,
+            adminActor.id,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        val error = Error.VersionConflict("message")
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        whenever(userRepository!!.store(event))
+            .thenReturn(error.some())
+
+        // when
+        val result = testee!!.changePersonalInformation(
+            adminActor,
+            userId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(error)
+    }
+
+    @Test
     fun `given user can be found when changing lock state then sourcing event is created and stored`() {
         // given
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = 3)
@@ -169,6 +209,41 @@ internal class ChangingUserTest {
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(error.left())
+
+        // when
+        val result = testee!!.changeLockState(
+            adminActor,
+            userId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given sourcing event cannot be stored when changing lock state then returns error`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 1)
+
+        val event = UserLockStateChanged(
+            userId,
+            2,
+            adminActor.id,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs
+        )
+
+        val error = Error.VersionConflict("message")
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        whenever(userRepository!!.store(event))
+            .thenReturn(error.some())
 
         // when
         val result = testee!!.changeLockState(
