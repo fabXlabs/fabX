@@ -6,26 +6,6 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-  - package-ecosystem: "gradle"
-    directory: "/app"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
-    directory: "/domain"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
-    directory: "/logging"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
-    directory: "/persistence"
-    schedule:
-      interval: "daily"
-  - package-ecosystem: "gradle"
-    directory: "/rest"
-    schedule:
-      interval: "daily"
   - package-ecosystem: "github-actions"
     # Workflow files stored in the
     # default location of `.github/workflows`
