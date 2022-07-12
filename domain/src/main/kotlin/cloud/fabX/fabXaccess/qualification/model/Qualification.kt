@@ -4,7 +4,6 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
-import arrow.core.orElse
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
@@ -66,6 +65,7 @@ data class Qualification internal constructor(
     }
 
     private class EventHandler : QualificationSourcingEvent.EventHandler {
+
         override fun handle(event: QualificationCreated, qualification: Option<Qualification>): Option<Qualification> {
             if (qualification.isDefined()) {
                 throw AccumulatorNotEmptyForQualificationCreatedEventHandler(
@@ -106,17 +106,16 @@ data class Qualification internal constructor(
             and: (E, Qualification) -> Option<Qualification>
         ): Option<Qualification> {
             if (qualification.map { it.id != event.aggregateRootId }.getOrElse { false }) {
-                throw EventAggregateRootIdDoesNotMatchQualificationId("Event $event cannot be applied to $qualification.")
+                throw EventAggregateRootIdDoesNotMatchQualificationId(
+                    "Event $event cannot be applied to $qualification. Aggregate root id does not match."
+                )
             }
 
-            return qualification.flatMap { and(event, it) }.orElse {
-                throw AccumulatorEmptyForQualificationEventHandler("Event handler for $event expects full accumulator but is empty.")
-            }
+            return qualification.flatMap { and(event, it) }
         }
 
         class EventAggregateRootIdDoesNotMatchQualificationId(message: String) : Exception(message)
         class AccumulatorNotEmptyForQualificationCreatedEventHandler(message: String) : Exception(message)
-        class AccumulatorEmptyForQualificationEventHandler(message: String) : Exception(message)
     }
 
     class EventHistoryDoesNotStartWithQualificationCreated(message: String) : Exception(message)

@@ -1,7 +1,10 @@
 package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.Either
+import arrow.core.None
 import arrow.core.Option
+import arrow.core.Some
+import arrow.core.getOrElse
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
@@ -29,8 +32,7 @@ data class User internal constructor(
         get() = "$firstName $lastName"
 
     companion object {
-        // TODO return Option<User> (e.g. None if User was deleted)
-        fun fromSourcingEvents(events: Iterable<UserSourcingEvent>): User {
+        fun fromSourcingEvents(events: Iterable<UserSourcingEvent>): Option<User> {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()
             events.assertAggregateVersionIncreasesOneByOne()
@@ -43,27 +45,13 @@ data class User internal constructor(
                 )
             }
 
-            return events.fold(
-                User(
-                    userCreatedEvent.aggregateRootId,
-                    userCreatedEvent.aggregateVersion,
-                    userCreatedEvent.firstName,
-                    userCreatedEvent.lastName,
-                    userCreatedEvent.wikiName,
-                    userCreatedEvent.phoneNumber,
-                    false,
-                    null,
-                    listOf(),
-                    null,
-                    false
-                )
-            ) { user, event ->
-                user.apply(event)
+            return events.fold(None) { result: Option<User>, event ->
+                event.processBy(EventHandler(), result)
             }
         }
     }
 
-    fun apply(sourcingEvent: UserSourcingEvent): User = sourcingEvent.processBy(EventHandler(), this)
+    fun apply(sourcingEvent: UserSourcingEvent): Option<User> = sourcingEvent.processBy(EventHandler(), Some(this))
 
     fun changePersonalInformation(
         actor: Admin,
@@ -106,48 +94,73 @@ data class User internal constructor(
 
     private class EventHandler : UserSourcingEvent.EventHandler {
 
-        override fun handle(event: UserCreated, user: User): User = User(
-            id = event.aggregateRootId,
-            aggregateVersion = event.aggregateVersion,
-            firstName = event.firstName,
-            lastName = event.lastName,
-            wikiName = event.wikiName,
-            phoneNumber = event.phoneNumber,
-            locked = false,
-            notes = null,
-            memberQualifications = listOf(),
-            instructorQualifications = null,
-            isAdmin = false
-        )
-
-        override fun handle(event: UserPersonalInformationChanged, user: User): User =
-            requireSameUserIdAnd(event, user) { e, u ->
-                u.copy(
-                    aggregateVersion = e.aggregateVersion,
-                    firstName = e.firstName.valueToChangeTo(u.firstName),
-                    lastName = e.lastName.valueToChangeTo(u.lastName),
-                    wikiName = e.wikiName.valueToChangeTo(u.wikiName),
-                    phoneNumber = e.phoneNumber.valueToChangeTo(u.phoneNumber)
+        override fun handle(event: UserCreated, user: Option<User>): Option<User> {
+            if (user.isDefined()) {
+                throw AccumulatorNotEmptyForUserCreatedEventHandler(
+                    "Handler for UserCreated is given $user."
                 )
             }
 
-        override fun handle(event: UserLockStateChanged, user: User): User =
-            requireSameUserIdAnd(event, user) { e, u ->
-                u.copy(
-                    aggregateVersion = e.aggregateVersion,
-                    locked = e.locked.valueToChangeTo(u.locked),
-                    notes = e.notes.valueToChangeTo(u.notes)
+            return Some(
+                User(
+                    id = event.aggregateRootId,
+                    aggregateVersion = event.aggregateVersion,
+                    firstName = event.firstName,
+                    lastName = event.lastName,
+                    wikiName = event.wikiName,
+                    phoneNumber = event.phoneNumber,
+                    locked = false,
+                    notes = null,
+                    memberQualifications = listOf(),
+                    instructorQualifications = null,
+                    isAdmin = false
+                )
+            )
+        }
+
+        override fun handle(
+            event: UserPersonalInformationChanged,
+            user: Option<User>
+        ): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        firstName = e.firstName.valueToChangeTo(u.firstName),
+                        lastName = e.lastName.valueToChangeTo(u.lastName),
+                        wikiName = e.wikiName.valueToChangeTo(u.wikiName),
+                        phoneNumber = e.phoneNumber.valueToChangeTo(u.phoneNumber)
+                    )
                 )
             }
 
-        private fun <E : UserSourcingEvent> requireSameUserIdAnd(event: E, user: User, and: (E, User) -> User): User {
-            if (event.aggregateRootId != user.id) {
-                throw EventAggregateRootIdDoesNotMatchUserId("Event $event cannot be applied to $user.")
+        override fun handle(event: UserLockStateChanged, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        locked = e.locked.valueToChangeTo(u.locked),
+                        notes = e.notes.valueToChangeTo(u.notes)
+                    )
+                )
             }
-            return and(event, user)
+
+        private fun <E : UserSourcingEvent> requireSomeUserWithSameIdAnd(
+            event: E,
+            user: Option<User>,
+            and: (E, User) -> Option<User>
+        ): Option<User> {
+            if (user.map { it.id != event.aggregateRootId }.getOrElse { false }) {
+                throw EventAggregateRootIdDoesNotMatchUserId(
+                    "Event $event cannot be applied to $user. Aggregate root id does not match."
+                )
+            }
+
+            return user.flatMap { and(event, it) }
         }
 
         class EventAggregateRootIdDoesNotMatchUserId(message: String) : Exception(message)
+        class AccumulatorNotEmptyForUserCreatedEventHandler(message: String) : Exception(message)
     }
 
     class EventHistoryDoesNotStartWithUserCreated(message: String) : Exception(message)

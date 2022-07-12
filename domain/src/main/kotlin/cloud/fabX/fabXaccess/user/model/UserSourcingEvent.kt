@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.model
 
+import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
@@ -13,12 +14,12 @@ sealed class UserSourcingEvent(
     override val timestamp: Instant = Clock.System.now()
 ) : SourcingEvent {
 
-    abstract fun processBy(eventHandler: EventHandler, user: User): User
+    abstract fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User>
 
     interface EventHandler {
-        fun handle(event: UserCreated, user: User): User
-        fun handle(event: UserPersonalInformationChanged, user: User): User
-        fun handle(event: UserLockStateChanged, user: User): User
+        fun handle(event: UserCreated, user: Option<User>): Option<User>
+        fun handle(event: UserPersonalInformationChanged, user: Option<User>): Option<User>
+        fun handle(event: UserLockStateChanged, user: Option<User>): Option<User>
     }
 }
 
@@ -31,9 +32,8 @@ data class UserCreated(
     val phoneNumber: String?
 ) : UserSourcingEvent(aggregateRootId, 1, actorId) {
 
-    override fun processBy(eventHandler: EventHandler, user: User): User =
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)
-
 }
 
 data class UserPersonalInformationChanged(
@@ -46,7 +46,7 @@ data class UserPersonalInformationChanged(
     val phoneNumber: ChangeableValue<String?>
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
-    override fun processBy(eventHandler: EventHandler, user: User): User =
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)
 }
 
@@ -58,6 +58,6 @@ data class UserLockStateChanged(
     val notes: ChangeableValue<String?>
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
-    override fun processBy(eventHandler: EventHandler, user: User): User =
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)
 }

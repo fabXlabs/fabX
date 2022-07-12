@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
 import isRight
+import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -99,21 +100,23 @@ internal class UserTest {
         val result = User.fromSourcingEvents(listOf(userCreated))
 
         // then
-        assertThat(result).isEqualTo(
-            User(
-                userId,
-                1,
-                "first",
-                "last",
-                "wiki",
-                null,
-                false,
-                null,
-                listOf(),
-                null,
-                false
+        assertThat(result)
+            .isSome()
+            .isEqualTo(
+                User(
+                    userId,
+                    1,
+                    "first",
+                    "last",
+                    "wiki",
+                    null,
+                    false,
+                    null,
+                    listOf(),
+                    null,
+                    false
+                )
             )
-        )
     }
 
     @Test
@@ -166,21 +169,23 @@ internal class UserTest {
         val result = User.fromSourcingEvents(listOf(event1, event2, event3, event4, event5))
 
         // then
-        assertThat(result).isEqualTo(
-            User(
-                userId,
-                5,
-                "first4",
-                "last5",
-                "wiki5",
-                null,
-                true,
-                "some notes",
-                listOf(),
-                null,
-                false
+        assertThat(result)
+            .isSome()
+            .isEqualTo(
+                User(
+                    userId,
+                    5,
+                    "first4",
+                    "last5",
+                    "wiki5",
+                    null,
+                    true,
+                    "some notes",
+                    listOf(),
+                    null,
+                    false
+                )
             )
-        )
     }
 
     @Test

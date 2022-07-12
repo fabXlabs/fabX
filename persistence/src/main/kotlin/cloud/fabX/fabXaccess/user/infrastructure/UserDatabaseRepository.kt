@@ -5,7 +5,6 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.left
-import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserId
@@ -21,7 +20,13 @@ class UserDatabaseRepository : UserRepository {
             .sortedBy { it.aggregateVersion }
 
         return if (e.isNotEmpty()) {
-            User.fromSourcingEvents(e).right()
+            User.fromSourcingEvents(e)
+                .toEither {
+                    Error.UserNotFound(
+                        "User with id $id not found.",
+                        id
+                    )
+                }
         } else {
             Error.UserNotFound(
                 "User with id $id not found.",
