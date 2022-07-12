@@ -1,4 +1,4 @@
-# 🔐 fabXAccess
+# 🔐 fabXaccess
 
 Backend for fabX access system. Written using [ktor](https://ktor.io) and [exposed](https://github.com/JetBrains/Exposed).
 
@@ -20,6 +20,7 @@ Backend for fabX access system. Written using [ktor](https://ktor.io) and [expos
 Hexagonal architecture + Domain Driven Design. Implementation inspired by:
 * [Hexagonal Architecture with Kotlin, Ktor and Guice](https://hackernoon.com/hexagonal-architecture-with-kotlin-ktor-and-guice-f1b68fbdf2d9) / [GitHub](https://github.com/sgerber-hyperanna/ktor-hexagonal-multi-module-template)
 * [ddd-by-examples/library](https://github.com/ddd-by-examples/library)
+* [12 Things You Should Know About Event Sourcing](http://blog.leifbattermann.de/2017/04/21/12-things-you-should-know-about-event-sourcing/)
 
 Modules:
 * rest (driver port)

@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
 import cloud.fabX.fabXaccess.qualification.model.QualificationDetailsChanged
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
@@ -34,16 +35,18 @@ internal class QualificationDatabaseRepositoryTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.QualificationNotFound(
-                "Qualification with id QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) not found.",
-                qualificationId
-            ))
+            .isEqualTo(
+                Error.QualificationNotFound(
+                    "Qualification with id QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) not found.",
+                    qualificationId
+                )
+            )
     }
 
     @Nested
     internal inner class GivenEventsForQualificationStoredInRepository {
 
-        private var repository: QualificationDatabaseRepository? = null
+        private var repository: QualificationRepository? = null
 
         @BeforeEach
         fun setup() {

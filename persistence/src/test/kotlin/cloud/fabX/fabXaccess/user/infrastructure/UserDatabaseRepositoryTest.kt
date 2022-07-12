@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
+import cloud.fabX.fabXaccess.user.model.UserRepository
 import isLeft
 import isNone
 import isRight
@@ -35,16 +36,18 @@ internal class UserDatabaseRepositoryTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.UserNotFound(
-                "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
-                userId
-            ))
+            .isEqualTo(
+                Error.UserNotFound(
+                    "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                    userId
+                )
+            )
     }
 
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
 
-        private var repository: UserDatabaseRepository? = null
+        private var repository: UserRepository? = null
 
         @BeforeEach
         fun setup() {

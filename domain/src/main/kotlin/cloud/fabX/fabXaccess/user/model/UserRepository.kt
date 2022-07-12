@@ -5,6 +5,7 @@ import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.Error
 
 interface UserRepository {
+    // TODO: getAll(): Iterable<User>
     fun getById(id: UserId): Either<Error, User>
     fun store(event: UserSourcingEvent): Option<Error>
 }
