@@ -9,8 +9,6 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserId
 
-// TODO CreatingUser service
-
 /**
  * Service to handle changing user properties.
  */
