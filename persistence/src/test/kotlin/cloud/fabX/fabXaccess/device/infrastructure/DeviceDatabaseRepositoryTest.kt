@@ -2,11 +2,14 @@ package cloud.fabX.fabXaccess.device.infrastructure
 
 import assertk.all
 import assertk.assertThat
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceCreated
+import cloud.fabX.fabXaccess.device.model.DeviceDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceDetailsChanged
+import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
@@ -21,8 +24,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class DeviceDatabaseRepositoryTest {
-    val deviceId = DeviceIdFixture.staticId(4242)
-    val actorId = UserIdFixture.staticId(1234)
+    private val deviceId = DeviceIdFixture.staticId(4242)
+    private val actorId = UserIdFixture.staticId(1234)
 
     @Test
     fun `given empty repository when getting device by id then returns device not found error`() {
@@ -148,6 +151,111 @@ internal class DeviceDatabaseRepositoryTest {
             assertThat(repository.getById(deviceId))
                 .isRight()
                 .transform { it.aggregateVersion }.isEqualTo(2)
+        }
+    }
+
+    @Nested
+    internal inner class GivenEventsForDevicesStoredInRepository {
+
+        private val deviceId2 = DeviceIdFixture.staticId(4343)
+        private val deviceId3 = DeviceIdFixture.staticId(4444)
+
+        private var repository: DeviceRepository? = null
+
+        @BeforeEach
+        fun setup() {
+            repository = DeviceDatabaseRepository()
+
+            val device1event1 = DeviceCreated(
+                deviceId,
+                actorId,
+                name = "device1",
+                background = "https://example.com/1.bmp",
+                backupBackendUrl = "https://backup.example.com"
+            )
+            repository!!.store(device1event1)
+
+            val device1event2 = DeviceDetailsChanged(
+                deviceId,
+                2,
+                actorId,
+                name = ChangeableValue.LeaveAsIs,
+                background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
+                backupBackendUrl = ChangeableValue.LeaveAsIs
+            )
+            repository!!.store(device1event2)
+
+            val device3event1 = DeviceCreated(
+                deviceId3,
+                actorId,
+                name = "device3",
+                background = "https://background.com/device3.bmp",
+                backupBackendUrl = "https://backup3.example.com"
+            )
+            repository!!.store(device3event1)
+
+            val device2event1 = DeviceCreated(
+                deviceId2,
+                actorId,
+                name = "device2",
+                background = "https://background.com/device2.bmp",
+                backupBackendUrl = "https://backup2.example.com"
+            )
+            repository!!.store(device2event1)
+
+            val device1event3 = DeviceDetailsChanged(
+                deviceId,
+                3,
+                actorId,
+                name = ChangeableValue.LeaveAsIs,
+                background = ChangeableValue.ChangeToValue("https://example.com/3.bmp"),
+                backupBackendUrl = ChangeableValue.LeaveAsIs
+            )
+            repository!!.store(device1event3)
+
+            val device3event2 = DeviceDeleted(
+                deviceId3,
+                2,
+                actorId
+            )
+            repository!!.store(device3event2)
+
+            val device2event2 = DeviceDetailsChanged(
+                deviceId2,
+                2,
+                actorId,
+                name = ChangeableValue.LeaveAsIs,
+                background = ChangeableValue.LeaveAsIs,
+                backupBackendUrl = ChangeableValue.ChangeToValue("https://backup42.example.com")
+            )
+            repository!!.store(device2event2)
+        }
+
+        @Test
+        fun `when getting all devices then returns all devices from events`() {
+            // given
+            val repository = this.repository!!
+
+            // when
+            val result = repository.getAll()
+
+            // then
+            assertThat(result).containsExactlyInAnyOrder(
+                DeviceFixture.arbitraryDevice(
+                    deviceId,
+                    3,
+                    "device1",
+                    "https://example.com/3.bmp",
+                    "https://backup.example.com"
+                ),
+                DeviceFixture.arbitraryDevice(
+                    deviceId2,
+                    2,
+                    "device2",
+                    "https://background.com/device2.bmp",
+                    "https://backup42.example.com"
+                )
+            )
         }
     }
 }
