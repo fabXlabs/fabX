@@ -13,8 +13,8 @@ object UserFixture {
         wikiName: String = "wiki",
         locked: Boolean = false,
         notes: String? = null,
-        memberQualifications: List<QualificationId> = listOf(QualificationIdFixture.arbitraryId()),
-        instructorQualifications: List<QualificationId>? = null,
+        memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitraryId()),
+        instructorQualifications: Set<QualificationId>? = null,
         isAdmin: Boolean = false
     ): User = User(
         userId,

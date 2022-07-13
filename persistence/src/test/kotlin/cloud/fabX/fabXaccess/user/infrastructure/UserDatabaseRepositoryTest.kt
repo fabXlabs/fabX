@@ -250,7 +250,7 @@ internal class UserDatabaseRepositoryTest {
                     "wiki1",
                     true,
                     "some notes",
-                    listOf(),
+                    setOf(),
                     null,
                     false
                 ),
@@ -262,7 +262,7 @@ internal class UserDatabaseRepositoryTest {
                     "wiki2v2",
                     false,
                     null,
-                    listOf(),
+                    setOf(),
                     null,
                     false
                 )

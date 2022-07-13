@@ -29,8 +29,8 @@ data class User internal constructor(
     val wikiName: String,
     val locked: Boolean,
     val notes: String?,
-    private val memberQualifications: List<QualificationId>,
-    private val instructorQualifications: List<QualificationId>?,
+    private val memberQualifications: Set<QualificationId>,
+    private val instructorQualifications: Set<QualificationId>?,
     private val isAdmin: Boolean
 ) : AggregateRootEntity<UserId> {
 
@@ -135,7 +135,7 @@ data class User internal constructor(
                     wikiName = event.wikiName,
                     locked = false,
                     notes = null,
-                    memberQualifications = listOf(),
+                    memberQualifications = setOf(),
                     instructorQualifications = null,
                     isAdmin = false
                 )

@@ -10,7 +10,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationId
 data class Instructor internal constructor(
     val userId: UserId,
     override val name: String,
-    val qualifications: List<QualificationId>
+    val qualifications: Set<QualificationId>
 ) : Actor {
     override val id: ActorId
         get() = userId

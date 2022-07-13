@@ -36,7 +36,7 @@ internal class UserTest {
             "nick",
             false,
             null,
-            listOf(),
+            setOf(),
             null,
             false
         )
@@ -139,7 +139,7 @@ internal class UserTest {
                     "wiki",
                     false,
                     null,
-                    listOf(),
+                    setOf(),
                     null,
                     false
                 )
@@ -203,7 +203,7 @@ internal class UserTest {
                     "wiki5",
                     true,
                     "some notes",
-                    listOf(),
+                    setOf(),
                     null,
                     false
                 )
@@ -325,7 +325,7 @@ internal class UserTest {
     @Test
     fun `given any user when getting as member then returns member`() {
         // given
-        val qualifications = listOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
+        val qualifications = setOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
         val user = UserFixture.arbitraryUser(
             userId,
             memberQualifications = qualifications,
@@ -362,7 +362,7 @@ internal class UserTest {
 
         val user = UserFixture.arbitraryUser(
             userId,
-            instructorQualifications = listOf(qualification1, qualification2),
+            instructorQualifications = setOf(qualification1, qualification2),
             firstName = "first",
             lastName = "last"
         )
@@ -373,7 +373,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isRight()
-            .isEqualTo(Instructor(userId, "first last", listOf(qualification1, qualification2)))
+            .isEqualTo(Instructor(userId, "first last", setOf(qualification1, qualification2)))
     }
 
     @Test
@@ -438,8 +438,8 @@ internal class UserTest {
             "nick",
             false,
             null,
-            listOf(QualificationIdFixture.staticId(43)),
-            listOf(QualificationIdFixture.staticId(44)),
+            setOf(QualificationIdFixture.staticId(43)),
+            setOf(QualificationIdFixture.staticId(44)),
             true
         )
 
