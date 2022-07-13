@@ -15,6 +15,6 @@ typealias QualificationIdFactory = () -> QualificationId
  *
  * @return a QualificationId of a random UUID
  */
-internal fun newQualificationId(): QualificationId {
+fun newQualificationId(): QualificationId {
     return QualificationId(UUID.randomUUID())
 }

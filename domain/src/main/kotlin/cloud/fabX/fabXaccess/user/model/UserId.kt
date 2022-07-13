@@ -16,6 +16,6 @@ typealias UserIdFactory = () -> UserId
  *
  * @return a UserId of a random UUID.
  */
-internal fun newUserId(): UserId {
+fun newUserId(): UserId {
     return UserId(UUID.randomUUID())
 }
