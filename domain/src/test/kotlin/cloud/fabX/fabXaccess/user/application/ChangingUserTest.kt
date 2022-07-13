@@ -43,8 +43,6 @@ internal class ChangingUserTest {
         @Mock logger: Logger,
         @Mock userRepository: UserRepository
     ) {
-        println("@BeforeTest configure DomainModule")
-
         this.logger = logger
         this.userRepository = userRepository
         DomainModule.configure { logger }

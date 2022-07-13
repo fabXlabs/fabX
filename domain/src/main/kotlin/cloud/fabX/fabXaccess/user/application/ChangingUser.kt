@@ -10,7 +10,6 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserId
 
 // TODO CreatingUser service
-// TODO DeletingUser service
 
 /**
  * Service to handle changing user properties.
