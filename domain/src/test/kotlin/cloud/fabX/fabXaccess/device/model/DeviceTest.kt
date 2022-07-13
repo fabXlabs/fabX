@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.device.model
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
@@ -36,6 +37,36 @@ internal class DeviceTest {
         assertThat(device).isNotNull()
         assertThat(device.id).isEqualTo(deviceId)
         assertThat(device.aggregateVersion).isEqualTo(aggregateVersion)
+    }
+
+    @Test
+    fun `when adding new device then returns expected sourcing events`() {
+        // given
+        DomainModule.configureDeviceIdFactory { deviceId }
+
+        val name = "name"
+        val background = "https://example.com/bg.bmp"
+        val backupBackendUrl = "https://backup.example.com"
+
+        val expectedSourcingEvent = DeviceCreated(
+            deviceId,
+            adminActor.id,
+            name,
+            background,
+            backupBackendUrl
+        )
+
+
+        // when
+        val result = Device.addNew(
+            adminActor,
+            name,
+            background,
+            backupBackendUrl
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
     }
 
     @Test
