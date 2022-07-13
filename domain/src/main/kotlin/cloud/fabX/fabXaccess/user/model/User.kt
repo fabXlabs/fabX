@@ -5,6 +5,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
+import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
@@ -38,6 +39,23 @@ data class User internal constructor(
         get() = "$firstName $lastName"
 
     companion object {
+        fun addNew(
+            actor: Admin,
+            firstName: String,
+            lastName: String,
+            wikiName: String,
+            phoneNumber: String
+        ): UserSourcingEvent {
+            return UserCreated(
+                DomainModule.userIdFactory().invoke(),
+                actor.id,
+                firstName,
+                lastName,
+                wikiName,
+                phoneNumber
+            )
+        }
+
         fun fromSourcingEvents(events: Iterable<UserSourcingEvent>): Option<User> {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()

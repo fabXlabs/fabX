@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.user.model
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
@@ -45,6 +46,38 @@ internal class UserTest {
         assertThat(user).isNotNull()
         assertThat(user.id).isEqualTo(userId)
         assertThat(user.aggregateVersion).isEqualTo(aggregateVersion)
+    }
+
+    @Test
+    fun `when adding new user then returns expected sourcing event`() {
+        // given
+        DomainModule.configureUserIdFactory { userId }
+
+        val firstName = "first"
+        val lastName = "last"
+        val wikiName = "wiki"
+        val phoneNumber = "+491234"
+
+        val expectedSourcingEvent = UserCreated(
+            userId,
+            adminActor.id,
+            firstName,
+            lastName,
+            wikiName,
+            phoneNumber
+        )
+
+        // when
+        val result = User.addNew(
+            adminActor,
+            firstName,
+            lastName,
+            wikiName,
+            phoneNumber
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
     }
 
     @Test

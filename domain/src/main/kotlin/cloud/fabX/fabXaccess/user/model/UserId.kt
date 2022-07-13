@@ -9,6 +9,8 @@ import java.util.UUID
  */
 data class UserId(override val value: UUID) : EntityId<UUID>, ActorId
 
+typealias UserIdFactory = () -> UserId
+
 /**
  * Returns a new UserId.
  *

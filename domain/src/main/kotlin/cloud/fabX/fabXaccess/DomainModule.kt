@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
 // TODO tool aggregate
@@ -14,6 +15,7 @@ object DomainModule {
 
     private var deviceIdFactory: DeviceIdFactory? = null
     private var qualificationIdFactory: QualificationIdFactory? = null
+    private var userIdFactory: UserIdFactory? = null
 
     private var deviceRepository: DeviceRepository? = null
     private var qualificationRepository: QualificationRepository? = null
@@ -24,6 +26,7 @@ object DomainModule {
         return loggerFactory != null
                 && deviceIdFactory != null
                 && qualificationIdFactory != null
+                && userIdFactory != null
                 && deviceRepository != null
                 && qualificationRepository != null
                 && userRepository != null
@@ -39,6 +42,10 @@ object DomainModule {
 
     fun configureQualificationIdFactory(qualificationIdFactory: QualificationIdFactory) {
         this.qualificationIdFactory = qualificationIdFactory
+    }
+
+    fun configureUserIdFactory(userIdFactory: UserIdFactory) {
+        this.userIdFactory = userIdFactory
     }
 
     fun configureDeviceRepository(deviceRepository: DeviceRepository) {
@@ -63,6 +70,10 @@ object DomainModule {
 
     internal fun qualificationIdFactory(): QualificationIdFactory {
         return require(qualificationIdFactory)
+    }
+
+    internal fun userIdFactory(): UserIdFactory {
+        return require(userIdFactory)
     }
 
     internal fun deviceRepository(): DeviceRepository {
