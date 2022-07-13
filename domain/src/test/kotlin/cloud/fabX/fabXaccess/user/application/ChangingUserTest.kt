@@ -60,7 +60,6 @@ internal class ChangingUserTest {
         val newFirstName = ChangeableValue.ChangeToValue("aFirstName")
         val newLastName = ChangeableValue.ChangeToValue("aLastName")
         val newWikiName = ChangeableValue.ChangeToValue("aWikiName")
-        val newPhoneNumber = ChangeableValue.ChangeToValue("0123")
 
         val expectedSourcingEvent = UserPersonalInformationChanged(
             userId,
@@ -68,8 +67,7 @@ internal class ChangingUserTest {
             adminActor.id,
             newFirstName,
             newLastName,
-            newWikiName,
-            newPhoneNumber
+            newWikiName
         )
 
         whenever(userRepository!!.getById(userId))
@@ -84,8 +82,7 @@ internal class ChangingUserTest {
             userId,
             newFirstName,
             newLastName,
-            newWikiName,
-            newPhoneNumber
+            newWikiName
         )
 
         // then
@@ -112,7 +109,6 @@ internal class ChangingUserTest {
             userId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
 
@@ -133,7 +129,6 @@ internal class ChangingUserTest {
             adminActor.id,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
 
@@ -149,7 +144,6 @@ internal class ChangingUserTest {
         val result = testee!!.changePersonalInformation(
             adminActor,
             userId,
-            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs

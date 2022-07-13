@@ -4,7 +4,6 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
@@ -62,8 +61,7 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 firstName = "first",
                 lastName = "last",
-                wikiName = "wiki",
-                phoneNumber = null
+                wikiName = "wiki"
             )
             repository!!.store(event1)
 
@@ -94,7 +92,6 @@ internal class UserDatabaseRepositoryTest {
                     transform { it.firstName }.isEqualTo("first")
                     transform { it.lastName }.isEqualTo("last")
                     transform { it.wikiName }.isEqualTo("wiki")
-                    transform { it.phoneNumber }.isNull()
                     transform { it.locked }.isTrue()
                     transform { it.notes }.isEqualTo("some notes")
                 }
@@ -162,8 +159,8 @@ internal class UserDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForUsersStoredInRepository {
 
-        val userId2 = UserIdFixture.staticId(12345)
-        val userId3 = UserIdFixture.staticId(123456)
+        private val userId2 = UserIdFixture.staticId(12345)
+        private val userId3 = UserIdFixture.staticId(123456)
 
         private var repository: UserRepository? = null
 
@@ -176,8 +173,7 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 firstName = "first1",
                 lastName = "last1",
-                wikiName = "wiki1",
-                phoneNumber = null
+                wikiName = "wiki1"
             )
             repository!!.store(user1event1)
 
@@ -195,8 +191,7 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 firstName = "first2",
                 lastName = "last2",
-                wikiName = "wiki2",
-                phoneNumber = null
+                wikiName = "wiki2"
             )
             repository!!.store(user2event1)
 
@@ -206,8 +201,7 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 firstName = ChangeableValue.ChangeToValue("first1v3"),
                 lastName = ChangeableValue.LeaveAsIs,
-                wikiName = ChangeableValue.LeaveAsIs,
-                phoneNumber = ChangeableValue.LeaveAsIs
+                wikiName = ChangeableValue.LeaveAsIs
             )
             repository!!.store(user1event3)
 
@@ -216,8 +210,7 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 firstName = "first3",
                 lastName = "last3",
-                wikiName = "wiki3",
-                phoneNumber = null
+                wikiName = "wiki3"
             )
             repository!!.store(user3event1)
 
@@ -227,8 +220,7 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 firstName = ChangeableValue.ChangeToValue("first2v2"),
                 lastName = ChangeableValue.ChangeToValue("last2v2"),
-                wikiName = ChangeableValue.ChangeToValue("wiki2v2"),
-                phoneNumber = ChangeableValue.LeaveAsIs
+                wikiName = ChangeableValue.ChangeToValue("wiki2v2")
             )
             repository!!.store(user2event2)
 
@@ -256,7 +248,6 @@ internal class UserDatabaseRepositoryTest {
                     "first1v3",
                     "last1",
                     "wiki1",
-                    null,
                     true,
                     "some notes",
                     listOf(),
@@ -269,7 +260,6 @@ internal class UserDatabaseRepositoryTest {
                     "first2v2",
                     "last2v2",
                     "wiki2v2",
-                    null,
                     false,
                     null,
                     listOf(),

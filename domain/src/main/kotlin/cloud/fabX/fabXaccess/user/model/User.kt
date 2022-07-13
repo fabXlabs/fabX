@@ -27,7 +27,6 @@ data class User internal constructor(
     val firstName: String,
     val lastName: String,
     val wikiName: String,
-    val phoneNumber: String?,
     val locked: Boolean,
     val notes: String?,
     private val memberQualifications: List<QualificationId>,
@@ -43,16 +42,14 @@ data class User internal constructor(
             actor: Admin,
             firstName: String,
             lastName: String,
-            wikiName: String,
-            phoneNumber: String
+            wikiName: String
         ): UserSourcingEvent {
             return UserCreated(
                 DomainModule.userIdFactory().invoke(),
                 actor.id,
                 firstName,
                 lastName,
-                wikiName,
-                phoneNumber
+                wikiName
             )
         }
 
@@ -81,8 +78,7 @@ data class User internal constructor(
         actor: Admin,
         firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
-        wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
-        phoneNumber: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
+        wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {
         return UserPersonalInformationChanged(
             id,
@@ -90,8 +86,7 @@ data class User internal constructor(
             actor.id,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
     }
 
@@ -138,7 +133,6 @@ data class User internal constructor(
                     firstName = event.firstName,
                     lastName = event.lastName,
                     wikiName = event.wikiName,
-                    phoneNumber = event.phoneNumber,
                     locked = false,
                     notes = null,
                     memberQualifications = listOf(),
@@ -159,7 +153,6 @@ data class User internal constructor(
                         firstName = e.firstName.valueToChangeTo(u.firstName),
                         lastName = e.lastName.valueToChangeTo(u.lastName),
                         wikiName = e.wikiName.valueToChangeTo(u.wikiName),
-                        phoneNumber = e.phoneNumber.valueToChangeTo(u.phoneNumber)
                     )
                 )
             }

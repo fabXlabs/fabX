@@ -29,8 +29,7 @@ data class UserCreated(
     override val actorId: ActorId,
     val firstName: String,
     val lastName: String,
-    val wikiName: String,
-    val phoneNumber: String?
+    val wikiName: String
 ) : UserSourcingEvent(aggregateRootId, 1, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
@@ -43,8 +42,7 @@ data class UserPersonalInformationChanged(
     override val actorId: ActorId,
     val firstName: ChangeableValue<String>,
     val lastName: ChangeableValue<String>,
-    val wikiName: ChangeableValue<String>,
-    val phoneNumber: ChangeableValue<String?>
+    val wikiName: ChangeableValue<String>
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =

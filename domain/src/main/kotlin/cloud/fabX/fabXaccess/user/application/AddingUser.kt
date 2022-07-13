@@ -19,8 +19,7 @@ class AddingUser {
         actor: Admin,
         firstName: String,
         lastName: String,
-        wikiName: String,
-        phoneNumber: String
+        wikiName: String
     ): Option<Error> {
         log.debug("addUser...")
 
@@ -30,8 +29,7 @@ class AddingUser {
                     actor,
                     firstName,
                     lastName,
-                    wikiName,
-                    phoneNumber
+                    wikiName
                 )
             )
             .tapNone { log.debug("...addUser done") }

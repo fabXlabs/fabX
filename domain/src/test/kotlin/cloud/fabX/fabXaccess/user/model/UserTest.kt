@@ -34,7 +34,6 @@ internal class UserTest {
             "Nikola",
             "Tesla",
             "nick",
-            "00491234567890",
             false,
             null,
             listOf(),
@@ -56,15 +55,13 @@ internal class UserTest {
         val firstName = "first"
         val lastName = "last"
         val wikiName = "wiki"
-        val phoneNumber = "+491234"
 
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
 
         // when
@@ -72,8 +69,7 @@ internal class UserTest {
             adminActor,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
 
         // then
@@ -103,8 +99,7 @@ internal class UserTest {
             adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first"),
             lastName = ChangeableValue.ChangeToValue("last"),
-            wikiName = ChangeableValue.ChangeToValue("wiki"),
-            phoneNumber = ChangeableValue.ChangeToValue(null)
+            wikiName = ChangeableValue.ChangeToValue("wiki")
         )
 
         // when
@@ -126,8 +121,7 @@ internal class UserTest {
             adminActor.id,
             firstName = "first",
             lastName = "last",
-            wikiName = "wiki",
-            phoneNumber = null
+            wikiName = "wiki"
         )
 
         // when
@@ -143,7 +137,6 @@ internal class UserTest {
                     "first",
                     "last",
                     "wiki",
-                    null,
                     false,
                     null,
                     listOf(),
@@ -161,8 +154,7 @@ internal class UserTest {
             adminActor.id,
             firstName = "first1",
             lastName = "last1",
-            wikiName = "wiki1",
-            phoneNumber = "1"
+            wikiName = "wiki1"
         )
         val event2 = UserPersonalInformationChanged(
             userId,
@@ -170,8 +162,7 @@ internal class UserTest {
             adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.ChangeToValue("last2"),
-            wikiName = ChangeableValue.ChangeToValue("wiki2"),
-            phoneNumber = ChangeableValue.ChangeToValue("2")
+            wikiName = ChangeableValue.ChangeToValue("wiki2")
         )
         val event3 = UserLockStateChanged(
             userId,
@@ -186,8 +177,7 @@ internal class UserTest {
             adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first4"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("wiki4"),
-            phoneNumber = ChangeableValue.LeaveAsIs
+            wikiName = ChangeableValue.ChangeToValue("wiki4")
         )
         val event5 = UserPersonalInformationChanged(
             userId,
@@ -195,8 +185,7 @@ internal class UserTest {
             adminActor.id,
             firstName = ChangeableValue.LeaveAsIs,
             lastName = ChangeableValue.ChangeToValue("last5"),
-            wikiName = ChangeableValue.ChangeToValue("wiki5"),
-            phoneNumber = ChangeableValue.ChangeToValue(null)
+            wikiName = ChangeableValue.ChangeToValue("wiki5")
         )
 
         // when
@@ -212,7 +201,6 @@ internal class UserTest {
                     "first4",
                     "last5",
                     "wiki5",
-                    null,
                     true,
                     "some notes",
                     listOf(),
@@ -230,8 +218,7 @@ internal class UserTest {
             adminActor.id,
             firstName = "first1",
             lastName = "last1",
-            wikiName = "wiki1",
-            phoneNumber = "1"
+            wikiName = "wiki1"
         )
         val event3 = UserPersonalInformationChanged(
             userId,
@@ -239,8 +226,7 @@ internal class UserTest {
             adminActor.id,
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("wiki2"),
-            phoneNumber = ChangeableValue.LeaveAsIs
+            wikiName = ChangeableValue.ChangeToValue("wiki2")
         )
         val event2 = UserLockStateChanged(
             userId,
@@ -269,8 +255,7 @@ internal class UserTest {
             adminActor.id,
             firstName = "first1",
             lastName = "last1",
-            wikiName = "wiki1",
-            phoneNumber = "1"
+            wikiName = "wiki1"
         )
 
         val event2 = UserDeleted(
@@ -298,8 +283,7 @@ internal class UserTest {
             actorId = adminActor.id,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("newWikiName"),
-            phoneNumber = ChangeableValue.ChangeToValue(null)
+            wikiName = ChangeableValue.ChangeToValue("newWikiName")
         )
 
         // when
@@ -307,8 +291,7 @@ internal class UserTest {
             actor = adminActor,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("newWikiName"),
-            phoneNumber = ChangeableValue.ChangeToValue(null)
+            wikiName = ChangeableValue.ChangeToValue("newWikiName")
         )
 
         // then
@@ -453,7 +436,6 @@ internal class UserTest {
             "Nikola",
             "Tesla",
             "nick",
-            "00491234567890",
             false,
             null,
             listOf(QualificationIdFixture.staticId(43)),
@@ -471,7 +453,6 @@ internal class UserTest {
                     "firstName=Nikola, " +
                     "lastName=Tesla, " +
                     "wikiName=nick, " +
-                    "phoneNumber=00491234567890, " +
                     "locked=false, " +
                     "notes=null, " +
                     "memberQualifications=[QualificationId(value=6ecbc07c-382b-3e04-a9b3-a86909f10e64)], " +

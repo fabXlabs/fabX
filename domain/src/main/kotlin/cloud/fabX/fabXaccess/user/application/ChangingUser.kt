@@ -22,8 +22,7 @@ class ChangingUser {
         userId: UserId,
         firstName: ChangeableValue<String>,
         lastName: ChangeableValue<String>,
-        wikiName: ChangeableValue<String>,
-        phoneNumber: ChangeableValue<String?>
+        wikiName: ChangeableValue<String>
     ): Option<Error> {
         log.debug("changePersonalInformation...")
 
@@ -33,8 +32,7 @@ class ChangingUser {
                     actor,
                     firstName,
                     lastName,
-                    wikiName,
-                    phoneNumber
+                    wikiName
                 )
             }
             .flatMap {

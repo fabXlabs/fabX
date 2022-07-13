@@ -52,15 +52,13 @@ internal class AddingUserTest {
         val firstName = "first"
         val lastName = "last"
         val wikiName = "wiki"
-        val phoneNumber = "+12345"
 
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
 
         whenever(userRepository!!.store(expectedSourcingEvent))
@@ -71,8 +69,7 @@ internal class AddingUserTest {
             adminActor,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
 
         // then
@@ -85,15 +82,13 @@ internal class AddingUserTest {
         val firstName = "first"
         val lastName = "last"
         val wikiName = "wiki"
-        val phoneNumber = "+12345"
 
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
 
         val error = ErrorFixture.arbitraryError()
@@ -106,8 +101,7 @@ internal class AddingUserTest {
             adminActor,
             firstName,
             lastName,
-            wikiName,
-            phoneNumber
+            wikiName
         )
 
         // then
