@@ -37,6 +37,7 @@ internal class UserTest {
             false,
             null,
             setOf(),
+            setOf(),
             null,
             false
         )
@@ -140,6 +141,7 @@ internal class UserTest {
                     false,
                     null,
                     setOf(),
+                    setOf(),
                     null,
                     false
                 )
@@ -203,6 +205,7 @@ internal class UserTest {
                     "wiki5",
                     true,
                     "some notes",
+                    setOf(),
                     setOf(),
                     null,
                     false
@@ -438,6 +441,7 @@ internal class UserTest {
             "nick",
             false,
             null,
+            setOf(),
             setOf(QualificationIdFixture.staticId(43)),
             setOf(QualificationIdFixture.staticId(44)),
             true
@@ -455,6 +459,7 @@ internal class UserTest {
                     "wikiName=nick, " +
                     "locked=false, " +
                     "notes=null, " +
+                    "identities=[], " +
                     "memberQualifications=[QualificationId(value=6ecbc07c-382b-3e04-a9b3-a86909f10e64)], " +
                     "instructorQualifications=[QualificationId(value=a3dd6fd6-61a5-3c37-810c-8c68fe610bec)], " +
                     "isAdmin=true)"

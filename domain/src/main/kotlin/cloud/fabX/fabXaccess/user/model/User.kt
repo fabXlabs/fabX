@@ -29,6 +29,7 @@ data class User internal constructor(
     val wikiName: String,
     val locked: Boolean,
     val notes: String?,
+    private val identities: Set<UserIdentity>,
     private val memberQualifications: Set<QualificationId>,
     private val instructorQualifications: Set<QualificationId>?,
     private val isAdmin: Boolean
@@ -135,6 +136,7 @@ data class User internal constructor(
                     wikiName = event.wikiName,
                     locked = false,
                     notes = null,
+                    identities = setOf(),
                     memberQualifications = setOf(),
                     instructorQualifications = null,
                     isAdmin = false

@@ -13,6 +13,7 @@ object UserFixture {
         wikiName: String = "wiki",
         locked: Boolean = false,
         notes: String? = null,
+        identities: Set<UserIdentity> = setOf(UsernamePasswordIdentity("firstlast", "supersecret")),
         memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitraryId()),
         instructorQualifications: Set<QualificationId>? = null,
         isAdmin: Boolean = false
@@ -24,6 +25,7 @@ object UserFixture {
         wikiName,
         locked,
         notes,
+        identities,
         memberQualifications,
         instructorQualifications,
         isAdmin
