@@ -8,6 +8,8 @@ import java.util.UUID
  */
 data class QualificationId(override val value: UUID) : EntityId<UUID>
 
+typealias QualificationIdFactory = () -> QualificationId
+
 /**
  * Returns a new QualificationId.
  *

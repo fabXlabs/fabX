@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.qualification.model
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
@@ -37,6 +38,38 @@ internal class QualificationTest {
         assertThat(qualification).isNotNull()
         assertThat(qualification.id).isEqualTo(qualificationId)
         assertThat(qualification.aggregateVersion).isEqualTo(aggregateVersion)
+    }
+
+    @Test
+    fun `when adding new qualification then returns expected souring event`() {
+        // given
+        DomainModule.configureQualificationIdFactory { qualificationId }
+
+        val name = "name"
+        val description = "description"
+        val colour = "#123456"
+        val orderNr = 123
+
+        val expectedSourcingEvent = QualificationCreated(
+            qualificationId,
+            adminActor.id,
+            name,
+            description,
+            colour,
+            orderNr
+        )
+
+        // when
+        val result = Qualification.addNew(
+            adminActor,
+            name,
+            description,
+            colour,
+            orderNr
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
     }
 
     @Test

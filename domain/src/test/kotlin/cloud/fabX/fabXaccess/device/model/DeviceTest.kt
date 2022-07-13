@@ -40,7 +40,7 @@ internal class DeviceTest {
     }
 
     @Test
-    fun `when adding new device then returns expected sourcing events`() {
+    fun `when adding new device then returns expected sourcing event`() {
         // given
         DomainModule.configureDeviceIdFactory { deviceId }
 

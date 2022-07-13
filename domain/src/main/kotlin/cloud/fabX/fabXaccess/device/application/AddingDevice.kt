@@ -21,7 +21,7 @@ class AddingDevice {
         background: String,
         backupBackendUrl: String
     ): Option<Error> {
-        log.debug("createDevice...")
+        log.debug("addDevice...")
 
         return deviceRepository
             .store(
@@ -32,7 +32,7 @@ class AddingDevice {
                     backupBackendUrl
                 )
             )
-            .tapNone { log.debug("...createDevice done") }
-            .tap { log.error("...createDevice error: $it") }
+            .tapNone { log.debug("...addDevice done") }
+            .tap { log.error("...addDevice error: $it") }
     }
 }

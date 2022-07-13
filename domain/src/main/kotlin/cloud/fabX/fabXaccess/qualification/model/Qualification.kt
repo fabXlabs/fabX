@@ -4,6 +4,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
+import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
@@ -22,6 +23,23 @@ data class Qualification internal constructor(
 ) : AggregateRootEntity<QualificationId> {
 
     companion object {
+        fun addNew(
+            actor: Admin,
+            name: String,
+            description: String,
+            colour: String,
+            orderNr: Int
+        ): QualificationSourcingEvent {
+            return QualificationCreated(
+                DomainModule.qualificationIdFactory().invoke(),
+                actor.id,
+                name,
+                description,
+                colour,
+                orderNr
+            )
+        }
+
         fun fromSourcingEvents(events: Iterable<QualificationSourcingEvent>): Option<Qualification> {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()

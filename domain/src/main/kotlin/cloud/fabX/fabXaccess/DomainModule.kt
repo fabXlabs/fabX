@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
@@ -12,6 +13,7 @@ object DomainModule {
     private var loggerFactory: LoggerFactory? = null
 
     private var deviceIdFactory: DeviceIdFactory? = null
+    private var qualificationIdFactory: QualificationIdFactory? = null
 
     private var deviceRepository: DeviceRepository? = null
     private var qualificationRepository: QualificationRepository? = null
@@ -21,6 +23,7 @@ object DomainModule {
     fun isFullyConfigured(): Boolean {
         return loggerFactory != null
                 && deviceIdFactory != null
+                && qualificationIdFactory != null
                 && deviceRepository != null
                 && qualificationRepository != null
                 && userRepository != null
@@ -32,6 +35,10 @@ object DomainModule {
 
     fun configureDeviceIdFactory(deviceIdFactory: DeviceIdFactory) {
         this.deviceIdFactory = deviceIdFactory
+    }
+
+    fun configureQualificationIdFactory(qualificationIdFactory: QualificationIdFactory) {
+        this.qualificationIdFactory = qualificationIdFactory
     }
 
     fun configureDeviceRepository(deviceRepository: DeviceRepository) {
@@ -52,6 +59,10 @@ object DomainModule {
 
     internal fun deviceIdFactory(): DeviceIdFactory {
         return require(deviceIdFactory)
+    }
+
+    internal fun qualificationIdFactory(): QualificationIdFactory {
+        return require(qualificationIdFactory)
     }
 
     internal fun deviceRepository(): DeviceRepository {
