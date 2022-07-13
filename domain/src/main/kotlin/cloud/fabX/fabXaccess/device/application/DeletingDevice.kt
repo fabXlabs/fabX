@@ -4,34 +4,27 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
-import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.user.model.Admin
 
-
-// TODO CreatingDevice service
-
 /**
- * Service to handle changing device properties.
+ * Service to handle deleting a device.
  */
-class ChangingDevice {
+class DeletingDevice {
 
     private val log = logger()
     private val deviceRepository = DomainModule.deviceRepository()
 
-    fun changeDeviceDetails(
+    fun deleteDevice(
         actor: Admin,
-        deviceId: DeviceId,
-        name: ChangeableValue<String>,
-        background: ChangeableValue<String>,
-        backupBackendUrl: ChangeableValue<String>
+        deviceId: DeviceId
     ): Option<Error> {
-        log.debug("changeDeviceDetails...")
+        log.debug("deleteDevice...")
 
         return deviceRepository.getById(deviceId)
             .map {
-                it.changeDetails(actor, name, background, backupBackendUrl)
+                it.delete(actor)
             }
             .flatMap {
                 deviceRepository.store(it)
@@ -40,7 +33,7 @@ class ChangingDevice {
             }
             .swap()
             .orNone()
-            .tapNone { log.debug("...changeDeviceDetails done") }
-            .tap { log.error("...changeDeviceDetails error: $it") }
+            .tapNone { log.debug("...deleteDevice done") }
+            .tap { log.error("...deleteDevice error: $it") }
     }
 }
