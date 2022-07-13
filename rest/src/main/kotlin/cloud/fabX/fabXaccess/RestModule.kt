@@ -11,6 +11,7 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 
+// TODO API tests
 object RestModule {
     private var loggerFactory: LoggerFactory? = null
 

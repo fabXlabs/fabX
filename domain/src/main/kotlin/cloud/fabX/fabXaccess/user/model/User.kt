@@ -16,6 +16,9 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
 // TODO UsernamePasswordIdentification
 
+// TODO wikiName must be unique rule
+// TODO phoneNumber must be empty or unique rule
+
 data class User internal constructor(
     override val id: UserId,
     override val aggregateVersion: Long,

@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.getOrElse
 import arrow.core.left
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.User
@@ -13,6 +14,16 @@ import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 
 class UserDatabaseRepository : UserRepository {
     private var events = mutableListOf<UserSourcingEvent>()
+
+    override fun getAll(): Set<User> {
+        return events
+            .sortedBy { it.aggregateVersion }
+            .groupBy { it.aggregateRootId }
+            .map { User.fromSourcingEvents(it.value) }
+            .filter { it.isDefined() }
+            .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
+            .toSet()
+    }
 
     override fun getById(id: UserId): Either<Error, User> {
         val e = events
