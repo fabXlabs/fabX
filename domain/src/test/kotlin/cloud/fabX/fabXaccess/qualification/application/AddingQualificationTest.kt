@@ -5,7 +5,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -96,7 +96,7 @@ internal class AddingQualificationTest {
             orderNr
         )
 
-        val error = Error.VersionConflict("message")
+        val error = ErrorFixture.arbitraryError()
 
         whenever(qualificationRepository!!.store(event))
             .thenReturn(error.some())

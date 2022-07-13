@@ -9,6 +9,7 @@ import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -136,7 +137,7 @@ internal class ChangingUserTest {
             ChangeableValue.LeaveAsIs
         )
 
-        val error = Error.VersionConflict("message")
+        val error = ErrorFixture.arbitraryError()
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
@@ -235,7 +236,7 @@ internal class ChangingUserTest {
             ChangeableValue.LeaveAsIs
         )
 
-        val error = Error.VersionConflict("message")
+        val error = ErrorFixture.arbitraryError()
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())

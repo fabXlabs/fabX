@@ -8,6 +8,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
@@ -105,7 +106,7 @@ internal class DeletingQualificationTest {
             adminActor.id
         )
 
-        val error = Error.VersionConflict("message")
+        val error = ErrorFixture.arbitraryError()
 
         whenever(qualificationRepository!!.getById(qualificationId))
             .thenReturn(qualification.right())
