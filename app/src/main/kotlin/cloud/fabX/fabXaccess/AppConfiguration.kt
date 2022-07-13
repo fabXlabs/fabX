@@ -3,7 +3,9 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
+import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.newDeviceId
 import cloud.fabX.fabXaccess.logging.LogbackLoggerFactory
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
@@ -16,6 +18,7 @@ object AppConfiguration {
     private val log: Logger
 
     internal val loggerFactory: LoggerFactory
+    private val deviceIdFactory: DeviceIdFactory
     private val deviceRepository: DeviceRepository
     private val qualificationRepository: QualificationRepository
     private val userRepository: UserRepository
@@ -24,6 +27,8 @@ object AppConfiguration {
         loggerFactory = LogbackLoggerFactory()
         log = loggerFactory.invoke(AppConfiguration::class.java)
         log.info("Configuring modules...")
+
+        deviceIdFactory = { newDeviceId() }
 
         deviceRepository = DeviceDatabaseRepository()
         qualificationRepository = QualificationDatabaseRepository()
@@ -46,10 +51,11 @@ object AppConfiguration {
     }
 
     private fun configureDomain() {
-        DomainModule.configure(loggerFactory)
-        DomainModule.configure(deviceRepository)
-        DomainModule.configure(qualificationRepository)
-        DomainModule.configure(userRepository)
+        DomainModule.configureLoggerFactory(loggerFactory)
+        DomainModule.configureDeviceIdFactory(deviceIdFactory)
+        DomainModule.configureDeviceRepository(deviceRepository)
+        DomainModule.configureQualificationRepository(qualificationRepository)
+        DomainModule.configureUserRepository(userRepository)
     }
 
     private fun configureRest() {

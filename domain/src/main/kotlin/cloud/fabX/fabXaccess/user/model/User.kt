@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
 // TODO UsernamePasswordIdentification
+// TODO PhoneNumberIdentification (maybe remove phone number from "personal details"?)
 
 // TODO wikiName must be unique rule
 // TODO phoneNumber must be empty or unique rule

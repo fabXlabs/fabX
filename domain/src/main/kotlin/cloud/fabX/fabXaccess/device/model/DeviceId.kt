@@ -9,11 +9,13 @@ import java.util.UUID
  */
 data class DeviceId(override val value: UUID) : EntityId<UUID>, ActorId
 
+typealias DeviceIdFactory = () -> DeviceId
+
 /**
  * Returns a new DeviceId.
  *
- * @returna DeviceId of a random UUID
+ * @return DeviceId of a random UUID
  */
-internal fun newDeviceId(): DeviceId {
+fun newDeviceId(): DeviceId {
     return DeviceId(UUID.randomUUID())
 }

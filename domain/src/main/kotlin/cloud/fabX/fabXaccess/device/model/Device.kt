@@ -4,6 +4,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
+import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
@@ -23,6 +24,21 @@ data class Device internal constructor(
 ) : AggregateRootEntity<DeviceId> {
 
     companion object {
+        fun addNew(
+            actor: Admin,
+            name: String,
+            background: String,
+            backupBackendUrl: String
+        ): DeviceSourcingEvent {
+            return DeviceCreated(
+                DomainModule.deviceIdFactory().invoke(),
+                actor.id,
+                name,
+                background,
+                backupBackendUrl
+            )
+        }
+
         fun fromSourcingEvents(events: Iterable<DeviceSourcingEvent>): Option<Device> {
             events.assertIsNotEmpty()
             events.assertAggregateVersionStartsWithOne()

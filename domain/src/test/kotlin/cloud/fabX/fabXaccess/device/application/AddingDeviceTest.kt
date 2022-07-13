@@ -1,16 +1,13 @@
 package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.None
-import arrow.core.left
-import arrow.core.right
 import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.device.model.DeviceDeleted
-import cloud.fabX.fabXaccess.device.model.DeviceFixture
+import cloud.fabX.fabXaccess.device.model.DeviceCreated
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -22,9 +19,8 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
-
 @MockitoSettings
-internal class DeletingDeviceTest {
+internal class AddingDeviceTest {
 
     private val adminActor = AdminFixture.arbitraryAdmin()
 
@@ -33,7 +29,7 @@ internal class DeletingDeviceTest {
     private var logger: Logger? = null
     private var deviceRepository: DeviceRepository? = null
 
-    private var testee: DeletingDevice? = null
+    private var testee: AddingDevice? = null
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -42,33 +38,38 @@ internal class DeletingDeviceTest {
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
+
         DomainModule.configureLoggerFactory { logger }
+        DomainModule.configureDeviceIdFactory { deviceId }
         DomainModule.configureDeviceRepository(deviceRepository)
 
-        testee = DeletingDevice()
+        testee = AddingDevice()
     }
 
     @Test
-    fun `given device can be found when deleting device then sourcing event is created and stored`() {
+    fun `given valid values when adding device then sourcing event is created and stored`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = 42)
+        val name = "name"
+        val backgroundUrl = "https://example.com/bg.bmp"
+        val backupBackendUrl = "https://backup.example.com"
 
-        val expectedSourcingEvent = DeviceDeleted(
+        val expectedSourcingEvent = DeviceCreated(
             deviceId,
-            43,
-            adminActor.id
+            adminActor.id,
+            name,
+            backgroundUrl,
+            backupBackendUrl
         )
-
-        whenever(deviceRepository!!.getById(deviceId))
-            .thenReturn(device.right())
 
         whenever(deviceRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.deleteDevice(
+        val result = testee!!.addDevice(
             adminActor,
-            deviceId
+            name,
+            backgroundUrl,
+            backupBackendUrl
         )
 
         // then
@@ -76,48 +77,31 @@ internal class DeletingDeviceTest {
     }
 
     @Test
-    fun `given device cannot be found when deleting device then returns error`() {
+    fun `given sourcing event cannot be stored when adding device then returns error`() {
         // given
-        val error = Error.DeviceNotFound("message", deviceId)
+        val name = "name"
+        val backgroundUrl = "https://example.com/bg.bmp"
+        val backupBackendUrl = "https://backup.example.com"
 
-        whenever(deviceRepository!!.getById(deviceId))
-            .thenReturn(error.left())
-
-        // when
-        val result = testee!!.deleteDevice(
-            adminActor,
-            deviceId
-        )
-
-        // then
-        assertThat(result)
-            .isSome()
-            .isEqualTo(error)
-    }
-
-    @Test
-    fun `given sourcing event cannot be stored when deleting device then returns error`() {
-        // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = 1)
-
-        val event = DeviceDeleted(
+        val event = DeviceCreated(
             deviceId,
-            2,
-            adminActor.id
+            adminActor.id,
+            name,
+            backgroundUrl,
+            backupBackendUrl
         )
 
         val error = Error.VersionConflict("message")
-
-        whenever(deviceRepository!!.getById(deviceId))
-            .thenReturn(device.right())
 
         whenever(deviceRepository!!.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.deleteDevice(
+        val result = testee!!.addDevice(
             adminActor,
-            deviceId
+            name,
+            backgroundUrl,
+            backupBackendUrl
         )
 
         // then

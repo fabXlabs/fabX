@@ -42,8 +42,8 @@ internal class ChangingDeviceTest {
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
-        DomainModule.configure { logger }
-        DomainModule.configure(deviceRepository)
+        DomainModule.configureLoggerFactory { logger }
+        DomainModule.configureDeviceRepository(deviceRepository)
 
         testee = ChangingDevice()
     }
@@ -144,5 +144,4 @@ internal class ChangingDeviceTest {
             .isSome()
             .isEqualTo(error)
     }
-
 }

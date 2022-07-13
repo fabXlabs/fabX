@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
+import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -10,6 +11,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 object DomainModule {
     private var loggerFactory: LoggerFactory? = null
 
+    private var deviceIdFactory: DeviceIdFactory? = null
+
     private var deviceRepository: DeviceRepository? = null
     private var qualificationRepository: QualificationRepository? = null
     private var userRepository: UserRepository? = null
@@ -17,29 +20,38 @@ object DomainModule {
 
     fun isFullyConfigured(): Boolean {
         return loggerFactory != null
+                && deviceIdFactory != null
                 && deviceRepository != null
                 && qualificationRepository != null
                 && userRepository != null
     }
 
-    fun configure(loggerFactory: LoggerFactory) {
+    fun configureLoggerFactory(loggerFactory: LoggerFactory) {
         this.loggerFactory = loggerFactory
     }
 
-    fun configure(deviceRepository: DeviceRepository) {
+    fun configureDeviceIdFactory(deviceIdFactory: DeviceIdFactory) {
+        this.deviceIdFactory = deviceIdFactory
+    }
+
+    fun configureDeviceRepository(deviceRepository: DeviceRepository) {
         this.deviceRepository = deviceRepository
     }
 
-    fun configure(userRepository: UserRepository) {
+    fun configureUserRepository(userRepository: UserRepository) {
         this.userRepository = userRepository
     }
 
-    fun configure(qualificationRepository: QualificationRepository) {
+    fun configureQualificationRepository(qualificationRepository: QualificationRepository) {
         this.qualificationRepository = qualificationRepository
     }
 
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
+    }
+
+    internal fun deviceIdFactory(): DeviceIdFactory {
+        return require(deviceIdFactory)
     }
 
     internal fun deviceRepository(): DeviceRepository {

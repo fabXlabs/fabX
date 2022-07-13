@@ -41,8 +41,8 @@ internal class DeletingUserTest {
     ) {
         this.logger = logger
         this.userRepository = userRepository
-        DomainModule.configure { logger }
-        DomainModule.configure(userRepository)
+        DomainModule.configureLoggerFactory { logger }
+        DomainModule.configureUserRepository(userRepository)
 
         testee = DeletingUser()
     }

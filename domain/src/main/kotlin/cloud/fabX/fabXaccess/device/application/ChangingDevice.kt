@@ -9,9 +9,6 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.user.model.Admin
 
-
-// TODO CreatingDevice service
-
 /**
  * Service to handle changing device properties.
  */
