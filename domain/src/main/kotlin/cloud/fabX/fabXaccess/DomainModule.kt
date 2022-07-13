@@ -5,6 +5,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
+// TODO tool aggregate
+
 object DomainModule {
     private var loggerFactory: LoggerFactory? = null
 
