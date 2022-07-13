@@ -2,11 +2,14 @@ package cloud.fabX.fabXaccess.qualification.infrastructure
 
 import assertk.all
 import assertk.assertThat
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
+import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationDetailsChanged
+import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
@@ -154,7 +157,107 @@ internal class QualificationDatabaseRepositoryTest {
                 .isRight()
                 .transform { it.aggregateVersion }.isEqualTo(2)
         }
-
     }
 
+    @Nested
+    internal inner class GivenEventsForQualificationsStoredInRepository {
+
+        private val qualificationId2 = QualificationIdFixture.staticId(234)
+        private val qualificationId3 = QualificationIdFixture.staticId(345)
+
+        private var repository: QualificationRepository? = null
+
+        @BeforeEach
+        fun setup() {
+            repository = QualificationDatabaseRepository()
+
+            val qualification1event1 = QualificationCreated(
+                qualificationId,
+                actorId,
+                name = "qualification1",
+                description = "description1",
+                colour = "#000001",
+                orderNr = 1
+            )
+            repository!!.store(qualification1event1)
+
+            val qualification1event2 = QualificationDetailsChanged(
+                qualificationId,
+                2,
+                actorId,
+                name = ChangeableValue.LeaveAsIs,
+                description = ChangeableValue.ChangeToValue("description1v2"),
+                colour = ChangeableValue.LeaveAsIs,
+                orderNr = ChangeableValue.LeaveAsIs
+            )
+            repository!!.store(qualification1event2)
+
+            val qualification2event1 = QualificationCreated(
+                qualificationId2,
+                actorId,
+                name = "qualification2",
+                description = "description2",
+                colour = "#000002",
+                orderNr = 2
+            )
+            repository!!.store(qualification2event1)
+
+            val qualification3event1 = QualificationCreated(
+                qualificationId3,
+                actorId,
+                name = "qualification3",
+                description = "description3",
+                colour = "#000003",
+                orderNr = 3
+            )
+            repository!!.store(qualification3event1)
+
+            val qualification2event2 = QualificationDeleted(
+                qualificationId2,
+                2,
+                actorId
+            )
+            repository!!.store(qualification2event2)
+
+            val qualification3event2 = QualificationDetailsChanged(
+                qualificationId3,
+                2,
+                actorId,
+                name = ChangeableValue.LeaveAsIs,
+                description = ChangeableValue.ChangeToValue("description3v2"),
+                colour = ChangeableValue.ChangeToValue("#333333"),
+                orderNr = ChangeableValue.LeaveAsIs
+            )
+            repository!!.store(qualification3event2)
+        }
+
+        @Test
+        fun `when getting all qualifications then returns all qualifications from events`() {
+            // given
+            val repository = this.repository!!
+
+            // when
+            val result = repository.getAll()
+
+            // then
+            assertThat(result).containsExactlyInAnyOrder(
+                QualificationFixture.arbitraryQualification(
+                    qualificationId,
+                    2,
+                    "qualification1",
+                    "description1v2",
+                    "#000001",
+                    1
+                ),
+                QualificationFixture.arbitraryQualification(
+                    qualificationId3,
+                    2,
+                    "qualification3",
+                    "description3v2",
+                    "#333333",
+                    3
+                ),
+            )
+        }
+    }
 }

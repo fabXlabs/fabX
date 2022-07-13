@@ -4,8 +4,8 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.getOrElse
 import arrow.core.left
-import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
@@ -14,6 +14,16 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
 
 class QualificationDatabaseRepository : QualificationRepository {
     private val events = mutableListOf<QualificationSourcingEvent>()
+
+    override fun getAll(): Set<Qualification> {
+        return events
+            .sortedBy { it.aggregateVersion }
+            .groupBy { it.aggregateRootId }
+            .map { Qualification.fromSourcingEvents(it.value) }
+            .filter { it.isDefined() }
+            .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
+            .toSet()
+    }
 
     override fun getById(id: QualificationId): Either<Error, Qualification> {
         val e = events
