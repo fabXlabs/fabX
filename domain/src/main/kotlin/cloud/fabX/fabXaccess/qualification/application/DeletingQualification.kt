@@ -4,34 +4,27 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
-import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
 
-// TODO CreatingQualification service
-
 /**
- * Service to handle changing qualification properties.
+ * Service to handle deleting a qualification.
  */
-class ChangingQualification {
+class DeletingQualification {
 
     private val log = logger()
     private val qualificationRepository = DomainModule.qualificationRepository()
 
-    fun changeQualificationDetails(
+    fun deleteQualification(
         actor: Admin,
-        qualificationId: QualificationId,
-        name: ChangeableValue<String>,
-        description: ChangeableValue<String>,
-        colour: ChangeableValue<String>,
-        orderNr: ChangeableValue<Int>
+        qualificationId: QualificationId
     ): Option<Error> {
-        log.debug("changeQualificationDetails...")
+        log.debug("deleteQualification...")
 
         return qualificationRepository.getById(qualificationId)
             .map {
-                it.changeDetails(actor, name, description, colour, orderNr)
+                it.delete(actor)
             }
             .flatMap {
                 qualificationRepository.store(it)
@@ -40,7 +33,7 @@ class ChangingQualification {
             }
             .swap()
             .orNone()
-            .tapNone { log.debug("...changeQualificationDetails done") }
-            .tap { log.error("...changeQualificationDetails error: $it") }
+            .tapNone { log.debug("...deleteQualification done") }
+            .tap { log.error("...deleteQualification error: $it") }
     }
 }
