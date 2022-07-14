@@ -60,7 +60,9 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 name = "device",
                 background = "https://example.com/1.bmp",
-                backupBackendUrl = "https://backup.example.com"
+                backupBackendUrl = "https://backup.example.com",
+                mac = "aabbccddeeff",
+                secret = "supersecret"
             )
             repository!!.store(event1)
 
@@ -171,7 +173,9 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
-                backupBackendUrl = "https://backup.example.com"
+                backupBackendUrl = "https://backup.example.com",
+                mac = "aabbccddeeff",
+                secret = "supersecret"
             )
             repository!!.store(device1event1)
 
@@ -190,7 +194,9 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 name = "device3",
                 background = "https://background.com/device3.bmp",
-                backupBackendUrl = "https://backup3.example.com"
+                backupBackendUrl = "https://backup3.example.com",
+                mac = "aabbccddee33",
+                secret = "supersecret3"
             )
             repository!!.store(device3event1)
 
@@ -199,7 +205,9 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
-                backupBackendUrl = "https://backup2.example.com"
+                backupBackendUrl = "https://backup2.example.com",
+                mac = "aabbccddee22",
+                secret = "supersecret2"
             )
             repository!!.store(device2event1)
 
@@ -226,7 +234,7 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
-                backupBackendUrl = ChangeableValue.ChangeToValue("https://backup42.example.com")
+                backupBackendUrl = ChangeableValue.ChangeToValue("https://backup42.example.com"),
             )
             repository!!.store(device2event2)
         }
@@ -246,14 +254,18 @@ internal class DeviceDatabaseRepositoryTest {
                     3,
                     "device1",
                     "https://example.com/3.bmp",
-                    "https://backup.example.com"
+                    "https://backup.example.com",
+                    "aabbccddeeff",
+                    "supersecret"
                 ),
                 DeviceFixture.arbitrary(
                     deviceId2,
                     2,
                     "device2",
                     "https://background.com/device2.bmp",
-                    "https://backup42.example.com"
+                    "https://backup42.example.com",
+                    "aabbccddee22",
+                    "supersecret2"
                 )
             )
         }

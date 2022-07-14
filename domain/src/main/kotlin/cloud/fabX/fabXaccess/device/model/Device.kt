@@ -11,15 +11,13 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.user.model.Admin
 
-// TODO DeviceMacSecretIdentity
-//      with maximum one device mac secret identity rule
-
 data class Device internal constructor(
     override val id: DeviceId,
     override val aggregateVersion: Long,
     val name: String,
     val background: String,
-    val backupBackendUrl: String
+    val backupBackendUrl: String,
+    internal val identity: MacSecretIdentity
 ) : AggregateRootEntity<DeviceId> {
 
     companion object {
@@ -27,14 +25,17 @@ data class Device internal constructor(
             actor: Admin,
             name: String,
             background: String,
-            backupBackendUrl: String
+            backupBackendUrl: String,
+            identity: MacSecretIdentity
         ): DeviceSourcingEvent {
             return DeviceCreated(
                 DomainModule.deviceIdFactory().invoke(),
                 actor.id,
                 name,
                 background,
-                backupBackendUrl
+                backupBackendUrl,
+                identity.mac,
+                identity.secret
             )
         }
 

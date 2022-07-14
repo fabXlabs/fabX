@@ -30,7 +30,8 @@ internal class DeviceTest {
             aggregateVersion,
             "Woodworking",
             "https://example.com/image.bmp",
-            "https://fabx-backup.example.com"
+            "https://fabx-backup.example.com",
+            MacSecretIdentity("aabbccddeeff", "supersecret")
         )
 
         // then
@@ -53,7 +54,9 @@ internal class DeviceTest {
             adminActor.id,
             name,
             background,
-            backupBackendUrl
+            backupBackendUrl,
+            "aabbccddeeff",
+            "supersecret"
         )
 
 
@@ -62,7 +65,8 @@ internal class DeviceTest {
             adminActor,
             name,
             background,
-            backupBackendUrl
+            backupBackendUrl,
+            MacSecretIdentity("aabbccddeeff", "supersecret")
         )
 
         // then
@@ -114,7 +118,9 @@ internal class DeviceTest {
             adminActor.id,
             "name1",
             "background1",
-            "backupUrl1"
+            "backupUrl1",
+            "aabbccddeeff",
+            "supersecret"
         )
         val event2 = DeviceDetailsChanged(
             deviceId,
@@ -145,7 +151,8 @@ internal class DeviceTest {
                     3,
                     "name2",
                     "background1",
-                    "backupUrl3"
+                    "backupUrl3",
+                    MacSecretIdentity("aabbccddeeff", "supersecret")
                 )
             )
     }
@@ -158,7 +165,9 @@ internal class DeviceTest {
             adminActor.id,
             "name1",
             "background1",
-            "backupUrl1"
+            "backupUrl1",
+            "aabbccddeeff",
+            "supersecret"
         )
         val event3 = DeviceDetailsChanged(
             deviceId,
@@ -196,7 +205,9 @@ internal class DeviceTest {
             adminActor.id,
             "Woodworking",
             "https://example.com/image.bmp",
-            "https://fabx-backup.example.com"
+            "https://fabx-backup.example.com",
+            "aabbccddeeff",
+            "supersecret"
         )
 
         val event2 = DeviceDeleted(
@@ -265,7 +276,8 @@ internal class DeviceTest {
             aggregateVersion,
             "Woodworking",
             "https://example.com/image.bmp",
-            "https://fabx-backup.example.com"
+            "https://fabx-backup.example.com",
+            MacSecretIdentity("aabbccddeeff", "supersecret")
         )
 
         // when
@@ -277,7 +289,8 @@ internal class DeviceTest {
                     "aggregateVersion=567, " +
                     "name=Woodworking, " +
                     "background=https://example.com/image.bmp, " +
-                    "backupBackendUrl=https://fabx-backup.example.com)"
+                    "backupBackendUrl=https://fabx-backup.example.com, " +
+                    "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret))"
         )
     }
 

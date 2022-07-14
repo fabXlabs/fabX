@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
+import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.Admin
 
 /**
@@ -19,7 +20,8 @@ class AddingDevice {
         actor: Admin,
         name: String,
         background: String,
-        backupBackendUrl: String
+        backupBackendUrl: String,
+        identity: MacSecretIdentity
     ): Option<Error> {
         log.debug("addDevice...")
 
@@ -29,7 +31,8 @@ class AddingDevice {
                     actor,
                     name,
                     background,
-                    backupBackendUrl
+                    backupBackendUrl,
+                    identity
                 )
             )
             .tapNone { log.debug("...addDevice done") }

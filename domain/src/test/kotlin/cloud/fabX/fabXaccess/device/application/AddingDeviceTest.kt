@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.model.DeviceCreated
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
@@ -52,13 +53,17 @@ internal class AddingDeviceTest {
         val name = "name"
         val backgroundUrl = "https://example.com/bg.bmp"
         val backupBackendUrl = "https://backup.example.com"
+        val mac = "aa11bb22cc33"
+        val secret = "verysecret123"
 
         val expectedSourcingEvent = DeviceCreated(
             deviceId,
             adminActor.id,
             name,
             backgroundUrl,
-            backupBackendUrl
+            backupBackendUrl,
+            mac,
+            secret
         )
 
         whenever(deviceRepository!!.store(expectedSourcingEvent))
@@ -69,7 +74,8 @@ internal class AddingDeviceTest {
             adminActor,
             name,
             backgroundUrl,
-            backupBackendUrl
+            backupBackendUrl,
+            MacSecretIdentity(mac, secret)
         )
 
         // then
@@ -82,13 +88,17 @@ internal class AddingDeviceTest {
         val name = "name"
         val backgroundUrl = "https://example.com/bg.bmp"
         val backupBackendUrl = "https://backup.example.com"
+        val mac = "aa11bb22cc33"
+        val secret = "verysecret123"
 
         val event = DeviceCreated(
             deviceId,
             adminActor.id,
             name,
             backgroundUrl,
-            backupBackendUrl
+            backupBackendUrl,
+            mac,
+            secret
         )
 
         val error = ErrorFixture.arbitrary()
@@ -101,7 +111,8 @@ internal class AddingDeviceTest {
             adminActor,
             name,
             backgroundUrl,
-            backupBackendUrl
+            backupBackendUrl,
+            MacSecretIdentity(mac, secret)
         )
 
         // then

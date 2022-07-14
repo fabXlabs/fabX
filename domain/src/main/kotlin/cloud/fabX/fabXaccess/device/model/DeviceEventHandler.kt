@@ -21,7 +21,8 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
                 aggregateVersion = event.aggregateVersion,
                 name = event.name,
                 background = event.background,
-                backupBackendUrl = event.backupBackendUrl
+                backupBackendUrl = event.backupBackendUrl,
+                identity = MacSecretIdentity(event.mac, event.secret)
             )
         )
     }

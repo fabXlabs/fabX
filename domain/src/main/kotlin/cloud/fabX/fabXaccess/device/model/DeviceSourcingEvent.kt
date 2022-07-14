@@ -28,7 +28,9 @@ data class DeviceCreated(
     override val actorId: ActorId,
     val name: String,
     val background: String,
-    val backupBackendUrl: String
+    val backupBackendUrl: String,
+    val mac: String,
+    val secret: String
 ) : DeviceSourcingEvent(aggregateRootId, 1, actorId) {
 
     override fun processBy(eventHandler: EventHandler, device: Option<Device>): Option<Device> =

@@ -7,12 +7,15 @@ object DeviceFixture {
         aggregateVersion: Long = 1,
         name: String = "device",
         background: String = "https://example.com/image.bmp",
-        backupBackendUrl: String = "https://fabx-backup.example.com"
+        backupBackendUrl: String = "https://fabx-backup.example.com",
+        mac: String = "aabbccddeeff",
+        secret: String = "supersecret42"
     ): Device = Device(
         deviceId,
         aggregateVersion,
         name,
         background,
-        backupBackendUrl
+        backupBackendUrl,
+        MacSecretIdentity(mac, secret)
     )
 }
