@@ -18,7 +18,7 @@ internal class QualificationTest {
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val aggregateVersion = 123L
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     @Test
     fun `given valid values when constructing qualification then it is constructed`() {

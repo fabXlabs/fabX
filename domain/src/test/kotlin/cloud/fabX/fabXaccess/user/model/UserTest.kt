@@ -23,7 +23,7 @@ internal class UserTest {
     private val userId = UserIdFixture.arbitraryId()
     private val aggregateVersion = 42L
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     @Test
     fun `given valid values when constructing user then user is constructed`() {

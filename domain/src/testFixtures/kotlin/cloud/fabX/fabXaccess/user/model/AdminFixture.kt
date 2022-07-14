@@ -3,7 +3,7 @@ package cloud.fabX.fabXaccess.user.model
 import arrow.core.getOrElse
 
 object AdminFixture {
-    fun arbitraryAdmin(
+    fun arbitrary(
         userId: UserId = UserIdFixture.arbitraryId(),
     ): Admin =
         UserFixture.arbitrary(

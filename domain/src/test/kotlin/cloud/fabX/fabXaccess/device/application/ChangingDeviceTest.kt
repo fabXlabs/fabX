@@ -27,7 +27,7 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class ChangingDeviceTest {
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 

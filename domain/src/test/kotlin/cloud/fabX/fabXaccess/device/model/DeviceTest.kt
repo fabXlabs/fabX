@@ -18,7 +18,7 @@ internal class DeviceTest {
     private val deviceId = DeviceIdFixture.arbitrary()
     private val aggregateVersion = 567L
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     @Test
     fun `given valid values when constructing device then it is constructed`() {

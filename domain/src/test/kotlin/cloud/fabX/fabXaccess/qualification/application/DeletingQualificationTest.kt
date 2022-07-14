@@ -26,7 +26,7 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class DeletingQualificationTest {
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 

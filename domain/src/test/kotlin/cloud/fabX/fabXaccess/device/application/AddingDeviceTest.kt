@@ -22,7 +22,7 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class AddingDeviceTest {
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 

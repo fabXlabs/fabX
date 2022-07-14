@@ -30,7 +30,7 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class ChangingUserTest {
 
-    private val adminActor = AdminFixture.arbitraryAdmin()
+    private val adminActor = AdminFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitraryId()
 
