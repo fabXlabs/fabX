@@ -280,7 +280,7 @@ internal class UserTest {
     @Test
     fun `when changing personal information then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UserPersonalInformationChanged(
             aggregateRootId = userId,
@@ -306,7 +306,7 @@ internal class UserTest {
     @Test
     fun `when changing lock state then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UserLockStateChanged(
             actorId = adminActor.id,
@@ -330,7 +330,7 @@ internal class UserTest {
     @Test
     fun `when adding username password identity then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val username = "name42"
         val password = "password1234"
@@ -359,7 +359,7 @@ internal class UserTest {
         // given
         val username = "u1"
         val identity = UsernamePasswordIdentity(username, "p1")
-        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UsernamePasswordIdentityRemoved(
             actorId = adminActor.id,
@@ -381,7 +381,7 @@ internal class UserTest {
     fun `given different username password identity when removing identity then error is returned`() {
         // given
         val identity = UsernamePasswordIdentity("u1", "p1")
-        val user = UserFixture.userWithIdentity(identity)
+        val user = UserFixture.withIdentity(identity)
 
         // when
         val result = user.removeUsernamePasswordIdentity(
@@ -405,7 +405,7 @@ internal class UserTest {
     @Test
     fun `given no username password identity when removing identity then error is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(identities = setOf())
+        val user = UserFixture.arbitrary(identities = setOf())
 
         // when
         val result = user.removeUsernamePasswordIdentity(
@@ -429,7 +429,7 @@ internal class UserTest {
     @Test
     fun `when adding card identity then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val cardId = "02E42232C45D80"
         val cardSecret = "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d"
@@ -458,7 +458,7 @@ internal class UserTest {
         // given
         val cardId = "2646d88c9a77bb"
         val identity = CardIdentity(cardId, "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d")
-        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = CardIdentityRemoved(
             actorId = adminActor.id,
@@ -483,7 +483,7 @@ internal class UserTest {
         val unknownCardId = "2646d88c9a77bb"
 
         val identity = CardIdentity(cardId, "dcc3114e9f37ec873fc4f043db6209ac948fe27b184ba8df3a2549")
-        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         // when
         val result = user.removeCardIdentity(adminActor, unknownCardId)
@@ -506,7 +506,7 @@ internal class UserTest {
         // given
         val unknownCardId = "2646d88c9a77bb"
 
-        val user = UserFixture.arbitraryUser(userId, identities = setOf())
+        val user = UserFixture.arbitrary(userId, identities = setOf())
 
         // when
         val result = user.removeCardIdentity(adminActor, unknownCardId)
@@ -527,7 +527,7 @@ internal class UserTest {
     @Test
     fun `when adding phone number identity then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val phoneNr = "+491720000000"
 
@@ -553,7 +553,7 @@ internal class UserTest {
         // given
         val phoneNr = "+491230000000"
         val identity = PhoneNrIdentity(phoneNr)
-        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = PhoneNrIdentityRemoved(
             actorId = adminActor.id,
@@ -575,7 +575,7 @@ internal class UserTest {
     fun `given different phone number identity when removing identity then error is returned`() {
         // given
         val identity = PhoneNrIdentity("+424242")
-        val user = UserFixture.userWithIdentity(identity)
+        val user = UserFixture.withIdentity(identity)
 
         // when
         val result = user.removePhoneNrIdentity(
@@ -597,7 +597,7 @@ internal class UserTest {
     @Test
     fun `given no phone number identity when removing identity then error is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(identities = setOf())
+        val user = UserFixture.arbitrary(identities = setOf())
 
         // when
         val result = user.removePhoneNrIdentity(
@@ -619,7 +619,7 @@ internal class UserTest {
     @Test
     fun `when deleting then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UserDeleted(
             aggregateRootId = userId,
@@ -650,7 +650,7 @@ internal class UserTest {
     ) {
         // given
         val identity = UsernamePasswordIdentity("user123", "password42")
-        val user = UserFixture.userWithIdentity(identity)
+        val user = UserFixture.withIdentity(identity)
 
         // when
         val result = user.hasIdentity(UsernamePasswordIdentity(username, password))
@@ -675,7 +675,7 @@ internal class UserTest {
     ) {
         // given
         val identity = CardIdentity("aabbccddeeff", "42aa42aa42aa")
-        val user = UserFixture.userWithIdentity(identity)
+        val user = UserFixture.withIdentity(identity)
 
         // when
         val result = user.hasIdentity(CardIdentity(cardId, cardSecret))
@@ -697,7 +697,7 @@ internal class UserTest {
     ) {
         // given
         val identity = PhoneNrIdentity("+4912300000042")
-        val user = UserFixture.userWithIdentity(identity)
+        val user = UserFixture.withIdentity(identity)
 
         // when
         val result = user.hasIdentity(PhoneNrIdentity(phoneNr))
@@ -710,7 +710,7 @@ internal class UserTest {
     fun `given any user when getting as member then returns member`() {
         // given
         val qualifications = setOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
-        val user = UserFixture.arbitraryUser(
+        val user = UserFixture.arbitrary(
             userId,
             memberQualifications = qualifications,
             firstName = "firstName",
@@ -727,7 +727,7 @@ internal class UserTest {
     @Test
     fun `given user without instructor when getting as instructor then returns error`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, instructorQualifications = null)
+        val user = UserFixture.arbitrary(userId, instructorQualifications = null)
 
         // when
         val result = user.asInstructor()
@@ -744,7 +744,7 @@ internal class UserTest {
         val qualification1 = QualificationIdFixture.arbitraryId()
         val qualification2 = QualificationIdFixture.arbitraryId()
 
-        val user = UserFixture.arbitraryUser(
+        val user = UserFixture.arbitrary(
             userId,
             instructorQualifications = setOf(qualification1, qualification2),
             firstName = "first",
@@ -763,7 +763,7 @@ internal class UserTest {
     @Test
     fun `given user without admin when getting as admin then returns error`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, isAdmin = false)
+        val user = UserFixture.arbitrary(userId, isAdmin = false)
 
         // when
         val result = user.asAdmin()
@@ -777,7 +777,7 @@ internal class UserTest {
     @Test
     fun `given user with admin when getting as admin then returns admin`() {
         // given
-        val user = UserFixture.arbitraryUser(
+        val user = UserFixture.arbitrary(
             userId,
             firstName = "first",
             lastName = "last",

@@ -50,7 +50,7 @@ internal class DeletingUserTest {
     @Test
     fun `given user can be found when deleting user then sourcing event is created and stored`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 987)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 987)
 
         val expectedSourcingEvent = UserDeleted(
             userId,
@@ -97,7 +97,7 @@ internal class DeletingUserTest {
     @Test
     fun `given sourcing event cannot be stored when deleting user then returns error`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 987)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 987)
 
         val event = UserDeleted(
             userId,

@@ -55,7 +55,7 @@ internal class ChangingUserTest {
     @Test
     fun `given user can be found when changing personal information then sourcing event is created and stored`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 1)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val newFirstName = ChangeableValue.ChangeToValue("aFirstName")
         val newLastName = ChangeableValue.ChangeToValue("aLastName")
@@ -121,7 +121,7 @@ internal class ChangingUserTest {
     @Test
     fun `given sourcing event cannot be stored when changing personal information then returns error`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 1)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val event = UserPersonalInformationChanged(
             userId,
@@ -158,7 +158,7 @@ internal class ChangingUserTest {
     @Test
     fun `given user can be found when changing lock state then sourcing event is created and stored`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 3)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 3)
 
         val newLocked = ChangeableValue.ChangeToValue(true)
         val newNotes = ChangeableValue.ChangeToValue("some notes")
@@ -220,7 +220,7 @@ internal class ChangingUserTest {
     @Test
     fun `given sourcing event cannot be stored when changing lock state then returns error`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = 1)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val event = UserLockStateChanged(
             userId,

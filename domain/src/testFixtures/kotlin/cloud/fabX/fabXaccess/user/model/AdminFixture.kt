@@ -6,7 +6,7 @@ object AdminFixture {
     fun arbitraryAdmin(
         userId: UserId = UserIdFixture.arbitraryId(),
     ): Admin =
-        UserFixture.arbitraryUser(
+        UserFixture.arbitrary(
             userId = userId,
             isAdmin = true
         )

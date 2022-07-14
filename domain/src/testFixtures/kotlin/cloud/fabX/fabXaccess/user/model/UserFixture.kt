@@ -5,7 +5,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 
 object UserFixture {
 
-    fun arbitraryUser(
+    fun arbitrary(
         userId: UserId = UserIdFixture.arbitraryId(),
         aggregateVersion: Long = 1,
         firstName: String = "first",
@@ -31,7 +31,7 @@ object UserFixture {
         isAdmin
     )
 
-    fun userWithIdentity(
+    fun withIdentity(
         identity: UserIdentity,
         userId: UserId = UserIdFixture.arbitraryId(),
         aggregateVersion: Long = 1,
@@ -43,7 +43,7 @@ object UserFixture {
         memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitraryId()),
         instructorQualifications: Set<QualificationId>? = null,
         isAdmin: Boolean = false
-    ): User = arbitraryUser(
+    ): User = arbitrary(
         userId,
         aggregateVersion,
         firstName,

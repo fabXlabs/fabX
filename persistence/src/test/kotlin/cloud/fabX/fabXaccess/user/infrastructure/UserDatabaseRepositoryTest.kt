@@ -245,7 +245,7 @@ internal class UserDatabaseRepositoryTest {
 
             // then
             assertThat(result).containsExactlyInAnyOrder(
-                UserFixture.arbitraryUser(
+                UserFixture.arbitrary(
                     userId,
                     3,
                     "first1v3",
@@ -258,7 +258,7 @@ internal class UserDatabaseRepositoryTest {
                     null,
                     false
                 ),
-                UserFixture.arbitraryUser(
+                UserFixture.arbitrary(
                     userId2,
                     2,
                     "first2v2",
