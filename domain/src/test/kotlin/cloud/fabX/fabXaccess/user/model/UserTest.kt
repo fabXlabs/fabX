@@ -355,6 +355,78 @@ internal class UserTest {
     }
 
     @Test
+    fun `given username password identity when removing identity then expected sourcing event is returned`() {
+        // given
+        val username = "u1"
+        val identity = UsernamePasswordIdentity(username, "p1")
+        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = UsernamePasswordIdentityRemoved(
+            actorId = adminActor.id,
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            username = username
+        )
+
+        // when
+        val result = user.removeUsernamePasswordIdentity(adminActor, username)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given different username password identity when removing identity then error is returned`() {
+        // given
+        val identity = UsernamePasswordIdentity("u1", "p1")
+        val user = UserFixture.userWithIdentity(identity)
+
+        // when
+        val result = user.removeUsernamePasswordIdentity(
+            adminActor,
+            "unknownusername"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with username \"unknownusername\".",
+                    mapOf(
+                        "username" to "unknownusername"
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `given no username password identity when removing identity then error is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, identities = setOf())
+
+        // when
+        val result = user.removeUsernamePasswordIdentity(
+            adminActor,
+            "unknownusername"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with username \"unknownusername\".",
+                    mapOf(
+                        "username" to "unknownusername"
+                    )
+                )
+            )
+    }
+
+    @Test
     fun `when deleting then expected sourcing event is returned`() {
         // given
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)

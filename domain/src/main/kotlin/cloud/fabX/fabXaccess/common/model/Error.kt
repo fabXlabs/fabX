@@ -4,7 +4,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.user.model.UserId
 
-sealed class Error(open val message: String, val parameters: Map<String, String> = emptyMap()) {
+sealed class Error(open val message: String, open val parameters: Map<String, String> = emptyMap()) {
     data class UserNotFound(
         override val message: String,
         val userId: UserId
@@ -13,6 +13,11 @@ sealed class Error(open val message: String, val parameters: Map<String, String>
     data class UserNotFoundByIdentity(
         override val message: String
     ) : Error(message)
+
+    data class UserIdentityNotFound(
+        override val message: String,
+        override val parameters: Map<String, String>
+    ) : Error(message, parameters)
 
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)

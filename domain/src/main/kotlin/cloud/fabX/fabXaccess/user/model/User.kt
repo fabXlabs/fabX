@@ -5,6 +5,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
+import arrow.core.toOption
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -14,6 +15,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import java.util.stream.Collectors
 
 // TODO PhoneNumberIdentification (maybe remove phone number from "personal details"?)
 //      with phone number must be unique rule
@@ -104,8 +106,36 @@ data class User internal constructor(
         password: String
     ): UserSourcingEvent {
         // TODO username must be unique rule
+        // TODO at most one UsernamePasswordIdentity rule
         // TODO password hashing rule
         return UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, password)
+    }
+
+    /**
+     * Removes the user's identity given by the username.
+     *
+     * @return error if no identity with given username exists, sourcing event otherwise
+     */
+    fun removeUsernamePasswordIdentity(
+        actor: Admin,
+        username: String
+    ): Either<Error, UserSourcingEvent> {
+        return identities.firstOrNull { it is UsernamePasswordIdentity && it.username == username }
+            .toOption()
+            .toEither {
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with username \"$username\".",
+                    mapOf("username" to username)
+                )
+            }
+            .map {
+                UsernamePasswordIdentityRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    username
+                )
+            }
     }
 
     fun delete(
@@ -190,6 +220,18 @@ data class User internal constructor(
                             e.username,
                             e.password
                         )
+                    )
+                )
+            }
+
+        override fun handle(event: UsernamePasswordIdentityRemoved, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        identities = u.identities.stream()
+                            .filter { !(it is UsernamePasswordIdentity && it.username == e.username) }
+                            .collect(Collectors.toSet())
                     )
                 )
             }
