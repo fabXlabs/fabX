@@ -31,7 +31,7 @@ internal class ChangingQualificationTest {
 
     private val adminActor = AdminFixture.arbitraryAdmin()
 
-    private val qualificationId = QualificationIdFixture.arbitraryId()
+    private val qualificationId = QualificationIdFixture.arbitrary()
 
     private var logger: Logger? = null
     private var qualificationRepository: QualificationRepository? = null

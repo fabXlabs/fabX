@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class QualificationTest {
 
-    private val qualificationId = QualificationIdFixture.arbitraryId()
+    private val qualificationId = QualificationIdFixture.arbitrary()
     private val aggregateVersion = 123L
 
     private val adminActor = AdminFixture.arbitraryAdmin()
@@ -277,7 +277,7 @@ internal class QualificationTest {
     fun `given valid qualification when stringifying then result is correct`() {
         // given
         val qualification = Qualification(
-            QualificationIdFixture.staticId(1234),
+            QualificationIdFixture.static(1234),
             aggregateVersion,
             "Door Shop",
             "Door of the workshop",

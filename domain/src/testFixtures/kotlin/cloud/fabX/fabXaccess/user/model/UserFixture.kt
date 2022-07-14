@@ -14,7 +14,7 @@ object UserFixture {
         locked: Boolean = false,
         notes: String? = null,
         identities: Set<UserIdentity> = setOf(UsernamePasswordIdentity("firstlast", "supersecret")),
-        memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitraryId()),
+        memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitrary()),
         instructorQualifications: Set<QualificationId>? = null,
         isAdmin: Boolean = false
     ): User = User(
@@ -40,7 +40,7 @@ object UserFixture {
         wikiName: String = "wiki",
         locked: Boolean = false,
         notes: String? = null,
-        memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitraryId()),
+        memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitrary()),
         instructorQualifications: Set<QualificationId>? = null,
         isAdmin: Boolean = false
     ): User = arbitrary(

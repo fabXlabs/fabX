@@ -4,12 +4,11 @@ import java.util.UUID
 
 object QualificationIdFixture {
 
-    fun arbitraryId(): QualificationId = newQualificationId()
+    fun arbitrary(): QualificationId = newQualificationId()
 
-    fun staticId(nr: Int): QualificationId {
+    fun static(nr: Int): QualificationId {
         val byteArray = ByteArray(16)
         byteArray[7] = nr.toByte()
         return QualificationId(UUID.nameUUIDFromBytes(byteArray))
     }
-
 }

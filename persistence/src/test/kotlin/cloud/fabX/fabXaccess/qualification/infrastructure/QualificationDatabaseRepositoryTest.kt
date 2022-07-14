@@ -24,7 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class QualificationDatabaseRepositoryTest {
-    val qualificationId = QualificationIdFixture.staticId(123)
+    val qualificationId = QualificationIdFixture.static(123)
     val actorId = UserIdFixture.staticId(42)
 
     @Test
@@ -162,8 +162,8 @@ internal class QualificationDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForQualificationsStoredInRepository {
 
-        private val qualificationId2 = QualificationIdFixture.staticId(234)
-        private val qualificationId3 = QualificationIdFixture.staticId(345)
+        private val qualificationId2 = QualificationIdFixture.static(234)
+        private val qualificationId3 = QualificationIdFixture.static(345)
 
         private var repository: QualificationRepository? = null
 

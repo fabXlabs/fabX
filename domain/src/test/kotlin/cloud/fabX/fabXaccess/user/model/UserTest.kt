@@ -709,7 +709,7 @@ internal class UserTest {
     @Test
     fun `given any user when getting as member then returns member`() {
         // given
-        val qualifications = setOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
+        val qualifications = setOf(QualificationIdFixture.arbitrary(), QualificationIdFixture.arbitrary())
         val user = UserFixture.arbitrary(
             userId,
             memberQualifications = qualifications,
@@ -741,8 +741,8 @@ internal class UserTest {
     @Test
     fun `given user with instructor when getting as instructor then returns instructor`() {
         // given
-        val qualification1 = QualificationIdFixture.arbitraryId()
-        val qualification2 = QualificationIdFixture.arbitraryId()
+        val qualification1 = QualificationIdFixture.arbitrary()
+        val qualification2 = QualificationIdFixture.arbitrary()
 
         val user = UserFixture.arbitrary(
             userId,
@@ -805,8 +805,8 @@ internal class UserTest {
             false,
             null,
             setOf(),
-            setOf(QualificationIdFixture.staticId(43)),
-            setOf(QualificationIdFixture.staticId(44)),
+            setOf(QualificationIdFixture.static(43)),
+            setOf(QualificationIdFixture.static(44)),
             true
         )
 
