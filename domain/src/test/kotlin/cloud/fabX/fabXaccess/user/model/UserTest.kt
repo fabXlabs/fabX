@@ -405,7 +405,7 @@ internal class UserTest {
     @Test
     fun `given no username password identity when removing identity then error is returned`() {
         // given
-        val user = UserFixture.arbitraryUser(userId, identities = setOf())
+        val user = UserFixture.arbitraryUser(identities = setOf())
 
         // when
         val result = user.removeUsernamePasswordIdentity(
@@ -525,6 +525,98 @@ internal class UserTest {
     }
 
     @Test
+    fun `when adding phone number identity then expected sourcing event is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+
+        val phoneNr = "+491720000000"
+
+        val expectedSourcingEvent = PhoneNrIdentityAdded(
+            actorId = adminActor.id,
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            phoneNr = phoneNr
+        )
+
+        // when
+        val result = user.addPhoneNrIdentity(
+            adminActor,
+            phoneNr
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given phone number identity when removing identity then expected sourcing event is returned`() {
+        // given
+        val phoneNr = "+491230000000"
+        val identity = PhoneNrIdentity(phoneNr)
+        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = PhoneNrIdentityRemoved(
+            actorId = adminActor.id,
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            phoneNr = phoneNr
+        )
+
+        // when
+        val result = user.removePhoneNrIdentity(adminActor, phoneNr)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given different phone number identity when removing identity then error is returned`() {
+        // given
+        val identity = PhoneNrIdentity("+424242")
+        val user = UserFixture.userWithIdentity(identity)
+
+        // when
+        val result = user.removePhoneNrIdentity(
+            adminActor,
+            "+123"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with phone number +123.",
+                    mapOf("phoneNr" to "+123")
+                )
+            )
+    }
+
+    @Test
+    fun `given no phone number identity when removing identity then error is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(identities = setOf())
+
+        // when
+        val result = user.removePhoneNrIdentity(
+            adminActor,
+            "+4242123"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with phone number +4242123.",
+                    mapOf("phoneNr" to "+4242123")
+                )
+            )
+    }
+
+    @Test
     fun `when deleting then expected sourcing event is returned`() {
         // given
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
@@ -551,7 +643,7 @@ internal class UserTest {
             "user,    password,   false",
         ]
     )
-    fun `given user with identity when checking hasIdentity then returns expected result`(
+    fun `given user with username password identity when checking hasIdentity then returns expected result`(
         username: String,
         password: String,
         expectedResult: Boolean
@@ -562,6 +654,53 @@ internal class UserTest {
 
         // when
         val result = user.hasIdentity(UsernamePasswordIdentity(username, password))
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "aabbccddeeff, 42aa42aa42aa, true",
+            "aaaaaaaaaaaa, 42aa42aa42aa, false",
+            "aabbccddeeff, bbbbbbbbbbbb, false",
+            "aaaaaaaaaaaa, bbbbbbbbbbbb, false",
+        ]
+    )
+    fun `given user with card identity when checking hasIdentity then returns expected result`(
+        cardId: String,
+        cardSecret: String,
+        expectedResult: Boolean
+    ) {
+        // given
+        val identity = CardIdentity("aabbccddeeff", "42aa42aa42aa")
+        val user = UserFixture.userWithIdentity(identity)
+
+        // when
+        val result = user.hasIdentity(CardIdentity(cardId, cardSecret))
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "+4912300000042, true",
+            "+4912300000001, false",
+        ]
+    )
+    fun `given user with phone number identity when checking hasIdentity then returns expected result`(
+        phoneNr: String,
+        expectedResult: Boolean
+    ) {
+        // given
+        val identity = PhoneNrIdentity("+4912300000042")
+        val user = UserFixture.userWithIdentity(identity)
+
+        // when
+        val result = user.hasIdentity(PhoneNrIdentity(phoneNr))
 
         // then
         assertThat(result).isEqualTo(expectedResult)

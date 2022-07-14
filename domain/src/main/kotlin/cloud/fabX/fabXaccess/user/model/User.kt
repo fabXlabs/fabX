@@ -17,10 +17,9 @@ import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import java.util.stream.Collectors
 
-// TODO PhoneNumberIdentification (maybe remove phone number from "personal details"?)
-//      with phone number must be unique rule
-
 // TODO wikiName must be unique rule
+
+// TODO service(s) for adding/removing identities
 
 data class User internal constructor(
     override val id: UserId,
@@ -174,6 +173,41 @@ data class User internal constructor(
             }
     }
 
+    fun addPhoneNrIdentity(
+        actor: Admin,
+        phoneNr: String
+    ): UserSourcingEvent {
+        // TODO phone number must be unique rule
+        return PhoneNrIdentityAdded(id, aggregateVersion + 1, actor.id, phoneNr)
+    }
+
+    /**
+     * Removes the user's identity given by the phone number.
+     *
+     * @return error if no identity with given card exists, sourcing event otherwise
+     */
+    fun removePhoneNrIdentity(
+        actor: Admin,
+        phoneNr: String
+    ): Either<Error, UserSourcingEvent> {
+        return identities.firstOrNull { it is PhoneNrIdentity && it.phoneNr == phoneNr }
+            .toOption()
+            .toEither {
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with phone number $phoneNr.",
+                    mapOf("phoneNr" to phoneNr)
+                )
+            }
+            .map {
+                PhoneNrIdentityRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    phoneNr
+                )
+            }
+    }
+
     fun delete(
         actor: Admin
     ): UserSourcingEvent {
@@ -195,6 +229,7 @@ data class User internal constructor(
         { Admin(id, name) }
     )
 
+    // TODO move event handler to own file
     private class EventHandler : UserSourcingEvent.EventHandler {
 
         override fun handle(event: UserCreated, user: Option<User>): Option<User> {
@@ -292,6 +327,28 @@ data class User internal constructor(
                         aggregateVersion = e.aggregateVersion,
                         identities = u.identities.stream()
                             .filter { !(it is CardIdentity && it.cardId == e.cardId) }
+                            .collect(Collectors.toSet())
+                    )
+                )
+            }
+
+        override fun handle(event: PhoneNrIdentityAdded, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        identities = u.identities + PhoneNrIdentity(e.phoneNr)
+                    )
+                )
+            }
+
+        override fun handle(event: PhoneNrIdentityRemoved, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        identities = u.identities.stream()
+                            .filter { !(it is PhoneNrIdentity && it.phoneNr == e.phoneNr) }
                             .collect(Collectors.toSet())
                     )
                 )

@@ -20,10 +20,14 @@ sealed class UserSourcingEvent(
         fun handle(event: UserCreated, user: Option<User>): Option<User>
         fun handle(event: UserPersonalInformationChanged, user: Option<User>): Option<User>
         fun handle(event: UserLockStateChanged, user: Option<User>): Option<User>
+
         fun handle(event: UsernamePasswordIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: UsernamePasswordIdentityRemoved, user: Option<User>): Option<User>
         fun handle(event: CardIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: CardIdentityRemoved, user: Option<User>): Option<User>
+        fun handle(event: PhoneNrIdentityAdded, user: Option<User>): Option<User>
+        fun handle(event: PhoneNrIdentityRemoved, user: Option<User>): Option<User>
+
         fun handle(event: UserDeleted, user: Option<User>): Option<User>
     }
 }
@@ -105,6 +109,28 @@ data class CardIdentityRemoved(
     override val aggregateVersion: Long,
     override val actorId: ActorId,
     val cardId: String
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+data class PhoneNrIdentityAdded(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    val phoneNr: String
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+data class PhoneNrIdentityRemoved(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    val phoneNr: String
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
