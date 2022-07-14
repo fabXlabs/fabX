@@ -24,7 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class DeviceDatabaseRepositoryTest {
-    private val deviceId = DeviceIdFixture.staticId(4242)
+    private val deviceId = DeviceIdFixture.static(4242)
     private val actorId = UserIdFixture.staticId(1234)
 
     @Test
@@ -157,8 +157,8 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDevicesStoredInRepository {
 
-        private val deviceId2 = DeviceIdFixture.staticId(4343)
-        private val deviceId3 = DeviceIdFixture.staticId(4444)
+        private val deviceId2 = DeviceIdFixture.static(4343)
+        private val deviceId3 = DeviceIdFixture.static(4444)
 
         private var repository: DeviceRepository? = null
 

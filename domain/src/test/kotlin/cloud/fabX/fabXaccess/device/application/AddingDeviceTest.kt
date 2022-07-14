@@ -24,7 +24,7 @@ internal class AddingDeviceTest {
 
     private val adminActor = AdminFixture.arbitraryAdmin()
 
-    private val deviceId = DeviceIdFixture.arbitraryId()
+    private val deviceId = DeviceIdFixture.arbitrary()
 
     private var logger: Logger? = null
     private var deviceRepository: DeviceRepository? = null

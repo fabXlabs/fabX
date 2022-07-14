@@ -15,7 +15,7 @@ import org.junit.jupiter.api.assertThrows
 
 internal class DeviceTest {
 
-    private val deviceId = DeviceIdFixture.arbitraryId()
+    private val deviceId = DeviceIdFixture.arbitrary()
     private val aggregateVersion = 567L
 
     private val adminActor = AdminFixture.arbitraryAdmin()
@@ -261,7 +261,7 @@ internal class DeviceTest {
     fun `given valid device when stringifying then result is correct`() {
         // given
         val device = Device(
-            DeviceIdFixture.staticId(9876),
+            DeviceIdFixture.static(9876),
             aggregateVersion,
             "Woodworking",
             "https://example.com/image.bmp",
