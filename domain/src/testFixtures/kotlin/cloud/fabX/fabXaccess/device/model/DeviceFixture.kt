@@ -18,4 +18,21 @@ object DeviceFixture {
         backupBackendUrl,
         MacSecretIdentity(mac, secret)
     )
+
+    fun withIdentity(
+        deviceIdentity: MacSecretIdentity,
+        deviceId: DeviceId = DeviceIdFixture.arbitrary(),
+        aggregateVersion: Long = 1,
+        name: String = "device",
+        background: String = "https://example.com/image.bmp",
+        backupBackendUrl: String = "https://fabx-backup.example.com"
+    ) = arbitrary(
+        deviceId,
+        aggregateVersion,
+        name,
+        background,
+        backupBackendUrl,
+        deviceIdentity.mac,
+        deviceIdentity.secret
+    )
 }

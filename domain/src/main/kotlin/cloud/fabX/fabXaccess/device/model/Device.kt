@@ -87,5 +87,7 @@ data class Device internal constructor(
         )
     }
 
+    fun hasIdentity(deviceIdentity: DeviceIdentity) = identity == deviceIdentity
+
     class EventHistoryDoesNotStartWithDeviceCreated(message: String) : Exception(message)
 }

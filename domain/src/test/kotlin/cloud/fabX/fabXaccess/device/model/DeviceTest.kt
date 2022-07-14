@@ -12,6 +12,8 @@ import isNone
 import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 internal class DeviceTest {
 
@@ -266,6 +268,32 @@ internal class DeviceTest {
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "aabbccddeeff, supersecret, true"
+        ]
+    )
+    fun `given mac secret identity when checking hasIdentity then returns expected result`(
+        mac: String,
+        secret: String,
+        expectedResult: Boolean
+    ) {
+        // given
+        val device = DeviceFixture.withIdentity(
+            MacSecretIdentity(
+                "aabbccddeeff",
+                "supersecret"
+            )
+        )
+
+        // when
+        val result = device.hasIdentity(MacSecretIdentity(mac, secret))
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test
