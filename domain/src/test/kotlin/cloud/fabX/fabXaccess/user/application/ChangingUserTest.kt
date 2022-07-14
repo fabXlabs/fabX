@@ -132,7 +132,7 @@ internal class ChangingUserTest {
             ChangeableValue.LeaveAsIs
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
@@ -230,7 +230,7 @@ internal class ChangingUserTest {
             ChangeableValue.LeaveAsIs
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())

@@ -123,7 +123,7 @@ internal class ChangingDeviceTest {
             ChangeableValue.LeaveAsIs
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(deviceRepository!!.getById(deviceId))
             .thenReturn(device.right())

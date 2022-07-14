@@ -91,7 +91,7 @@ internal class AddingDeviceTest {
             backupBackendUrl
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(deviceRepository!!.store(event))
             .thenReturn(error.some())

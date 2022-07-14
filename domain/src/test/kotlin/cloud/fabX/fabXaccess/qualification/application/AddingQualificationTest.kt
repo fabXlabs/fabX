@@ -96,7 +96,7 @@ internal class AddingQualificationTest {
             orderNr
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(qualificationRepository!!.store(event))
             .thenReturn(error.some())

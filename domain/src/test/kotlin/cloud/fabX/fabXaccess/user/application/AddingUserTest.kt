@@ -91,7 +91,7 @@ internal class AddingUserTest {
             wikiName
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(error.some())

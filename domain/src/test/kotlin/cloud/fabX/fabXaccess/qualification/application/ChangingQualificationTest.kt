@@ -136,7 +136,7 @@ internal class ChangingQualificationTest {
             ChangeableValue.LeaveAsIs
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(qualificationRepository!!.getById(qualificationId))
             .thenReturn(qualification.right())

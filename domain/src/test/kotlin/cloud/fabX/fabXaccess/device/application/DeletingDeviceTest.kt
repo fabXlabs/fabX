@@ -107,7 +107,7 @@ internal class DeletingDeviceTest {
             adminActor.id
         )
 
-        val error = ErrorFixture.arbitraryError()
+        val error = ErrorFixture.arbitrary()
 
         whenever(deviceRepository!!.getById(deviceId))
             .thenReturn(device.right())
