@@ -9,3 +9,7 @@ interface UserRepository {
     fun getById(id: UserId): Either<Error, User>
     fun store(event: UserSourcingEvent): Option<Error>
 }
+
+interface GettingUserByIdentity {
+    fun getByIdentity(identity: UserIdentity): Either<Error, User>
+}

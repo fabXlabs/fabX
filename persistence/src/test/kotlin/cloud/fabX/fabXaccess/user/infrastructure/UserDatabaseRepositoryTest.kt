@@ -7,6 +7,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -14,6 +15,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isLeft
 import isNone
 import isRight
@@ -270,6 +273,90 @@ internal class UserDatabaseRepositoryTest {
                 )
             )
         }
+    }
 
+    @Nested
+    internal inner class GivenUsersWithIdentitiesStoredInRepository {
+
+        private val userId2 = UserIdFixture.staticId(12345)
+
+        private var repository: UserDatabaseRepository? = null
+
+        @BeforeEach
+        fun setup() {
+            repository = UserDatabaseRepository()
+
+            val user1Created = UserCreated(
+                userId,
+                actorId,
+                firstName = "first1",
+                lastName = "last1",
+                wikiName = "wiki1"
+            )
+            repository!!.store(user1Created)
+
+            val user1IdentityAdded = UsernamePasswordIdentityAdded(
+                userId,
+                2,
+                actorId,
+                "username1",
+                "password1"
+            )
+            repository!!.store(user1IdentityAdded)
+
+            val user2Created = UserCreated(
+                userId2,
+                actorId,
+                firstName = "first2",
+                lastName = "last2",
+                wikiName = "wiki2"
+            )
+            repository!!.store(user2Created)
+
+            val user2IdentityAdded = UsernamePasswordIdentityAdded(
+                userId2,
+                2,
+                actorId,
+                "username2",
+                "password2"
+            )
+            repository!!.store(user2IdentityAdded)
+        }
+
+        @Test
+        fun `when getting by known identity then returns user`() {
+            // given
+            val repository = this.repository!! as GettingUserByIdentity
+
+            // when
+            val result = repository.getByIdentity(
+                UsernamePasswordIdentity("username1", "password1")
+            )
+
+            // then
+            assertThat(result)
+                .isRight()
+                .all {
+                    transform { it.id }.isEqualTo(userId)
+                }
+        }
+
+        @Test
+        fun `when getting by unknown identity then returns error`() {
+            // given
+            val repository = this.repository!! as GettingUserByIdentity
+
+            // when
+            val result = repository.getByIdentity(
+                UsernamePasswordIdentity("unknownusername", "randompassword")
+            )
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UserNotFoundByIdentity("Not able to find user for given identity.")
+                )
+        }
     }
 }
