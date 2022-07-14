@@ -54,7 +54,7 @@ internal class ChangingQualificationTest {
     @Test
     fun `given qualification can be found when changing qualification details then sourcing event is created and stored`() {
         // given
-        val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = 1)
+        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 1)
 
         val newName = ChangeableValue.ChangeToValue("newName")
         val newDescription = ChangeableValue.ChangeToValue("newDescription")
@@ -124,7 +124,7 @@ internal class ChangingQualificationTest {
     @Test
     fun `given sourcing event cannot be stored when changing qualification details then returns error`() {
         // given
-        val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = 1)
+        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 1)
 
         val event = QualificationDetailsChanged(
             qualificationId,

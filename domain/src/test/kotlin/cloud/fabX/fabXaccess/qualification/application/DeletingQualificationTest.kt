@@ -51,7 +51,7 @@ internal class DeletingQualificationTest {
     @Test
     fun `given qualification can be found when deleting qualification then sourcing event is created and stored`() {
         // given
-        val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = 123)
+        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
         val expectedSourcingEvent = QualificationDeleted(
             qualificationId,
@@ -98,7 +98,7 @@ internal class DeletingQualificationTest {
     @Test
     fun `given sourcing event cannot be stored when deleting qualification then returns error`() {
         // given
-        val qualification = QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = 123)
+        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
         val event = QualificationDeleted(
             qualificationId,

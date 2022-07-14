@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.qualification.model
 
 object QualificationFixture {
 
-    fun arbitraryQualification(
+    fun arbitrary(
         qualificationId: QualificationId = QualificationIdFixture.arbitraryId(),
         aggregateVersion: Long = 1,
         name: String = "qualification",

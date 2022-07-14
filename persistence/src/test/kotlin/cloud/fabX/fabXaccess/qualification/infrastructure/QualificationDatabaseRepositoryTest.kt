@@ -241,7 +241,7 @@ internal class QualificationDatabaseRepositoryTest {
 
             // then
             assertThat(result).containsExactlyInAnyOrder(
-                QualificationFixture.arbitraryQualification(
+                QualificationFixture.arbitrary(
                     qualificationId,
                     2,
                     "qualification1",
@@ -249,7 +249,7 @@ internal class QualificationDatabaseRepositoryTest {
                     "#000001",
                     1
                 ),
-                QualificationFixture.arbitraryQualification(
+                QualificationFixture.arbitrary(
                     qualificationId3,
                     2,
                     "qualification3",

@@ -229,7 +229,7 @@ internal class QualificationTest {
     fun `when changing details then expected sourcing event is returned`() {
         // given
         val qualification =
-            QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = aggregateVersion)
+            QualificationFixture.arbitrary(qualificationId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = QualificationDetailsChanged(
             aggregateRootId = qualificationId,
@@ -258,7 +258,7 @@ internal class QualificationTest {
     fun `when deleting then expected sourcing event is returned`() {
         // given
         val qualification =
-            QualificationFixture.arbitraryQualification(qualificationId, aggregateVersion = aggregateVersion)
+            QualificationFixture.arbitrary(qualificationId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = QualificationDeleted(
             aggregateRootId = qualificationId,
