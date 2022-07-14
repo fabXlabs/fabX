@@ -336,9 +336,7 @@ internal class UserDatabaseRepositoryTest {
             // then
             assertThat(result)
                 .isRight()
-                .all {
-                    transform { it.id }.isEqualTo(userId)
-                }
+                .transform { it.id }.isEqualTo(userId)
         }
 
         @Test

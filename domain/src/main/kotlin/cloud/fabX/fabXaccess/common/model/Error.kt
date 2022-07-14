@@ -32,5 +32,9 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         val deviceId: DeviceId
     ) : Error(message, mapOf("deviceId" to deviceId.toString()))
 
+    data class DeviceNotFoundByIdentity(
+        override val message: String
+    ) : Error(message)
+
     data class VersionConflict(override val message: String) : Error(message)
 }

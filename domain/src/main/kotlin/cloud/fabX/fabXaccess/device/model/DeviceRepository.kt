@@ -9,3 +9,7 @@ interface DeviceRepository {
     fun getById(id: DeviceId): Either<Error, Device>
     fun store(event: DeviceSourcingEvent): Option<Error>
 }
+
+interface GettingDeviceByIdentity {
+    fun getByIdentity(identity: DeviceIdentity): Either<Error, Device>
+}

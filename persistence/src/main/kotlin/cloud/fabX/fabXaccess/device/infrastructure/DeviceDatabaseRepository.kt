@@ -6,13 +6,16 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
+import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceId
+import cloud.fabX.fabXaccess.device.model.DeviceIdentity
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
+import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 
-class DeviceDatabaseRepository : DeviceRepository {
+class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity {
     private val events = mutableListOf<DeviceSourcingEvent>()
 
     override fun getAll(): Set<Device> {
@@ -69,4 +72,10 @@ class DeviceDatabaseRepository : DeviceRepository {
             .filter { it.aggregateRootId == id }
             .maxOfOrNull { it.aggregateVersion }
     }
+
+    override fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
+        getAll()
+            .firstOrNull { it.hasIdentity(identity) }
+            .toOption()
+            .toEither { Error.DeviceNotFoundByIdentity("Not able to find device for given identity.") }
 }

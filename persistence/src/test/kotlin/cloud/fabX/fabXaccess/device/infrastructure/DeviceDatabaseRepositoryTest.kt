@@ -12,6 +12,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceDetailsChanged
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
+import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
@@ -268,6 +270,75 @@ internal class DeviceDatabaseRepositoryTest {
                     "supersecret2"
                 )
             )
+        }
+    }
+
+    @Nested
+    internal inner class GivenDevicesWithIdentitiesStoredInRepository {
+
+        private val deviceId2 = DeviceIdFixture.static(4242)
+
+        private var repository: DeviceRepository? = null
+
+        @BeforeEach
+        fun setup() {
+            repository = DeviceDatabaseRepository()
+
+            val device1Created = DeviceCreated(
+                deviceId,
+                actorId,
+                name = "device1",
+                background = "https://example.com/1.bmp",
+                backupBackendUrl = "https://backup.example.com",
+                mac = "aabbccddeeff",
+                secret = "supersecret"
+            )
+            repository!!.store(device1Created)
+
+            val device2Created = DeviceCreated(
+                deviceId2,
+                actorId,
+                name = "device2",
+                background = "https://background.com/device2.bmp",
+                backupBackendUrl = "https://backup2.example.com",
+                mac = "aabbccddee22",
+                secret = "supersecret2"
+            )
+            repository!!.store(device2Created)
+        }
+
+        @Test
+        fun `when getting by known identity then returns device`() {
+            // given
+            val repository = this.repository!! as GettingDeviceByIdentity
+
+            // when
+            val result = repository.getByIdentity(
+                MacSecretIdentity("aabbccddeeff", "supersecret")
+            )
+
+            // then
+            assertThat(result)
+                .isRight()
+                .transform { it.id }.isEqualTo(deviceId)
+        }
+
+        @Test
+        fun `when getting by unknown identity then returns error`() {
+            // given
+            val repository = this.repository!! as GettingDeviceByIdentity
+
+            // when
+            val result = repository.getByIdentity(
+                MacSecretIdentity("000000000000", "supersecret")
+            )
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.DeviceNotFoundByIdentity("Not able to find device for given identity.")
+                )
         }
     }
 }
