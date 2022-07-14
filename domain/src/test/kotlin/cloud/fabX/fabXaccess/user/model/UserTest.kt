@@ -427,6 +427,104 @@ internal class UserTest {
     }
 
     @Test
+    fun `when adding card identity then expected sourcing event is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+
+        val cardId = "02E42232C45D80"
+        val cardSecret = "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d"
+
+        val expectedSourcingEvent = CardIdentityAdded(
+            actorId = adminActor.id,
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            cardId = cardId,
+            cardSecret = cardSecret
+        )
+
+        // when
+        val result = user.addCardIdentity(
+            adminActor,
+            cardId,
+            cardSecret
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given card identity when removing identity then expected sourcing event is returned`() {
+        // given
+        val cardId = "2646d88c9a77bb"
+        val identity = CardIdentity(cardId, "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d")
+        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = CardIdentityRemoved(
+            actorId = adminActor.id,
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            cardId = cardId
+        )
+
+        // when
+        val result = user.removeCardIdentity(adminActor, cardId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given different card identity when removing identity then error is returned`() {
+        // given
+        val cardId = "3c07d626bd4ce5"
+        val unknownCardId = "2646d88c9a77bb"
+
+        val identity = CardIdentity(cardId, "dcc3114e9f37ec873fc4f043db6209ac948fe27b184ba8df3a2549")
+        val user = UserFixture.userWithIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+
+        // when
+        val result = user.removeCardIdentity(adminActor, unknownCardId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with card id $unknownCardId.",
+                    mapOf(
+                        "cardId" to unknownCardId
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `given no card identity when removing identity then error is returned`() {
+        // given
+        val unknownCardId = "2646d88c9a77bb"
+
+        val user = UserFixture.arbitraryUser(userId, identities = setOf())
+
+        // when
+        val result = user.removeCardIdentity(adminActor, unknownCardId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with card id $unknownCardId.",
+                    mapOf(
+                        "cardId" to unknownCardId
+                    )
+                )
+            )
+    }
+
+    @Test
     fun `when deleting then expected sourcing event is returned`() {
         // given
         val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)

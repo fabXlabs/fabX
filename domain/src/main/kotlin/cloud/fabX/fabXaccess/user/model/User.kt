@@ -138,6 +138,42 @@ data class User internal constructor(
             }
     }
 
+    fun addCardIdentity(
+        actor: Admin,
+        cardId: String,
+        cardSecret: String
+    ): UserSourcingEvent {
+        // TODO at most one CardIdentity rule
+        return CardIdentityAdded(id, aggregateVersion + 1, actor.id, cardId, cardSecret)
+    }
+
+    /**
+     * Removes the user's identity given by the card id.
+     *
+     * @return error if no identity with given card id exists, sourcing event otherwise
+     */
+    fun removeCardIdentity(
+        actor: Admin,
+        cardId: String
+    ): Either<Error, UserSourcingEvent> {
+        return identities.firstOrNull { it is CardIdentity && it.cardId == cardId }
+            .toOption()
+            .toEither {
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with card id $cardId.",
+                    mapOf("cardId" to cardId)
+                )
+            }
+            .map {
+                CardIdentityRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    cardId
+                )
+            }
+    }
+
     fun delete(
         actor: Admin
     ): UserSourcingEvent {
@@ -231,6 +267,31 @@ data class User internal constructor(
                         aggregateVersion = e.aggregateVersion,
                         identities = u.identities.stream()
                             .filter { !(it is UsernamePasswordIdentity && it.username == e.username) }
+                            .collect(Collectors.toSet())
+                    )
+                )
+            }
+
+        override fun handle(event: CardIdentityAdded, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        identities = u.identities + CardIdentity(
+                            e.cardId,
+                            e.cardSecret
+                        )
+                    )
+                )
+            }
+
+        override fun handle(event: CardIdentityRemoved, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        identities = u.identities.stream()
+                            .filter { !(it is CardIdentity && it.cardId == e.cardId) }
                             .collect(Collectors.toSet())
                     )
                 )
