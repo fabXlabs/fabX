@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource
 
 internal class DeviceDatabaseRepositoryTest {
     private val deviceId = DeviceIdFixture.static(4242)
-    private val actorId = UserIdFixture.staticId(1234)
+    private val actorId = UserIdFixture.static(1234)
 
     @Test
     fun `given empty repository when getting device by id then returns device not found error`() {

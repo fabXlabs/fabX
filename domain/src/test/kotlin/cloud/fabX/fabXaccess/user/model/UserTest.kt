@@ -20,7 +20,7 @@ import org.junit.jupiter.params.provider.CsvSource
 
 internal class UserTest {
 
-    private val userId = UserIdFixture.arbitraryId()
+    private val userId = UserIdFixture.arbitrary()
     private val aggregateVersion = 42L
 
     private val adminActor = AdminFixture.arbitrary()
@@ -797,7 +797,7 @@ internal class UserTest {
     fun `given valid user when stringifying then result is correct`() {
         // given
         val user = User(
-            UserIdFixture.staticId(42),
+            UserIdFixture.static(42),
             123,
             "Nikola",
             "Tesla",

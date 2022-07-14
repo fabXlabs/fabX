@@ -4,12 +4,11 @@ import java.util.UUID
 
 object UserIdFixture {
 
-    fun arbitraryId(): UserId = newUserId()
+    fun arbitrary(): UserId = newUserId()
 
-    fun staticId(nr: Int): UserId {
+    fun static(nr: Int): UserId {
         val byteArray = ByteArray(16)
         byteArray[7] = nr.toByte()
         return UserId(UUID.nameUUIDFromBytes(byteArray))
     }
-
 }

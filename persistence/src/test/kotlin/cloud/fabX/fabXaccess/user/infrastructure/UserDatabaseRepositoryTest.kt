@@ -28,8 +28,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class UserDatabaseRepositoryTest {
-    val userId = UserIdFixture.staticId(1234)
-    val actorId = UserIdFixture.staticId(1)
+    val userId = UserIdFixture.static(1234)
+    val actorId = UserIdFixture.static(1)
 
     @Test
     fun `given empty repository when getting user by id then returns user not found error`() {
@@ -162,8 +162,8 @@ internal class UserDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForUsersStoredInRepository {
 
-        private val userId2 = UserIdFixture.staticId(12345)
-        private val userId3 = UserIdFixture.staticId(123456)
+        private val userId2 = UserIdFixture.static(12345)
+        private val userId3 = UserIdFixture.static(123456)
 
         private var repository: UserRepository? = null
 
@@ -278,7 +278,7 @@ internal class UserDatabaseRepositoryTest {
     @Nested
     internal inner class GivenUsersWithIdentitiesStoredInRepository {
 
-        private val userId2 = UserIdFixture.staticId(12345)
+        private val userId2 = UserIdFixture.static(12345)
 
         private var repository: UserDatabaseRepository? = null
 

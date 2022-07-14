@@ -24,7 +24,7 @@ internal class AddingUserTest {
 
     private val adminActor = AdminFixture.arbitrary()
 
-    private val userId = UserIdFixture.arbitraryId()
+    private val userId = UserIdFixture.arbitrary()
 
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null

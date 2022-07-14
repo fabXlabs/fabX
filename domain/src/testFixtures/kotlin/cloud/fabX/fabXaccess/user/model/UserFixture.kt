@@ -6,7 +6,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 object UserFixture {
 
     fun arbitrary(
-        userId: UserId = UserIdFixture.arbitraryId(),
+        userId: UserId = UserIdFixture.arbitrary(),
         aggregateVersion: Long = 1,
         firstName: String = "first",
         lastName: String = "last",
@@ -33,7 +33,7 @@ object UserFixture {
 
     fun withIdentity(
         identity: UserIdentity,
-        userId: UserId = UserIdFixture.arbitraryId(),
+        userId: UserId = UserIdFixture.arbitrary(),
         aggregateVersion: Long = 1,
         firstName: String = "first",
         lastName: String = "last",

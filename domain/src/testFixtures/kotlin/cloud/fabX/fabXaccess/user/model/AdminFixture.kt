@@ -4,7 +4,7 @@ import arrow.core.getOrElse
 
 object AdminFixture {
     fun arbitrary(
-        userId: UserId = UserIdFixture.arbitraryId(),
+        userId: UserId = UserIdFixture.arbitrary(),
     ): Admin =
         UserFixture.arbitrary(
             userId = userId,

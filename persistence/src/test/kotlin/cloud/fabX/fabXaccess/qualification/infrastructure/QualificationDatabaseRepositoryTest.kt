@@ -25,7 +25,7 @@ import org.junit.jupiter.params.provider.ValueSource
 
 internal class QualificationDatabaseRepositoryTest {
     val qualificationId = QualificationIdFixture.static(123)
-    val actorId = UserIdFixture.staticId(42)
+    val actorId = UserIdFixture.static(42)
 
     @Test
     fun `given empty repository when getting qualification by id then returns qualification not found error`() {
