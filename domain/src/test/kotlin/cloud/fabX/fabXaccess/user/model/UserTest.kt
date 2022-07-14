@@ -326,6 +326,51 @@ internal class UserTest {
     }
 
     @Test
+    fun `when adding username password identity then expected sourcing event is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+
+        val username = "name42"
+        val password = "password1234"
+
+        val expectedSourcingEvent = UsernamePasswordIdentityAdded(
+            actorId = adminActor.id,
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            username = username,
+            password = password
+        )
+
+        // when
+        val result = user.addUsernamePasswordIdentity(
+            adminActor,
+            username,
+            password
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `when deleting then expected sourcing event is returned`() {
+        // given
+        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = UserDeleted(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id
+        )
+
+        // when
+        val result = user.delete(adminActor)
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
     fun `given any user when getting as member then returns member`() {
         // given
         val qualifications = setOf(QualificationIdFixture.arbitraryId(), QualificationIdFixture.arbitraryId())
@@ -410,24 +455,6 @@ internal class UserTest {
         assertThat(result)
             .isRight()
             .isEqualTo(Admin(userId, "first last"))
-    }
-
-    @Test
-    fun `when deleting then expected sourcing event is returned`() {
-        // given
-        val user = UserFixture.arbitraryUser(userId, aggregateVersion = aggregateVersion)
-
-        val expectedSourcingEvent = UserDeleted(
-            aggregateRootId = userId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id
-        )
-
-        // when
-        val result = user.delete(adminActor)
-
-        // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
     }
 
     @Test

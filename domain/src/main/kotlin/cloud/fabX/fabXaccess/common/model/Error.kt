@@ -10,6 +10,10 @@ sealed class Error(open val message: String, val parameters: Map<String, String>
         val userId: UserId
     ) : Error(message, mapOf("userId" to userId.toString()))
 
+    data class UserNotFoundByIdentity(
+        override val message: String
+    ) : Error(message)
+
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)
 

@@ -20,6 +20,7 @@ sealed class UserSourcingEvent(
         fun handle(event: UserCreated, user: Option<User>): Option<User>
         fun handle(event: UserPersonalInformationChanged, user: Option<User>): Option<User>
         fun handle(event: UserLockStateChanged, user: Option<User>): Option<User>
+        fun handle(event: UsernamePasswordIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: UserDeleted, user: Option<User>): Option<User>
     }
 }
@@ -55,6 +56,18 @@ data class UserLockStateChanged(
     override val actorId: ActorId,
     val locked: ChangeableValue<Boolean>,
     val notes: ChangeableValue<String?>
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+data class UsernamePasswordIdentityAdded(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    val username: String,
+    val password: String
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =

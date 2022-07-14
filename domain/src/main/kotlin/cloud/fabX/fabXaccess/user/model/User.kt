@@ -15,11 +15,10 @@ import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
-// TODO UsernamePasswordIdentification
 // TODO PhoneNumberIdentification (maybe remove phone number from "personal details"?)
+//      with phone number must be unique rule
 
 // TODO wikiName must be unique rule
-// TODO phoneNumber must be empty or unique rule
 
 data class User internal constructor(
     override val id: UserId,
@@ -99,6 +98,16 @@ data class User internal constructor(
         return UserLockStateChanged(id, aggregateVersion + 1, actor.id, locked, notes)
     }
 
+    fun addUsernamePasswordIdentity(
+        actor: Admin,
+        username: String,
+        password: String
+    ): UserSourcingEvent {
+        // TODO username must be unique rule
+        // TODO password hashing rule
+        return UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, password)
+    }
+
     fun delete(
         actor: Admin
     ): UserSourcingEvent {
@@ -166,6 +175,19 @@ data class User internal constructor(
                         aggregateVersion = e.aggregateVersion,
                         locked = e.locked.valueToChangeTo(u.locked),
                         notes = e.notes.valueToChangeTo(u.notes)
+                    )
+                )
+            }
+
+        override fun handle(event: UsernamePasswordIdentityAdded, user: Option<User>): Option<User> =
+            requireSomeUserWithSameIdAnd(event, user) { e, u ->
+                Some(
+                    u.copy(
+                        aggregateVersion = e.aggregateVersion,
+                        identities = u.identities + UsernamePasswordIdentity(
+                            e.username,
+                            e.password
+                        )
                     )
                 )
             }
