@@ -15,6 +15,8 @@ import isRight
 import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 internal class UserTest {
 
@@ -368,6 +370,31 @@ internal class UserTest {
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "user123, password42, true",
+            "user123, password,   false",
+            "user,    password42, false",
+            "user,    password,   false",
+        ]
+    )
+    fun `given user with identity when checking hasIdentity then returns expected result`(
+        username: String,
+        password: String,
+        expectedResult: Boolean
+    ) {
+        // given
+        val identity = UsernamePasswordIdentity("user123", "password42")
+        val user = UserFixture.userWithIdentity(identity)
+
+        // when
+        val result = user.hasIdentity(UsernamePasswordIdentity(username, password))
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
     }
 
     @Test

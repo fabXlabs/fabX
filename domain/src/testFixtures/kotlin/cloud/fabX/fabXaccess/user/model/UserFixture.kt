@@ -30,4 +30,30 @@ object UserFixture {
         instructorQualifications,
         isAdmin
     )
+
+    fun userWithIdentity(
+        identity: UserIdentity,
+        userId: UserId = UserIdFixture.arbitraryId(),
+        aggregateVersion: Long = 1,
+        firstName: String = "first",
+        lastName: String = "last",
+        wikiName: String = "wiki",
+        locked: Boolean = false,
+        notes: String? = null,
+        memberQualifications: Set<QualificationId> = setOf(QualificationIdFixture.arbitraryId()),
+        instructorQualifications: Set<QualificationId>? = null,
+        isAdmin: Boolean = false
+    ): User = arbitraryUser(
+        userId,
+        aggregateVersion,
+        firstName,
+        lastName,
+        wikiName,
+        locked,
+        notes,
+        setOf(identity),
+        memberQualifications,
+        instructorQualifications,
+        isAdmin,
+    )
 }

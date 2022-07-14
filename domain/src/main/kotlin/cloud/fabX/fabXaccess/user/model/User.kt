@@ -114,6 +114,8 @@ data class User internal constructor(
         return UserDeleted(id, aggregateVersion + 1, actor.id)
     }
 
+    fun hasIdentity(userIdentity: UserIdentity) = identities.contains(userIdentity)
+
     fun asMember(): Member = Member(id, name, memberQualifications)
 
     fun asInstructor(): Either<Error, Instructor> =
