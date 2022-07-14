@@ -260,97 +260,81 @@ data class User internal constructor(
             event: UserPersonalInformationChanged,
             user: Option<User>
         ): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        firstName = e.firstName.valueToChangeTo(u.firstName),
-                        lastName = e.lastName.valueToChangeTo(u.lastName),
-                        wikiName = e.wikiName.valueToChangeTo(u.wikiName),
-                    )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    firstName = e.firstName.valueToChangeTo(u.firstName),
+                    lastName = e.lastName.valueToChangeTo(u.lastName),
+                    wikiName = e.wikiName.valueToChangeTo(u.wikiName),
                 )
             }
 
         override fun handle(event: UserLockStateChanged, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        locked = e.locked.valueToChangeTo(u.locked),
-                        notes = e.notes.valueToChangeTo(u.notes)
-                    )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    locked = e.locked.valueToChangeTo(u.locked),
+                    notes = e.notes.valueToChangeTo(u.notes)
                 )
             }
 
         override fun handle(event: UsernamePasswordIdentityAdded, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        identities = u.identities + UsernamePasswordIdentity(
-                            e.username,
-                            e.password
-                        )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    identities = u.identities + UsernamePasswordIdentity(
+                        e.username,
+                        e.password
                     )
                 )
             }
 
         override fun handle(event: UsernamePasswordIdentityRemoved, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        identities = u.identities.stream()
-                            .filter { !(it is UsernamePasswordIdentity && it.username == e.username) }
-                            .collect(Collectors.toSet())
-                    )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    identities = u.identities.stream()
+                        .filter { !(it is UsernamePasswordIdentity && it.username == e.username) }
+                        .collect(Collectors.toSet())
                 )
             }
 
         override fun handle(event: CardIdentityAdded, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        identities = u.identities + CardIdentity(
-                            e.cardId,
-                            e.cardSecret
-                        )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    identities = u.identities + CardIdentity(
+                        e.cardId,
+                        e.cardSecret
                     )
                 )
             }
 
         override fun handle(event: CardIdentityRemoved, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        identities = u.identities.stream()
-                            .filter { !(it is CardIdentity && it.cardId == e.cardId) }
-                            .collect(Collectors.toSet())
-                    )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    identities = u.identities.stream()
+                        .filter { !(it is CardIdentity && it.cardId == e.cardId) }
+                        .collect(Collectors.toSet())
                 )
             }
 
         override fun handle(event: PhoneNrIdentityAdded, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        identities = u.identities + PhoneNrIdentity(e.phoneNr)
-                    )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    identities = u.identities + PhoneNrIdentity(e.phoneNr)
                 )
             }
 
         override fun handle(event: PhoneNrIdentityRemoved, user: Option<User>): Option<User> =
-            requireSomeUserWithSameIdAnd(event, user) { e, u ->
-                Some(
-                    u.copy(
-                        aggregateVersion = e.aggregateVersion,
-                        identities = u.identities.stream()
-                            .filter { !(it is PhoneNrIdentity && it.phoneNr == e.phoneNr) }
-                            .collect(Collectors.toSet())
-                    )
+            requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+                u.copy(
+                    aggregateVersion = e.aggregateVersion,
+                    identities = u.identities.stream()
+                        .filter { !(it is PhoneNrIdentity && it.phoneNr == e.phoneNr) }
+                        .collect(Collectors.toSet())
                 )
             }
 
@@ -371,6 +355,14 @@ data class User internal constructor(
             }
 
             return user.flatMap { and(event, it) }
+        }
+
+        private fun <E : UserSourcingEvent> requireSomeUserWithSameIdAndSome(
+            event: E,
+            user: Option<User>,
+            and: (E, User) -> User
+        ): Option<User> = requireSomeUserWithSameIdAnd(event, user) { e, u ->
+            Some(and(e, u))
         }
 
         class EventAggregateRootIdDoesNotMatchUserId(message: String) : Exception(message)
