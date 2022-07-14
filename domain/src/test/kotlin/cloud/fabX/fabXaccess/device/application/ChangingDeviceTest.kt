@@ -52,7 +52,7 @@ internal class ChangingDeviceTest {
     @Test
     fun `given device can be found when changing device details then sourcing event is created and stored`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = 1)
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
         val newName = ChangeableValue.ChangeToValue("newName")
         val newBackground = ChangeableValue.ChangeToValue("newBackground")
@@ -112,7 +112,7 @@ internal class ChangingDeviceTest {
     @Test
     fun `given sourcing event cannot be stored when changing device details then returns error`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = 1)
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
         val event = DeviceDetailsChanged(
             deviceId,

@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.device.model
 
 object DeviceFixture {
 
-    fun arbitraryDevice(
+    fun arbitrary(
         deviceId: DeviceId = DeviceIdFixture.arbitraryId(),
         aggregateVersion: Long = 1,
         name: String = "device",

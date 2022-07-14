@@ -52,7 +52,7 @@ internal class DeletingDeviceTest {
     @Test
     fun `given device can be found when deleting device then sourcing event is created and stored`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = 42)
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 42)
 
         val expectedSourcingEvent = DeviceDeleted(
             deviceId,
@@ -99,7 +99,7 @@ internal class DeletingDeviceTest {
     @Test
     fun `given sourcing event cannot be stored when deleting device then returns error`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = 1)
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
         val event = DeviceDeleted(
             deviceId,

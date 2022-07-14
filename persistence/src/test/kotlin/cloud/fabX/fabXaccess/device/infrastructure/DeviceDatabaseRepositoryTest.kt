@@ -241,14 +241,14 @@ internal class DeviceDatabaseRepositoryTest {
 
             // then
             assertThat(result).containsExactlyInAnyOrder(
-                DeviceFixture.arbitraryDevice(
+                DeviceFixture.arbitrary(
                     deviceId,
                     3,
                     "device1",
                     "https://example.com/3.bmp",
                     "https://backup.example.com"
                 ),
-                DeviceFixture.arbitraryDevice(
+                DeviceFixture.arbitrary(
                     deviceId2,
                     2,
                     "device2",

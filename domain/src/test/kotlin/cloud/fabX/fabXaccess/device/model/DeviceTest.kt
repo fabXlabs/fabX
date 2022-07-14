@@ -216,7 +216,7 @@ internal class DeviceTest {
     @Test
     fun `when changing details then expected sourcing event is returned`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = aggregateVersion)
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = DeviceDetailsChanged(
             aggregateRootId = deviceId,
@@ -242,7 +242,7 @@ internal class DeviceTest {
     @Test
     fun `when deleting then expected sourcing event is returned`() {
         // given
-        val device = DeviceFixture.arbitraryDevice(deviceId, aggregateVersion = aggregateVersion)
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = DeviceDeleted(
             aggregateRootId = deviceId,
