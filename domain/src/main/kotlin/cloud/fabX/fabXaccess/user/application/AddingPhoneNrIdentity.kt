@@ -1,36 +1,33 @@
 package cloud.fabX.fabXaccess.user.application
-
 import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
-import cloud.fabX.fabXaccess.user.model.CardIdentity
+import cloud.fabX.fabXaccess.user.model.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.UserId
 
 /**
- * Service to add a [CardIdentity] to a user.
+ * Service to add a [PhoneNrIdentity] to a user.
  */
-class AddingCardIdentity {
+class AddingPhoneNrIdentity {
 
     private val log = logger()
     private val userRepository = DomainModule.userRepository()
 
-    fun addCardIdentity(
+    fun addPhoneNrIdentity(
         actor: Admin,
         userId: UserId,
-        cardId: String,
-        cardSecret: String
+        phoneNr: String
     ): Option<Error> {
-        log.debug("addCardIdentity...")
+        log.debug("addPhoneNrIdentity...")
 
         return userRepository.getById(userId)
             .map {
-                it.addCardIdentity(
+                it.addPhoneNrIdentity(
                     actor,
-                    cardId,
-                    cardSecret
+                    phoneNr
                 )
             }
             .flatMap {
@@ -40,7 +37,7 @@ class AddingCardIdentity {
             }
             .swap()
             .orNone()
-            .tapNone { log.debug("...addCardIdentity done") }
-            .tap { log.error("...addCardIdentity error: $it") }
+            .tapNone { log.debug("...addPhoneNrIdentity done") }
+            .tap { log.error("...addPhoneNrIdentity error: $it") }
     }
 }
