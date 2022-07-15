@@ -6,10 +6,9 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
+import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
-
-// TODO tool aggregate
 
 object DomainModule {
     private var loggerFactory: LoggerFactory? = null
@@ -21,6 +20,7 @@ object DomainModule {
 
     private var deviceRepository: DeviceRepository? = null
     private var qualificationRepository: QualificationRepository? = null
+    private var toolRepository: ToolRepository? = null
     private var userRepository: UserRepository? = null
 
 
@@ -32,6 +32,7 @@ object DomainModule {
                 && userIdFactory != null
                 && deviceRepository != null
                 && qualificationRepository != null
+                && toolRepository != null
                 && userRepository != null
     }
 
@@ -59,12 +60,16 @@ object DomainModule {
         this.deviceRepository = deviceRepository
     }
 
-    fun configureUserRepository(userRepository: UserRepository) {
-        this.userRepository = userRepository
-    }
-
     fun configureQualificationRepository(qualificationRepository: QualificationRepository) {
         this.qualificationRepository = qualificationRepository
+    }
+
+    fun configureToolRepository(toolRepository: ToolRepository) {
+        this.toolRepository = toolRepository
+    }
+
+    fun configureUserRepository(userRepository: UserRepository) {
+        this.userRepository = userRepository
     }
 
     internal fun loggerFactory(): LoggerFactory {
@@ -93,6 +98,10 @@ object DomainModule {
 
     internal fun qualificationRepository(): QualificationRepository {
         return require(qualificationRepository)
+    }
+
+    internal fun toolRepository(): ToolRepository {
+        return require(toolRepository)
     }
 
     internal fun userRepository(): UserRepository {
