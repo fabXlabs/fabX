@@ -16,8 +16,6 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
 // TODO wikiName must be unique rule
 
-// TODO service(s) for adding/removing identities
-
 data class User internal constructor(
     override val id: UserId,
     override val aggregateVersion: Long,
