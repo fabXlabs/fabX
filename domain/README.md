@@ -11,7 +11,7 @@
 
 * Identity: An identification of a User/Device/...
 * UserIdentity: An identification of a User
-  * UserPasswordIdentity: Combination of username and password identifying a User
+  * UserPasswordIdentity: Combination of username and password (hash) identifying a User
   * CardIdentity: A single secret identifying a User (at a Device)
   * PhoneNumberIdentity: A phone number identifying a User (at a Device)
   * (WebAuthnIdentity)

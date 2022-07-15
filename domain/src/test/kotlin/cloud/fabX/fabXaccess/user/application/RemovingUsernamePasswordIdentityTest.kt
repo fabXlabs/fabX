@@ -54,13 +54,13 @@ internal class RemovingUsernamePasswordIdentityTest {
     fun `given user and identity can be found when removing identity then sourcing event is created and stored`() {
         // given
         val username = "username"
-        val password = "password42"
+        val hash = "password42"
 
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                UsernamePasswordIdentity(username, password)
+                UsernamePasswordIdentity(username, hash)
             )
         )
 

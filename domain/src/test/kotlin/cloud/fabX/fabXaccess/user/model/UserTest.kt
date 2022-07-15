@@ -333,21 +333,21 @@ internal class UserTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val username = "name42"
-        val password = "password1234"
+        val hash = "password1234"
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             actorId = adminActor.id,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             username = username,
-            password = password
+            hash = hash
         )
 
         // when
         val result = user.addUsernamePasswordIdentity(
             adminActor,
             username,
-            password
+            hash
         )
 
         // then

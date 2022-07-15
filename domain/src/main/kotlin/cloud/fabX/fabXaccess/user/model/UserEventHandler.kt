@@ -61,7 +61,7 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
                 aggregateVersion = e.aggregateVersion,
                 identities = u.identities + UsernamePasswordIdentity(
                     e.username,
-                    e.password
+                    e.hash
                 )
             )
         }

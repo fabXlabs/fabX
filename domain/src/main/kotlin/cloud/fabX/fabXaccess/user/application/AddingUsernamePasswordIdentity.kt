@@ -21,7 +21,7 @@ class AddingUsernamePasswordIdentity {
         actor: Admin,
         userId: UserId,
         username: String,
-        password: String
+        hash: String
     ): Option<Error> {
         log.debug("addUsernamePasswordIdentity...")
 
@@ -30,7 +30,7 @@ class AddingUsernamePasswordIdentity {
                 it.addUsernamePasswordIdentity(
                     actor,
                     username,
-                    password
+                    hash
                 )
             }
             .flatMap {

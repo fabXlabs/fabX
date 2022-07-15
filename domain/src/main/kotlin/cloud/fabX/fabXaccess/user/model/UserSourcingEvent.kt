@@ -74,7 +74,7 @@ data class UsernamePasswordIdentityAdded(
     override val aggregateVersion: Long,
     override val actorId: ActorId,
     val username: String,
-    val password: String
+    val hash: String
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =

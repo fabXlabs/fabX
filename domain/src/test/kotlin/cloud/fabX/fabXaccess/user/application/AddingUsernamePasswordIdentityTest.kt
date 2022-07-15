@@ -54,14 +54,14 @@ internal class AddingUsernamePasswordIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val username = "username"
-        val password = "password42"
+        val hash = "password42"
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             userId,
             2,
             adminActor.id,
             username,
-            password
+            hash
         )
 
         whenever(userRepository!!.getById(userId))
@@ -75,7 +75,7 @@ internal class AddingUsernamePasswordIdentityTest {
             adminActor,
             userId,
             username,
-            password
+            hash
         )
 
         // then
@@ -114,14 +114,14 @@ internal class AddingUsernamePasswordIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val username = "username"
-        val password = "password42"
+        val hash = "password42"
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             userId,
             2,
             adminActor.id,
             username,
-            password
+            hash
         )
 
         val error = Error.UserNotFound("message", userId)
@@ -137,7 +137,7 @@ internal class AddingUsernamePasswordIdentityTest {
             adminActor,
             userId,
             username,
-            password
+            hash
         )
 
         // then

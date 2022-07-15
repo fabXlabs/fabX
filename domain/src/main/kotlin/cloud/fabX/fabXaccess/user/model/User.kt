@@ -97,12 +97,12 @@ data class User internal constructor(
     fun addUsernamePasswordIdentity(
         actor: Admin,
         username: String,
-        password: String
+        hash: String
     ): UserSourcingEvent {
         // TODO username must be unique rule
         // TODO at most one UsernamePasswordIdentity rule
         // TODO password hashing rule
-        return UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, password)
+        return UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, hash)
     }
 
     /**
