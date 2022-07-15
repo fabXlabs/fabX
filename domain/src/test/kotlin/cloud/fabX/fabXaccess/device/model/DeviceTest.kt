@@ -206,6 +206,65 @@ internal class DeviceTest {
     }
 
     @Test
+    fun `given sourcing events including ToolAttached then applies it`() {
+        // given
+        val toolId1 = ToolIdFixture.arbitrary()
+        val toolId3 = ToolIdFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary(
+            deviceId = deviceId,
+            aggregateVersion = 1,
+            attachedTools = mapOf(1 to toolId1)
+        )
+
+        val event = ToolAttached(
+            deviceId,
+            2,
+            adminActor.id,
+            3,
+            toolId3
+        )
+
+        // when
+        val result = device.apply(event)
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.attachedTools }
+            .isEqualTo(mapOf(1 to toolId1, 3 to toolId3))
+    }
+
+    @Test
+    fun `given sourcing events including ToolDetached then applies it`() {
+        // given
+        val toolId1 = ToolIdFixture.arbitrary()
+        val toolId2 = ToolIdFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary(
+            deviceId = deviceId,
+            aggregateVersion = 1,
+            attachedTools = mapOf(1 to toolId1, 2 to toolId2)
+        )
+
+        val event = ToolDetached(
+            deviceId,
+            2,
+            adminActor.id,
+            1
+        )
+
+        // when
+        val result = device.apply(event)
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.attachedTools }
+            .isEqualTo(mapOf(2 to toolId2))
+    }
+
+    @Test
     fun `given sourcing events including DeviceDeleted event when constructing device then returns None`() {
         // given
         val event1 = DeviceCreated(

@@ -42,12 +42,28 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
         )
     }
 
-    override fun handle(event: ToolAttached, device: Option<Device>): Option<Device> {
-        TODO("Not yet implemented")
+    override fun handle(
+        event: ToolAttached,
+        device: Option<Device>
+    ): Option<Device> = requireSomeDeviceWithSameIdAnd(event, device) { e, d ->
+        Some(
+            d.copy(
+                aggregateVersion = e.aggregateVersion,
+                attachedTools = d.attachedTools + (e.pin to e.toolId)
+            )
+        )
     }
 
-    override fun handle(event: ToolDetached, device: Option<Device>): Option<Device> {
-        TODO("Not yet implemented")
+    override fun handle(
+        event: ToolDetached,
+        device: Option<Device>
+    ): Option<Device> = requireSomeDeviceWithSameIdAnd(event, device) { e, d ->
+        Some(
+            d.copy(
+                aggregateVersion = e.aggregateVersion,
+                attachedTools = d.attachedTools - e.pin
+            )
+        )
     }
 
     override fun handle(
