@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
@@ -15,6 +16,7 @@ object DomainModule {
 
     private var deviceIdFactory: DeviceIdFactory? = null
     private var qualificationIdFactory: QualificationIdFactory? = null
+    private var toolIdFactory: ToolIdFactory? = null
     private var userIdFactory: UserIdFactory? = null
 
     private var deviceRepository: DeviceRepository? = null
@@ -26,6 +28,7 @@ object DomainModule {
         return loggerFactory != null
                 && deviceIdFactory != null
                 && qualificationIdFactory != null
+                && toolIdFactory != null
                 && userIdFactory != null
                 && deviceRepository != null
                 && qualificationRepository != null
@@ -42,6 +45,10 @@ object DomainModule {
 
     fun configureQualificationIdFactory(qualificationIdFactory: QualificationIdFactory) {
         this.qualificationIdFactory = qualificationIdFactory
+    }
+
+    fun configureToolIdFactory(toolIdFactory: ToolIdFactory) {
+        this.toolIdFactory = toolIdFactory
     }
 
     fun configureUserIdFactory(userIdFactory: UserIdFactory) {
@@ -70,6 +77,10 @@ object DomainModule {
 
     internal fun qualificationIdFactory(): QualificationIdFactory {
         return require(qualificationIdFactory)
+    }
+
+    internal fun toolIdFactory(): ToolIdFactory {
+        return require(toolIdFactory)
     }
 
     internal fun userIdFactory(): UserIdFactory {

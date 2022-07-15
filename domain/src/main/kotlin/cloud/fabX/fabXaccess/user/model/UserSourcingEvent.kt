@@ -146,3 +146,5 @@ data class UserDeleted(
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)
 }
+
+// TODO adding/removing qualifications or changing set of qualifications

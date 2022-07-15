@@ -11,6 +11,8 @@ import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseR
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.qualification.model.newQualificationId
+import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
+import cloud.fabX.fabXaccess.tool.model.newToolId
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -24,6 +26,7 @@ object AppConfiguration {
     internal val loggerFactory: LoggerFactory
     private val deviceIdFactory: DeviceIdFactory
     private val qualificationIdFactory: QualificationIdFactory
+    private val toolIdFactory: ToolIdFactory
     private val userIdFactory: UserIdFactory
 
     private val deviceRepository: DeviceRepository
@@ -37,6 +40,7 @@ object AppConfiguration {
 
         deviceIdFactory = { newDeviceId() }
         qualificationIdFactory = { newQualificationId() }
+        toolIdFactory = { newToolId() }
         userIdFactory = { newUserId() }
 
         deviceRepository = DeviceDatabaseRepository()
@@ -64,6 +68,7 @@ object AppConfiguration {
 
         DomainModule.configureDeviceIdFactory(deviceIdFactory)
         DomainModule.configureQualificationIdFactory(qualificationIdFactory)
+        DomainModule.configureToolIdFactory(toolIdFactory)
         DomainModule.configureUserIdFactory(userIdFactory)
 
         DomainModule.configureDeviceRepository(deviceRepository)
