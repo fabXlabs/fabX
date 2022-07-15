@@ -101,7 +101,6 @@ data class User internal constructor(
     ): UserSourcingEvent {
         // TODO username must be unique rule
         // TODO at most one UsernamePasswordIdentity rule
-        // TODO password hashing rule
         return UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, hash)
     }
 
