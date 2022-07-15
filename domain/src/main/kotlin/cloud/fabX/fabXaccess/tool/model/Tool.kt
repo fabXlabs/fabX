@@ -95,6 +95,8 @@ data class Tool internal constructor(
     fun delete(
         actor: Admin
     ): ToolSourcingEvent {
+        // TODO remove attachment to/from device(s) (via DomainEvent?)
+
         return ToolDeleted(
             id,
             aggregateVersion + 1,

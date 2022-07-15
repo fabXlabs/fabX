@@ -22,7 +22,8 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
                 name = event.name,
                 background = event.background,
                 backupBackendUrl = event.backupBackendUrl,
-                identity = MacSecretIdentity(event.mac, event.secret)
+                identity = MacSecretIdentity(event.mac, event.secret),
+                attachedTools = mapOf()
             )
         )
     }
@@ -39,6 +40,14 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
                 backupBackendUrl = e.backupBackendUrl.valueToChangeTo(d.backupBackendUrl)
             )
         )
+    }
+
+    override fun handle(event: ToolAttached, device: Option<Device>): Option<Device> {
+        TODO("Not yet implemented")
+    }
+
+    override fun handle(event: ToolDetached, device: Option<Device>): Option<Device> {
+        TODO("Not yet implemented")
     }
 
     override fun handle(

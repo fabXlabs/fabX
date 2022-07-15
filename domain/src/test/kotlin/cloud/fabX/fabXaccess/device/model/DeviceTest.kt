@@ -6,9 +6,13 @@ import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import isLeft
 import isNone
+import isRight
 import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,7 +37,8 @@ internal class DeviceTest {
             "Woodworking",
             "https://example.com/image.bmp",
             "https://fabx-backup.example.com",
-            MacSecretIdentity("aabbccddeeff", "supersecret")
+            MacSecretIdentity("aabbccddeeff", "supersecret"),
+            mapOf()
         )
 
         // then
@@ -154,7 +159,8 @@ internal class DeviceTest {
                     "name2",
                     "background1",
                     "backupUrl3",
-                    MacSecretIdentity("aabbccddeeff", "supersecret")
+                    MacSecretIdentity("aabbccddeeff", "supersecret"),
+                    mapOf()
                 )
             )
     }
@@ -253,6 +259,129 @@ internal class DeviceTest {
     }
 
     @Test
+    fun `when attaching tool then returns expected sourcing event`() {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
+
+        val pin = 3
+        val toolId = ToolIdFixture.arbitrary()
+
+        val expectedSourcingEvent = ToolAttached(
+            aggregateRootId = deviceId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
+            pin = pin,
+            toolId = toolId
+        )
+
+        // when
+        val result = device.attachTool(
+            adminActor,
+            pin,
+            toolId
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given pin is already in use when attaching tool then returns error`() {
+        // given
+        val pin = 3
+        val toolId = ToolIdFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion,
+            attachedTools = mapOf(
+                pin to toolId
+            )
+        )
+
+        // when
+        val result = device.attachTool(
+            adminActor,
+            pin,
+            toolId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PinInUse(
+                    "Tool (with id $toolId) already attached at pin $pin.",
+                    pin
+                )
+            )
+    }
+
+    @Test
+    fun `when detaching tool then returns expected sourcing event`() {
+        // given
+        val pin = 3
+        val toolId = ToolIdFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion,
+            attachedTools = mapOf(
+                pin to toolId
+            )
+        )
+
+        val expectedSourcingEvent = ToolDetached(
+            aggregateRootId = deviceId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
+            pin = pin
+        )
+
+        // when
+        val result = device.detachTool(
+            adminActor,
+            pin
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given pin is not in use when detaching tool then returns error`() {
+        // given
+        val pin = 3
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion,
+            attachedTools = mapOf()
+        )
+
+        // when
+        val result = device.detachTool(
+            adminActor,
+            pin
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PinNotInUse(
+                    "No tool attached at pin $pin.",
+                    pin
+                )
+            )
+
+    }
+
+    @Test
     fun `when deleting then expected sourcing event is returned`() {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
@@ -305,7 +434,8 @@ internal class DeviceTest {
             "Woodworking",
             "https://example.com/image.bmp",
             "https://fabx-backup.example.com",
-            MacSecretIdentity("aabbccddeeff", "supersecret")
+            MacSecretIdentity("aabbccddeeff", "supersecret"),
+            mapOf(3 to ToolIdFixture.static(345))
         )
 
         // when
@@ -318,8 +448,8 @@ internal class DeviceTest {
                     "name=Woodworking, " +
                     "background=https://example.com/image.bmp, " +
                     "backupBackendUrl=https://fabx-backup.example.com, " +
-                    "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret))"
+                    "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret), " +
+                    "attachedTools={3=ToolId(value=b6f53dde-e176-3672-8b65-819b4c168e6f)})"
         )
     }
-
 }

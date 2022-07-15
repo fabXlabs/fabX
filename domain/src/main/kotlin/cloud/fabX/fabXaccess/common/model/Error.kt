@@ -36,5 +36,15 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val message: String
     ) : Error(message)
 
+    data class PinInUse(
+        override val message: String,
+        val pin: Int
+    ) : Error(message, mapOf("pin" to pin.toString()))
+
+    data class PinNotInUse(
+        override val message: String,
+        val pin: Int
+    ) : Error(message, mapOf("pin" to pin.toString()))
+
     data class VersionConflict(override val message: String) : Error(message)
 }
