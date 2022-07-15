@@ -11,11 +11,12 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import cloud.fabX.fabXaccess.user.model.CardIdentity
-import cloud.fabX.fabXaccess.user.model.CardIdentityRemoved
+import cloud.fabX.fabXaccess.user.model.PhoneNrIdentity
+import cloud.fabX.fabXaccess.user.model.PhoneNrIdentityRemoved
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityRemoved
 import isNone
 import isSome
@@ -27,8 +28,7 @@ import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
 @MockitoSettings
-
-internal class RemovingCardIdentityTest {
+internal class RemovingPhoneNrIdentityTest {
 
     private val adminActor = AdminFixture.arbitrary()
 
@@ -37,7 +37,7 @@ internal class RemovingCardIdentityTest {
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null
 
-    private var testee: RemovingCardIdentity? = null
+    private var testee: RemovingPhoneNrIdentity? = null
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -49,28 +49,27 @@ internal class RemovingCardIdentityTest {
         DomainModule.configureLoggerFactory { logger }
         DomainModule.configureUserRepository(userRepository)
 
-        testee = RemovingCardIdentity()
+        testee = RemovingPhoneNrIdentity()
     }
 
     @Test
     fun `given user and identity can be found when removing identity then sourcing event is created and stored`() {
         // given
-        val cardId = "username"
-        val cardSecret = "password42"
+        val phoneNr = "+491234567890"
 
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                CardIdentity(cardId, cardSecret)
+                PhoneNrIdentity(phoneNr)
             )
         )
 
-        val expectedSourcingEvent = CardIdentityRemoved(
+        val expectedSourcingEvent = PhoneNrIdentityRemoved(
             userId,
             2,
             adminActor.id,
-            cardId
+            phoneNr
         )
 
         whenever(userRepository!!.getById(userId))
@@ -80,10 +79,10 @@ internal class RemovingCardIdentityTest {
             .thenReturn(None)
 
         // when
-        val result = testee!!.removeCardIdentity(
+        val result = testee!!.removePhoneNrIdentity(
             adminActor,
             userId,
-            cardId
+            phoneNr
         )
 
         // then
@@ -103,10 +102,10 @@ internal class RemovingCardIdentityTest {
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.removeCardIdentity(
+        val result = testee!!.removePhoneNrIdentity(
             adminActor,
             userId,
-            "11223344556677"
+            "username"
         )
 
         // then
@@ -118,21 +117,21 @@ internal class RemovingCardIdentityTest {
     @Test
     fun `given sourcing event cannot be stored when adding identity then returns error`() {
         // given
-        val cardId = "11223344556677"
+        val phoneNr = "+491234567890"
 
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                CardIdentity(cardId, "abcdefabcdefabcdefabcdefabcdefabcdef")
+                PhoneNrIdentity(phoneNr)
             )
         )
 
-        val expectedSourcingEvent = CardIdentityRemoved(
+        val expectedSourcingEvent = PhoneNrIdentityRemoved(
             userId,
             2,
             adminActor.id,
-            cardId
+            phoneNr
         )
 
         val error = ErrorFixture.arbitrary()
@@ -144,10 +143,10 @@ internal class RemovingCardIdentityTest {
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.removeCardIdentity(
+        val result = testee!!.removePhoneNrIdentity(
             adminActor,
             userId,
-            cardId
+            phoneNr
         )
 
         // then
@@ -169,10 +168,10 @@ internal class RemovingCardIdentityTest {
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.removeCardIdentity(
+        val result = testee!!.removePhoneNrIdentity(
             adminActor,
             userId,
-            "00000000000000"
+            "+49123"
         )
 
         // then
