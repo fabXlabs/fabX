@@ -136,7 +136,7 @@ data class User internal constructor(
         cardId: String,
         cardSecret: String
     ): UserSourcingEvent {
-        // TODO at most one CardIdentity rule
+        // TODO card id must be unique rule
         return CardIdentityAdded(id, aggregateVersion + 1, actor.id, cardId, cardSecret)
     }
 

@@ -144,12 +144,6 @@ data class Device internal constructor(
         )
     }
 
-    fun getConfiguration(): DeviceConfiguration = DeviceConfiguration(
-        name,
-        background,
-        backupBackendUrl
-    )
-
     fun hasIdentity(deviceIdentity: DeviceIdentity) = identity == deviceIdentity
 
     class EventHistoryDoesNotStartWithDeviceCreated(message: String) : Exception(message)
