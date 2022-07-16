@@ -1,13 +1,18 @@
 package cloud.fabX.fabXaccess.user.model
 
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
 import isNone
@@ -250,6 +255,71 @@ internal class UserTest {
         assertThat(exception.message)
             .isNotNull()
             .isEqualTo("Aggregate version does not increase one by one for ${listOf(event1, event3, event2)}.")
+    }
+
+    @Test
+    fun `given sourcing events including MemberQualificationAdded then applies it`() {
+        // given
+        val qualificationId1 = QualificationIdFixture.arbitrary()
+        val qualificationId2 = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId = userId,
+            aggregateVersion = 1,
+            memberQualifications = setOf()
+        )
+
+        val event1 = MemberQualificationAdded(
+            userId,
+            2,
+            adminActor.id,
+            qualificationId1
+        )
+
+        val event2 = MemberQualificationAdded(
+            userId,
+            3,
+            adminActor.id,
+            qualificationId2
+        )
+
+        // when
+        val result = user.apply(event1).flatMap { it.apply(event2) }
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.memberQualifications }
+            .containsExactlyInAnyOrder(qualificationId1, qualificationId2)
+    }
+
+    @Test
+    fun `given sourcing events including MemberQualificationRemoved then applies it`() {
+        // given
+        val qualificationId1 = QualificationIdFixture.arbitrary()
+        val qualificationId2 = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId = userId,
+            aggregateVersion = 42,
+            memberQualifications = setOf(qualificationId1, qualificationId2)
+        )
+
+        val event = MemberQualificationRemoved(
+            userId,
+            43,
+            adminActor.id,
+            qualificationId1
+        )
+
+        // when
+        val result = user.apply(event)
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.memberQualifications }
+            .containsExactlyInAnyOrder(qualificationId2)
     }
 
     @Test
@@ -612,6 +682,112 @@ internal class UserTest {
                 Error.UserIdentityNotFound(
                     "Not able to find identity with phone number +4242123.",
                     mapOf("phoneNr" to "+4242123")
+                )
+            )
+    }
+
+    @Test
+    fun `when adding member qualification then returns sourcing event`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val qualificationId = QualificationIdFixture.arbitrary()
+        val qualification = QualificationFixture.arbitrary(qualificationId)
+
+        val expectedSourcingEvent = MemberQualificationAdded(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
+            qualificationId = qualificationId
+        )
+
+        // when
+        val result = user.addMemberQualification(adminActor, qualificationId) {
+            if (it == qualificationId) {
+                qualification.right()
+            } else {
+                throw IllegalArgumentException("Unexpected qualification id")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given unknown qualification when adding member qualification then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val unknownQualificationId = QualificationIdFixture.arbitrary()
+
+        val error = ErrorFixture.arbitrary()
+
+        // when
+        val result = user.addMemberQualification(adminActor, unknownQualificationId) {
+            if (it == unknownQualificationId) {
+                error.left()
+            } else {
+                throw IllegalArgumentException("Unexpected qualification id")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given has qualification when removing member qualification then returns sourcing event`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            memberQualifications = setOf(qualificationId)
+        )
+
+        val expectedSourcingEvent = MemberQualificationRemoved(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
+            qualificationId = qualificationId
+        )
+
+        // when
+        val result = user.removeMemberQualification(adminActor, qualificationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given not has qualification when removing member qualification then returns error`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            memberQualifications = setOf()
+        )
+
+        // when
+        val result = user.removeMemberQualification(adminActor, qualificationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.MemberQualificationNotFound(
+                    "Not able to find member qualification with id $qualificationId.",
+                    qualificationId
                 )
             )
     }

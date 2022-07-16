@@ -22,6 +22,11 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)
 
+    data class MemberQualificationNotFound(
+        override val message: String,
+        val qualificationId: QualificationId
+    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+
     data class QualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId

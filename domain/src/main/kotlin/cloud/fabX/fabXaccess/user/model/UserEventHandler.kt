@@ -115,6 +115,22 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
             )
         }
 
+    override fun handle(event: MemberQualificationAdded, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                memberQualifications = u.memberQualifications + e.qualificationId
+            )
+        }
+
+    override fun handle(event: MemberQualificationRemoved, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                memberQualifications = u.memberQualifications - e.qualificationId
+            )
+        }
+
     override fun handle(event: UserDeleted, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAnd(event, user) { _, _ ->
             None

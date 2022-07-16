@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.GetQualificationById
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
@@ -198,6 +199,54 @@ data class User internal constructor(
                     aggregateVersion + 1,
                     actor.id,
                     phoneNr
+                )
+            }
+    }
+
+    /**
+     * Adds a member qualification given by its id to the user.
+     *
+     * @return error if the qualification cannot be found, sourcing event otherwise
+     */
+    fun addMemberQualification(
+        actor: Admin, // TODO replace by instructor
+        qualificationId: QualificationId,
+        getQualificationById: GetQualificationById
+    ): Either<Error, UserSourcingEvent> {
+        return getQualificationById.getQualificationById(qualificationId)
+            .map {
+                MemberQualificationAdded(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    qualificationId
+                )
+            }
+    }
+
+    /**
+     * Removes the user's member qualification given by the qualification id.
+     *
+     * @return error if the user does not have the qualification, sourcing event otherwise
+     */
+    fun removeMemberQualification(
+        actor: Admin,
+        qualificationId: QualificationId
+    ): Either<Error, UserSourcingEvent> {
+        return memberQualifications.firstOrNull { it == qualificationId }
+            .toOption()
+            .toEither {
+                Error.MemberQualificationNotFound(
+                    "Not able to find member qualification with id $qualificationId.",
+                    qualificationId
+                )
+            }
+            .map {
+                MemberQualificationRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    qualificationId
                 )
             }
     }

@@ -81,6 +81,8 @@ data class Qualification internal constructor(
     fun delete(
         actor: Admin
     ): QualificationSourcingEvent {
+        // TODO check if is required for any tool (return error)
+        // TODO remove from users (via DomainEvent?)
         return QualificationDeleted(
             id,
             aggregateVersion + 1,

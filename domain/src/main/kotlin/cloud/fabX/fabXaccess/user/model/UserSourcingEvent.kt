@@ -4,6 +4,7 @@ import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
+import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
@@ -27,6 +28,9 @@ sealed class UserSourcingEvent(
         fun handle(event: CardIdentityRemoved, user: Option<User>): Option<User>
         fun handle(event: PhoneNrIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: PhoneNrIdentityRemoved, user: Option<User>): Option<User>
+
+        fun handle(event: MemberQualificationAdded, user: Option<User>): Option<User>
+        fun handle(event: MemberQualificationRemoved, user: Option<User>): Option<User>
 
         fun handle(event: UserDeleted, user: Option<User>): Option<User>
     }
@@ -137,6 +141,28 @@ data class PhoneNrIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+data class MemberQualificationAdded(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    val qualificationId: QualificationId
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+data class MemberQualificationRemoved(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    val qualificationId: QualificationId
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
 data class UserDeleted(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -146,5 +172,3 @@ data class UserDeleted(
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)
 }
-
-// TODO adding/removing qualifications or changing set of qualifications
