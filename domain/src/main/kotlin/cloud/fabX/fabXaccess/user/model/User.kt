@@ -227,7 +227,7 @@ data class User internal constructor(
     /**
      * Removes the user's member qualification given by the qualification id.
      *
-     * @return error if the user does not have the qualification, sourcing event otherwise
+     * @return error if the user does not have the member qualification, sourcing event otherwise
      */
     fun removeMemberQualification(
         actor: Admin,
@@ -250,6 +250,56 @@ data class User internal constructor(
                 )
             }
     }
+
+    /**
+     * Adds an instructor qualification given by its id to the user.
+     *
+     * @return error if the qualification cannot be found, sourcing event otherwise
+     */
+    fun addInstructorQualification(
+        actor: Admin,
+        qualificationId: QualificationId,
+        getQualificationById: GetQualificationById
+    ): Either<Error, UserSourcingEvent> {
+        return getQualificationById.getQualificationById(qualificationId)
+            .map {
+                InstructorQualificationAdded(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    qualificationId
+                )
+            }
+    }
+
+    /**
+     * Removes the user's instructor qualification given by the qualification id.
+     *
+     * @return error if the user does not have the instructor qualification, sourcing event otherwise
+     */
+    fun removeInstructorQualification(
+        actor: Admin,
+        qualificationId: QualificationId
+    ): Either<Error, UserSourcingEvent> {
+        return memberQualifications.firstOrNull { it == qualificationId }
+            .toOption()
+            .toEither {
+                Error.InstructorQualificationNotFound(
+                    "Not able to find instructor qualification with id $qualificationId.",
+                    qualificationId
+                )
+            }
+            .map {
+                InstructorQualificationRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    qualificationId
+                )
+            }
+    }
+
+    // TODO changeIsAdmin
 
     fun delete(
         actor: Admin

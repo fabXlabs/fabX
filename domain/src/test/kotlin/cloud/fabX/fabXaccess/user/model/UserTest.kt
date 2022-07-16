@@ -6,6 +6,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -320,6 +321,109 @@ internal class UserTest {
             .isSome()
             .transform { it.memberQualifications }
             .containsExactlyInAnyOrder(qualificationId2)
+    }
+
+    @Test
+    fun `given sourcing events including InstructorQualificationAdded then applies it`() {
+        // given
+        val qualificationId1 = QualificationIdFixture.arbitrary()
+        val qualificationId2 = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId = userId,
+            aggregateVersion = 1,
+            instructorQualifications = null
+        )
+
+        val event1 = InstructorQualificationAdded(
+            userId,
+            2,
+            adminActor.id,
+            qualificationId1
+        )
+
+        val event2 = InstructorQualificationAdded(
+            userId,
+            3,
+            adminActor.id,
+            qualificationId2
+        )
+
+        // when
+        val result = user.apply(event1).flatMap { it.apply(event2) }
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.instructorQualifications }
+            .isNotNull()
+            .containsExactlyInAnyOrder(qualificationId1, qualificationId2)
+    }
+
+    @Test
+    fun `given sourcing events including InstructorQualificationRemoved then applies it`() {
+        // given
+        val qualificationId1 = QualificationIdFixture.arbitrary()
+        val qualificationId2 = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId = userId,
+            aggregateVersion = 42,
+            instructorQualifications = setOf(qualificationId1, qualificationId2)
+        )
+
+        val event = InstructorQualificationRemoved(
+            userId,
+            43,
+            adminActor.id,
+            qualificationId1
+        )
+
+        // when
+        val result = user.apply(event)
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.instructorQualifications }
+            .isNotNull()
+            .containsExactlyInAnyOrder(qualificationId2)
+    }
+
+    @Test
+    fun `given sourcing events including InstructorQualificationRemoved removing last instructor qualification then applies it`() {
+        // given
+        val qualificationId1 = QualificationIdFixture.arbitrary()
+        val qualificationId2 = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId = userId,
+            aggregateVersion = 42,
+            instructorQualifications = setOf(qualificationId1, qualificationId2)
+        )
+
+        val event1 = InstructorQualificationRemoved(
+            userId,
+            43,
+            adminActor.id,
+            qualificationId1
+        )
+
+        val event2 = InstructorQualificationRemoved(
+            userId,
+            43,
+            adminActor.id,
+            qualificationId2
+        )
+
+        // when
+        val result = user.apply(event1).flatMap { it.apply(event2) }
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.instructorQualifications }
+            .isNull()
     }
 
     @Test
@@ -787,6 +891,112 @@ internal class UserTest {
             .isEqualTo(
                 Error.MemberQualificationNotFound(
                     "Not able to find member qualification with id $qualificationId.",
+                    qualificationId
+                )
+            )
+    }
+
+    @Test
+    fun `when adding instructor qualification then returns sourcing event`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val qualificationId = QualificationIdFixture.arbitrary()
+        val qualification = QualificationFixture.arbitrary(qualificationId)
+
+        val expectedSourcingEvent = InstructorQualificationAdded(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
+            qualificationId = qualificationId
+        )
+
+        // when
+        val result = user.addInstructorQualification(adminActor, qualificationId) {
+            if (it == qualificationId) {
+                qualification.right()
+            } else {
+                throw IllegalArgumentException("Unexpected qualification id")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given unknown qualification when adding instructor qualification then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val unknownQualificationId = QualificationIdFixture.arbitrary()
+
+        val error = ErrorFixture.arbitrary()
+
+        // when
+        val result = user.addInstructorQualification(adminActor, unknownQualificationId) {
+            if (it == unknownQualificationId) {
+                error.left()
+            } else {
+                throw IllegalArgumentException("Unexpected qualification id")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given has qualification when removing instructor qualification then returns sourcing event`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            memberQualifications = setOf(qualificationId)
+        )
+
+        val expectedSourcingEvent = InstructorQualificationRemoved(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = adminActor.id,
+            qualificationId = qualificationId
+        )
+
+        // when
+        val result = user.removeInstructorQualification(adminActor, qualificationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given not has qualification when removing instructor qualification then returns error`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            memberQualifications = setOf()
+        )
+
+        // when
+        val result = user.removeInstructorQualification(adminActor, qualificationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.InstructorQualificationNotFound(
+                    "Not able to find instructor qualification with id $qualificationId.",
                     qualificationId
                 )
             )

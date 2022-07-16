@@ -131,6 +131,25 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
             )
         }
 
+    override fun handle(event: InstructorQualificationAdded, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                instructorQualifications = u.instructorQualifications.orEmpty() + e.qualificationId
+            )
+        }
+
+    override fun handle(event: InstructorQualificationRemoved, user: Option<User>): Option<User> {
+        return requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            val instructorQualifications = u.instructorQualifications.orEmpty() - e.qualificationId
+
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                instructorQualifications = instructorQualifications.ifEmpty { null }
+            )
+        }
+    }
+
     override fun handle(event: UserDeleted, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAnd(event, user) { _, _ ->
             None
