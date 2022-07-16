@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.flatMap
 import arrow.core.getOrNone
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
@@ -11,6 +12,7 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.PinInUse
 import cloud.fabX.fabXaccess.common.model.Error.PinNotInUse
+import cloud.fabX.fabXaccess.common.model.GetToolById
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
@@ -87,12 +89,12 @@ data class Device internal constructor(
     fun attachTool(
         actor: Admin,
         pin: Int,
-        toolId: ToolId
+        toolId: ToolId,
+        getToolById: GetToolById
     ): Either<Error, DeviceSourcingEvent> {
         // TODO Check if tool is attached to other device?
         //      Or is it a feature that it can be attached to multiple devices?
 
-        // TODO check if tool exists
         return attachedTools.getOrNone(pin)
             .toEither {
                 ToolAttached(
@@ -107,6 +109,11 @@ data class Device internal constructor(
                 PinInUse("Tool (with id $it) already attached at pin $pin.", pin)
             }
             .swap()
+            .flatMap { event ->
+                // assert tool exists
+                return getToolById.getToolById(toolId)
+                    .map { event }
+            }
     }
 
     fun detachTool(

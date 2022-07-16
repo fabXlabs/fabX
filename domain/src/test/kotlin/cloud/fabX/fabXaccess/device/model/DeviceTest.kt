@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess.device.model
 
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
@@ -7,7 +9,9 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
@@ -318,12 +322,18 @@ internal class DeviceTest {
     }
 
     @Test
+    @Suppress("MoveLambdaOutsideParentheses")
     fun `when attaching tool then returns expected sourcing event`() {
         // given
-        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
-
         val pin = 3
         val toolId = ToolIdFixture.arbitrary()
+        val tool = ToolFixture.arbitrary(toolId = toolId)
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion = aggregateVersion,
+            attachedTools = mapOf()
+        )
 
         val expectedSourcingEvent = ToolAttached(
             aggregateRootId = deviceId,
@@ -337,7 +347,8 @@ internal class DeviceTest {
         val result = device.attachTool(
             adminActor,
             pin,
-            toolId
+            toolId,
+            { tool.right() }
         )
 
         // then
@@ -347,10 +358,12 @@ internal class DeviceTest {
     }
 
     @Test
+    @Suppress("MoveLambdaOutsideParentheses")
     fun `given pin is already in use when attaching tool then returns error`() {
         // given
         val pin = 3
         val toolId = ToolIdFixture.arbitrary()
+        val tool = ToolFixture.arbitrary(toolId = toolId)
 
         val device = DeviceFixture.arbitrary(
             deviceId,
@@ -364,7 +377,8 @@ internal class DeviceTest {
         val result = device.attachTool(
             adminActor,
             pin,
-            toolId
+            toolId,
+            { tool.right() }
         )
 
         // then
@@ -376,6 +390,35 @@ internal class DeviceTest {
                     pin
                 )
             )
+    }
+
+    @Test
+    @Suppress("MoveLambdaOutsideParentheses")
+    fun `given tool does not exist when attaching tool then returns error`() {
+        // given
+        val pin = 3
+        val toolId = ToolIdFixture.arbitrary()
+
+        val error = ErrorFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion,
+            attachedTools = mapOf()
+        )
+
+        // when
+        val result = device.attachTool(
+            adminActor,
+            pin,
+            toolId,
+            { error.left() }
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
     }
 
     @Test
