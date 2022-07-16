@@ -9,6 +9,7 @@ val mockitoJunitVersion: String by project
 plugins {
     base
     kotlin("jvm") version "1.5.31"
+    jacoco
 }
 
 allprojects {
@@ -16,6 +17,7 @@ allprojects {
     version = "2.0-SNAPSHOT"
 
     apply(plugin = "kotlin")
+    apply(plugin = "jacoco")
 
     repositories {
         mavenCentral()
@@ -36,6 +38,13 @@ allprojects {
                 events = setOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
             }
         }
+    }
+
+    tasks.test {
+        finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+    }
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test) // tests are required to run before generating the report
     }
 
     dependencies {
