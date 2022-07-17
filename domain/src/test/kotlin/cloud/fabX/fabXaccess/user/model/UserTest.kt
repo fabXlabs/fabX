@@ -958,7 +958,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = aggregateVersion,
-            memberQualifications = setOf(qualificationId)
+            instructorQualifications = setOf(qualificationId)
         )
 
         val expectedSourcingEvent = InstructorQualificationRemoved(
@@ -985,7 +985,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = aggregateVersion,
-            memberQualifications = setOf()
+            instructorQualifications = null
         )
 
         // when

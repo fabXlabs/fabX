@@ -213,6 +213,7 @@ data class User internal constructor(
         qualificationId: QualificationId,
         getQualificationById: GetQualificationById
     ): Either<Error, UserSourcingEvent> {
+        // TODO error if user already has member qualification?
         return getQualificationById.getQualificationById(qualificationId)
             .map {
                 MemberQualificationAdded(
@@ -261,6 +262,7 @@ data class User internal constructor(
         qualificationId: QualificationId,
         getQualificationById: GetQualificationById
     ): Either<Error, UserSourcingEvent> {
+        // TODO error if user already has instructor qualification?
         return getQualificationById.getQualificationById(qualificationId)
             .map {
                 InstructorQualificationAdded(
@@ -281,7 +283,7 @@ data class User internal constructor(
         actor: Admin,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
-        return memberQualifications.firstOrNull { it == qualificationId }
+        return instructorQualifications?.firstOrNull { it == qualificationId }
             .toOption()
             .toEither {
                 Error.InstructorQualificationNotFound(

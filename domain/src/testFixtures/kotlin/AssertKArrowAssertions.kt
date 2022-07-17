@@ -22,7 +22,7 @@ fun <A,B> Assert<Either<A, B>>.isLeft(): Assert<A> = transform(appendName("left"
 
 fun <A> Assert<Option<A>>.isNone(): Assert<None> = transform(appendName("none", separator = ".")) { actual ->
     when (actual) {
-        is Some -> expected("to be None")
+        is Some -> expected("to be None but was ${actual.value}")
         is None -> actual
     }
 }
