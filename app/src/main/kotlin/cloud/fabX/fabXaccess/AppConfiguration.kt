@@ -11,7 +11,10 @@ import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseR
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.qualification.model.newQualificationId
+import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
+import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.newToolId
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
@@ -31,7 +34,10 @@ object AppConfiguration {
 
     private val deviceRepository: DeviceRepository
     private val qualificationRepository: QualificationRepository
+    private val toolRepository: ToolRepository
     private val userRepository: UserRepository
+
+    private val gettingToolsByQualificationId: GettingToolsByQualificationId
 
     init {
         loggerFactory = LogbackLoggerFactory()
@@ -43,9 +49,14 @@ object AppConfiguration {
         toolIdFactory = { newToolId() }
         userIdFactory = { newUserId() }
 
+        val toolDatabaseRepository = ToolDatabaseRepository()
+
         deviceRepository = DeviceDatabaseRepository()
         qualificationRepository = QualificationDatabaseRepository()
+        toolRepository = toolDatabaseRepository
         userRepository = UserDatabaseRepository()
+
+        gettingToolsByQualificationId = toolDatabaseRepository
 
         configureDomain()
         configureRest()
@@ -73,7 +84,10 @@ object AppConfiguration {
 
         DomainModule.configureDeviceRepository(deviceRepository)
         DomainModule.configureQualificationRepository(qualificationRepository)
+        DomainModule.configureToolRepository(toolRepository)
         DomainModule.configureUserRepository(userRepository)
+
+        DomainModule.configureGettingToolsByQualificationId(gettingToolsByQualificationId)
     }
 
     private fun configureRest() {
