@@ -436,12 +436,14 @@ internal class UserTest {
     }
 
     @ParameterizedTest
-    @CsvSource(value = [
-        "false, true,  true",
-        "false, false, false",
-        "true,  true,  true",
-        "true,  false, false",
-    ])
+    @CsvSource(
+        value = [
+            "false, true,  true",
+            "false, false, false",
+            "true,  true,  true",
+            "true,  false, false",
+        ]
+    )
     fun `given sourcing events including IsAdminChanged event when constructing user then returns applies it`(
         initial: Boolean, changingTo: Boolean, expectedResult: Boolean
     ) {
@@ -967,6 +969,33 @@ internal class UserTest {
         assertThat(result)
             .isRight()
             .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given already has qualification when adding instructor qualification then returns error`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            instructorQualifications = setOf(qualificationId)
+        )
+
+        // when
+        val result = user.addInstructorQualification(adminActor, qualificationId) {
+            throw IllegalStateException("should not get here")
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.InstructorQualificationAlreadyFound(
+                    "User $userId already has instructor qualification $qualificationId.",
+                    qualificationId
+                )
+            )
     }
 
     @Test

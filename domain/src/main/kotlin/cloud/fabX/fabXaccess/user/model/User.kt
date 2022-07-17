@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.flatMap
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
@@ -262,8 +263,19 @@ data class User internal constructor(
         qualificationId: QualificationId,
         getQualificationById: GetQualificationById
     ): Either<Error, UserSourcingEvent> {
-        // TODO error if user already has instructor qualification? or just not return a sourcing event?
-        return getQualificationById.getQualificationById(qualificationId)
+        return instructorQualifications?.firstOrNull { it == qualificationId }
+            .toOption()
+            .map {
+                Error.InstructorQualificationAlreadyFound(
+                    "User $id already has instructor qualification $qualificationId.",
+                    qualificationId
+                )
+            }
+            .toEither { }
+            .swap()
+            .flatMap {
+                getQualificationById.getQualificationById(qualificationId)
+            }
             .map {
                 InstructorQualificationAdded(
                     id,
