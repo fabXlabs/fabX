@@ -10,6 +10,6 @@ interface UserRepository {
     fun store(event: UserSourcingEvent): Option<Error>
 }
 
-interface GettingUserByIdentity {
+fun interface GettingUserByIdentity {
     fun getByIdentity(identity: UserIdentity): Either<Error, User>
 }

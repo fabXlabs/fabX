@@ -12,10 +12,10 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.PinInUse
 import cloud.fabX.fabXaccess.common.model.Error.PinNotInUse
-import cloud.fabX.fabXaccess.common.model.GetToolById
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
+import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.ToolId
 import cloud.fabX.fabXaccess.user.model.Admin
 
@@ -90,7 +90,7 @@ data class Device internal constructor(
         actor: Admin,
         pin: Int,
         toolId: ToolId,
-        getToolById: GetToolById
+        gettingToolById: GettingToolById
     ): Either<Error, DeviceSourcingEvent> {
         // TODO Check if tool is attached to other device?
         //      Or is it a feature that it can be attached to multiple devices?
@@ -111,7 +111,7 @@ data class Device internal constructor(
             .swap()
             .flatMap { event ->
                 // assert tool exists
-                return getToolById.getToolById(toolId)
+                return gettingToolById.getToolById(toolId)
                     .map { event }
             }
     }
