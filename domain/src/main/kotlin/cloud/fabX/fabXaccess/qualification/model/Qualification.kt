@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import cloud.fabX.fabXaccess.DomainModule
@@ -90,24 +89,23 @@ data class Qualification internal constructor(
     ): Either<Error, QualificationSourcingEvent> {
         // TODO remove from users (via DomainEvent?)
 
-        return gettingToolsByQualificationId.getToolsByQualificationId(id)
-            .flatMap {
-                if (it.isEmpty()) {
-                    QualificationDeleted(
-                        id,
-                        aggregateVersion + 1,
-                        actor.id
-                    ).right()
-                } else {
-                    val toolIds = it.joinToString { tool -> tool.id.toString() }
+        val tools = gettingToolsByQualificationId.getToolsByQualificationId(id)
 
-                    Error.QualificationInUse(
-                        "Qualification in use by tools ($toolIds).",
-                        id,
-                        it.map { tool -> tool.id }.toSet()
-                    ).left()
-                }
-            }
+        return if (tools.isEmpty()) {
+            QualificationDeleted(
+                id,
+                aggregateVersion + 1,
+                actor.id
+            ).right()
+        } else {
+            val toolIds = tools.joinToString { tool -> tool.id.toString() }
+
+            Error.QualificationInUse(
+                "Qualification in use by tools ($toolIds).",
+                id,
+                tools.map { tool -> tool.id }.toSet()
+            ).left()
+        }
     }
 
     class EventHistoryDoesNotStartWithQualificationCreated(message: String) : Exception(message)

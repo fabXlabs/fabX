@@ -22,7 +22,7 @@ fun interface GettingToolsByQualificationId {
      * Returns all tools which require the qualification (potentially among other qualifications)
      * given by its id. Returns an empty set if no tools require the qualification.
      *
-     * @return error if qualification cannot be found or (potentially empty) set of tools which require the qualification
+     * @return (potentially empty) set of tools which require the qualification
      */
-    fun getToolsByQualificationId(id: QualificationId): Either<Error, Set<Tool>>
+    fun getToolsByQualificationId(id: QualificationId): Set<Tool>
 }

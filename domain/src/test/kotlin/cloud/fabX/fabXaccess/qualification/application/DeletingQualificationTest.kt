@@ -15,7 +15,6 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
-import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -71,7 +70,7 @@ internal class DeletingQualificationTest {
             .thenReturn(qualification.right())
 
         whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
-            .thenReturn(setOf<Tool>().right())
+            .thenReturn(setOf())
 
         whenever(qualificationRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
@@ -123,7 +122,7 @@ internal class DeletingQualificationTest {
             .thenReturn(qualification.right())
 
         whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
-            .thenReturn(setOf<Tool>().right())
+            .thenReturn(setOf())
 
         whenever(qualificationRepository!!.store(event))
             .thenReturn(error.some())
@@ -151,7 +150,7 @@ internal class DeletingQualificationTest {
             .thenReturn(qualification.right())
 
         whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
-            .thenReturn(setOf(tool).right())
+            .thenReturn(setOf(tool))
 
         // when
         val result = testee!!.deleteQualification(

@@ -59,6 +59,11 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val message: String
     ) : Error(message)
 
+    data class ToolNotFound(
+        override val message: String,
+        val toolId: ToolId
+    ) : Error(message, mapOf("toolId" to toolId.toString()))
+
     data class PinInUse(
         override val message: String,
         val pin: Int
