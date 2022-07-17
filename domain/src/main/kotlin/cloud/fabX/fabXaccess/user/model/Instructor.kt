@@ -10,8 +10,12 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationId
 data class Instructor internal constructor(
     val userId: UserId,
     override val name: String,
-    val qualifications: Set<QualificationId>
+    private val qualifications: Set<QualificationId>
 ) : Actor {
     override val id: ActorId
         get() = userId
+
+    fun hasQualification(qualificationId: QualificationId): Boolean {
+        return qualifications.contains(qualificationId)
+    }
 }
