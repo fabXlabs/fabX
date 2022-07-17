@@ -14,6 +14,10 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
+import cloud.fabX.fabXaccess.tool.model.Tool
+import cloud.fabX.fabXaccess.tool.model.ToolFixture
+import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
@@ -32,18 +36,22 @@ internal class DeletingQualificationTest {
 
     private var logger: Logger? = null
     private var qualificationRepository: QualificationRepository? = null
+    private var gettingToolsByQualificationId: GettingToolsByQualificationId? = null
 
     private var testee: DeletingQualification? = null
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock qualificationRepository: QualificationRepository
+        @Mock qualificationRepository: QualificationRepository,
+        @Mock gettingToolsByQualificationId: GettingToolsByQualificationId
     ) {
         this.logger = logger
         this.qualificationRepository = qualificationRepository
+        this.gettingToolsByQualificationId = gettingToolsByQualificationId
         DomainModule.configureLoggerFactory { logger }
         DomainModule.configureQualificationRepository(qualificationRepository)
+        DomainModule.configureGettingToolsByQualificationId(gettingToolsByQualificationId)
 
         testee = DeletingQualification()
     }
@@ -61,6 +69,9 @@ internal class DeletingQualificationTest {
 
         whenever(qualificationRepository!!.getById(qualificationId))
             .thenReturn(qualification.right())
+
+        whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
+            .thenReturn(setOf<Tool>().right())
 
         whenever(qualificationRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
@@ -111,6 +122,9 @@ internal class DeletingQualificationTest {
         whenever(qualificationRepository!!.getById(qualificationId))
             .thenReturn(qualification.right())
 
+        whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
+            .thenReturn(setOf<Tool>().right())
+
         whenever(qualificationRepository!!.store(event))
             .thenReturn(error.some())
 
@@ -124,5 +138,36 @@ internal class DeletingQualificationTest {
         assertThat(result)
             .isSome()
             .isEqualTo(error)
+    }
+
+    @Test
+    fun `given qualification is in use for tool when deleting qualification then returns error()`() {
+        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
+
+        val toolId = ToolIdFixture.arbitrary()
+        val tool = ToolFixture.arbitrary(toolId, requiredQualifications = setOf(qualificationId))
+
+        whenever(qualificationRepository!!.getById(qualificationId))
+            .thenReturn(qualification.right())
+
+        whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
+            .thenReturn(setOf(tool).right())
+
+        // when
+        val result = testee!!.deleteQualification(
+            adminActor,
+            qualificationId
+        )
+
+        val expectedError = Error.QualificationInUse(
+            "Qualification in use by tools ($toolId).",
+            qualificationId,
+            setOf(toolId)
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(expectedError)
     }
 }

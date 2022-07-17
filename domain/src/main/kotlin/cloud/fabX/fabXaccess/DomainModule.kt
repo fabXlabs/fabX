@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
@@ -23,6 +24,8 @@ object DomainModule {
     private var toolRepository: ToolRepository? = null
     private var userRepository: UserRepository? = null
 
+    private var gettingToolsByQualificationId: GettingToolsByQualificationId? = null
+
 
     fun isFullyConfigured(): Boolean {
         return loggerFactory != null
@@ -34,6 +37,7 @@ object DomainModule {
                 && qualificationRepository != null
                 && toolRepository != null
                 && userRepository != null
+                && gettingToolsByQualificationId != null
     }
 
     fun configureLoggerFactory(loggerFactory: LoggerFactory) {
@@ -72,6 +76,10 @@ object DomainModule {
         this.userRepository = userRepository
     }
 
+    fun configureGettingToolsByQualificationId(gettingToolsByQualificationId: GettingToolsByQualificationId) {
+        this.gettingToolsByQualificationId = gettingToolsByQualificationId
+    }
+
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
     }
@@ -106,6 +114,10 @@ object DomainModule {
 
     internal fun userRepository(): UserRepository {
         return require(userRepository)
+    }
+
+    internal fun gettingToolsQualificationId(): GettingToolsByQualificationId {
+        return require(gettingToolsByQualificationId)
     }
 
     private fun <T : Any> require(value: T?): T = requireNotNull(value) { "DomainModule has to be configured" }

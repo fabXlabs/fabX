@@ -17,7 +17,7 @@ fun interface GettingToolById {
     fun getToolById(id: ToolId): Either<Error, Tool>
 }
 
-fun interface GetToolsByQualificationId {
+fun interface GettingToolsByQualificationId {
     /**
      * Returns all tools which require the qualification (potentially among other qualifications)
      * given by its id. Returns an empty set if no tools require the qualification.

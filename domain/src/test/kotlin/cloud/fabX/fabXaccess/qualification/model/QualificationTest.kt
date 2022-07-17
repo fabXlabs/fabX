@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.model
 
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
@@ -7,8 +8,11 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
+import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
+import isRight
 import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -266,11 +270,15 @@ internal class QualificationTest {
             actorId = adminActor.id
         )
 
+        val gettingToolsByQualificationId = GettingToolsByQualificationId { setOf<Tool>().right() }
+
         // when
-        val result = qualification.delete(adminActor)
+        val result = qualification.delete(adminActor, gettingToolsByQualificationId)
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
     }
 
     @Test

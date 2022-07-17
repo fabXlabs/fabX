@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common.model
 
 import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.tool.model.ToolId
 import cloud.fabX.fabXaccess.user.model.UserId
 
 sealed class Error(open val message: String, open val parameters: Map<String, String> = emptyMap()) {
@@ -36,6 +37,18 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val message: String,
         val qualificationId: QualificationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+
+    data class QualificationInUse(
+        override val message: String,
+        val qualificationId: QualificationId,
+        val toolIds: Set<ToolId>
+    ) : Error(
+        message,
+        mapOf(
+            "qualificationId" to qualificationId.toString(),
+            "toolIds" to toolIds.joinToString()
+        )
+    )
 
     data class DeviceNotFound(
         override val message: String,

@@ -15,6 +15,7 @@ class DeletingQualification {
 
     private val log = logger()
     private val qualificationRepository = DomainModule.qualificationRepository()
+    private val gettingToolsByQualificationId = DomainModule.gettingToolsQualificationId()
 
     fun deleteQualification(
         actor: Admin,
@@ -23,8 +24,8 @@ class DeletingQualification {
         log.debug("deleteQualification...")
 
         return qualificationRepository.getById(qualificationId)
-            .map {
-                it.delete(actor)
+            .flatMap {
+                it.delete(actor, gettingToolsByQualificationId)
             }
             .flatMap {
                 qualificationRepository.store(it)
