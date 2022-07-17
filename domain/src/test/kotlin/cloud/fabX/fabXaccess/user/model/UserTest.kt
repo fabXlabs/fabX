@@ -435,6 +435,40 @@ internal class UserTest {
             .isNull()
     }
 
+    @ParameterizedTest
+    @CsvSource(value = [
+        "false, true,  true",
+        "false, false, false",
+        "true,  true,  true",
+        "true,  false, false",
+    ])
+    fun `given sourcing events including IsAdminChanged event when constructing user then returns applies it`(
+        initial: Boolean, changingTo: Boolean, expectedResult: Boolean
+    ) {
+        // given
+        val user = UserFixture.arbitrary(
+            userId = userId,
+            aggregateVersion = 42,
+            isAdmin = initial
+        )
+
+        val event = IsAdminChanged(
+            userId,
+            43,
+            adminActor.id,
+            changingTo
+        )
+
+        // when
+        val result = user.apply(event)
+
+        // then
+        assertThat(result)
+            .isSome()
+            .transform { it.isAdmin }
+            .isEqualTo(expectedResult)
+    }
+
     @Test
     fun `given sourcing events including UserDeleted event when constructing user then returns None`() {
         // given
@@ -1009,6 +1043,32 @@ internal class UserTest {
                     qualificationId
                 )
             )
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun `when changing isAdmin then returns sourcing event`(
+        changeTo: Boolean
+    ) {
+        // given
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            instructorQualifications = null
+        )
+
+        val expectedSourcingEvent = IsAdminChanged(
+            userId,
+            aggregateVersion + 1,
+            adminActor.id,
+            changeTo
+        )
+
+        // when
+        val result = user.changeIsAdmin(adminActor, changeTo)
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
     }
 
     @Test

@@ -262,7 +262,7 @@ data class User internal constructor(
         qualificationId: QualificationId,
         getQualificationById: GetQualificationById
     ): Either<Error, UserSourcingEvent> {
-        // TODO error if user already has instructor qualification?
+        // TODO error if user already has instructor qualification? or just not return a sourcing event?
         return getQualificationById.getQualificationById(qualificationId)
             .map {
                 InstructorQualificationAdded(
@@ -301,7 +301,21 @@ data class User internal constructor(
             }
     }
 
-    // TODO changeIsAdmin
+    /**
+     * Changes whether the user is admin or not.
+     */
+    fun changeIsAdmin(
+        actor: Admin,
+        isAdmin: Boolean
+    ): UserSourcingEvent {
+        // TODO error if new value is equal to old value? or just not return a sourcing event?
+        return IsAdminChanged(
+            id,
+            aggregateVersion + 1,
+            actor.id,
+            isAdmin
+        )
+    }
 
     fun delete(
         actor: Admin

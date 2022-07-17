@@ -150,6 +150,15 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
         }
     }
 
+    override fun handle(event: IsAdminChanged, user: Option<User>): Option<User> {
+        return requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                isAdmin = e.isAdmin
+            )
+        }
+    }
+
     override fun handle(event: UserDeleted, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAnd(event, user) { _, _ ->
             None

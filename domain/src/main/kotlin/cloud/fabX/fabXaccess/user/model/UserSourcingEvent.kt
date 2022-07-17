@@ -35,6 +35,8 @@ sealed class UserSourcingEvent(
         fun handle(event: InstructorQualificationAdded, user: Option<User>): Option<User>
         fun handle(event: InstructorQualificationRemoved, user: Option<User>): Option<User>
 
+        fun handle(event: IsAdminChanged, user: Option<User>): Option<User>
+
         fun handle(event: UserDeleted, user: Option<User>): Option<User>
     }
 }
@@ -182,6 +184,17 @@ data class InstructorQualificationRemoved(
     override val aggregateVersion: Long,
     override val actorId: ActorId,
     val qualificationId: QualificationId
+) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+data class IsAdminChanged(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    val isAdmin: Boolean
 ) : UserSourcingEvent(aggregateRootId, aggregateVersion, actorId) {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
