@@ -214,8 +214,17 @@ data class User internal constructor(
         qualificationId: QualificationId,
         getQualificationById: GetQualificationById
     ): Either<Error, UserSourcingEvent> {
-        // TODO error if user already has member qualification?
-        return getQualificationById.getQualificationById(qualificationId)
+        return memberQualifications.firstOrNull { it == qualificationId }
+            .toOption()
+            .map {
+                Error.MemberQualificationAlreadyFound(
+                    "User $id already has member qualification $qualificationId.",
+                    qualificationId
+                )
+            }
+            .toEither { }
+            .swap()
+            .flatMap { getQualificationById.getQualificationById(qualificationId) }
             .map {
                 MemberQualificationAdded(
                     id,

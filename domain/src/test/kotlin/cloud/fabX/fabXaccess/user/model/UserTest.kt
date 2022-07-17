@@ -866,6 +866,33 @@ internal class UserTest {
     }
 
     @Test
+    fun `given already has qualification when adding member qualification then returns error`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            memberQualifications = setOf(qualificationId)
+        )
+
+        // when
+        val result = user.addMemberQualification(adminActor, qualificationId) {
+            throw IllegalStateException("should not get here")
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.MemberQualificationAlreadyFound(
+                    "User $userId already has member qualification $qualificationId.",
+                    qualificationId
+                )
+            )
+    }
+
+    @Test
     fun `given unknown qualification when adding member qualification then returns error`() {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)

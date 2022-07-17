@@ -28,6 +28,11 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         val qualificationId: QualificationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
 
+    data class MemberQualificationAlreadyFound(
+        override val message: String,
+        val qualificationId: QualificationId
+    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+
     data class InstructorQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId
