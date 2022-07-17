@@ -28,16 +28,23 @@ object DomainModule {
 
 
     fun isFullyConfigured(): Boolean {
-        return loggerFactory != null
-                && deviceIdFactory != null
-                && qualificationIdFactory != null
-                && toolIdFactory != null
-                && userIdFactory != null
-                && deviceRepository != null
-                && qualificationRepository != null
-                && toolRepository != null
-                && userRepository != null
-                && gettingToolsByQualificationId != null
+        return try {
+            require(loggerFactory)
+            require(deviceIdFactory)
+            require(qualificationIdFactory)
+            require(toolIdFactory)
+            require(userIdFactory)
+            require(deviceRepository)
+            require(qualificationRepository)
+            require(toolRepository)
+            require(userRepository)
+            require(gettingToolsByQualificationId)
+
+            true
+        } catch (e: IllegalArgumentException) {
+            System.err.println(e.message)
+            false
+        }
     }
 
     fun configureLoggerFactory(loggerFactory: LoggerFactory) {
@@ -120,5 +127,6 @@ object DomainModule {
         return require(gettingToolsByQualificationId)
     }
 
-    private fun <T : Any> require(value: T?): T = requireNotNull(value) { "DomainModule has to be configured" }
+    private inline fun <reified T : Any> require(value: T?): T =
+        requireNotNull(value) { "DomainModule has to be configured (missing ${T::class.qualifiedName})" }
 }
