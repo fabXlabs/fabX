@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.ValueSource
 
 internal class UserTest {
 
@@ -294,16 +295,20 @@ internal class UserTest {
             .containsExactlyInAnyOrder(qualificationId1, qualificationId2)
     }
 
-    @Test
-    fun `given sourcing events including MemberQualificationRemoved then applies it`() {
+    @ParameterizedTest
+    @ValueSource(ints = [1, 2, 42])
+    fun `given sourcing events including MemberQualificationRemoved then applies it`(
+        amountAdditionalQualifications: Int
+    ) {
         // given
         val qualificationId1 = QualificationIdFixture.arbitrary()
-        val qualificationId2 = QualificationIdFixture.arbitrary()
+
+        val additionalQualificationIds = QualificationIdFixture.arbitraries(amountAdditionalQualifications)
 
         val user = UserFixture.arbitrary(
             userId = userId,
             aggregateVersion = 42,
-            memberQualifications = setOf(qualificationId1, qualificationId2)
+            memberQualifications = setOf(qualificationId1) + additionalQualificationIds
         )
 
         val event = MemberQualificationRemoved(
@@ -320,7 +325,7 @@ internal class UserTest {
         assertThat(result)
             .isSome()
             .transform { it.memberQualifications }
-            .containsExactlyInAnyOrder(qualificationId2)
+            .isEqualTo(additionalQualificationIds)
     }
 
     @Test
@@ -360,23 +365,27 @@ internal class UserTest {
             .containsExactlyInAnyOrder(qualificationId1, qualificationId2)
     }
 
-    @Test
-    fun `given sourcing events including InstructorQualificationRemoved then applies it`() {
+    @ParameterizedTest
+    @ValueSource(ints = [1, 2, 42])
+    fun `given sourcing events including InstructorQualificationRemoved then applies it`(
+        amountAdditionalQualifications: Int
+    ) {
         // given
-        val qualificationId1 = QualificationIdFixture.arbitrary()
-        val qualificationId2 = QualificationIdFixture.arbitrary()
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val additionalQualificationIds = QualificationIdFixture.arbitraries(amountAdditionalQualifications)
 
         val user = UserFixture.arbitrary(
             userId = userId,
             aggregateVersion = 42,
-            instructorQualifications = setOf(qualificationId1, qualificationId2)
+            instructorQualifications = setOf(qualificationId) + additionalQualificationIds
         )
 
         val event = InstructorQualificationRemoved(
             userId,
             43,
             adminActor.id,
-            qualificationId1
+            qualificationId
         )
 
         // when
@@ -387,7 +396,7 @@ internal class UserTest {
             .isSome()
             .transform { it.instructorQualifications }
             .isNotNull()
-            .containsExactlyInAnyOrder(qualificationId2)
+            .isEqualTo(additionalQualificationIds)
     }
 
     @Test

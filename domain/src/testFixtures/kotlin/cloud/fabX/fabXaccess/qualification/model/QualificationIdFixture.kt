@@ -11,4 +11,16 @@ object QualificationIdFixture {
         byteArray[7] = nr.toByte()
         return QualificationId(UUID.nameUUIDFromBytes(byteArray))
     }
+
+    fun arbitraries(amount: Int): Set<QualificationId> {
+        val ids = 1.rangeTo(amount)
+            .map { arbitrary() }
+            .toSet()
+
+        if (ids.size != amount) {
+            throw IllegalStateException("generated duplicate ids")
+        }
+
+        return ids
+    }
 }
