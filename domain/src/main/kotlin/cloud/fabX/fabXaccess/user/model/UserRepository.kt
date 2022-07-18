@@ -13,3 +13,7 @@ interface UserRepository {
 fun interface GettingUserByIdentity {
     fun getByIdentity(identity: UserIdentity): Either<Error, User>
 }
+
+fun interface GettingUserByUsername {
+    fun getByUsername(username: String): Either<Error, User>
+}

@@ -15,6 +15,10 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val message: String
     ) : Error(message)
 
+    data class UserNotFoundByUsername(
+        override val message: String
+    ) : Error(message)
+
     data class UserIdentityNotFound(
         override val message: String,
         override val parameters: Map<String, String>

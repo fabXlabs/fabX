@@ -1217,6 +1217,28 @@ internal class UserTest {
         assertThat(result).isEqualTo(expectedResult)
     }
 
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "name1, name1, true",
+            "longername, longername, true",
+            "name1, name2, false"
+        ]
+    )
+    fun `given user with username password identity when checking hasUsername then returns expected result`(
+        identityUsername: String, checkUsername: String, expectedResult: Boolean
+    ) {
+        // given
+        val identity = UsernamePasswordIdentity(identityUsername, "passwordHash42")
+        val user = UserFixture.withIdentity(identity)
+
+        // when
+        val result = user.hasUsername(checkUsername)
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
     @Test
     fun `given any user when getting as member then returns member`() {
         // given

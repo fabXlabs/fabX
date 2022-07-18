@@ -9,13 +9,14 @@ import arrow.core.left
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserId
 import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 
-class UserDatabaseRepository : UserRepository, GettingUserByIdentity {
+class UserDatabaseRepository : UserRepository, GettingUserByIdentity, GettingUserByUsername {
     private var events = mutableListOf<UserSourcingEvent>()
 
     override fun getAll(): Set<User> {
@@ -78,4 +79,10 @@ class UserDatabaseRepository : UserRepository, GettingUserByIdentity {
             .firstOrNull { it.hasIdentity(identity) }
             .toOption()
             .toEither { Error.UserNotFoundByIdentity("Not able to find user for given identity.") }
+
+    override fun getByUsername(username: String): Either<Error, User> =
+        getAll()
+            .firstOrNull { it.hasUsername(username) }
+            .toOption()
+            .toEither { Error.UserNotFoundByUsername("Not able to find user for given username.") }
 }

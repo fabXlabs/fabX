@@ -346,6 +346,9 @@ data class User internal constructor(
 
     fun hasIdentity(userIdentity: UserIdentity) = identities.contains(userIdentity)
 
+    fun hasUsername(username: String) =
+        identities.any { it is UsernamePasswordIdentity && it.username == username }
+
     fun asMember(): Member = Member(id, name, memberQualifications)
 
     fun asInstructor(): Either<Error, Instructor> =
