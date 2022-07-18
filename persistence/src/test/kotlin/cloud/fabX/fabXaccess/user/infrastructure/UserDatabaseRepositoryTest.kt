@@ -7,6 +7,8 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
+import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
@@ -336,6 +338,15 @@ internal class UserDatabaseRepositoryTest {
             )
             repository!!.store(user1IdentityAdded)
 
+            val user1CardIdentityAdded = CardIdentityAdded(
+                userId,
+                3,
+                actorId,
+                "11223344556677",
+                "superSecret42"
+            )
+            repository!!.store(user1CardIdentityAdded)
+
             val user2Created = UserCreated(
                 userId2,
                 actorId,
@@ -353,6 +364,15 @@ internal class UserDatabaseRepositoryTest {
                 "password2"
             )
             repository!!.store(user2IdentityAdded)
+
+            val user2CardIdentityAdded = CardIdentityAdded(
+                userId2,
+                3,
+                actorId,
+                "aabbccddeeffaa",
+                "highSecret"
+            )
+            repository!!.store(user2CardIdentityAdded)
         }
 
         @Test
@@ -416,6 +436,39 @@ internal class UserDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.UserNotFoundByUsername("Not able to find user for given username.")
+                )
+        }
+
+        @Test
+        fun `when getting by known card id then returns user`() {
+            // given
+            val repository = this.repository!! as GettingUserByCardId
+
+            // when
+            val result = repository.getByCardId("aabbccddeeffaa")
+
+            // then
+            assertThat(result)
+                .isRight()
+                .transform { it.id }.isEqualTo(userId2)
+        }
+
+        @Test
+        fun `when getting by unknown card id then returns error`() {
+            // given
+            val repository = this.repository!! as GettingUserByCardId
+
+            // when
+            val unknownCardId = "00000000000000"
+            val result = repository.getByCardId(unknownCardId)
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UserNotFoundByCardId(
+                        "Not able to find user for given card id."
+                    )
                 )
         }
     }

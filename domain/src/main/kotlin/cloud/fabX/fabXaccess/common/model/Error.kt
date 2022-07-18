@@ -19,6 +19,10 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val message: String
     ) : Error(message)
 
+    data class UserNotFoundByCardId(
+        override val message: String
+    ) : Error(message)
+
     data class UserNotFoundByWikiName(
         override val message: String
     ) : Error(message)

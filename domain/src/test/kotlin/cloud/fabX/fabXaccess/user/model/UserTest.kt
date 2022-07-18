@@ -1458,6 +1458,28 @@ internal class UserTest {
         assertThat(result).isEqualTo(expectedResult)
     }
 
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "aabbccddeeff00, aabbccddeeff00, true",
+            "00000000000001, 00000000000001, true",
+            "aabbccddeeff00, 11111111111111, false"
+        ]
+    )
+    fun `given user with card identity when checking hasCardId then returns expected result`(
+        identityCardId: String, checkCardId: String, expectedResult: Boolean
+    ) {
+        // given
+        val identity = CardIdentity(identityCardId, "secret42")
+        val user = UserFixture.withIdentity(identity)
+
+        // when
+        val result = user.hasCardId(checkCardId)
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
     @Test
     fun `given any user when getting as member then returns member`() {
         // given

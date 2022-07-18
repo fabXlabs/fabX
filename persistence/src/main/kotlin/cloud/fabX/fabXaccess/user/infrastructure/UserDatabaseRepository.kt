@@ -8,6 +8,7 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
@@ -17,7 +18,12 @@ import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 
-class UserDatabaseRepository : UserRepository, GettingUserByIdentity, GettingUserByUsername, GettingUserByWikiName {
+class UserDatabaseRepository :
+    UserRepository,
+    GettingUserByIdentity,
+    GettingUserByUsername,
+    GettingUserByCardId,
+    GettingUserByWikiName {
     private var events = mutableListOf<UserSourcingEvent>()
 
     override fun getAll(): Set<User> {
@@ -86,6 +92,12 @@ class UserDatabaseRepository : UserRepository, GettingUserByIdentity, GettingUse
             .firstOrNull { it.hasUsername(username) }
             .toOption()
             .toEither { Error.UserNotFoundByUsername("Not able to find user for given username.") }
+
+    override fun getByCardId(cardId: String): Either<Error, User> =
+        getAll()
+            .firstOrNull { it.hasCardId(cardId) }
+            .toOption()
+            .toEither { Error.UserNotFoundByCardId("Not able to find user for given card id.") }
 
     override fun getByWikiName(wikiName: String): Either<Error, User> =
         getAll()
