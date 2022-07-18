@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -56,7 +57,7 @@ internal class ChangingIsAdminTest {
         newIsAdmin: Boolean
     ) {
         // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1, isAdmin = !newIsAdmin)
 
         val expectedSourcingEvent = IsAdminChanged(
             userId,
@@ -108,11 +109,36 @@ internal class ChangingIsAdminTest {
     }
 
     @Test
+    fun `given domain error when changing is admin then returns domain error`() {
+        // given
+        val newIsAdmin = true
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1, isAdmin = newIsAdmin)
+
+        val expectedDomainError = Error.UserAlreadyAdmin("User already is admin.")
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        // when
+        val result = testee!!.changeIsAdmin(
+            adminActor,
+            userId,
+            newIsAdmin
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(expectedDomainError)
+    }
+
+    @Test
     fun `given sourcing event cannot be stored when changing is admin then returns error`() {
         // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
-
         val newIsAdmin = true
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1, isAdmin = !newIsAdmin)
 
         val expectedSourcingEvent = IsAdminChanged(
             userId,

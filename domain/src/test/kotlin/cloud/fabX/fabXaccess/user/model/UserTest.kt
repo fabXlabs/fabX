@@ -1184,7 +1184,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = aggregateVersion,
-            instructorQualifications = null
+            isAdmin = !changeTo
         )
 
         val expectedSourcingEvent = IsAdminChanged(
@@ -1198,7 +1198,45 @@ internal class UserTest {
         val result = user.changeIsAdmin(adminActor, changeTo)
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given user already is admin when changing isAdmin then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            isAdmin = true
+        )
+
+        // when
+        val result = user.changeIsAdmin(adminActor, true)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserAlreadyAdmin("User already is admin."))
+    }
+
+    @Test
+    fun `given user already is not admin when changing isAdmin then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            isAdmin = false
+        )
+
+        // when
+        val result = user.changeIsAdmin(adminActor, false)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserAlreadyNotAdmin("User already not is admin."))
     }
 
     @Test

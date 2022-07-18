@@ -24,7 +24,7 @@ class ChangingIsAdmin {
         log.debug("changeIsAdmin...")
 
         return userRepository.getById(userId)
-            .map {
+            .flatMap {
                 it.changeIsAdmin(
                     actor,
                     isAdmin

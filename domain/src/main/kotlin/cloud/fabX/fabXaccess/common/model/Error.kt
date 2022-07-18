@@ -32,6 +32,14 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val message: String
     ) : Error(message)
 
+    data class UserAlreadyAdmin(
+        override val message: String
+    ) : Error(message)
+
+    data class UserAlreadyNotAdmin(
+        override val message: String
+    ) : Error(message)
+
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)
 
