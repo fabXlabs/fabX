@@ -19,8 +19,6 @@ import cloud.fabX.fabXaccess.common.model.biFlatmap
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
-// TODO wikiName must be unique rule
-
 data class User internal constructor(
     override val id: UserId,
     override val aggregateVersion: Long,
