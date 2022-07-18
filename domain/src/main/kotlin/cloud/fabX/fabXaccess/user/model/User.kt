@@ -5,6 +5,8 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
@@ -96,14 +98,57 @@ data class User internal constructor(
         return UserLockStateChanged(id, aggregateVersion + 1, actor.id, locked, notes)
     }
 
+    /**
+     * Adds a username password identity to the user.
+     *
+     * Returns an error if the user already has a username password identity.
+     * Returns an error if the username is already in use (by another user).
+     *
+     * @return error or sourcing event
+     */
     fun addUsernamePasswordIdentity(
         actor: Admin,
         username: String,
-        hash: String
-    ): UserSourcingEvent {
-        // TODO username must be unique rule
-        // TODO at most one UsernamePasswordIdentity rule
-        return UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, hash)
+        hash: String,
+        gettingUserByUsername: GettingUserByUsername
+    ): Either<Error, UserSourcingEvent> {
+        return requireNoUsernamePasswordIdentity()
+            .flatMap { requireUniqueUsername(username, gettingUserByUsername) }
+            .map {
+                UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, hash)
+            }
+    }
+
+    private fun requireNoUsernamePasswordIdentity(): Either<Error, Unit> {
+        return identities.firstOrNull { it is UsernamePasswordIdentity }
+            .toOption()
+            .map {
+                Error.UsernamePasswordIdentityAlreadyFound(
+                    "User already has a username password identity."
+                )
+            }
+            .toEither { }
+            .swap()
+    }
+
+    private fun requireUniqueUsername(
+        username: String,
+        gettingUserByUsername: GettingUserByUsername
+    ): Either<Error, Unit> {
+        return gettingUserByUsername.getByUsername(username)
+            .swap()
+            .mapLeft {
+                Error.UsernameAlreadyInUse(
+                    "Username is already in use."
+                )
+            }
+            .flatMap {
+                if (it is Error.UserNotFoundByUsername) {
+                    Unit.right()
+                } else {
+                    it.left()
+                }
+            }
     }
 
     /**

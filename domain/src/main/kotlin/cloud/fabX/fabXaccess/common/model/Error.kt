@@ -24,6 +24,14 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         override val parameters: Map<String, String>
     ) : Error(message, parameters)
 
+    data class UsernamePasswordIdentityAlreadyFound(
+        override val message: String
+    ) : Error(message)
+
+    data class UsernameAlreadyInUse(
+        override val message: String
+    ) : Error(message)
+
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)
 

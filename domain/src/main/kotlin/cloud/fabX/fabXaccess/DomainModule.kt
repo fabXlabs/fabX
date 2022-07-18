@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
@@ -25,6 +26,7 @@ object DomainModule {
     private var userRepository: UserRepository? = null
 
     private var gettingToolsByQualificationId: GettingToolsByQualificationId? = null
+    private var gettingUserByUsername: GettingUserByUsername? = null
 
 
     fun isFullyConfigured(): Boolean {
@@ -39,6 +41,7 @@ object DomainModule {
             require(toolRepository)
             require(userRepository)
             require(gettingToolsByQualificationId)
+            require(gettingUserByUsername)
 
             true
         } catch (e: IllegalArgumentException) {
@@ -87,6 +90,10 @@ object DomainModule {
         this.gettingToolsByQualificationId = gettingToolsByQualificationId
     }
 
+    fun configureGettingUserByUsername(gettingUserByUsername: GettingUserByUsername) {
+        this.gettingUserByUsername = gettingUserByUsername
+    }
+
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
     }
@@ -125,6 +132,10 @@ object DomainModule {
 
     internal fun gettingToolsQualificationId(): GettingToolsByQualificationId {
         return require(gettingToolsByQualificationId)
+    }
+
+    internal fun gettingUserByUsername(): GettingUserByUsername {
+        return require(gettingUserByUsername)
     }
 
     private inline fun <reified T : Any> require(value: T?): T =

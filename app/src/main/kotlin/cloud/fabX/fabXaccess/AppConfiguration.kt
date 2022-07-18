@@ -17,6 +17,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.newToolId
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
+import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.newUserId
@@ -38,6 +39,7 @@ object AppConfiguration {
     private val userRepository: UserRepository
 
     private val gettingToolsByQualificationId: GettingToolsByQualificationId
+    private val gettingUserByUsername: GettingUserByUsername
 
     init {
         loggerFactory = LogbackLoggerFactory()
@@ -57,6 +59,7 @@ object AppConfiguration {
         userRepository = UserDatabaseRepository()
 
         gettingToolsByQualificationId = toolDatabaseRepository
+        gettingUserByUsername = userRepository
 
         configureDomain()
         configureRest()
@@ -88,6 +91,7 @@ object AppConfiguration {
         DomainModule.configureUserRepository(userRepository)
 
         DomainModule.configureGettingToolsByQualificationId(gettingToolsByQualificationId)
+        DomainModule.configureGettingUserByUsername(gettingUserByUsername)
     }
 
     private fun configureRest() {

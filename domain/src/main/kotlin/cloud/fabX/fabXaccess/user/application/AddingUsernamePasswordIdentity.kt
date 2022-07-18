@@ -16,6 +16,7 @@ class AddingUsernamePasswordIdentity {
 
     private val log = logger()
     private val userRepository = DomainModule.userRepository()
+    private val gettingUserByUsername = DomainModule.gettingUserByUsername()
 
     fun addUsernamePasswordIdentity(
         actor: Admin,
@@ -26,11 +27,12 @@ class AddingUsernamePasswordIdentity {
         log.debug("addUsernamePasswordIdentity...")
 
         return userRepository.getById(userId)
-            .map {
+            .flatMap {
                 it.addUsernamePasswordIdentity(
                     actor,
                     username,
-                    hash
+                    hash,
+                    gettingUserByUsername
                 )
             }
             .flatMap {

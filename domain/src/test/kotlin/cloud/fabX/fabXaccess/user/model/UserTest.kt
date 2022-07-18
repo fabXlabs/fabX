@@ -549,7 +549,13 @@ internal class UserTest {
     @Test
     fun `when adding username password identity then expected sourcing event is returned`() {
         // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            identities = setOf(
+                CardIdentity("aabbccddeeff", "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d")
+            )
+        )
 
         val username = "name42"
         val hash = "password1234"
@@ -567,10 +573,78 @@ internal class UserTest {
             adminActor,
             username,
             hash
-        )
+        ) {
+            if (it == username) {
+                Error.UserNotFoundByUsername("").left()
+            } else {
+                throw IllegalArgumentException("unexpected username")
+            }
+        }
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given user already has username password identity when adding username password identity then returns error`() {
+        // given
+        val identity = UsernamePasswordIdentity("username", "passwordHash")
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf(identity))
+
+        // when
+        val result = user.addUsernamePasswordIdentity(
+            adminActor,
+            "name",
+            "hash"
+        ) {
+            if (it == "name") {
+                Error.UserNotFoundByUsername("").left()
+            } else {
+                throw IllegalArgumentException("unexpected username")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UsernamePasswordIdentityAlreadyFound("User already has a username password identity.")
+            )
+    }
+
+    @Test
+    fun `given username is already in use when adding username password identity then returns error`() {
+        // given
+        val otherUser = UserFixture.arbitrary(
+            identities = setOf(UsernamePasswordIdentity("name", "otherHash"))
+        )
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf())
+
+        // when
+        val result = user.addUsernamePasswordIdentity(
+            adminActor,
+            "name",
+            "hash"
+        ) {
+            if (it == "name") {
+                otherUser.right()
+            } else {
+                throw IllegalArgumentException("unexpected username")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UsernameAlreadyInUse(
+                    "Username is already in use."
+                )
+            )
+
     }
 
     @Test
