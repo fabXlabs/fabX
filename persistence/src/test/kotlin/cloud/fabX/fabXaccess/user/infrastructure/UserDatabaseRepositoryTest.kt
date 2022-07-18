@@ -8,6 +8,7 @@ import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -354,6 +355,36 @@ internal class UserDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.UserNotFoundByIdentity("Not able to find user for given identity.")
+                )
+        }
+
+        @Test
+        fun `when getting by known username then returns user`() {
+            // given
+            val repository = this.repository!! as GettingUserByUsername
+
+            // when
+            val result = repository.getByUsername("username1")
+
+            // then
+            assertThat(result)
+                .isRight()
+                .transform { it.id }.isEqualTo(userId)
+        }
+
+        @Test
+        fun `when getting by unknown username then returns error`() {
+            // given
+            val repository = this.repository!! as GettingUserByUsername
+
+            // when
+            val result = repository.getByUsername("unknownusername")
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UserNotFoundByUsername("Not able to find user for given username.")
                 )
         }
     }
