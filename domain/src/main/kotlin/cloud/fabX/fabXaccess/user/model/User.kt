@@ -10,10 +10,10 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.GetQualificationById
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
 // TODO wikiName must be unique rule
@@ -212,7 +212,7 @@ data class User internal constructor(
     fun addMemberQualification(
         actor: Admin, // TODO replace by instructor
         qualificationId: QualificationId,
-        getQualificationById: GetQualificationById
+        gettingQualificationById: GettingQualificationById
     ): Either<Error, UserSourcingEvent> {
         return memberQualifications.firstOrNull { it == qualificationId }
             .toOption()
@@ -224,7 +224,7 @@ data class User internal constructor(
             }
             .toEither { }
             .swap()
-            .flatMap { getQualificationById.getQualificationById(qualificationId) }
+            .flatMap { gettingQualificationById.getQualificationById(qualificationId) }
             .map {
                 MemberQualificationAdded(
                     id,
@@ -270,7 +270,7 @@ data class User internal constructor(
     fun addInstructorQualification(
         actor: Admin,
         qualificationId: QualificationId,
-        getQualificationById: GetQualificationById
+        gettingQualificationById: GettingQualificationById
     ): Either<Error, UserSourcingEvent> {
         return instructorQualifications?.firstOrNull { it == qualificationId }
             .toOption()
@@ -283,7 +283,7 @@ data class User internal constructor(
             .toEither { }
             .swap()
             .flatMap {
-                getQualificationById.getQualificationById(qualificationId)
+                gettingQualificationById.getQualificationById(qualificationId)
             }
             .map {
                 InstructorQualificationAdded(
