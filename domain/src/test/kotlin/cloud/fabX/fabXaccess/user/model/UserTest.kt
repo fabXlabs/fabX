@@ -835,10 +835,49 @@ internal class UserTest {
         val result = user.addPhoneNrIdentity(
             adminActor,
             phoneNr
-        )
+        ) {
+            if (it == PhoneNrIdentity(phoneNr)) {
+                Error.UserNotFoundByIdentity("").left()
+            } else {
+                throw IllegalArgumentException("unexpected phone number")
+            }
+        }
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given phone number is in use when adding phone number then returns error`() {
+        // given
+        val phoneNr = "+491720000123"
+        val otherUser = UserFixture.arbitrary(identities = setOf(PhoneNrIdentity(phoneNr)))
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+
+        // when
+        val result = user.addPhoneNrIdentity(
+            adminActor,
+            phoneNr
+        ) {
+            if (it == PhoneNrIdentity(phoneNr)) {
+                otherUser.right()
+            } else {
+                throw IllegalArgumentException("unexpected phone number")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PhoneNrAlreadyInUse(
+                    "Phone number is already in use."
+                )
+            )
     }
 
     @Test

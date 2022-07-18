@@ -216,10 +216,33 @@ data class User internal constructor(
 
     fun addPhoneNrIdentity(
         actor: Admin,
-        phoneNr: String
-    ): UserSourcingEvent {
-        // TODO phone number must be unique rule
-        return PhoneNrIdentityAdded(id, aggregateVersion + 1, actor.id, phoneNr)
+        phoneNr: String,
+        gettingUserByIdentity: GettingUserByIdentity
+    ): Either<Error, UserSourcingEvent> {
+        return requireUniquePhoneNr(phoneNr, gettingUserByIdentity)
+            .map {
+                PhoneNrIdentityAdded(id, aggregateVersion + 1, actor.id, phoneNr)
+            }
+    }
+
+    private fun requireUniquePhoneNr(
+        phoneNr: String,
+        gettingUserByIdentity: GettingUserByIdentity
+    ): Either<Error, Unit> {
+        return gettingUserByIdentity.getByIdentity(PhoneNrIdentity(phoneNr))
+            .swap()
+            .mapLeft {
+                Error.PhoneNrAlreadyInUse(
+                    "Phone number is already in use."
+                )
+            }
+            .flatMap {
+                if (it is Error.UserNotFoundByIdentity) {
+                    Unit.right()
+                } else {
+                    it.left()
+                }
+            }
     }
 
     /**

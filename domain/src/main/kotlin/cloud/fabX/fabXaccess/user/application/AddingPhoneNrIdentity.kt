@@ -15,6 +15,7 @@ class AddingPhoneNrIdentity {
 
     private val log = logger()
     private val userRepository = DomainModule.userRepository()
+    private val gettingUserByIdentity = DomainModule.gettingUserByIdentity()
 
     fun addPhoneNrIdentity(
         actor: Admin,
@@ -24,10 +25,11 @@ class AddingPhoneNrIdentity {
         log.debug("addPhoneNrIdentity...")
 
         return userRepository.getById(userId)
-            .map {
+            .flatMap {
                 it.addPhoneNrIdentity(
                     actor,
-                    phoneNr
+                    phoneNr,
+                    gettingUserByIdentity
                 )
             }
             .flatMap {
