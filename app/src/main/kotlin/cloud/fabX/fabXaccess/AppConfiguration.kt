@@ -53,14 +53,12 @@ object AppConfiguration {
         toolIdFactory = { newToolId() }
         userIdFactory = { newUserId() }
 
-        val toolDatabaseRepository = ToolDatabaseRepository()
-
         deviceRepository = DeviceDatabaseRepository()
         qualificationRepository = QualificationDatabaseRepository()
-        toolRepository = toolDatabaseRepository
+        toolRepository = ToolDatabaseRepository()
         userRepository = UserDatabaseRepository()
 
-        gettingToolsByQualificationId = toolDatabaseRepository
+        gettingToolsByQualificationId = toolRepository
         gettingUserByUsername = userRepository
         gettingUserByIdentity = userRepository
 
