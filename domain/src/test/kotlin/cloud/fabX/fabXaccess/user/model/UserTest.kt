@@ -80,10 +80,45 @@ internal class UserTest {
             firstName,
             lastName,
             wikiName
-        )
+        ) {
+            if (it == wikiName) {
+                Error.UserNotFoundByWikiName("").left()
+            } else {
+                throw IllegalArgumentException("unexpected wiki name")
+            }
+        }
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given wiki name is already in use when adding new user then returns error`() {
+        // given
+        val otherUser = UserFixture.arbitrary(wikiName = "someone")
+
+        // when
+        val result = User.addNew(
+            adminActor,
+            "first",
+            "last",
+            "someone"
+        ) {
+            if (it == "someone") {
+                otherUser.right()
+            } else {
+                throw IllegalArgumentException("unexpected wiki name")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.WikiNameAlreadyInUse("Wiki name is already in use.")
+            )
     }
 
     @Test
@@ -516,10 +551,43 @@ internal class UserTest {
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("newWikiName")
-        )
+        ) {
+            if (it == "newWikiName") {
+                Error.UserNotFoundByWikiName("").left()
+            } else {
+                throw IllegalArgumentException("unexpected wiki name")
+            }
+        }
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given wiki name is already in use when changing personal information then returns error`() {
+        // given
+        val otherUser = UserFixture.arbitrary(wikiName = "wikiName")
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        // when
+        val result = user.changePersonalInformation(
+            adminActor,
+            wikiName = ChangeableValue.ChangeToValue("wikiName")
+        ) {
+            if (it == "wikiName") {
+                otherUser.right()
+            } else {
+                throw IllegalArgumentException("unexpected wiki name")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.WikiNameAlreadyInUse("Wiki name is already in use."))
     }
 
     @Test

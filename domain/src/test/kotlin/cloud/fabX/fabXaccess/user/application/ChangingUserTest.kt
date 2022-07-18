@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
@@ -36,18 +37,23 @@ internal class ChangingUserTest {
 
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null
+    private var gettingUserByWikiName: GettingUserByWikiName? = null
 
     private var testee: ChangingUser? = null
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock userRepository: UserRepository
+        @Mock userRepository: UserRepository,
+        @Mock gettingUserByWikiName: GettingUserByWikiName
     ) {
         this.logger = logger
         this.userRepository = userRepository
+        this.gettingUserByWikiName = gettingUserByWikiName
+
         DomainModule.configureLoggerFactory { logger }
         DomainModule.configureUserRepository(userRepository)
+        DomainModule.configureGettingUserByWikiName(gettingUserByWikiName)
 
         testee = ChangingUser()
     }
@@ -72,6 +78,9 @@ internal class ChangingUserTest {
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
+
+        whenever(gettingUserByWikiName!!.getByWikiName(newWikiName.value))
+            .thenReturn(Error.UserNotFoundByWikiName("").left())
 
         whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
@@ -116,6 +125,38 @@ internal class ChangingUserTest {
         assertThat(result)
             .isSome()
             .isEqualTo(error)
+    }
+
+    @Test
+    fun `given domain error when changing personal information then returns domain error`() {
+        // given
+        val newWikiName = ChangeableValue.ChangeToValue("aWikiName")
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+
+        val otherUser = UserFixture.arbitrary(wikiName = newWikiName.value)
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        whenever(gettingUserByWikiName!!.getByWikiName(newWikiName.value))
+            .thenReturn(otherUser.right())
+
+        val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.")
+
+        // when
+        val result = testee!!.changePersonalInformation(
+            adminActor,
+            userId,
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
+            newWikiName
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(expectedDomainError)
     }
 
     @Test

@@ -16,6 +16,7 @@ class ChangingUser {
 
     private val log = logger()
     private val userRepository = DomainModule.userRepository()
+    private val gettingUserByWikiName = DomainModule.gettingUserByWikiName()
 
     fun changePersonalInformation(
         actor: Admin,
@@ -27,12 +28,13 @@ class ChangingUser {
         log.debug("changePersonalInformation...")
 
         return userRepository.getById(userId)
-            .map {
+            .flatMap {
                 it.changePersonalInformation(
                     actor,
                     firstName,
                     lastName,
-                    wikiName
+                    wikiName,
+                    gettingUserByWikiName
                 )
             }
             .flatMap {

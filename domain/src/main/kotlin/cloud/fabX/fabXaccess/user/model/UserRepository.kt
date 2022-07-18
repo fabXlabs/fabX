@@ -17,3 +17,7 @@ fun interface GettingUserByIdentity {
 fun interface GettingUserByUsername {
     fun getByUsername(username: String): Either<Error, User>
 }
+
+fun interface GettingUserByWikiName {
+    fun getByWikiName(wikiName: String): Either<Error, User>
+}

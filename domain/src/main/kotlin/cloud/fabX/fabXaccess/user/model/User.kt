@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
+import cloud.fabX.fabXaccess.common.model.biFlatmap
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
@@ -42,15 +43,19 @@ data class User internal constructor(
             actor: Admin,
             firstName: String,
             lastName: String,
-            wikiName: String
-        ): UserSourcingEvent {
-            return UserCreated(
-                DomainModule.userIdFactory().invoke(),
-                actor.id,
-                firstName,
-                lastName,
-                wikiName
-            )
+            wikiName: String,
+            gettingUserByWikiName: GettingUserByWikiName
+        ): Either<Error, UserSourcingEvent> {
+            return requireUniqueWikiName(wikiName, gettingUserByWikiName)
+                .map {
+                    UserCreated(
+                        DomainModule.userIdFactory().invoke(),
+                        actor.id,
+                        firstName,
+                        lastName,
+                        wikiName
+                    )
+                }
         }
 
         fun fromSourcingEvents(events: Iterable<UserSourcingEvent>): Option<User> {
@@ -70,6 +75,26 @@ data class User internal constructor(
                 event.processBy(UserEventHandler(), result)
             }
         }
+
+        private fun requireUniqueWikiName(
+            wikiName: String,
+            gettingUserByWikiName: GettingUserByWikiName
+        ): Either<Error, Unit> {
+            return gettingUserByWikiName.getByWikiName(wikiName)
+                .swap()
+                .mapLeft {
+                    Error.WikiNameAlreadyInUse(
+                        "Wiki name is already in use."
+                    )
+                }
+                .flatMap {
+                    if (it is Error.UserNotFoundByWikiName) {
+                        Unit.right()
+                    } else {
+                        it.left()
+                    }
+                }
+        }
     }
 
     fun apply(sourcingEvent: UserSourcingEvent): Option<User> = sourcingEvent.processBy(UserEventHandler(), Some(this))
@@ -78,16 +103,22 @@ data class User internal constructor(
         actor: Admin,
         firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
-        wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs
-    ): UserSourcingEvent {
-        return UserPersonalInformationChanged(
-            id,
-            aggregateVersion + 1,
-            actor.id,
-            firstName,
-            lastName,
-            wikiName
-        )
+        wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
+        gettingUserByWikiName: GettingUserByWikiName
+    ): Either<Error, UserSourcingEvent> {
+        return wikiName.biFlatmap(
+            { Unit.right() },
+            { requireUniqueWikiName(it, gettingUserByWikiName) }
+        ).map {
+            UserPersonalInformationChanged(
+                id,
+                aggregateVersion + 1,
+                actor.id,
+                firstName,
+                lastName,
+                wikiName
+            )
+        }
     }
 
     fun changeLockState(

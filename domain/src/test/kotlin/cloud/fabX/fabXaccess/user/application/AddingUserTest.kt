@@ -1,14 +1,19 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.None
+import arrow.core.left
+import arrow.core.right
 import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.UserCreated
+import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
@@ -28,20 +33,24 @@ internal class AddingUserTest {
 
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null
+    private var gettingUserByWikiName: GettingUserByWikiName? = null
 
     private var testee: AddingUser? = null
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock userRepository: UserRepository
+        @Mock userRepository: UserRepository,
+        @Mock gettingUserByWikiName: GettingUserByWikiName
     ) {
         this.logger = logger
         this.userRepository = userRepository
+        this.gettingUserByWikiName = gettingUserByWikiName
 
         DomainModule.configureLoggerFactory { logger }
         DomainModule.configureUserIdFactory { userId }
         DomainModule.configureUserRepository(userRepository)
+        DomainModule.configureGettingUserByWikiName(gettingUserByWikiName)
 
         testee = AddingUser()
     }
@@ -61,6 +70,9 @@ internal class AddingUserTest {
             wikiName
         )
 
+        whenever(gettingUserByWikiName!!.getByWikiName(wikiName))
+            .thenReturn(Error.UserNotFoundByWikiName("").left())
+
         whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
 
@@ -74,6 +86,31 @@ internal class AddingUserTest {
 
         // then
         assertThat(result).isNone()
+    }
+
+    @Test
+    fun `given domain error when adding user then returns domain error`() {
+        // given
+        val wikiName = "wiki"
+        val otherUser = UserFixture.arbitrary(wikiName = wikiName)
+
+        whenever(gettingUserByWikiName!!.getByWikiName(wikiName))
+            .thenReturn(otherUser.right())
+
+        val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.")
+
+        // when
+        val result = testee!!.addUser(
+            adminActor,
+            "first",
+            "last",
+            wikiName
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(expectedDomainError)
     }
 
     @Test
@@ -92,6 +129,9 @@ internal class AddingUserTest {
         )
 
         val error = ErrorFixture.arbitrary()
+
+        whenever(gettingUserByWikiName!!.getByWikiName(wikiName))
+            .thenReturn(Error.UserNotFoundByWikiName("").left())
 
         whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(error.some())

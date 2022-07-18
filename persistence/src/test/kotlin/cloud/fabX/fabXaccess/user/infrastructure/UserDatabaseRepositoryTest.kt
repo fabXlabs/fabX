@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
+import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -273,6 +274,36 @@ internal class UserDatabaseRepositoryTest {
                     false
                 )
             )
+        }
+
+        @Test
+        fun `when getting by known wiki name then returns user`() {
+            // given
+            val repository = this.repository!! as GettingUserByWikiName
+
+            // when
+            val result = repository.getByWikiName("wiki2v2")
+
+            // then
+            assertThat(result)
+                .isRight()
+                .transform { it.id }.isEqualTo(userId2)
+        }
+
+        @Test
+        fun `when getting by unknown wiki name then returns error`() {
+            // given
+            val repository = this.repository!! as GettingUserByWikiName
+
+            // when
+            val result = repository.getByWikiName("unknownWikiName")
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UserNotFoundByWikiName("Not able to find user for given wiki name.")
+                )
         }
     }
 
