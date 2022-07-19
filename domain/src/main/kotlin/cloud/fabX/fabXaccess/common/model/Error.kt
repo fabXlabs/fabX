@@ -126,6 +126,18 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
 
     data class VersionConflict(override val message: String) : Error(message)
 
+    data class UsernameInvalid(
+        override val message: String,
+        val value: String,
+        val regex: Regex
+    ) : Error(message, mapOf("value" to value, "regex" to regex.toString()))
+
+    data class PasswordHashInvalid(
+        override val message: String,
+        val value: String,
+        val regex: Regex
+    ) : Error(message, mapOf("value" to value, "regex" to regex.toString()))
+
     data class InstructorPermissionNotFound(
         override val message: String,
         val qualificationId: QualificationId
