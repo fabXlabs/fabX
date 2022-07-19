@@ -11,10 +11,10 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
-import cloud.fabX.fabXaccess.user.model.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.PhoneNrIdentityAdded
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
@@ -71,7 +71,7 @@ internal class AddingPhoneNrIdentityTest {
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity!!.getByIdentity(PhoneNrIdentity(phoneNr)))
+        whenever(gettingUserByIdentity!!.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
             .thenReturn(Error.UserNotFoundByIdentity("").left())
 
         whenever(userRepository!!.store(expectedSourcingEvent))
@@ -117,7 +117,7 @@ internal class AddingPhoneNrIdentityTest {
     fun `given domain error when adding identity then returns domain error`() {
         // given
         val phoneNr = "+49123456789"
-        val otherUser = UserFixture.withIdentity(PhoneNrIdentity(phoneNr))
+        val otherUser = UserFixture.withIdentity(UserIdentityFixture.phoneNr(phoneNr))
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -128,7 +128,7 @@ internal class AddingPhoneNrIdentityTest {
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity!!.getByIdentity(PhoneNrIdentity(phoneNr)))
+        whenever(gettingUserByIdentity!!.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
             .thenReturn(otherUser.right())
 
         // when
@@ -163,7 +163,7 @@ internal class AddingPhoneNrIdentityTest {
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity!!.getByIdentity(PhoneNrIdentity(phoneNr)))
+        whenever(gettingUserByIdentity!!.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
             .thenReturn(Error.UserNotFoundByIdentity("").left())
 
         whenever(userRepository!!.store(expectedSourcingEvent))

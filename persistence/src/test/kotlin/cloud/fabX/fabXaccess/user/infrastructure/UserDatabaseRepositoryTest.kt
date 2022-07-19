@@ -16,10 +16,10 @@ import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isLeft
 import isNone
@@ -334,7 +334,7 @@ internal class UserDatabaseRepositoryTest {
                 2,
                 actorId,
                 "username1",
-                "password1"
+                "FyGrfqsvzCwU8UtVqZUI4MQ3pp3TTsOF6J//QLdSEoE="
             )
             repository!!.store(user1IdentityAdded)
 
@@ -343,7 +343,7 @@ internal class UserDatabaseRepositoryTest {
                 3,
                 actorId,
                 "11223344556677",
-                "superSecret42"
+                "2312D5DFD79E5AA85BD0F43B565665BA3CEFAFF60689ACF8F49A7FADA0004756"
             )
             repository!!.store(user1CardIdentityAdded)
 
@@ -361,7 +361,7 @@ internal class UserDatabaseRepositoryTest {
                 2,
                 actorId,
                 "username2",
-                "password2"
+                "Fp6cwyJURizWnWI2yWSsgg3FfrFErl/+vvkgdWsBdH8="
             )
             repository!!.store(user2IdentityAdded)
 
@@ -369,8 +369,8 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 3,
                 actorId,
-                "aabbccddeeffaa",
-                "highSecret"
+                "AA11BB22CC33DD",
+                "F4B726CC27C2413227382ABF095D09B1A13B00FC6AD1B1B5D75C4A954628C807"
             )
             repository!!.store(user2CardIdentityAdded)
         }
@@ -382,7 +382,7 @@ internal class UserDatabaseRepositoryTest {
 
             // when
             val result = repository.getByIdentity(
-                UsernamePasswordIdentity("username1", "password1")
+                UserIdentityFixture.usernamePassword("username1", "FyGrfqsvzCwU8UtVqZUI4MQ3pp3TTsOF6J//QLdSEoE=")
             )
 
             // then
@@ -398,7 +398,7 @@ internal class UserDatabaseRepositoryTest {
 
             // when
             val result = repository.getByIdentity(
-                UsernamePasswordIdentity("unknownusername", "randompassword")
+                UserIdentityFixture.usernamePassword("unknownusername", "7pY1AYwQwy95R5xVtNRgen3+hYyEe+2gi+KxK2P64WY=")
             )
 
             // then
@@ -445,7 +445,7 @@ internal class UserDatabaseRepositoryTest {
             val repository = this.repository!! as GettingUserByCardId
 
             // when
-            val result = repository.getByCardId("aabbccddeeffaa")
+            val result = repository.getByCardId("AA11BB22CC33DD")
 
             // then
             assertThat(result)

@@ -621,9 +621,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = aggregateVersion,
-            identities = setOf(
-                CardIdentity("aabbccddeeff", "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d")
-            )
+            identities = setOf(UserIdentityFixture.card())
         )
 
         val username = "name42"
@@ -659,7 +657,7 @@ internal class UserTest {
     @Test
     fun `given user already has username password identity when adding username password identity then returns error`() {
         // given
-        val identity = UsernamePasswordIdentity("username", "passwordHash")
+        val identity = UserIdentityFixture.usernamePassword("username")
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf(identity))
 
         // when
@@ -687,7 +685,7 @@ internal class UserTest {
     fun `given username is already in use when adding username password identity then returns error`() {
         // given
         val otherUser = UserFixture.arbitrary(
-            identities = setOf(UsernamePasswordIdentity("name", "otherHash"))
+            identities = setOf(UserIdentityFixture.usernamePassword("name"))
         )
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf())
@@ -720,7 +718,7 @@ internal class UserTest {
     fun `given username password identity when removing identity then expected sourcing event is returned`() {
         // given
         val username = "u1"
-        val identity = UsernamePasswordIdentity(username, "p1")
+        val identity = UserIdentityFixture.usernamePassword(username)
         val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = UsernamePasswordIdentityRemoved(
@@ -742,7 +740,7 @@ internal class UserTest {
     @Test
     fun `given different username password identity when removing identity then error is returned`() {
         // given
-        val identity = UsernamePasswordIdentity("u1", "p1")
+        val identity = UserIdentityFixture.usernamePassword("u1")
         val user = UserFixture.withIdentity(identity)
 
         // when
@@ -830,12 +828,7 @@ internal class UserTest {
         val cardSecret = "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d"
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
-        val otherUser = UserFixture.withIdentity(
-            CardIdentity(
-                cardId,
-                "0000000000000000000000000000000000000000000000000000000000000000"
-            )
-        )
+        val otherUser = UserFixture.withIdentity(UserIdentityFixture.card(cardId))
 
         // when
         val result = user.addCardIdentity(
@@ -863,8 +856,8 @@ internal class UserTest {
     @Test
     fun `given card identity when removing identity then expected sourcing event is returned`() {
         // given
-        val cardId = "2646d88c9a77bb"
-        val identity = CardIdentity(cardId, "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d")
+        val cardId = "9E54A3187264EB"
+        val identity = UserIdentityFixture.card(cardId)
         val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = CardIdentityRemoved(
@@ -886,10 +879,10 @@ internal class UserTest {
     @Test
     fun `given different card identity when removing identity then error is returned`() {
         // given
-        val cardId = "3c07d626bd4ce5"
-        val unknownCardId = "2646d88c9a77bb"
+        val cardId = "9E54A3187264EB"
+        val unknownCardId = "D4854276281ABD"
 
-        val identity = CardIdentity(cardId, "dcc3114e9f37ec873fc4f043db6209ac948fe27b184ba8df3a2549")
+        val identity = UserIdentityFixture.card(cardId)
         val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         // when
@@ -911,7 +904,7 @@ internal class UserTest {
     @Test
     fun `given no card identity when removing identity then error is returned`() {
         // given
-        val unknownCardId = "2646d88c9a77bb"
+        val unknownCardId = "7845B76EB036BB"
 
         val user = UserFixture.arbitrary(userId, identities = setOf())
 
@@ -950,7 +943,7 @@ internal class UserTest {
             adminActor,
             phoneNr
         ) {
-            if (it == PhoneNrIdentity(phoneNr)) {
+            if (it == UserIdentityFixture.phoneNr(phoneNr)) {
                 Error.UserNotFoundByIdentity("").left()
             } else {
                 throw IllegalArgumentException("unexpected phone number")
@@ -967,7 +960,7 @@ internal class UserTest {
     fun `given phone number is in use when adding phone number then returns error`() {
         // given
         val phoneNr = "+491720000123"
-        val otherUser = UserFixture.withIdentity(PhoneNrIdentity(phoneNr))
+        val otherUser = UserFixture.withIdentity(UserIdentityFixture.phoneNr(phoneNr))
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -977,7 +970,7 @@ internal class UserTest {
             adminActor,
             phoneNr
         ) {
-            if (it == PhoneNrIdentity(phoneNr)) {
+            if (it == UserIdentityFixture.phoneNr(phoneNr)) {
                 otherUser.right()
             } else {
                 throw IllegalArgumentException("unexpected phone number")
@@ -998,7 +991,7 @@ internal class UserTest {
     fun `given phone number identity when removing identity then expected sourcing event is returned`() {
         // given
         val phoneNr = "+491230000000"
-        val identity = PhoneNrIdentity(phoneNr)
+        val identity = UserIdentityFixture.phoneNr(phoneNr)
         val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = PhoneNrIdentityRemoved(
@@ -1020,7 +1013,7 @@ internal class UserTest {
     @Test
     fun `given different phone number identity when removing identity then error is returned`() {
         // given
-        val identity = PhoneNrIdentity("+424242")
+        val identity = UserIdentityFixture.phoneNr("+424242")
         val user = UserFixture.withIdentity(identity)
 
         // when
@@ -1439,10 +1432,10 @@ internal class UserTest {
     @ParameterizedTest
     @CsvSource(
         value = [
-            "user123, password42, true",
-            "user123, password,   false",
-            "user,    password42, false",
-            "user,    password,   false",
+            "user123, 4Mt7/bEfN/samfzYogSTVcnCleWI1zehSJa4HdcWsMQ=, true",
+            "user123, AAAA/bEfN/samfzYogSTVcnCleWI1zehSJa4HdcWsMQ=, false",
+            "user,    4Mt7/bEfN/samfzYogSTVcnCleWI1zehSJa4HdcWsMQ=, false",
+            "user,    AAAA/bEfN/samfzYogSTVcnCleWI1zehSJa4HdcWsMQ=,   false",
         ]
     )
     fun `given user with username password identity when checking hasIdentity then returns expected result`(
@@ -1451,11 +1444,11 @@ internal class UserTest {
         expectedResult: Boolean
     ) {
         // given
-        val identity = UsernamePasswordIdentity("user123", "password42")
+        val identity = UserIdentityFixture.usernamePassword("user123", "4Mt7/bEfN/samfzYogSTVcnCleWI1zehSJa4HdcWsMQ=")
         val user = UserFixture.withIdentity(identity)
 
         // when
-        val result = user.hasIdentity(UsernamePasswordIdentity(username, password))
+        val result = user.hasIdentity(UserIdentityFixture.usernamePassword(username, password))
 
         // then
         assertThat(result).isEqualTo(expectedResult)
@@ -1464,10 +1457,10 @@ internal class UserTest {
     @ParameterizedTest
     @CsvSource(
         value = [
-            "aabbccddeeff, 42aa42aa42aa, true",
-            "aaaaaaaaaaaa, 42aa42aa42aa, false",
-            "aabbccddeeff, bbbbbbbbbbbb, false",
-            "aaaaaaaaaaaa, bbbbbbbbbbbb, false",
+            "E272BFA478B021, 10250DC83A755C8FFD0FC6249E231B62E1E983849BBA4BB6BF8D5EB75DDD2B29, true",
+            "AAAAAAAAAAAAAA, 10250DC83A755C8FFD0FC6249E231B62E1E983849BBA4BB6BF8D5EB75DDD2B29, false",
+            "E272BFA478B021, BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB, false",
+            "AAAAAAAAAAAAAA, BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB, false",
         ]
     )
     fun `given user with card identity when checking hasIdentity then returns expected result`(
@@ -1476,11 +1469,14 @@ internal class UserTest {
         expectedResult: Boolean
     ) {
         // given
-        val identity = CardIdentity("aabbccddeeff", "42aa42aa42aa")
+        val identity = UserIdentityFixture.card(
+            "E272BFA478B021",
+            "10250DC83A755C8FFD0FC6249E231B62E1E983849BBA4BB6BF8D5EB75DDD2B29"
+        )
         val user = UserFixture.withIdentity(identity)
 
         // when
-        val result = user.hasIdentity(CardIdentity(cardId, cardSecret))
+        val result = user.hasIdentity(UserIdentityFixture.card(cardId, cardSecret))
 
         // then
         assertThat(result).isEqualTo(expectedResult)
@@ -1498,11 +1494,11 @@ internal class UserTest {
         expectedResult: Boolean
     ) {
         // given
-        val identity = PhoneNrIdentity("+4912300000042")
+        val identity = UserIdentityFixture.phoneNr("+4912300000042")
         val user = UserFixture.withIdentity(identity)
 
         // when
-        val result = user.hasIdentity(PhoneNrIdentity(phoneNr))
+        val result = user.hasIdentity(UserIdentityFixture.phoneNr(phoneNr))
 
         // then
         assertThat(result).isEqualTo(expectedResult)
@@ -1520,7 +1516,7 @@ internal class UserTest {
         identityUsername: String, checkUsername: String, expectedResult: Boolean
     ) {
         // given
-        val identity = UsernamePasswordIdentity(identityUsername, "passwordHash42")
+        val identity = UserIdentityFixture.usernamePassword(identityUsername)
         val user = UserFixture.withIdentity(identity)
 
         // when
@@ -1533,16 +1529,16 @@ internal class UserTest {
     @ParameterizedTest
     @CsvSource(
         value = [
-            "aabbccddeeff00, aabbccddeeff00, true",
+            "100DF3CE80B5F8, 100DF3CE80B5F8, true",
             "00000000000001, 00000000000001, true",
-            "aabbccddeeff00, 11111111111111, false"
+            "100DF3CE80B5F8, 11111111111111, false"
         ]
     )
     fun `given user with card identity when checking hasCardId then returns expected result`(
         identityCardId: String, checkCardId: String, expectedResult: Boolean
     ) {
         // given
-        val identity = CardIdentity(identityCardId, "secret42")
+        val identity = UserIdentityFixture.card(identityCardId)
         val user = UserFixture.withIdentity(identity)
 
         // when

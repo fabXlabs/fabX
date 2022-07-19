@@ -11,12 +11,11 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import cloud.fabX.fabXaccess.user.model.CardIdentity
 import cloud.fabX.fabXaccess.user.model.CardIdentityRemoved
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityRemoved
 import isNone
 import isSome
 import org.junit.jupiter.api.BeforeEach
@@ -55,14 +54,13 @@ internal class RemovingCardIdentityTest {
     @Test
     fun `given user and identity can be found when removing identity then sourcing event is created and stored`() {
         // given
-        val cardId = "username"
-        val cardSecret = "password42"
+        val cardId = "4843F377D8AF17"
 
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                CardIdentity(cardId, cardSecret)
+                UserIdentityFixture.card(cardId)
             )
         )
 
@@ -124,7 +122,7 @@ internal class RemovingCardIdentityTest {
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                CardIdentity(cardId, "abcdefabcdefabcdefabcdefabcdefabcdef")
+                UserIdentityFixture.card(cardId)
             )
         )
 

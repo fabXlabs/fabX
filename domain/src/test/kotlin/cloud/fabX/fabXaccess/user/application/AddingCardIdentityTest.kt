@@ -10,11 +10,11 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import cloud.fabX.fabXaccess.user.model.CardIdentity
 import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
@@ -122,9 +122,9 @@ internal class AddingCardIdentityTest {
     fun `given domain error when adding identity then returns domain error`() {
         // given
         val cardId = "11223344556677"
-        val cardSecret = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
 
-        val otherUser = UserFixture.withIdentity(CardIdentity(cardId, cardSecret))
+        val otherUser = UserFixture.withIdentity(UserIdentityFixture.card(cardId))
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -156,7 +156,7 @@ internal class AddingCardIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val cardId = "77665544332211"
-        val cardSecret = "123456789012345678901234567890abcdef"
+        val cardSecret = "5A040F53492720A82247F7C5D7F6C888AB23A712DA04A8A30D0F9EE3150E80F4"
 
         val expectedSourcingEvent = CardIdentityAdded(
             userId,

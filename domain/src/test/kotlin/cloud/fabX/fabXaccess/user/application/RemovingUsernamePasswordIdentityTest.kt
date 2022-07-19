@@ -13,8 +13,8 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityRemoved
 import isNone
 import isSome
@@ -54,13 +54,12 @@ internal class RemovingUsernamePasswordIdentityTest {
     fun `given user and identity can be found when removing identity then sourcing event is created and stored`() {
         // given
         val username = "username"
-        val hash = "password42"
 
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                UsernamePasswordIdentity(username, hash)
+                UserIdentityFixture.usernamePassword(username)
             )
         )
 
@@ -122,7 +121,7 @@ internal class RemovingUsernamePasswordIdentityTest {
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                UsernamePasswordIdentity(username, "secret42")
+                UserIdentityFixture.usernamePassword(username)
             )
         )
 

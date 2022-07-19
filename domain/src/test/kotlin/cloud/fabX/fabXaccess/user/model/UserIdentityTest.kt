@@ -190,7 +190,7 @@ class UserIdentityTest {
         // then
         assertThat(result)
             .isRight()
-            .isEqualTo(PhoneNrIdentity(normalized))
+            .isEqualTo(UserIdentityFixture.phoneNr(normalized))
     }
 
     @ParameterizedTest

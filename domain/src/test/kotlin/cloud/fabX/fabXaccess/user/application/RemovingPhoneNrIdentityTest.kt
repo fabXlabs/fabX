@@ -11,13 +11,11 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import cloud.fabX.fabXaccess.user.model.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.PhoneNrIdentityRemoved
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityRemoved
 import isNone
 import isSome
 import org.junit.jupiter.api.BeforeEach
@@ -61,7 +59,7 @@ internal class RemovingPhoneNrIdentityTest {
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                PhoneNrIdentity(phoneNr)
+                UserIdentityFixture.phoneNr(phoneNr)
             )
         )
 
@@ -123,7 +121,7 @@ internal class RemovingPhoneNrIdentityTest {
             userId,
             aggregateVersion = 1,
             identities = setOf(
-                PhoneNrIdentity(phoneNr)
+                UserIdentityFixture.phoneNr(phoneNr)
             )
         )
 

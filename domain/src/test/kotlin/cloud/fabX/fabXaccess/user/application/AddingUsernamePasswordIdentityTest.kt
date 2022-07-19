@@ -13,8 +13,8 @@ import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isNone
 import isSome
@@ -161,7 +161,7 @@ internal class AddingUsernamePasswordIdentityTest {
     @Test
     fun `given domain error when adding identity then returns domain error`() {
         // given
-        val existingUsernamePasswordIdentity = UsernamePasswordIdentity("name", "hash")
+        val existingUsernamePasswordIdentity = UserIdentityFixture.usernamePassword("name")
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
