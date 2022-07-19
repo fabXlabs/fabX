@@ -1,11 +1,9 @@
 package cloud.fabX.fabXaccess.common
 
-import cloud.fabX.fabXaccess.common.model.ActorId
-import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
+import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.mockito.Mock
@@ -28,10 +26,10 @@ internal class SynchronousDomainEventPublisherTest {
         testee.addHandler(handler2)
         testee.addHandler(handler3)
 
-        val domainEvent = object : DomainEvent {
-            override val actorId: ActorId = UserIdFixture.arbitrary()
-            override val timestamp: Instant = Clock.System.now()
-        }
+        val domainEvent = QualificationDeleted(
+            UserIdFixture.arbitrary(),
+            Clock.System.now()
+        )
 
         // when
         testee.publish(domainEvent)

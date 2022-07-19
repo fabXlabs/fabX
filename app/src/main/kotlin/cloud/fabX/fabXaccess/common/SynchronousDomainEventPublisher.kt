@@ -9,7 +9,7 @@ class SynchronousDomainEventPublisher : DomainEventPublisher {
     private val handlers: MutableSet<DomainEventHandler> = mutableSetOf()
 
     override fun publish(domainEvent: DomainEvent) {
-        handlers.forEach { it.handle(domainEvent) }
+        handlers.forEach { domainEvent.handleBy(it) }
     }
 
     fun addHandler(handler: DomainEventHandler) {
