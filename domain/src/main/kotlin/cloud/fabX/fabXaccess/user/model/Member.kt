@@ -14,4 +14,8 @@ data class Member internal constructor(
 ) : Actor {
     override val id: ActorId
         get() = userId
+
+    fun hasQualification(qualificationId: QualificationId): Boolean {
+        return qualifications.contains(qualificationId)
+    }
 }

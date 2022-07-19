@@ -7,20 +7,8 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
-import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
-import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
-import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
-import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
-import cloud.fabX.fabXaccess.user.model.UserCreated
-import cloud.fabX.fabXaccess.user.model.UserDeleted
-import cloud.fabX.fabXaccess.user.model.UserFixture
-import cloud.fabX.fabXaccess.user.model.UserIdFixture
-import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
-import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
-import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
-import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.user.model.*
 import isLeft
 import isNone
 import isRight
@@ -470,6 +458,111 @@ internal class UserDatabaseRepositoryTest {
                         "Not able to find user for given card id."
                     )
                 )
+        }
+    }
+
+    @Nested
+    internal inner class GivenUsersWithQualificationsStoredInRepository {
+
+        private val userId2 = UserIdFixture.static(978)
+        private val userId3 = UserIdFixture.static(999)
+        private val qualificationId = QualificationIdFixture.static(456)
+        private val qualificationId2 = QualificationIdFixture.static(678)
+
+        private var repository: UserDatabaseRepository? = null
+
+        @BeforeEach
+        fun setup() {
+            repository = UserDatabaseRepository()
+
+            val user1Created = UserCreated(
+                userId,
+                actorId,
+                firstName = "first1",
+                lastName = "last1",
+                wikiName = "wiki1"
+            )
+            repository!!.store(user1Created)
+
+            val user1MemberQualificationAdded = MemberQualificationAdded(
+                userId,
+                2,
+                actorId,
+                qualificationId
+            )
+            repository!!.store(user1MemberQualificationAdded)
+
+
+            val user1InstructorQualificationAdded = InstructorQualificationAdded(
+                userId,
+                3,
+                actorId,
+                qualificationId2
+            )
+            repository!!.store(user1InstructorQualificationAdded)
+
+
+            val user2Created = UserCreated(
+                userId2,
+                actorId,
+                firstName = "first2",
+                lastName = "last2",
+                wikiName = "wiki2"
+            )
+            repository!!.store(user2Created)
+
+            val user2InstructorQualificationAdded = InstructorQualificationAdded(
+                userId2,
+                2,
+                actorId,
+                qualificationId
+            )
+            repository!!.store(user2InstructorQualificationAdded)
+
+            val user3Created = UserCreated(
+                userId3,
+                actorId,
+                firstName = "first3",
+                lastName = "last3",
+                wikiName = "wiki3"
+            )
+            repository!!.store(user3Created)
+
+            val user3MemberQualificationAdded = MemberQualificationAdded(
+                userId3,
+                2,
+                actorId,
+                qualificationId
+            )
+            repository!!.store(user3MemberQualificationAdded)
+        }
+
+        @Test
+        fun `when getting users by member qualification then returns users who have member qualification`() {
+            // given
+            val repository = this.repository!! as GettingUsersByMemberQualification
+
+            // when
+            val result = repository.getByMemberQualification(qualificationId)
+
+            // then
+            assertThat(result)
+                .transform { it.map { user -> user.id } }
+                .containsExactlyInAnyOrder(userId, userId3)
+        }
+
+        @Test
+        fun `when getting users by instructor qualification then returns users who have instructor qualification`() {
+            // given
+            val repository = this.repository!! as GettingUsersByInstructorQualification
+
+            // when
+            val result = repository.getByInstructorQualification(qualificationId2)
+
+            // then
+            assertThat(result)
+                .transform { it.map { user -> user.id } }
+                .containsExactlyInAnyOrder(userId)
         }
     }
 }

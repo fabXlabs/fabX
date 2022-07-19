@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.MemberQualificationRemoved
@@ -18,6 +19,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -77,6 +79,51 @@ internal class RemovingMemberQualificationTest {
         // when
         val result = testee!!.removeMemberQualification(
             adminActor,
+            userId,
+            qualificationId
+        )
+
+        // then
+        assertThat(result).isNone()
+        val inOrder = inOrder(userRepository!!)
+        inOrder.verify(userRepository!!).getById(userId)
+        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        inOrder.verifyNoMoreInteractions()
+    }
+
+    @Test
+    fun `given triggered by domain event when removing member qualification then sourcing event is created and stored`() {
+        // given
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = 1,
+            memberQualifications = setOf(qualificationId)
+        )
+
+        val actorId = UserIdFixture.arbitrary()
+
+        val domainEvent = QualificationDeleted(
+            actorId,
+            Clock.System.now(),
+            qualificationId
+        )
+
+        val expectedSourcingEvent = MemberQualificationRemoved(
+            userId,
+            2,
+            actorId,
+            qualificationId
+        )
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        whenever(userRepository!!.store(expectedSourcingEvent))
+            .thenReturn(None)
+
+        // when
+        val result = testee!!.removeMemberQualification(
+            domainEvent,
             userId,
             qualificationId
         )

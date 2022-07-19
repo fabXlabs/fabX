@@ -13,12 +13,14 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
 import isNone
 import isRight
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -1190,6 +1192,41 @@ internal class UserTest {
     }
 
     @Test
+    fun `given triggered by domain event when removing member qualification then returns sourcing event`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            memberQualifications = setOf(qualificationId)
+        )
+
+        val actorId = UserIdFixture.arbitrary()
+
+        val domainEvent = QualificationDeleted(
+            actorId,
+            Clock.System.now(),
+            qualificationId
+        )
+
+        val expectedSourcingEvent = MemberQualificationRemoved(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = actorId,
+            qualificationId = qualificationId
+        )
+
+        // when
+        val result = user.removeMemberQualification(domainEvent, qualificationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
     fun `given not has qualification when removing member qualification then returns error`() {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
@@ -1315,6 +1352,41 @@ internal class UserTest {
 
         // when
         val result = user.removeInstructorQualification(adminActor, qualificationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given triggered by domain event when removing instructor qualification then returns sourcing event`() {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(
+            userId,
+            aggregateVersion = aggregateVersion,
+            instructorQualifications = setOf(qualificationId)
+        )
+
+        val actorId = UserIdFixture.arbitrary()
+
+        val domainEvent = QualificationDeleted(
+            actorId,
+            Clock.System.now(),
+            qualificationId
+        )
+
+        val expectedSourcingEvent = InstructorQualificationRemoved(
+            aggregateRootId = userId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = actorId,
+            qualificationId = qualificationId
+        )
+
+        // when
+        val result = user.removeInstructorQualification(domainEvent, qualificationId)
 
         // then
         assertThat(result)

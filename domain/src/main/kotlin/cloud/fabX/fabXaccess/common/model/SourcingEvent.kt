@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common.model
 
 import kotlinx.datetime.Instant
 
+// TODO add a trace id
 interface SourcingEvent {
     val aggregateRootId: EntityId<*>
     val aggregateVersion: Long

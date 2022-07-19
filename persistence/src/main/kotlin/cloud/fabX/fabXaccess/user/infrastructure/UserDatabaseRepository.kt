@@ -8,22 +8,17 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
-import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
-import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
-import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
-import cloud.fabX.fabXaccess.user.model.User
-import cloud.fabX.fabXaccess.user.model.UserId
-import cloud.fabX.fabXaccess.user.model.UserIdentity
-import cloud.fabX.fabXaccess.user.model.UserRepository
-import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
+import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.user.model.*
 
 class UserDatabaseRepository :
     UserRepository,
     GettingUserByIdentity,
     GettingUserByUsername,
     GettingUserByCardId,
-    GettingUserByWikiName {
+    GettingUserByWikiName,
+    GettingUsersByMemberQualification,
+    GettingUsersByInstructorQualification {
     private var events = mutableListOf<UserSourcingEvent>()
 
     override fun getAll(): Set<User> {
@@ -104,4 +99,18 @@ class UserDatabaseRepository :
             .firstOrNull { it.wikiName == wikiName }
             .toOption()
             .toEither { Error.UserNotFoundByWikiName("Not able to find user for given wiki name.") }
+
+    override fun getByMemberQualification(qualificationId: QualificationId): Set<User> =
+        getAll()
+            .filter { it.asMember().hasQualification(qualificationId) }
+            .toSet()
+
+    override fun getByInstructorQualification(qualificationId: QualificationId): Set<User> {
+        return getAll()
+            .filter {
+                it.asInstructor()
+                    .fold({ false }, { instructor -> instructor.hasQualification(qualificationId) })
+            }
+            .toSet()
+    }
 }

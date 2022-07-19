@@ -8,12 +8,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
-import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
-import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
-import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
-import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
-import cloud.fabX.fabXaccess.user.model.UserIdFactory
-import cloud.fabX.fabXaccess.user.model.UserRepository
+import cloud.fabX.fabXaccess.user.model.*
 
 object DomainModule {
     private var loggerFactory: LoggerFactory? = null
@@ -33,6 +28,8 @@ object DomainModule {
     private var gettingUserByIdentity: GettingUserByIdentity? = null
     private var gettingUserByWikiName: GettingUserByWikiName? = null
     private var gettingUserByCardId: GettingUserByCardId? = null
+    private var gettingUsersByMemberQualification: GettingUsersByMemberQualification? = null
+    private var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification? = null
 
 
     fun isFullyConfigured(): Boolean {
@@ -51,6 +48,8 @@ object DomainModule {
             require(gettingUserByIdentity)
             require(gettingUserByWikiName)
             require(gettingUserByCardId)
+            require(gettingUsersByMemberQualification)
+            require(gettingUsersByInstructorQualification)
 
             true
         } catch (e: IllegalArgumentException) {
@@ -115,6 +114,14 @@ object DomainModule {
         this.gettingUserByCardId = gettingUserByCardId
     }
 
+    fun configureGettingUsersByMemberQualification(gettingUsersByMemberQualification: GettingUsersByMemberQualification) {
+        this.gettingUsersByMemberQualification = gettingUsersByMemberQualification
+    }
+
+    fun configureGettingUsersByInstructorQualification(gettingUsersByInstructorQualification: GettingUsersByInstructorQualification) {
+        this.gettingUsersByInstructorQualification = gettingUsersByInstructorQualification
+    }
+
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
     }
@@ -169,6 +176,14 @@ object DomainModule {
 
     internal fun gettingUserByCardId(): GettingUserByCardId {
         return require(gettingUserByCardId)
+    }
+
+    internal fun gettingUsersByMemberQualification(): GettingUsersByMemberQualification {
+        return require(gettingUsersByMemberQualification)
+    }
+
+    internal fun gettingUsersByInstructorQualification(): GettingUsersByInstructorQualification {
+        return require(gettingUsersByInstructorQualification)
     }
 
     private inline fun <reified T : Any> require(value: T?): T =

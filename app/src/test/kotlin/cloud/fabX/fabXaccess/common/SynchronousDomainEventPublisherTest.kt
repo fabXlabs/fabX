@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common
 
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
@@ -28,7 +29,8 @@ internal class SynchronousDomainEventPublisherTest {
 
         val domainEvent = QualificationDeleted(
             UserIdFixture.arbitrary(),
-            Clock.System.now()
+            Clock.System.now(),
+            QualificationIdFixture.arbitrary()
         )
 
         // when

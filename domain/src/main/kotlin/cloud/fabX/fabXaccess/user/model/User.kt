@@ -9,13 +9,7 @@ import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
-import cloud.fabX.fabXaccess.common.model.ChangeableValue
-import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
-import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
-import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
-import cloud.fabX.fabXaccess.common.model.biFlatmap
+import cloud.fabX.fabXaccess.common.model.*
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 
@@ -385,6 +379,21 @@ data class User internal constructor(
     fun removeMemberQualification(
         actor: Admin,
         qualificationId: QualificationId
+    ): Either<Error, UserSourcingEvent> =
+        removeMemberQualification(actor.id, qualificationId)
+
+    /**
+     * Removes the user's member qualification (triggered by a domain event).
+     */
+    internal fun removeMemberQualification(
+        domainEvent: DomainEvent,
+        qualificationId: QualificationId
+    ): Either<Error, UserSourcingEvent> =
+        removeMemberQualification(domainEvent.actorId, qualificationId)
+
+    private fun removeMemberQualification(
+        actorId: ActorId,
+        qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
         return memberQualifications.firstOrNull { it == qualificationId }
             .toOption()
@@ -398,7 +407,7 @@ data class User internal constructor(
                 MemberQualificationRemoved(
                     id,
                     aggregateVersion + 1,
-                    actor.id,
+                    actorId,
                     qualificationId
                 )
             }
@@ -445,6 +454,21 @@ data class User internal constructor(
     fun removeInstructorQualification(
         actor: Admin,
         qualificationId: QualificationId
+    ): Either<Error, UserSourcingEvent> =
+        removeInstructorQualification(actor.id, qualificationId)
+
+    /**
+     * Removes the user's instructor qualification (triggered by a domain event).
+     */
+    internal fun removeInstructorQualification(
+        domainEvent: DomainEvent,
+        qualificationId: QualificationId
+    ): Either<Error, UserSourcingEvent> =
+        removeInstructorQualification(domainEvent.actorId, qualificationId)
+
+    private fun removeInstructorQualification(
+        actorId: ActorId,
+        qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
         return instructorQualifications?.firstOrNull { it == qualificationId }
             .toOption()
@@ -458,7 +482,7 @@ data class User internal constructor(
                 InstructorQualificationRemoved(
                     id,
                     aggregateVersion + 1,
-                    actor.id,
+                    actorId,
                     qualificationId
                 )
             }
