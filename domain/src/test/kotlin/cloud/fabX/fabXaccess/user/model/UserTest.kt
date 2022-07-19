@@ -19,6 +19,7 @@ import isLeft
 import isNone
 import isRight
 import isSome
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -1061,49 +1062,99 @@ internal class UserTest {
             )
     }
 
-    @Test
-    fun `when adding member qualification then returns sourcing event`() {
-        // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+    @Nested
+    internal inner class GivenInstructor {
 
-        val qualificationId = QualificationIdFixture.arbitrary()
-        val qualification = QualificationFixture.arbitrary(qualificationId)
+        private val qualificationId = QualificationIdFixture.arbitrary()
+        private val qualification = QualificationFixture.arbitrary(qualificationId)
 
-        val expectedSourcingEvent = MemberQualificationAdded(
-            aggregateRootId = userId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id,
-            qualificationId = qualificationId
-        )
+        private val instructorActor: Instructor = InstructorFixture.arbitrary(qualifications = setOf(qualificationId))
 
-        // when
-        val result = user.addMemberQualification(adminActor, qualificationId) {
-            if (it == qualificationId) {
-                qualification.right()
-            } else {
-                throw IllegalArgumentException("Unexpected qualification id")
+        @Test
+        fun `when adding member qualification then returns sourcing event`() {
+            // given
+            val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+            val expectedSourcingEvent = MemberQualificationAdded(
+                aggregateRootId = userId,
+                aggregateVersion = aggregateVersion + 1,
+                actorId = instructorActor.id,
+                qualificationId = qualificationId
+            )
+
+            // when
+            val result = user.addMemberQualification(instructorActor, qualificationId) {
+                if (it == qualificationId) {
+                    qualification.right()
+                } else {
+                    throw IllegalArgumentException("Unexpected qualification id")
+                }
             }
+
+            // then
+            assertThat(result)
+                .isRight()
+                .isEqualTo(expectedSourcingEvent)
         }
 
-        // then
-        assertThat(result)
-            .isRight()
-            .isEqualTo(expectedSourcingEvent)
+        @Test
+        fun `given already has qualification when adding member qualification then returns error`() {
+            // given
+            val user = UserFixture.arbitrary(
+                userId,
+                aggregateVersion = aggregateVersion,
+                memberQualifications = setOf(qualificationId)
+            )
+
+            // when
+            val result = user.addMemberQualification(instructorActor, qualificationId) {
+                throw IllegalStateException("should not get here")
+            }
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.MemberQualificationAlreadyFound(
+                        "User $userId already has member qualification $qualificationId.",
+                        qualificationId
+                    )
+                )
+        }
+
+        @Test
+        fun `given unknown qualification when adding member qualification then returns error`() {
+            // given
+            val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+            val error = ErrorFixture.arbitrary()
+
+            // when
+            val result = user.addMemberQualification(instructorActor, qualificationId) {
+                if (it == qualificationId) {
+                    error.left()
+                } else {
+                    throw IllegalArgumentException("Unexpected qualification id")
+                }
+            }
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(error)
+        }
     }
 
     @Test
-    fun `given already has qualification when adding member qualification then returns error`() {
+    fun `given instructor not has qualification when adding member qualification then returns error`() {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
+        val instructorActor: Instructor = InstructorFixture.arbitrary(qualifications = setOf())
 
-        val user = UserFixture.arbitrary(
-            userId,
-            aggregateVersion = aggregateVersion,
-            memberQualifications = setOf(qualificationId)
-        )
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         // when
-        val result = user.addMemberQualification(adminActor, qualificationId) {
+        val result = user.addMemberQualification(instructorActor, qualificationId) {
             throw IllegalStateException("should not get here")
         }
 
@@ -1111,35 +1162,11 @@ internal class UserTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(
-                Error.MemberQualificationAlreadyFound(
-                    "User $userId already has member qualification $qualificationId.",
+                Error.InstructorPermissionNotFound(
+                    "Actor not has instructor permission for qualification $qualificationId.",
                     qualificationId
                 )
             )
-    }
-
-    @Test
-    fun `given unknown qualification when adding member qualification then returns error`() {
-        // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
-
-        val unknownQualificationId = QualificationIdFixture.arbitrary()
-
-        val error = ErrorFixture.arbitrary()
-
-        // when
-        val result = user.addMemberQualification(adminActor, unknownQualificationId) {
-            if (it == unknownQualificationId) {
-                error.left()
-            } else {
-                throw IllegalArgumentException("Unexpected qualification id")
-            }
-        }
-
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(error)
     }
 
     @Test

@@ -7,7 +7,7 @@ import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
-import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.UserId
 
 /**
@@ -20,7 +20,7 @@ class AddingMemberQualification {
     private val qualificationRepository = DomainModule.qualificationRepository()
 
     fun addMemberQualification(
-        actor: Admin, // TODO replace by Instructor
+        actor: Instructor,
         userId: UserId,
         qualificationId: QualificationId
     ): Option<Error> {

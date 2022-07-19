@@ -330,20 +330,23 @@ data class User internal constructor(
      * @return error if the qualification cannot be found, sourcing event otherwise
      */
     fun addMemberQualification(
-        actor: Admin, // TODO replace by instructor
+        actor: Instructor,
         qualificationId: QualificationId,
         gettingQualificationById: GettingQualificationById
     ): Either<Error, UserSourcingEvent> {
-        return memberQualifications.firstOrNull { it == qualificationId }
-            .toOption()
-            .map {
-                Error.MemberQualificationAlreadyFound(
-                    "User $id already has member qualification $qualificationId.",
-                    qualificationId
-                )
+        return requireInstructorWithQualification(actor, qualificationId)
+            .flatMap {
+                memberQualifications.firstOrNull { it == qualificationId }
+                    .toOption()
+                    .map {
+                        Error.MemberQualificationAlreadyFound(
+                            "User $id already has member qualification $qualificationId.",
+                            qualificationId
+                        )
+                    }
+                    .toEither { }
+                    .swap()
             }
-            .toEither { }
-            .swap()
             .flatMap { gettingQualificationById.getQualificationById(qualificationId) }
             .map {
                 MemberQualificationAdded(
@@ -353,6 +356,22 @@ data class User internal constructor(
                     qualificationId
                 )
             }
+    }
+
+    private fun requireInstructorWithQualification(
+        actor: Instructor,
+        qualificationId: QualificationId
+    ): Either<Error, Unit> {
+        return Either.conditionally(
+            actor.hasQualification(qualificationId),
+            {
+                Error.InstructorPermissionNotFound(
+                    "Actor not has instructor permission for qualification $qualificationId.",
+                    qualificationId
+                )
+            },
+            {}
+        )
     }
 
     /**

@@ -12,7 +12,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
-import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.InstructorFixture
 import cloud.fabX.fabXaccess.user.model.MemberQualificationAdded
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
@@ -29,10 +29,9 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class AddingMemberQualificationTest {
 
-    private val adminActor = AdminFixture.arbitrary()
-
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
+    private val instructorActor = InstructorFixture.arbitrary(qualifications = setOf(qualificationId))
 
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null
@@ -67,7 +66,7 @@ internal class AddingMemberQualificationTest {
         val expectedSourcingEvent = MemberQualificationAdded(
             userId,
             2,
-            adminActor.id,
+            instructorActor.id,
             qualificationId
         )
 
@@ -82,7 +81,7 @@ internal class AddingMemberQualificationTest {
 
         // when
         val result = testee!!.addMemberQualification(
-            adminActor,
+            instructorActor,
             userId,
             qualificationId
         )
@@ -107,7 +106,7 @@ internal class AddingMemberQualificationTest {
 
         // when
         val result = testee!!.addMemberQualification(
-            adminActor,
+            instructorActor,
             userId,
             qualificationId
         )
@@ -131,7 +130,7 @@ internal class AddingMemberQualificationTest {
 
         // when
         val result = testee!!.addMemberQualification(
-            adminActor,
+            instructorActor,
             userId,
             qualificationId
         )
@@ -150,7 +149,7 @@ internal class AddingMemberQualificationTest {
         val expectedSourcingEvent = MemberQualificationAdded(
             userId,
             2,
-            adminActor.id,
+            instructorActor.id,
             qualificationId
         )
 
@@ -167,7 +166,7 @@ internal class AddingMemberQualificationTest {
 
         // when
         val result = testee!!.addMemberQualification(
-            adminActor,
+            instructorActor,
             userId,
             qualificationId
         )

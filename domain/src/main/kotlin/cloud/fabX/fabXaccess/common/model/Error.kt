@@ -125,4 +125,9 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     ) : Error(message, mapOf("pin" to pin.toString()))
 
     data class VersionConflict(override val message: String) : Error(message)
+
+    data class InstructorPermissionNotFound(
+        override val message: String,
+        val qualificationId: QualificationId
+    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
 }
