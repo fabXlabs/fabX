@@ -1,3 +1,5 @@
+val kotlinxDateTimeVersion: String by project
+
 plugins {
     kotlin("jvm")
     application
@@ -12,4 +14,6 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+    testImplementation(testFixtures(project(":domain")))
 }
