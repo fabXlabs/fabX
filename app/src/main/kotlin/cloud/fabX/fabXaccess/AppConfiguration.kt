@@ -17,6 +17,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.newToolId
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
+import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
@@ -44,6 +45,7 @@ object AppConfiguration {
     private val gettingUserByUsername: GettingUserByUsername
     private val gettingUserByIdentity: GettingUserByIdentity
     private val gettingUserByWikiName: GettingUserByWikiName
+    private val gettingUserByCardId: GettingUserByCardId
 
     init {
         loggerFactory = LogbackLoggerFactory()
@@ -64,6 +66,7 @@ object AppConfiguration {
         gettingUserByUsername = userRepository
         gettingUserByIdentity = userRepository
         gettingUserByWikiName = userRepository
+        gettingUserByCardId = userRepository
 
         configureDomain()
         configureRest()
@@ -98,6 +101,7 @@ object AppConfiguration {
         DomainModule.configureGettingUserByUsername(gettingUserByUsername)
         DomainModule.configureGettingUserByIdentity(gettingUserByIdentity)
         DomainModule.configureGettingUserByWikiName(gettingUserByWikiName)
+        DomainModule.configureGettingUserByCardId(gettingUserByCardId)
     }
 
     private fun configureRest() {

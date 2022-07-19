@@ -16,6 +16,7 @@ class AddingCardIdentity {
 
     private val log = logger()
     private val userRepository = DomainModule.userRepository()
+    private val gettingUserByCardId = DomainModule.gettingUserByCardId()
 
     fun addCardIdentity(
         actor: Admin,
@@ -26,11 +27,12 @@ class AddingCardIdentity {
         log.debug("addCardIdentity...")
 
         return userRepository.getById(userId)
-            .map {
+            .flatMap {
                 it.addCardIdentity(
                     actor,
                     cardId,
-                    cardSecret
+                    cardSecret,
+                    gettingUserByCardId
                 )
             }
             .flatMap {

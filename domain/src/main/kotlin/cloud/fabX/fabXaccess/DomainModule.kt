@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
@@ -31,6 +32,7 @@ object DomainModule {
     private var gettingUserByUsername: GettingUserByUsername? = null
     private var gettingUserByIdentity: GettingUserByIdentity? = null
     private var gettingUserByWikiName: GettingUserByWikiName? = null
+    private var gettingUserByCardId: GettingUserByCardId? = null
 
 
     fun isFullyConfigured(): Boolean {
@@ -48,6 +50,7 @@ object DomainModule {
             require(gettingUserByUsername)
             require(gettingUserByIdentity)
             require(gettingUserByWikiName)
+            require(gettingUserByCardId)
 
             true
         } catch (e: IllegalArgumentException) {
@@ -108,6 +111,10 @@ object DomainModule {
         this.gettingUserByWikiName = gettingUserByWikiName
     }
 
+    fun configureGettingUserByCardId(gettingUserByCardId: GettingUserByCardId) {
+        this.gettingUserByCardId = gettingUserByCardId
+    }
+
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
     }
@@ -158,6 +165,10 @@ object DomainModule {
 
     internal fun gettingUserByWikiName(): GettingUserByWikiName {
         return require(gettingUserByWikiName)
+    }
+
+    internal fun gettingUserByCardId(): GettingUserByCardId {
+        return require(gettingUserByCardId)
     }
 
     private inline fun <reified T : Any> require(value: T?): T =

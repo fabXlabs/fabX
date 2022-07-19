@@ -10,7 +10,9 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.CardIdentity
 import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
+import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -32,18 +34,23 @@ internal class AddingCardIdentityTest {
 
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null
+    private var gettingUserByCardId: GettingUserByCardId? = null
 
     private var testee: AddingCardIdentity? = null
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock userRepository: UserRepository
+        @Mock userRepository: UserRepository,
+        @Mock gettingUserByCardId: GettingUserByCardId
     ) {
         this.logger = logger
         this.userRepository = userRepository
+        this.gettingUserByCardId = gettingUserByCardId
+
         DomainModule.configureLoggerFactory { logger }
         DomainModule.configureUserRepository(userRepository)
+        DomainModule.configureGettingUserByCardId(gettingUserByCardId)
 
         testee = AddingCardIdentity()
     }
@@ -66,6 +73,9 @@ internal class AddingCardIdentityTest {
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
+
+        whenever(gettingUserByCardId!!.getByCardId(cardId))
+            .thenReturn(Error.UserNotFoundByCardId("").left())
 
         whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(None)
@@ -109,6 +119,38 @@ internal class AddingCardIdentityTest {
     }
 
     @Test
+    fun `given domain error when adding identity then returns domain error`() {
+        // given
+        val cardId = "11223344556677"
+        val cardSecret = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+
+        val otherUser = UserFixture.withIdentity(CardIdentity(cardId, cardSecret))
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+
+        val expectedDomainError = Error.CardIdAlreadyInUse("Card id is already in use.")
+
+        whenever(userRepository!!.getById(userId))
+            .thenReturn(user.right())
+
+        whenever(gettingUserByCardId!!.getByCardId(cardId))
+            .thenReturn(otherUser.right())
+
+        // when
+        val result = testee!!.addCardIdentity(
+            adminActor,
+            userId,
+            cardId,
+            cardSecret
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(expectedDomainError)
+    }
+
+    @Test
     fun `given sourcing event cannot be stored when adding identity then returns error`() {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
@@ -128,6 +170,9 @@ internal class AddingCardIdentityTest {
 
         whenever(userRepository!!.getById(userId))
             .thenReturn(user.right())
+
+        whenever(gettingUserByCardId!!.getByCardId(cardId))
+            .thenReturn(Error.UserNotFoundByCardId("").left())
 
         whenever(userRepository!!.store(expectedSourcingEvent))
             .thenReturn(error.some())

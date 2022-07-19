@@ -808,10 +808,55 @@ internal class UserTest {
             adminActor,
             cardId,
             cardSecret
-        )
+        ) {
+            if (it == cardId) {
+                Error.UserNotFoundByCardId("").left()
+            } else {
+                throw IllegalArgumentException("unexpected card id")
+            }
+        }
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given card id is in use when adding card identity then returns error`() {
+        // given
+        val cardId = "02E42232C45D80"
+        val cardSecret = "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d"
+
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+        val otherUser = UserFixture.withIdentity(
+            CardIdentity(
+                cardId,
+                "0000000000000000000000000000000000000000000000000000000000000000"
+            )
+        )
+
+        // when
+        val result = user.addCardIdentity(
+            adminActor,
+            cardId,
+            cardSecret
+        ) {
+            if (it == cardId) {
+                otherUser.right()
+            } else {
+                throw IllegalArgumentException("unexpected card id")
+            }
+        }
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.CardIdAlreadyInUse(
+                    "Card id is already in use."
+                )
+            )
     }
 
     @Test
@@ -921,7 +966,7 @@ internal class UserTest {
     fun `given phone number is in use when adding phone number then returns error`() {
         // given
         val phoneNr = "+491720000123"
-        val otherUser = UserFixture.arbitrary(identities = setOf(PhoneNrIdentity(phoneNr)))
+        val otherUser = UserFixture.withIdentity(PhoneNrIdentity(phoneNr))
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 

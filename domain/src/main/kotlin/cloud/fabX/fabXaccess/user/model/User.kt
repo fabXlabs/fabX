@@ -210,10 +210,33 @@ data class User internal constructor(
     fun addCardIdentity(
         actor: Admin,
         cardId: String,
-        cardSecret: String
-    ): UserSourcingEvent {
-        // TODO card id must be unique rule
-        return CardIdentityAdded(id, aggregateVersion + 1, actor.id, cardId, cardSecret)
+        cardSecret: String,
+        gettingUserByCardId: GettingUserByCardId
+    ): Either<Error, UserSourcingEvent> {
+        return requireUniqueCardId(cardId, gettingUserByCardId)
+            .map {
+                CardIdentityAdded(id, aggregateVersion + 1, actor.id, cardId, cardSecret)
+            }
+    }
+
+    private fun requireUniqueCardId(
+        cardId: String,
+        gettingUserByCardId: GettingUserByCardId
+    ): Either<Error, Unit> {
+        return gettingUserByCardId.getByCardId(cardId)
+            .swap()
+            .mapLeft {
+                Error.CardIdAlreadyInUse(
+                    "Card id is already in use."
+                )
+            }
+            .flatMap {
+                if (it is Error.UserNotFoundByCardId) {
+                    Unit.right()
+                } else {
+                    it.left()
+                }
+            }
     }
 
     /**

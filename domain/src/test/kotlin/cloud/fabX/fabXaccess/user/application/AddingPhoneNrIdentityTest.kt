@@ -117,7 +117,7 @@ internal class AddingPhoneNrIdentityTest {
     fun `given domain error when adding identity then returns domain error`() {
         // given
         val phoneNr = "+49123456789"
-        val otherUser = UserFixture.arbitrary(identities = setOf(PhoneNrIdentity(phoneNr)))
+        val otherUser = UserFixture.withIdentity(PhoneNrIdentity(phoneNr))
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
