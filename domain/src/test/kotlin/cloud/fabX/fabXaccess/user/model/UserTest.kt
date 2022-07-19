@@ -625,7 +625,7 @@ internal class UserTest {
         )
 
         val username = "name42"
-        val hash = "password1234"
+        val hash = "Q1kxQjCP56+cO62gMvOP+T9gz0uEnZIOnzT7TeJ21V4="
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             actorId = adminActor.id,
@@ -792,7 +792,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         val cardId = "02E42232C45D80"
-        val cardSecret = "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d"
+        val cardSecret = "D7673E42DA311BFF83EBD0761ED8CD607200A9E0F6065E6B945AE86D14EAB3C6"
 
         val expectedSourcingEvent = CardIdentityAdded(
             actorId = adminActor.id,

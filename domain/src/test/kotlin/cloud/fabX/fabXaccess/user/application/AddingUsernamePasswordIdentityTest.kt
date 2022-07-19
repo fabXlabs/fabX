@@ -60,7 +60,7 @@ internal class AddingUsernamePasswordIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
 
         val username = "username"
-        val hash = "password42"
+        val hash = "GeARB560BTUdyM8Ez2Vmld/c2F0d8vM4/Knwg8NJ9uY="
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             userId,
@@ -123,7 +123,7 @@ internal class AddingUsernamePasswordIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
 
         val username = "username"
-        val hash = "password42"
+        val hash = "6mAgYY3knb1Osh0uy10lHcBZBNcx07a37LaqtzJjMG4="
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             userId,

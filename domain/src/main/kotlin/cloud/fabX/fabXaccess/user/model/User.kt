@@ -143,8 +143,9 @@ data class User internal constructor(
     ): Either<Error, UserSourcingEvent> {
         return requireNoUsernamePasswordIdentity()
             .flatMap { requireUniqueUsername(username, gettingUserByUsername) }
+            .flatMap { UsernamePasswordIdentity.fromUnvalidated(username, hash) }
             .map {
-                UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, username, hash)
+                UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, it.username, it.hash)
             }
     }
 
@@ -214,8 +215,9 @@ data class User internal constructor(
         gettingUserByCardId: GettingUserByCardId
     ): Either<Error, UserSourcingEvent> {
         return requireUniqueCardId(cardId, gettingUserByCardId)
+            .flatMap { CardIdentity.fromUnvalidated(cardId, cardSecret) }
             .map {
-                CardIdentityAdded(id, aggregateVersion + 1, actor.id, cardId, cardSecret)
+                CardIdentityAdded(id, aggregateVersion + 1, actor.id, it.cardId, it.cardSecret)
             }
     }
 
@@ -272,8 +274,9 @@ data class User internal constructor(
         gettingUserByIdentity: GettingUserByIdentity
     ): Either<Error, UserSourcingEvent> {
         return requireUniquePhoneNr(phoneNr, gettingUserByIdentity)
+            .flatMap { PhoneNrIdentity.fromUnvalidated(phoneNr) }
             .map {
-                PhoneNrIdentityAdded(id, aggregateVersion + 1, actor.id, phoneNr)
+                PhoneNrIdentityAdded(id, aggregateVersion + 1, actor.id, it.phoneNr)
             }
     }
 

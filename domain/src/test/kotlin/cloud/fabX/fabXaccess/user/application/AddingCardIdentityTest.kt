@@ -61,7 +61,7 @@ internal class AddingCardIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val cardId = "11223344556677"
-        val cardSecret = "0123456789abcdef"
+        val cardSecret = "636B2D08298280E107E47B15EBE6336D6629F4FB742243DA3A792A42D5010737"
 
         val expectedSourcingEvent = CardIdentityAdded(
             userId,
