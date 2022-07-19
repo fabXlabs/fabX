@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common.model
 
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolId
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 // TODO add a trace id
@@ -24,7 +25,7 @@ interface DomainEventHandler {
 
 data class QualificationDeleted(
     override val actorId: ActorId,
-    override val timestamp: Instant,
+    override val timestamp: Instant = Clock.System.now(),
     val qualificationId: QualificationId
 ) : DomainEvent {
     override fun handleBy(eventHandler: DomainEventHandler) {
@@ -34,7 +35,7 @@ data class QualificationDeleted(
 
 data class ToolDeleted(
     override val actorId: ActorId,
-    override val timestamp: Instant,
+    override val timestamp: Instant = Clock.System.now(),
     val toolId: ToolId
 ) : DomainEvent {
     override fun handleBy(eventHandler: DomainEventHandler) {

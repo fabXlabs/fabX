@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess
 
+import cloud.fabX.fabXaccess.common.SynchronousDomainEventPublisher
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
@@ -21,14 +22,19 @@ import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
+import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
+import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 import cloud.fabX.fabXaccess.user.model.UserIdFactory
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.newUserId
 import kotlin.system.exitProcess
+import kotlinx.datetime.Clock
 
 object AppConfiguration {
 
     private val log: Logger
+
+    private val clock: Clock
 
     internal val loggerFactory: LoggerFactory
     private val deviceIdFactory: DeviceIdFactory
@@ -46,11 +52,17 @@ object AppConfiguration {
     private val gettingUserByIdentity: GettingUserByIdentity
     private val gettingUserByWikiName: GettingUserByWikiName
     private val gettingUserByCardId: GettingUserByCardId
+    private val gettingUsersByMemberQualification: GettingUsersByMemberQualification
+    private val gettingUsersByInstructorQualification: GettingUsersByInstructorQualification
+
+    private val domainEventPublisher: SynchronousDomainEventPublisher
 
     init {
         loggerFactory = LogbackLoggerFactory()
         log = loggerFactory.invoke(AppConfiguration::class.java)
         log.info("Configuring modules...")
+
+        clock = Clock.System
 
         deviceIdFactory = { newDeviceId() }
         qualificationIdFactory = { newQualificationId() }
@@ -67,6 +79,10 @@ object AppConfiguration {
         gettingUserByIdentity = userRepository
         gettingUserByWikiName = userRepository
         gettingUserByCardId = userRepository
+        gettingUsersByMemberQualification = userRepository
+        gettingUsersByInstructorQualification = userRepository
+
+        domainEventPublisher = SynchronousDomainEventPublisher()
 
         configureDomain()
         configureRest()
@@ -87,6 +103,8 @@ object AppConfiguration {
     private fun configureDomain() {
         DomainModule.configureLoggerFactory(loggerFactory)
 
+        DomainModule.configureClock(clock)
+
         DomainModule.configureDeviceIdFactory(deviceIdFactory)
         DomainModule.configureQualificationIdFactory(qualificationIdFactory)
         DomainModule.configureToolIdFactory(toolIdFactory)
@@ -102,6 +120,11 @@ object AppConfiguration {
         DomainModule.configureGettingUserByIdentity(gettingUserByIdentity)
         DomainModule.configureGettingUserByWikiName(gettingUserByWikiName)
         DomainModule.configureGettingUserByCardId(gettingUserByCardId)
+        DomainModule.configureGettingUsersByMemberQualification(gettingUsersByMemberQualification)
+        DomainModule.configureGettingUsersByInstructorQualification(gettingUsersByInstructorQualification)
+
+        DomainModule.configureDomainEventPublisher(domainEventPublisher)
+        domainEventPublisher.addHandler(DomainModule.userDomainEventHandler())
     }
 
     private fun configureRest() {

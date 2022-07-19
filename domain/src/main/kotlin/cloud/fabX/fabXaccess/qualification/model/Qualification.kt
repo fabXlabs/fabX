@@ -87,8 +87,6 @@ data class Qualification internal constructor(
         actor: Admin,
         gettingToolsByQualificationId: GettingToolsByQualificationId
     ): Either<Error, QualificationSourcingEvent> {
-        // TODO remove from users (via DomainEvent?)
-
         val tools = gettingToolsByQualificationId.getToolsByQualificationId(id)
 
         return if (tools.isEmpty()) {

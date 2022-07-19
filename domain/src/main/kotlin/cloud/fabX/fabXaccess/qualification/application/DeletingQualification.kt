@@ -5,6 +5,7 @@ import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
 
@@ -14,6 +15,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class DeletingQualification {
 
     private val log = logger()
+    private val clock = DomainModule.clock()
+    private val domainEventPublisher = DomainModule.domainEventPublisher()
     private val qualificationRepository = DomainModule.qualificationRepository()
     private val gettingToolsByQualificationId = DomainModule.gettingToolsQualificationId()
 
@@ -35,6 +38,15 @@ class DeletingQualification {
             .swap()
             .orNone()
             .tapNone { log.debug("...deleteQualification done") }
+            .tapNone {
+                domainEventPublisher.publish(
+                    QualificationDeleted(
+                        actor.id,
+                        clock.now(),
+                        qualificationId
+                    )
+                )
+            }
             .tap { log.error("...deleteQualification error: $it") }
     }
 }

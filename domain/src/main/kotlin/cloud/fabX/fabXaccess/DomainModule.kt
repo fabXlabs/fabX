@@ -1,6 +1,8 @@
 package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
+import cloud.fabX.fabXaccess.common.model.DomainEventHandler
+import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
@@ -8,10 +10,24 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolIdFactory
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
-import cloud.fabX.fabXaccess.user.model.*
+import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
+import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
+import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
+import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
+import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
+import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
+import cloud.fabX.fabXaccess.user.model.UserIdFactory
+import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 object DomainModule {
+    // external dependencies
     private var loggerFactory: LoggerFactory? = null
+
+    private var clock: Clock? = null
+
+    private var domainEventPublisher: DomainEventPublisher? = null
 
     private var deviceIdFactory: DeviceIdFactory? = null
     private var qualificationIdFactory: QualificationIdFactory? = null
@@ -31,10 +47,16 @@ object DomainModule {
     private var gettingUsersByMemberQualification: GettingUsersByMemberQualification? = null
     private var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification? = null
 
+    // own services
+    private val userDomainEventHandler: UserDomainEventHandler by lazy { UserDomainEventHandler() }
 
+
+    @Suppress("DuplicatedCode")
     fun isFullyConfigured(): Boolean {
         return try {
             require(loggerFactory)
+            require(clock)
+            require(domainEventPublisher)
             require(deviceIdFactory)
             require(qualificationIdFactory)
             require(toolIdFactory)
@@ -60,6 +82,14 @@ object DomainModule {
 
     fun configureLoggerFactory(loggerFactory: LoggerFactory) {
         this.loggerFactory = loggerFactory
+    }
+
+    fun configureClock(clock: Clock) {
+        this.clock = clock
+    }
+
+    fun configureDomainEventPublisher(domainEventPublisher: DomainEventPublisher) {
+        this.domainEventPublisher = domainEventPublisher
     }
 
     fun configureDeviceIdFactory(deviceIdFactory: DeviceIdFactory) {
@@ -122,8 +152,18 @@ object DomainModule {
         this.gettingUsersByInstructorQualification = gettingUsersByInstructorQualification
     }
 
+    fun userDomainEventHandler(): DomainEventHandler = userDomainEventHandler
+
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
+    }
+
+    internal fun clock(): Clock {
+        return require(clock)
+    }
+
+    internal fun domainEventPublisher(): DomainEventPublisher {
+        return require(domainEventPublisher)
     }
 
     internal fun deviceIdFactory(): DeviceIdFactory {
