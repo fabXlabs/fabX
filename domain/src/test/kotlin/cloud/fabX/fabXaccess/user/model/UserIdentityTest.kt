@@ -1,6 +1,5 @@
 package cloud.fabX.fabXaccess.user.model
 
-import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.Error
@@ -31,18 +30,17 @@ class UserIdentityTest {
         // then
         assertThat(result)
             .isRight()
-            .all {
-                transform { it.username }.isEqualTo(username)
-                transform { it.hash }.isEqualTo(hash)
-            }
+            .isEqualTo(UsernamePasswordIdentity(username, hash))
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
-        "user-name", // dash is illegal
-        "user name", // space is illegal
-        "user\nname", // newline is illegal
-    ])
+    @ValueSource(
+        strings = [
+            "user-name", // dash is illegal
+            "user name", // space is illegal
+            "user\nname", // newline is illegal
+        ]
+    )
     fun `given invalid username when building UsernamePasswordIdentity then returns error`(
         username: String
     ) {
@@ -65,11 +63,13 @@ class UserIdentityTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
-        "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg", // one character too short
-        "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg_", // underscore is illegal
-        "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg." // dot is illegal
-    ])
+    @ValueSource(
+        strings = [
+            "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg", // one character too short
+            "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg_", // underscore is illegal
+            "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg." // dot is illegal
+        ]
+    )
     fun `given invalid hash when building UsernamePasswordIdentity then returns error`(
         hash: String
     ) {
@@ -87,6 +87,82 @@ class UserIdentityTest {
                     "Password hash is invalid (has to match ^[A-Za-z0-9+/]{43}=\$).",
                     hash,
                     UsernamePasswordIdentity.hashRegex
+                )
+            )
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "09723319BA6E8D, D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B",
+            "2780919BDC6BC6, 76436695FF8B50218E6439DB99CDA1934EE5A260B2C3753FDC38146EA0D9261B",
+            "7AF9FAAE28F100, 8A2808E7E5F231B3FCAD197A7CE390E086FF918688A2ACF4E85C181D6FBFF36D",
+        ]
+    )
+    fun `given valid id and secret when building CardIdentity then returns instance`(
+        cardId: String,
+        cardSecret: String
+    ) {
+        // given
+
+        // when
+        val result = CardIdentity.fromUnvalidated(cardId, cardSecret)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(CardIdentity(cardId, cardSecret))
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = [
+        "09723319BA6E8d", // lowercase d illegal
+        "09723319BA6E", // too short
+        "09723319BA6EAF123", // too long
+        "09723319BA6E8-" // dash illegal
+    ])
+    fun `given invalid id when building CardIdentity then returns error`(id: String) {
+        // given
+        val secret = "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B"
+
+        // when
+        val result = CardIdentity.fromUnvalidated(id, secret)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.CardIdInvalid(
+                    "Card id is invalid (has to match ^[0-9A-F]{14}\$).",
+                    id,
+                    CardIdentity.cardIdRegex
+                )
+            )
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = [
+        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971b", // lowercase b illegal
+        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D9", // too short
+        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B111222", // too long
+        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D97..", // dot illegal
+
+    ])
+    fun `given invalid secret when building CardIdentity then returns error`(secret: String) {
+        // given
+        val id = "AABBCCDDEEFF00"
+
+        // when
+        val result = CardIdentity.fromUnvalidated(id, secret)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.CardSecretInvalid(
+                    "Card secret is invalid (has to match ^[0-9A-F]{64}\$).",
+                    secret,
+                    CardIdentity.cardSecretRegex
                 )
             )
     }

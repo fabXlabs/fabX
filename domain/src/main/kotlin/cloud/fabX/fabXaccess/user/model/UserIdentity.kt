@@ -59,7 +59,48 @@ data class UsernamePasswordIdentity(val username: String, val hash: String) : Us
  *
  * Only to be used via a Device reading the card.
  */
-data class CardIdentity(val cardId: String, val cardSecret: String) : UserIdentity
+data class CardIdentity(val cardId: String, val cardSecret: String) : UserIdentity {
+    companion object {
+        internal val cardIdRegex = Regex("^[0-9A-F]{14}$")
+        internal val cardSecretRegex = Regex("^[0-9A-F]{64}$")
+
+        fun fromUnvalidated(cardId: String, cardSecret: String): Either<Error, CardIdentity> {
+            return requireValidCardId(cardId)
+                .flatMap { requireValidCardSecret(cardSecret) }
+                .map {
+                    CardIdentity(cardId, cardSecret)
+                }
+        }
+
+        private fun requireValidCardId(cardId: String): Either<Error, Unit> {
+            return Either.conditionally(
+                cardId.matches(cardIdRegex),
+                {
+                    Error.CardIdInvalid(
+                        "Card id is invalid (has to match $cardIdRegex).",
+                        cardId,
+                        cardIdRegex
+                    )
+                },
+                {}
+            )
+        }
+
+        private fun requireValidCardSecret(cardSecret: String): Either<Error, Unit> {
+            return Either.conditionally(
+                cardSecret.matches(cardSecretRegex),
+                {
+                    Error.CardSecretInvalid(
+                        "Card secret is invalid (has to match $cardSecretRegex).",
+                        cardSecret,
+                        cardSecretRegex
+                    )
+                },
+                {}
+            )
+        }
+    }
+}
 
 /**
  * Identifying a User by phone number.
