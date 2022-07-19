@@ -92,8 +92,8 @@ data class Device internal constructor(
         toolId: ToolId,
         gettingToolById: GettingToolById
     ): Either<Error, DeviceSourcingEvent> {
-        // TODO Check if tool is attached to other device?
-        //      Or is it a feature that it can be attached to multiple devices?
+        // TODO Check if tool is attached to other device (or other pin on this device)?
+        //      Or is it a feature that it can be attached multiple times?
 
         return attachedTools.getOrNone(pin)
             .toEither {

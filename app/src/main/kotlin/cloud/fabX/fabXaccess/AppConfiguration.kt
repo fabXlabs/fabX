@@ -125,6 +125,7 @@ object AppConfiguration {
 
         DomainModule.configureDomainEventPublisher(domainEventPublisher)
         domainEventPublisher.addHandler(DomainModule.userDomainEventHandler())
+        domainEventPublisher.addHandler(DomainModule.deviceDomainEventHandler())
     }
 
     private fun configureRest() {
