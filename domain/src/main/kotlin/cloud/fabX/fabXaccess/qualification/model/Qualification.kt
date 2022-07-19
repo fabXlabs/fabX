@@ -87,23 +87,34 @@ data class Qualification internal constructor(
         actor: Admin,
         gettingToolsByQualificationId: GettingToolsByQualificationId
     ): Either<Error, QualificationSourcingEvent> {
+        return requireQualificationNotInUseByTools(gettingToolsByQualificationId)
+            .map {
+                QualificationDeleted(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id
+                )
+            }
+    }
+
+    private fun requireQualificationNotInUseByTools(
+        gettingToolsByQualificationId: GettingToolsByQualificationId
+    ): Either<Error, Unit> {
         val tools = gettingToolsByQualificationId.getToolsByQualificationId(id)
 
-        return if (tools.isEmpty()) {
-            QualificationDeleted(
-                id,
-                aggregateVersion + 1,
-                actor.id
-            ).right()
-        } else {
-            val toolIds = tools.joinToString { tool -> tool.id.toString() }
+        return Either.conditionally(
+            tools.isEmpty(),
+            {
+                val toolIds = tools.joinToString { tool -> tool.id.toString() }
 
-            Error.QualificationInUse(
-                "Qualification in use by tools ($toolIds).",
-                id,
-                tools.map { tool -> tool.id }.toSet()
-            ).left()
-        }
+                Error.QualificationInUse(
+                    "Qualification in use by tools ($toolIds).",
+                    id,
+                    tools.map { tool -> tool.id }.toSet()
+                )
+            },
+            {}
+        )
     }
 
     class EventHistoryDoesNotStartWithQualificationCreated(message: String) : Exception(message)
