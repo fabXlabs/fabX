@@ -5,6 +5,7 @@ import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.tool.model.ToolId
 import cloud.fabX.fabXaccess.user.model.Admin
 
@@ -14,6 +15,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class DeletingTool {
 
     private val log = logger()
+    private val clock = DomainModule.clock()
+    private val domainEventPublisher = DomainModule.domainEventPublisher()
     private val toolRepository = DomainModule.toolRepository()
 
     fun deleteTool(
@@ -34,6 +37,15 @@ class DeletingTool {
             .swap()
             .orNone()
             .tapNone { log.debug("...deleteTool done") }
+            .tapNone {
+                domainEventPublisher.publish(
+                    ToolDeleted(
+                        actor.id,
+                        clock.now(),
+                        toolId
+                    )
+                )
+            }
             .tap { log.error("...deleteTool error: $it") }
     }
 }

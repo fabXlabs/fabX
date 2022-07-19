@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.tool.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -7,6 +8,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.tool.model.ToolDeleted
@@ -16,10 +18,12 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @MockitoSettings
@@ -28,8 +32,10 @@ internal class DeletingToolTest {
     private val adminActor = AdminFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
+    private val fixedInstant = Clock.System.now()
 
     private var logger: Logger? = null
+    private var domainEventPublisher: DomainEventPublisher? = null
     private var toolRepository: ToolRepository? = null
 
     private var testee: DeletingTool? = null
@@ -37,18 +43,23 @@ internal class DeletingToolTest {
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
+        @Mock domainEventPublisher: DomainEventPublisher,
         @Mock toolRepository: ToolRepository
     ) {
         this.logger = logger
+        this.domainEventPublisher = domainEventPublisher
         this.toolRepository = toolRepository
+
         DomainModule.configureLoggerFactory { logger }
+        DomainModule.configureClock(FixedClock(fixedInstant))
+        DomainModule.configureDomainEventPublisher(domainEventPublisher)
         DomainModule.configureToolRepository(toolRepository)
 
         testee = DeletingTool()
     }
 
     @Test
-    fun `given tool can be found when deleting tool then sourcing event is created and stored`() {
+    fun `given tool can be found when deleting tool then sourcing event is created and stored and domain event is published`() {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 234)
 
@@ -72,6 +83,13 @@ internal class DeletingToolTest {
 
         // then
         assertThat(result).isNone()
+        verify(domainEventPublisher!!).publish(
+            cloud.fabX.fabXaccess.common.model.ToolDeleted(
+                adminActor.id,
+                fixedInstant,
+                toolId
+            )
+        )
     }
 
     @Test
