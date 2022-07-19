@@ -115,12 +115,14 @@ class UserIdentityTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
-        "09723319BA6E8d", // lowercase d illegal
-        "09723319BA6E", // too short
-        "09723319BA6EAF123", // too long
-        "09723319BA6E8-" // dash illegal
-    ])
+    @ValueSource(
+        strings = [
+            "09723319BA6E8d", // lowercase d illegal
+            "09723319BA6E", // too short
+            "09723319BA6EAF123", // too long
+            "09723319BA6E8-" // dash illegal
+        ]
+    )
     fun `given invalid id when building CardIdentity then returns error`(id: String) {
         // given
         val secret = "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B"
@@ -141,13 +143,15 @@ class UserIdentityTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = [
-        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971b", // lowercase b illegal
-        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D9", // too short
-        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B111222", // too long
-        "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D97..", // dot illegal
+    @ValueSource(
+        strings = [
+            "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971b", // lowercase b illegal
+            "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D9", // too short
+            "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B111222", // too long
+            "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D97..", // dot illegal
 
-    ])
+        ]
+    )
     fun `given invalid secret when building CardIdentity then returns error`(secret: String) {
         // given
         val id = "AABBCCDDEEFF00"
@@ -163,6 +167,55 @@ class UserIdentityTest {
                     "Card secret is invalid (has to match ^[0-9A-F]{64}\$).",
                     secret,
                     CardIdentity.cardSecretRegex
+                )
+            )
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "+49 123 12345678, +4912312345678",
+            "+1 (567) 123 123, +1567123123"
+        ]
+    )
+    fun `given valid phone number when building PhoneNrIdentity then returns instance`(
+        phoneNr: String,
+        normalized: String
+    ) {
+        // given
+
+        // when
+        val result = PhoneNrIdentity.fromUnvalidated(phoneNr)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(PhoneNrIdentity(normalized))
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "123456789", // missing plus
+            "+++123456" // too many plus
+        ]
+    )
+    fun `given invalid phone number when building PhoneNrIdentity then returns error`(
+        phoneNr: String
+    ) {
+        // given
+
+        // when
+        val result = PhoneNrIdentity.fromUnvalidated(phoneNr)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PhoneNrInvalid(
+                    "Phone number is invalid (has to match ^\\+[0-9]+\$).",
+                    phoneNr,
+                    PhoneNrIdentity.phoneNrRegex
                 )
             )
     }

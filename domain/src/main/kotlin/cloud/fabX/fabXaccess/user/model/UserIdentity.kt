@@ -107,4 +107,30 @@ data class CardIdentity(val cardId: String, val cardSecret: String) : UserIdenti
  *
  * Only to be used via a Device "reading" the phone number, e.g. by receiving a call from the number.
  */
-data class PhoneNrIdentity(val phoneNr: String) : UserIdentity
+data class PhoneNrIdentity(val phoneNr: String) : UserIdentity {
+    companion object {
+        internal val phoneNrRegex = Regex("^\\+[0-9]+$")
+
+        fun fromUnvalidated(phoneNr: String): Either<Error, PhoneNrIdentity> {
+            val normalized = phoneNr.filter { it.isDigit() || it == '+' }
+            return requireValidPhoneNr(normalized)
+                .map {
+                    PhoneNrIdentity(normalized)
+                }
+        }
+
+        private fun requireValidPhoneNr(phoneNr: String): Either<Error, Unit> {
+            return Either.conditionally(
+                phoneNr.matches(phoneNrRegex),
+                {
+                    Error.PhoneNrInvalid(
+                        "Phone number is invalid (has to match $phoneNrRegex).",
+                        phoneNr,
+                        phoneNrRegex
+                    )
+                },
+                {}
+            )
+        }
+    }
+}

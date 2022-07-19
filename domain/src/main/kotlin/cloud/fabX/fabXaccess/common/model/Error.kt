@@ -150,6 +150,12 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         val regex: Regex
     ) : Error(message, mapOf("value" to value, "regex" to regex.toString()))
 
+    data class PhoneNrInvalid(
+        override val message: String,
+        val value: String,
+        val regex: Regex
+    ) : Error(message, mapOf("value" to value, "regex" to regex.toString()))
+
     data class InstructorPermissionNotFound(
         override val message: String,
         val qualificationId: QualificationId
