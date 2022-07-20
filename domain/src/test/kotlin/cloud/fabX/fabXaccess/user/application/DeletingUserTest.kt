@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -26,6 +27,7 @@ import org.mockito.kotlin.whenever
 internal class DeletingUserTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -55,7 +57,8 @@ internal class DeletingUserTest {
         val expectedSourcingEvent = UserDeleted(
             userId,
             988,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         whenever(userRepository!!.getById(userId))
@@ -67,6 +70,7 @@ internal class DeletingUserTest {
         // when
         val result = testee!!.deleteUser(
             adminActor,
+            correlationId,
             userId
         )
 
@@ -85,6 +89,7 @@ internal class DeletingUserTest {
         // when
         val result = testee!!.deleteUser(
             adminActor,
+            correlationId,
             userId
         )
 
@@ -102,7 +107,8 @@ internal class DeletingUserTest {
         val event = UserDeleted(
             userId,
             988,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         val error = Error.UserNotFound("message", userId)
@@ -116,6 +122,7 @@ internal class DeletingUserTest {
         // when
         val result = testee!!.deleteUser(
             adminActor,
+            correlationId,
             userId
         )
 

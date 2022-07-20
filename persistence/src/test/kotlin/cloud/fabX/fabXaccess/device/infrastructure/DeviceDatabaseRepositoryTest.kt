@@ -5,6 +5,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceCreated
 import cloud.fabX.fabXaccess.device.model.DeviceDeleted
@@ -44,6 +45,7 @@ internal class DeviceDatabaseRepositoryTest {
         private val toolId2 = ToolIdFixture.static(679)
 
         private val actorId = UserIdFixture.static(1234)
+        private val correlationId = CorrelationIdFixture.arbitrary()
     }
 
     @Test
@@ -77,6 +79,7 @@ internal class DeviceDatabaseRepositoryTest {
             val event1 = DeviceCreated(
                 deviceId,
                 actorId,
+                correlationId,
                 name = "device",
                 background = "https://example.com/1.bmp",
                 backupBackendUrl = "https://backup.example.com",
@@ -89,6 +92,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 2,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
@@ -125,6 +129,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 3,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
                 backupBackendUrl = ChangeableValue.LeaveAsIs
@@ -151,6 +156,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 version,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
                 backupBackendUrl = ChangeableValue.LeaveAsIs
@@ -190,6 +196,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device1event1 = DeviceCreated(
                 deviceId,
                 actorId,
+                correlationId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
                 backupBackendUrl = "https://backup.example.com",
@@ -202,6 +209,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 2,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
@@ -211,6 +219,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device3event1 = DeviceCreated(
                 deviceId3,
                 actorId,
+                correlationId,
                 name = "device3",
                 background = "https://background.com/device3.bmp",
                 backupBackendUrl = "https://backup3.example.com",
@@ -222,6 +231,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device2event1 = DeviceCreated(
                 deviceId2,
                 actorId,
+                correlationId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
                 backupBackendUrl = "https://backup2.example.com",
@@ -234,6 +244,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 3,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.ChangeToValue("https://example.com/3.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
@@ -243,7 +254,8 @@ internal class DeviceDatabaseRepositoryTest {
             val device3event2 = DeviceDeleted(
                 deviceId3,
                 2,
-                actorId
+                actorId,
+                correlationId,
             )
             repository!!.store(device3event2)
 
@@ -251,6 +263,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId2,
                 2,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
                 backupBackendUrl = ChangeableValue.ChangeToValue("https://backup42.example.com"),
@@ -304,6 +317,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device1Created = DeviceCreated(
                 deviceId,
                 actorId,
+                correlationId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
                 backupBackendUrl = "https://backup.example.com",
@@ -315,6 +329,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device2Created = DeviceCreated(
                 deviceId2,
                 actorId,
+                correlationId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
                 backupBackendUrl = "https://backup2.example.com",
@@ -372,6 +387,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device1Created = DeviceCreated(
                 deviceId,
                 actorId,
+                correlationId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
                 backupBackendUrl = "https://backup.example.com",
@@ -384,6 +400,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 2,
                 actorId,
+                correlationId,
                 1,
                 toolId1
             )
@@ -393,6 +410,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 3,
                 actorId,
+                correlationId,
                 2,
                 toolId2
             )
@@ -401,6 +419,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device2Created = DeviceCreated(
                 deviceId2,
                 actorId,
+                correlationId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
                 backupBackendUrl = "https://backup2.example.com",
@@ -413,6 +432,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId2,
                 2,
                 actorId,
+                correlationId,
                 3,
                 toolId2
             )

@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.device.application
 import arrow.core.Option
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
@@ -18,6 +19,7 @@ class AddingDevice {
 
     fun addDevice(
         actor: Admin,
+        correlationId: CorrelationId,
         name: String,
         background: String,
         backupBackendUrl: String,
@@ -29,6 +31,7 @@ class AddingDevice {
             .store(
                 Device.addNew(
                     actor,
+                    correlationId,
                     name,
                     background,
                     backupBackendUrl,

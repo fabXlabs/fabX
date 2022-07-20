@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class RemovingCardIdentityTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -68,6 +70,7 @@ internal class RemovingCardIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             cardId
         )
 
@@ -80,6 +83,7 @@ internal class RemovingCardIdentityTest {
         // when
         val result = testee!!.removeCardIdentity(
             adminActor,
+            correlationId,
             userId,
             cardId
         )
@@ -103,6 +107,7 @@ internal class RemovingCardIdentityTest {
         // when
         val result = testee!!.removeCardIdentity(
             adminActor,
+            correlationId,
             userId,
             "11223344556677"
         )
@@ -130,6 +135,7 @@ internal class RemovingCardIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             cardId
         )
 
@@ -144,6 +150,7 @@ internal class RemovingCardIdentityTest {
         // when
         val result = testee!!.removeCardIdentity(
             adminActor,
+            correlationId,
             userId,
             cardId
         )
@@ -169,6 +176,7 @@ internal class RemovingCardIdentityTest {
         // when
         val result = testee!!.removeCardIdentity(
             adminActor,
+            correlationId,
             userId,
             "00000000000000"
         )

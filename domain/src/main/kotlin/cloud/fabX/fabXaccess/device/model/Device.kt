@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.PinInUse
@@ -34,6 +35,7 @@ data class Device internal constructor(
     companion object {
         fun addNew(
             actor: Admin,
+            correlationId: CorrelationId,
             name: String,
             background: String,
             backupBackendUrl: String,
@@ -42,6 +44,7 @@ data class Device internal constructor(
             return DeviceCreated(
                 DomainModule.deviceIdFactory().invoke(),
                 actor.id,
+                correlationId,
                 name,
                 background,
                 backupBackendUrl,
@@ -74,6 +77,7 @@ data class Device internal constructor(
 
     fun changeDetails(
         actor: Admin,
+        correlationId: CorrelationId,
         name: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         background: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         backupBackendUrl: ChangeableValue<String> = ChangeableValue.LeaveAsIs
@@ -82,6 +86,7 @@ data class Device internal constructor(
             id,
             aggregateVersion + 1,
             actor.id,
+            correlationId,
             name,
             background,
             backupBackendUrl
@@ -90,6 +95,7 @@ data class Device internal constructor(
 
     fun attachTool(
         actor: Admin,
+        correlationId: CorrelationId,
         pin: Int,
         toolId: ToolId,
         gettingToolById: GettingToolById
@@ -103,6 +109,7 @@ data class Device internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    correlationId,
                     pin,
                     toolId
                 )
@@ -125,9 +132,10 @@ data class Device internal constructor(
      */
     fun detachTool(
         actor: Admin,
+        correlationId: CorrelationId,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> =
-        detachTool(actor.id, pin)
+        detachTool(actor.id, correlationId, pin)
 
     /**
      * Detaches the tool (triggered by a domain event).
@@ -136,10 +144,11 @@ data class Device internal constructor(
         domainEvent: DomainEvent,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> =
-        detachTool(domainEvent.actorId, pin)
+        detachTool(domainEvent.actorId, domainEvent.correlationId, pin)
 
     private fun detachTool(
         actorId: ActorId,
+        correlationId: CorrelationId,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> {
         return attachedTools.getOrNone(pin)
@@ -151,18 +160,21 @@ data class Device internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    correlationId,
                     pin
                 )
             }
     }
 
     fun delete(
-        actor: Admin
+        actor: Admin,
+        correlationId: CorrelationId,
     ): DeviceSourcingEvent {
         return DeviceDeleted(
             id,
             aggregateVersion + 1,
-            actor.id
+            actor.id,
+            correlationId
         )
     }
 

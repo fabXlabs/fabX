@@ -8,6 +8,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -32,6 +33,7 @@ import org.mockito.kotlin.whenever
 internal class ChangingUserTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -71,6 +73,7 @@ internal class ChangingUserTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             newFirstName,
             newLastName,
             newWikiName
@@ -88,6 +91,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changePersonalInformation(
             adminActor,
+            correlationId,
             userId,
             newFirstName,
             newLastName,
@@ -115,6 +119,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changePersonalInformation(
             adminActor,
+            correlationId,
             userId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -147,6 +152,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changePersonalInformation(
             adminActor,
+            correlationId,
             userId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -168,6 +174,7 @@ internal class ChangingUserTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
@@ -184,6 +191,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changePersonalInformation(
             adminActor,
+            correlationId,
             userId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -208,6 +216,7 @@ internal class ChangingUserTest {
             userId,
             4,
             adminActor.id,
+            correlationId,
             newLocked,
             newNotes
         )
@@ -221,6 +230,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changeLockState(
             adminActor,
+            correlationId,
             userId,
             newLocked,
             newNotes
@@ -247,6 +257,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changeLockState(
             adminActor,
+            correlationId,
             userId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
@@ -267,6 +278,7 @@ internal class ChangingUserTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
@@ -282,6 +294,7 @@ internal class ChangingUserTest {
         // when
         val result = testee!!.changeLockState(
             adminActor,
+            correlationId,
             userId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs

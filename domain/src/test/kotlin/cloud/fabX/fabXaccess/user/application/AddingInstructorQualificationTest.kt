@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class AddingInstructorQualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
@@ -68,6 +70,7 @@ internal class AddingInstructorQualificationTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             qualificationId
         )
 
@@ -83,6 +86,7 @@ internal class AddingInstructorQualificationTest {
         // when
         val result = testee!!.addInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -108,6 +112,7 @@ internal class AddingInstructorQualificationTest {
         // when
         val result = testee!!.addInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -132,6 +137,7 @@ internal class AddingInstructorQualificationTest {
         // when
         val result = testee!!.addInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -151,6 +157,7 @@ internal class AddingInstructorQualificationTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             qualificationId
         )
 
@@ -168,6 +175,7 @@ internal class AddingInstructorQualificationTest {
         // when
         val result = testee!!.addInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )

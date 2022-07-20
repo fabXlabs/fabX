@@ -6,6 +6,7 @@ import arrow.core.Some
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
@@ -27,6 +28,7 @@ data class Tool internal constructor(
     companion object {
         fun addNew(
             actor: Admin,
+            correlationId: CorrelationId,
             name: String,
             type: ToolType,
             time: Int,
@@ -37,6 +39,7 @@ data class Tool internal constructor(
             return ToolCreated(
                 DomainModule.toolIdFactory().invoke(),
                 actor.id,
+                correlationId,
                 name,
                 type,
                 time,
@@ -70,6 +73,7 @@ data class Tool internal constructor(
 
     fun changeDetails(
         actor: Admin,
+        correlationId: CorrelationId,
         name: ChangeableValue<String>,
         type: ChangeableValue<ToolType>,
         time: ChangeableValue<Int>,
@@ -82,6 +86,7 @@ data class Tool internal constructor(
             id,
             aggregateVersion + 1,
             actor.id,
+            correlationId,
             name,
             type,
             time,
@@ -93,12 +98,14 @@ data class Tool internal constructor(
     }
 
     fun delete(
-        actor: Admin
+        actor: Admin,
+        correlationId: CorrelationId
     ): ToolSourcingEvent {
         return ToolDeleted(
             id,
             aggregateVersion + 1,
-            actor.id
+            actor.id,
+            correlationId
         )
     }
 

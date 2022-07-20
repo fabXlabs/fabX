@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.qualification.application
 import arrow.core.Option
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.user.model.Admin
@@ -17,6 +18,7 @@ class AddingQualification {
 
     fun addQualification(
         actor: Admin,
+        correlationId: CorrelationId,
         name: String,
         description: String,
         colour: String,
@@ -28,6 +30,7 @@ class AddingQualification {
             .store(
                 Qualification.addNew(
                     actor,
+                    correlationId,
                     name,
                     description,
                     colour,

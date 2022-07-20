@@ -5,6 +5,7 @@ import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserId
@@ -20,6 +21,7 @@ class ChangingUser {
 
     fun changePersonalInformation(
         actor: Admin,
+        correlationId: CorrelationId,
         userId: UserId,
         firstName: ChangeableValue<String>,
         lastName: ChangeableValue<String>,
@@ -31,6 +33,7 @@ class ChangingUser {
             .flatMap {
                 it.changePersonalInformation(
                     actor,
+                    correlationId,
                     firstName,
                     lastName,
                     wikiName,
@@ -50,6 +53,7 @@ class ChangingUser {
 
     fun changeLockState(
         actor: Admin,
+        correlationId: CorrelationId,
         userId: UserId,
         locked: ChangeableValue<Boolean>,
         notes: ChangeableValue<String?>
@@ -57,7 +61,7 @@ class ChangingUser {
         log.debug("changeLockState...")
 
         return userRepository.getById(userId)
-            .map { it.changeLockState(actor, locked, notes) }
+            .map { it.changeLockState(actor, correlationId, locked, notes) }
             .flatMap {
                 userRepository.store(it)
                     .toEither { }

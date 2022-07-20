@@ -5,6 +5,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.model.DeviceCreated
@@ -24,6 +25,7 @@ import org.mockito.kotlin.whenever
 internal class AddingDeviceTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
@@ -59,6 +61,7 @@ internal class AddingDeviceTest {
         val expectedSourcingEvent = DeviceCreated(
             deviceId,
             adminActor.id,
+            correlationId,
             name,
             backgroundUrl,
             backupBackendUrl,
@@ -72,6 +75,7 @@ internal class AddingDeviceTest {
         // when
         val result = testee!!.addDevice(
             adminActor,
+            correlationId,
             name,
             backgroundUrl,
             backupBackendUrl,
@@ -94,6 +98,7 @@ internal class AddingDeviceTest {
         val event = DeviceCreated(
             deviceId,
             adminActor.id,
+            correlationId,
             name,
             backgroundUrl,
             backupBackendUrl,
@@ -109,6 +114,7 @@ internal class AddingDeviceTest {
         // when
         val result = testee!!.addDevice(
             adminActor,
+            correlationId,
             name,
             backgroundUrl,
             backupBackendUrl,

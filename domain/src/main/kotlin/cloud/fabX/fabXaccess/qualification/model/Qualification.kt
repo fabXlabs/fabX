@@ -7,6 +7,7 @@ import arrow.core.Some
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
@@ -26,6 +27,7 @@ data class Qualification internal constructor(
     companion object {
         fun addNew(
             actor: Admin,
+            correlationId: CorrelationId,
             name: String,
             description: String,
             colour: String,
@@ -34,6 +36,7 @@ data class Qualification internal constructor(
             return QualificationCreated(
                 DomainModule.qualificationIdFactory().invoke(),
                 actor.id,
+                correlationId,
                 name,
                 description,
                 colour,
@@ -65,6 +68,7 @@ data class Qualification internal constructor(
 
     fun changeDetails(
         actor: Admin,
+        correlationId: CorrelationId,
         name: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         description: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         colour: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
@@ -74,6 +78,7 @@ data class Qualification internal constructor(
             id,
             aggregateVersion + 1,
             actor.id,
+            correlationId,
             name,
             description,
             colour,
@@ -83,6 +88,7 @@ data class Qualification internal constructor(
 
     fun delete(
         actor: Admin,
+        correlationId: CorrelationId,
         gettingToolsByQualificationId: GettingToolsByQualificationId
     ): Either<Error, QualificationSourcingEvent> {
         return requireQualificationNotInUseByTools(gettingToolsByQualificationId)
@@ -90,7 +96,8 @@ data class Qualification internal constructor(
                 QualificationDeleted(
                     id,
                     aggregateVersion + 1,
-                    actor.id
+                    actor.id,
+                    correlationId
                 )
             }
     }

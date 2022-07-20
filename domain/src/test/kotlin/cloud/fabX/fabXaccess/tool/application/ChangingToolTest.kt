@@ -8,6 +8,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.tool.model.IdleState
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class ChangingToolTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
 
@@ -68,6 +70,7 @@ internal class ChangingToolTest {
             toolId,
             2,
             adminActor.id,
+            correlationId,
             newName,
             newType,
             newTime,
@@ -86,6 +89,7 @@ internal class ChangingToolTest {
         // when
         val result = testee!!.changeToolDetails(
             adminActor,
+            correlationId,
             toolId,
             newName,
             newType,
@@ -115,6 +119,7 @@ internal class ChangingToolTest {
         // when
         val result = testee!!.changeToolDetails(
             adminActor,
+            correlationId,
             toolId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -140,6 +145,7 @@ internal class ChangingToolTest {
             toolId,
             2,
             adminActor.id,
+            correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -160,6 +166,7 @@ internal class ChangingToolTest {
         // when
         val result = testee!!.changeToolDetails(
             adminActor,
+            correlationId,
             toolId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

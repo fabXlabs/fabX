@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.tool.model.ToolId
@@ -21,13 +22,14 @@ class DeletingTool {
 
     fun deleteTool(
         actor: Admin,
+        correlationId: CorrelationId,
         toolId: ToolId
     ): Option<Error> {
         log.debug("deleteTool...")
 
         return toolRepository.getById(toolId)
             .map {
-                it.delete(actor)
+                it.delete(actor, correlationId)
             }
             .flatMap {
                 toolRepository.store(it)
@@ -42,6 +44,7 @@ class DeletingTool {
                     ToolDeleted(
                         actor.id,
                         clock.now(),
+                        correlationId,
                         toolId
                     )
                 )

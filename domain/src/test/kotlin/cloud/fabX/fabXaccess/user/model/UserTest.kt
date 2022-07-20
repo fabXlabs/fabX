@@ -10,6 +10,7 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
@@ -30,10 +31,11 @@ import org.junit.jupiter.params.provider.ValueSource
 
 internal class UserTest {
 
+    private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
+
     private val userId = UserIdFixture.arbitrary()
     private val aggregateVersion = 42L
-
-    private val adminActor = AdminFixture.arbitrary()
 
     @Test
     fun `given valid values when constructing user then user is constructed`() {
@@ -72,6 +74,7 @@ internal class UserTest {
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
+            correlationId,
             firstName,
             lastName,
             wikiName
@@ -80,6 +83,7 @@ internal class UserTest {
         // when
         val result = User.addNew(
             adminActor,
+            correlationId,
             firstName,
             lastName,
             wikiName
@@ -105,6 +109,7 @@ internal class UserTest {
         // when
         val result = User.addNew(
             adminActor,
+            correlationId,
             "first",
             "last",
             "someone"
@@ -145,6 +150,7 @@ internal class UserTest {
             userId,
             1,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = ChangeableValue.ChangeToValue("first"),
             lastName = ChangeableValue.ChangeToValue("last"),
             wikiName = ChangeableValue.ChangeToValue("wiki")
@@ -167,6 +173,7 @@ internal class UserTest {
         val userCreated = UserCreated(
             userId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = "first",
             lastName = "last",
             wikiName = "wiki"
@@ -201,6 +208,7 @@ internal class UserTest {
         val event1 = UserCreated(
             userId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = "first1",
             lastName = "last1",
             wikiName = "wiki1"
@@ -209,6 +217,7 @@ internal class UserTest {
             userId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.ChangeToValue("last2"),
             wikiName = ChangeableValue.ChangeToValue("wiki2")
@@ -217,6 +226,7 @@ internal class UserTest {
             userId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue("some notes")
         )
@@ -224,6 +234,7 @@ internal class UserTest {
             userId,
             4,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = ChangeableValue.ChangeToValue("first4"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("wiki4")
@@ -232,6 +243,7 @@ internal class UserTest {
             userId,
             5,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = ChangeableValue.LeaveAsIs,
             lastName = ChangeableValue.ChangeToValue("last5"),
             wikiName = ChangeableValue.ChangeToValue("wiki5")
@@ -266,6 +278,7 @@ internal class UserTest {
         val event1 = UserCreated(
             userId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = "first1",
             lastName = "last1",
             wikiName = "wiki1"
@@ -274,6 +287,7 @@ internal class UserTest {
             userId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = ChangeableValue.ChangeToValue("first2"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("wiki2")
@@ -282,6 +296,7 @@ internal class UserTest {
             userId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue("some notes")
         )
@@ -313,6 +328,7 @@ internal class UserTest {
             userId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId1
         )
 
@@ -320,6 +336,7 @@ internal class UserTest {
             userId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId2
         )
 
@@ -353,6 +370,7 @@ internal class UserTest {
             userId,
             43,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId1
         )
 
@@ -382,6 +400,7 @@ internal class UserTest {
             userId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId1
         )
 
@@ -389,6 +408,7 @@ internal class UserTest {
             userId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId2
         )
 
@@ -423,6 +443,7 @@ internal class UserTest {
             userId,
             43,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId
         )
 
@@ -453,6 +474,7 @@ internal class UserTest {
             userId,
             43,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId1
         )
 
@@ -460,6 +482,7 @@ internal class UserTest {
             userId,
             43,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             qualificationId2
         )
 
@@ -496,6 +519,7 @@ internal class UserTest {
             userId,
             43,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             changingTo
         )
 
@@ -515,6 +539,7 @@ internal class UserTest {
         val event1 = UserCreated(
             userId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             firstName = "first1",
             lastName = "last1",
             wikiName = "wiki1"
@@ -523,7 +548,8 @@ internal class UserTest {
         val event2 = UserDeleted(
             userId,
             2,
-            adminActor.id
+            adminActor.id,
+            CorrelationIdFixture.arbitrary(),
         )
 
         // when
@@ -543,6 +569,7 @@ internal class UserTest {
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
+            correlationId = correlationId,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("newWikiName")
@@ -551,6 +578,7 @@ internal class UserTest {
         // when
         val result = user.changePersonalInformation(
             actor = adminActor,
+            correlationId = correlationId,
             firstName = ChangeableValue.ChangeToValue("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
             wikiName = ChangeableValue.ChangeToValue("newWikiName")
@@ -578,6 +606,7 @@ internal class UserTest {
         // when
         val result = user.changePersonalInformation(
             adminActor,
+            correlationId,
             wikiName = ChangeableValue.ChangeToValue("wikiName")
         ) {
             if (it == "wikiName") {
@@ -600,6 +629,7 @@ internal class UserTest {
 
         val expectedSourcingEvent = UserLockStateChanged(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             locked = ChangeableValue.ChangeToValue(true),
@@ -609,6 +639,7 @@ internal class UserTest {
         // when
         val result = user.changeLockState(
             actor = adminActor,
+            correlationId = correlationId,
             locked = ChangeableValue.ChangeToValue(true),
             notes = ChangeableValue.ChangeToValue(null)
         )
@@ -631,6 +662,7 @@ internal class UserTest {
 
         val expectedSourcingEvent = UsernamePasswordIdentityAdded(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             username = username,
@@ -640,6 +672,7 @@ internal class UserTest {
         // when
         val result = user.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             username,
             hash
         ) {
@@ -665,6 +698,7 @@ internal class UserTest {
         // when
         val result = user.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             "name",
             "hash"
         ) {
@@ -695,6 +729,7 @@ internal class UserTest {
         // when
         val result = user.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             "name",
             "hash"
         ) {
@@ -725,13 +760,14 @@ internal class UserTest {
 
         val expectedSourcingEvent = UsernamePasswordIdentityRemoved(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             username = username
         )
 
         // when
-        val result = user.removeUsernamePasswordIdentity(adminActor, username)
+        val result = user.removeUsernamePasswordIdentity(adminActor, correlationId, username)
 
         // then
         assertThat(result)
@@ -748,6 +784,7 @@ internal class UserTest {
         // when
         val result = user.removeUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             "unknownusername"
         )
 
@@ -772,6 +809,7 @@ internal class UserTest {
         // when
         val result = user.removeUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             "unknownusername"
         )
 
@@ -798,6 +836,7 @@ internal class UserTest {
 
         val expectedSourcingEvent = CardIdentityAdded(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             cardId = cardId,
@@ -807,6 +846,7 @@ internal class UserTest {
         // when
         val result = user.addCardIdentity(
             adminActor,
+            correlationId,
             cardId,
             cardSecret
         ) {
@@ -835,6 +875,7 @@ internal class UserTest {
         // when
         val result = user.addCardIdentity(
             adminActor,
+            correlationId,
             cardId,
             cardSecret
         ) {
@@ -864,13 +905,14 @@ internal class UserTest {
 
         val expectedSourcingEvent = CardIdentityRemoved(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             cardId = cardId
         )
 
         // when
-        val result = user.removeCardIdentity(adminActor, cardId)
+        val result = user.removeCardIdentity(adminActor, correlationId, cardId)
 
         // then
         assertThat(result)
@@ -888,7 +930,7 @@ internal class UserTest {
         val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
 
         // when
-        val result = user.removeCardIdentity(adminActor, unknownCardId)
+        val result = user.removeCardIdentity(adminActor, correlationId, unknownCardId)
 
         // then
         assertThat(result)
@@ -911,7 +953,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(userId, identities = setOf())
 
         // when
-        val result = user.removeCardIdentity(adminActor, unknownCardId)
+        val result = user.removeCardIdentity(adminActor, correlationId, unknownCardId)
 
         // then
         assertThat(result)
@@ -935,6 +977,7 @@ internal class UserTest {
 
         val expectedSourcingEvent = PhoneNrIdentityAdded(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             phoneNr = phoneNr
@@ -943,6 +986,7 @@ internal class UserTest {
         // when
         val result = user.addPhoneNrIdentity(
             adminActor,
+            correlationId,
             phoneNr
         ) {
             if (it == UserIdentityFixture.phoneNr(phoneNr)) {
@@ -966,10 +1010,10 @@ internal class UserTest {
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
-
         // when
         val result = user.addPhoneNrIdentity(
             adminActor,
+            correlationId,
             phoneNr
         ) {
             if (it == UserIdentityFixture.phoneNr(phoneNr)) {
@@ -998,13 +1042,14 @@ internal class UserTest {
 
         val expectedSourcingEvent = PhoneNrIdentityRemoved(
             actorId = adminActor.id,
+            correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             phoneNr = phoneNr
         )
 
         // when
-        val result = user.removePhoneNrIdentity(adminActor, phoneNr)
+        val result = user.removePhoneNrIdentity(adminActor, correlationId, phoneNr)
 
         // then
         assertThat(result)
@@ -1021,6 +1066,7 @@ internal class UserTest {
         // when
         val result = user.removePhoneNrIdentity(
             adminActor,
+            correlationId,
             "+123"
         )
 
@@ -1043,6 +1089,7 @@ internal class UserTest {
         // when
         val result = user.removePhoneNrIdentity(
             adminActor,
+            correlationId,
             "+4242123"
         )
 
@@ -1072,13 +1119,14 @@ internal class UserTest {
 
             val expectedSourcingEvent = MemberQualificationAdded(
                 aggregateRootId = userId,
+                correlationId = correlationId,
                 aggregateVersion = aggregateVersion + 1,
                 actorId = instructorActor.id,
                 qualificationId = qualificationId
             )
 
             // when
-            val result = user.addMemberQualification(instructorActor, qualificationId) {
+            val result = user.addMemberQualification(instructorActor, correlationId, qualificationId) {
                 if (it == qualificationId) {
                     qualification.right()
                 } else {
@@ -1102,7 +1150,7 @@ internal class UserTest {
             )
 
             // when
-            val result = user.addMemberQualification(instructorActor, qualificationId) {
+            val result = user.addMemberQualification(instructorActor, correlationId, qualificationId) {
                 throw IllegalStateException("should not get here")
             }
 
@@ -1125,7 +1173,7 @@ internal class UserTest {
             val error = ErrorFixture.arbitrary()
 
             // when
-            val result = user.addMemberQualification(instructorActor, qualificationId) {
+            val result = user.addMemberQualification(instructorActor, correlationId, qualificationId) {
                 if (it == qualificationId) {
                     error.left()
                 } else {
@@ -1149,7 +1197,7 @@ internal class UserTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
         // when
-        val result = user.addMemberQualification(instructorActor, qualificationId) {
+        val result = user.addMemberQualification(instructorActor, correlationId, qualificationId) {
             throw IllegalStateException("should not get here")
         }
 
@@ -1179,11 +1227,12 @@ internal class UserTest {
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
+            correlationId = correlationId,
             qualificationId = qualificationId
         )
 
         // when
-        val result = user.removeMemberQualification(adminActor, qualificationId)
+        val result = user.removeMemberQualification(adminActor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -1207,6 +1256,7 @@ internal class UserTest {
         val domainEvent = QualificationDeleted(
             actorId,
             Clock.System.now(),
+            correlationId,
             qualificationId
         )
 
@@ -1214,6 +1264,7 @@ internal class UserTest {
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             actorId = actorId,
+            correlationId = correlationId,
             qualificationId = qualificationId
         )
 
@@ -1238,7 +1289,7 @@ internal class UserTest {
         )
 
         // when
-        val result = user.removeMemberQualification(adminActor, qualificationId)
+        val result = user.removeMemberQualification(adminActor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -1263,11 +1314,12 @@ internal class UserTest {
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
+            correlationId = correlationId,
             qualificationId = qualificationId
         )
 
         // when
-        val result = user.addInstructorQualification(adminActor, qualificationId) {
+        val result = user.addInstructorQualification(adminActor, correlationId, qualificationId) {
             if (it == qualificationId) {
                 qualification.right()
             } else {
@@ -1293,7 +1345,7 @@ internal class UserTest {
         )
 
         // when
-        val result = user.addInstructorQualification(adminActor, qualificationId) {
+        val result = user.addInstructorQualification(adminActor, correlationId, qualificationId) {
             throw IllegalStateException("should not get here")
         }
 
@@ -1318,7 +1370,7 @@ internal class UserTest {
         val error = ErrorFixture.arbitrary()
 
         // when
-        val result = user.addInstructorQualification(adminActor, unknownQualificationId) {
+        val result = user.addInstructorQualification(adminActor, correlationId, unknownQualificationId) {
             if (it == unknownQualificationId) {
                 error.left()
             } else {
@@ -1347,11 +1399,12 @@ internal class UserTest {
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
+            correlationId = correlationId,
             qualificationId = qualificationId
         )
 
         // when
-        val result = user.removeInstructorQualification(adminActor, qualificationId)
+        val result = user.removeInstructorQualification(adminActor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -1375,6 +1428,7 @@ internal class UserTest {
         val domainEvent = QualificationDeleted(
             actorId,
             Clock.System.now(),
+            correlationId,
             qualificationId
         )
 
@@ -1382,6 +1436,7 @@ internal class UserTest {
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
             actorId = actorId,
+            correlationId = correlationId,
             qualificationId = qualificationId
         )
 
@@ -1406,7 +1461,7 @@ internal class UserTest {
         )
 
         // when
-        val result = user.removeInstructorQualification(adminActor, qualificationId)
+        val result = user.removeInstructorQualification(adminActor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -1435,11 +1490,12 @@ internal class UserTest {
             userId,
             aggregateVersion + 1,
             adminActor.id,
+            correlationId,
             changeTo
         )
 
         // when
-        val result = user.changeIsAdmin(adminActor, changeTo)
+        val result = user.changeIsAdmin(adminActor, correlationId, changeTo)
 
         // then
         assertThat(result)
@@ -1457,7 +1513,7 @@ internal class UserTest {
         )
 
         // when
-        val result = user.changeIsAdmin(adminActor, true)
+        val result = user.changeIsAdmin(adminActor, correlationId, true)
 
         // then
         assertThat(result)
@@ -1475,7 +1531,7 @@ internal class UserTest {
         )
 
         // when
-        val result = user.changeIsAdmin(adminActor, false)
+        val result = user.changeIsAdmin(adminActor, correlationId, false)
 
         // then
         assertThat(result)
@@ -1491,11 +1547,12 @@ internal class UserTest {
         val expectedSourcingEvent = UserDeleted(
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id
+            actorId = adminActor.id,
+            correlationId = correlationId,
         )
 
         // when
-        val result = user.delete(adminActor)
+        val result = user.delete(adminActor, correlationId)
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)

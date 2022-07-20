@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
@@ -21,6 +22,7 @@ class AddingMemberQualification {
 
     fun addMemberQualification(
         actor: Instructor,
+        correlationId: CorrelationId,
         userId: UserId,
         qualificationId: QualificationId
     ): Option<Error> {
@@ -30,6 +32,7 @@ class AddingMemberQualification {
             .flatMap {
                 it.addMemberQualification(
                     actor,
+                    correlationId,
                     qualificationId,
                     qualificationRepository
                 )

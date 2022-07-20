@@ -5,6 +5,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
 import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
@@ -24,8 +25,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class QualificationDatabaseRepositoryTest {
-    val qualificationId = QualificationIdFixture.static(123)
-    val actorId = UserIdFixture.static(42)
+    private val qualificationId = QualificationIdFixture.static(123)
+    private val actorId = UserIdFixture.static(42)
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     @Test
     fun `given empty repository when getting qualification by id then returns qualification not found error`() {
@@ -58,6 +60,7 @@ internal class QualificationDatabaseRepositoryTest {
             val event1 = QualificationCreated(
                 qualificationId,
                 actorId,
+                correlationId,
                 name = "quali",
                 description = "description",
                 colour = "#000000",
@@ -69,6 +72,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 2,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 description = ChangeableValue.ChangeToValue("a good qualification"),
                 colour = ChangeableValue.LeaveAsIs,
@@ -107,6 +111,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 3,
                 actorId,
+                correlationId,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -134,6 +139,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 version,
                 actorId,
+                correlationId,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -174,6 +180,7 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification1event1 = QualificationCreated(
                 qualificationId,
                 actorId,
+                correlationId,
                 name = "qualification1",
                 description = "description1",
                 colour = "#000001",
@@ -185,6 +192,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 2,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 description = ChangeableValue.ChangeToValue("description1v2"),
                 colour = ChangeableValue.LeaveAsIs,
@@ -195,6 +203,7 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification2event1 = QualificationCreated(
                 qualificationId2,
                 actorId,
+                correlationId,
                 name = "qualification2",
                 description = "description2",
                 colour = "#000002",
@@ -205,6 +214,7 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification3event1 = QualificationCreated(
                 qualificationId3,
                 actorId,
+                correlationId,
                 name = "qualification3",
                 description = "description3",
                 colour = "#000003",
@@ -215,7 +225,8 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification2event2 = QualificationDeleted(
                 qualificationId2,
                 2,
-                actorId
+                actorId,
+                correlationId
             )
             repository!!.store(qualification2event2)
 
@@ -223,6 +234,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId3,
                 2,
                 actorId,
+                correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 description = ChangeableValue.ChangeToValue("description3v2"),
                 colour = ChangeableValue.ChangeToValue("#333333"),

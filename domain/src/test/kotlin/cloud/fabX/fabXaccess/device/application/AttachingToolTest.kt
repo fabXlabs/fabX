@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class AttachingToolTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
@@ -69,6 +71,7 @@ internal class AttachingToolTest {
             deviceId,
             2,
             adminActor.id,
+            correlationId,
             pin,
             toolId
         )
@@ -85,6 +88,7 @@ internal class AttachingToolTest {
         // when
         val result = testee!!.attachTool(
             adminActor,
+            correlationId,
             deviceId,
             pin,
             toolId
@@ -112,6 +116,7 @@ internal class AttachingToolTest {
         // when
         val result = testee!!.attachTool(
             adminActor,
+            correlationId,
             deviceId,
             1,
             toolId
@@ -134,6 +139,7 @@ internal class AttachingToolTest {
         // when
         val result = testee!!.attachTool(
             adminActor,
+            correlationId,
             deviceId,
             1,
             ToolIdFixture.arbitrary()
@@ -158,6 +164,7 @@ internal class AttachingToolTest {
             deviceId,
             2,
             adminActor.id,
+            correlationId,
             pin,
             toolId
         )
@@ -176,6 +183,7 @@ internal class AttachingToolTest {
         // when
         val result = testee!!.attachTool(
             adminActor,
+            correlationId,
             deviceId,
             pin,
             toolId

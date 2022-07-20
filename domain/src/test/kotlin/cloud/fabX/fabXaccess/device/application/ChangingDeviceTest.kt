@@ -8,6 +8,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -28,6 +29,7 @@ import org.mockito.kotlin.whenever
 internal class ChangingDeviceTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
@@ -62,6 +64,7 @@ internal class ChangingDeviceTest {
             deviceId,
             2,
             adminActor.id,
+            correlationId,
             newName,
             newBackground,
             newBackupBackendUrl
@@ -76,6 +79,7 @@ internal class ChangingDeviceTest {
         // when
         val result = testee!!.changeDeviceDetails(
             adminActor,
+            correlationId,
             deviceId,
             newName,
             newBackground,
@@ -97,6 +101,7 @@ internal class ChangingDeviceTest {
         // when
         val result = testee!!.changeDeviceDetails(
             adminActor,
+            correlationId,
             deviceId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -118,6 +123,7 @@ internal class ChangingDeviceTest {
             deviceId,
             2,
             adminActor.id,
+            correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
@@ -134,6 +140,7 @@ internal class ChangingDeviceTest {
         // when
         val result = testee!!.changeDeviceDetails(
             adminActor,
+            correlationId,
             deviceId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

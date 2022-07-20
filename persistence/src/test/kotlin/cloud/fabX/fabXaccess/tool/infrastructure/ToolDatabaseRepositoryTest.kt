@@ -5,6 +5,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
@@ -40,6 +41,7 @@ internal class ToolDatabaseRepositoryTest {
         private val qualificationId2 = QualificationIdFixture.static(345)
 
         private val actorId = UserIdFixture.static(987)
+        private val correlationId = CorrelationIdFixture.arbitrary()
 
         @JvmStatic
         fun toolAndQualificationIds(): Iterable<Arguments> {
@@ -87,6 +89,7 @@ internal class ToolDatabaseRepositoryTest {
             val event1 = ToolCreated(
                 toolId,
                 actorId,
+                correlationId,
                 "name",
                 ToolType.UNLOCK,
                 42,
@@ -100,6 +103,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId,
                 2,
                 actorId,
+                correlationId,
                 ChangeableValue.ChangeToValue("name2"),
                 ChangeableValue.ChangeToValue(ToolType.KEEP),
                 ChangeableValue.LeaveAsIs,
@@ -143,6 +147,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId,
                 3,
                 actorId,
+                correlationId,
                 ChangeableValue.ChangeToValue("name3"),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -174,6 +179,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId,
                 version,
                 actorId,
+                correlationId,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -215,6 +221,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool1event1 = ToolCreated(
                 toolId,
                 actorId,
+                correlationId,
                 "tool1",
                 ToolType.UNLOCK,
                 1,
@@ -228,6 +235,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId,
                 2,
                 actorId,
+                correlationId,
                 ChangeableValue.ChangeToValue("name2"),
                 ChangeableValue.ChangeToValue(ToolType.KEEP),
                 ChangeableValue.LeaveAsIs,
@@ -242,6 +250,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool2event1 = ToolCreated(
                 toolId2,
                 actorId,
+                correlationId,
                 "tool2",
                 ToolType.KEEP,
                 2,
@@ -254,6 +263,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool3event1 = ToolCreated(
                 toolId3,
                 actorId,
+                correlationId,
                 "tool3",
                 ToolType.KEEP,
                 3,
@@ -266,7 +276,8 @@ internal class ToolDatabaseRepositoryTest {
             val tool2event2 = ToolDeleted(
                 toolId2,
                 2,
-                actorId
+                actorId,
+                correlationId
             )
             repository!!.store(tool2event2)
 
@@ -274,6 +285,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId3,
                 2,
                 actorId,
+                correlationId,
                 ChangeableValue.ChangeToValue("newName3"),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -332,6 +344,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool1created = ToolCreated(
                 toolId,
                 actorId,
+                correlationId,
                 "tool1",
                 ToolType.UNLOCK,
                 1,
@@ -344,6 +357,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool2created = ToolCreated(
                 toolId2,
                 actorId,
+                correlationId,
                 "tool2",
                 ToolType.KEEP,
                 2,
@@ -356,6 +370,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool3created = ToolCreated(
                 toolId3,
                 actorId,
+                correlationId,
                 "tool3",
                 ToolType.KEEP,
                 3,

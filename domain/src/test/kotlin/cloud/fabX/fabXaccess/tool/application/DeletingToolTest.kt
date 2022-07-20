@@ -8,6 +8,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class DeletingToolTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
@@ -66,7 +68,8 @@ internal class DeletingToolTest {
         val expectedSourcingEvent = ToolDeleted(
             toolId,
             235,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         whenever(toolRepository!!.getById(toolId))
@@ -78,6 +81,7 @@ internal class DeletingToolTest {
         // when
         val result = testee!!.deleteTool(
             adminActor,
+            correlationId,
             toolId
         )
 
@@ -87,6 +91,7 @@ internal class DeletingToolTest {
             cloud.fabX.fabXaccess.common.model.ToolDeleted(
                 adminActor.id,
                 fixedInstant,
+                correlationId,
                 toolId
             )
         )
@@ -103,6 +108,7 @@ internal class DeletingToolTest {
         // when
         val result = testee!!.deleteTool(
             adminActor,
+            correlationId,
             toolId
         )
 
@@ -120,7 +126,8 @@ internal class DeletingToolTest {
         val event = ToolDeleted(
             toolId,
             568,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         val error = ErrorFixture.arbitrary()
@@ -135,6 +142,7 @@ internal class DeletingToolTest {
         // when
         val result = testee!!.deleteTool(
             adminActor,
+            correlationId,
             toolId
         )
 

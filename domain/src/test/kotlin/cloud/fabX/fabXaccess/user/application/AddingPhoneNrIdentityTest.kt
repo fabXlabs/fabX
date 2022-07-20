@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -29,6 +30,7 @@ import org.mockito.kotlin.whenever
 internal class AddingPhoneNrIdentityTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -65,6 +67,7 @@ internal class AddingPhoneNrIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             phoneNr
         )
 
@@ -80,6 +83,7 @@ internal class AddingPhoneNrIdentityTest {
         // when
         val result = testee!!.addPhoneNrIdentity(
             adminActor,
+            correlationId,
             userId,
             phoneNr
         )
@@ -103,6 +107,7 @@ internal class AddingPhoneNrIdentityTest {
         // when
         val result = testee!!.addPhoneNrIdentity(
             adminActor,
+            correlationId,
             userId,
             "+49123"
         )
@@ -134,6 +139,7 @@ internal class AddingPhoneNrIdentityTest {
         // when
         val result = testee!!.addPhoneNrIdentity(
             adminActor,
+            correlationId,
             userId,
             phoneNr
         )
@@ -155,6 +161,7 @@ internal class AddingPhoneNrIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             phoneNr
         )
 
@@ -172,6 +179,7 @@ internal class AddingPhoneNrIdentityTest {
         // when
         val result = testee!!.addPhoneNrIdentity(
             adminActor,
+            correlationId,
             userId,
             phoneNr
         )

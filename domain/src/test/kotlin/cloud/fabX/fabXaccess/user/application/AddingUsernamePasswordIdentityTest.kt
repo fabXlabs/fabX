@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -29,6 +30,7 @@ import org.mockito.kotlin.whenever
 internal class AddingUsernamePasswordIdentityTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -66,6 +68,7 @@ internal class AddingUsernamePasswordIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             username,
             hash
         )
@@ -82,6 +85,7 @@ internal class AddingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             username,
             hash
@@ -106,6 +110,7 @@ internal class AddingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             "username",
             "password"
@@ -129,6 +134,7 @@ internal class AddingUsernamePasswordIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             username,
             hash
         )
@@ -147,6 +153,7 @@ internal class AddingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             username,
             hash
@@ -177,6 +184,7 @@ internal class AddingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.addUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             "username",
             "password42"

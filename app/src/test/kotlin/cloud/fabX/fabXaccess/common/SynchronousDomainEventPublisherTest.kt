@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.common
 
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -30,6 +31,7 @@ internal class SynchronousDomainEventPublisherTest {
         val domainEvent = QualificationDeleted(
             UserIdFixture.arbitrary(),
             Clock.System.now(),
+            CorrelationIdFixture.arbitrary(),
             QualificationIdFixture.arbitrary()
         )
 

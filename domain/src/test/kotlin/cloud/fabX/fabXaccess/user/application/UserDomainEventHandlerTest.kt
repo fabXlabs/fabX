@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.user.application
 import arrow.core.None
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -63,6 +64,7 @@ internal class UserDomainEventHandlerTest {
         val domainEvent = QualificationDeleted(
             actorId,
             Clock.System.now(),
+            CorrelationIdFixture.arbitrary(),
             qualificationId
         )
 

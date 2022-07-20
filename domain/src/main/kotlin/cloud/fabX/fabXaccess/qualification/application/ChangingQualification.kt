@@ -5,6 +5,7 @@ import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
@@ -19,6 +20,7 @@ class ChangingQualification {
 
     fun changeQualificationDetails(
         actor: Admin,
+        correlationId: CorrelationId,
         qualificationId: QualificationId,
         name: ChangeableValue<String>,
         description: ChangeableValue<String>,
@@ -29,7 +31,7 @@ class ChangingQualification {
 
         return qualificationRepository.getById(qualificationId)
             .map {
-                it.changeDetails(actor, name, description, colour, orderNr)
+                it.changeDetails(actor, correlationId, name, description, colour, orderNr)
             }
             .flatMap {
                 qualificationRepository.store(it)

@@ -2,12 +2,12 @@ package cloud.fabX.fabXaccess.common.model
 
 import kotlinx.datetime.Instant
 
-// TODO add a trace id
 interface SourcingEvent {
     val aggregateRootId: EntityId<*>
     val aggregateVersion: Long
     val actorId: ActorId
     val timestamp: Instant
+    val correlationId: CorrelationId
 }
 
 fun <E : SourcingEvent> Iterable<E>.assertIsNotEmpty() {

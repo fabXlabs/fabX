@@ -8,6 +8,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
@@ -34,6 +35,7 @@ import org.mockito.kotlin.whenever
 internal class DeletingQualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
@@ -74,7 +76,8 @@ internal class DeletingQualificationTest {
         val expectedSourcingEvent = QualificationDeleted(
             qualificationId,
             124,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         whenever(qualificationRepository!!.getById(qualificationId))
@@ -89,6 +92,7 @@ internal class DeletingQualificationTest {
         // when
         val result = testee!!.deleteQualification(
             adminActor,
+            correlationId,
             qualificationId
         )
 
@@ -98,6 +102,7 @@ internal class DeletingQualificationTest {
             cloud.fabX.fabXaccess.common.model.QualificationDeleted(
                 adminActor.id,
                 fixedInstant,
+                correlationId,
                 qualificationId
             )
         )
@@ -114,6 +119,7 @@ internal class DeletingQualificationTest {
         // when
         val result = testee!!.deleteQualification(
             adminActor,
+            correlationId,
             qualificationId
         )
 
@@ -131,7 +137,8 @@ internal class DeletingQualificationTest {
         val event = QualificationDeleted(
             qualificationId,
             124,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         val error = ErrorFixture.arbitrary()
@@ -148,6 +155,7 @@ internal class DeletingQualificationTest {
         // when
         val result = testee!!.deleteQualification(
             adminActor,
+            correlationId,
             qualificationId
         )
 
@@ -173,6 +181,7 @@ internal class DeletingQualificationTest {
         // when
         val result = testee!!.deleteQualification(
             adminActor,
+            correlationId,
             qualificationId
         )
 

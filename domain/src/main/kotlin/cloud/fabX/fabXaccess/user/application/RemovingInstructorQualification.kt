@@ -5,6 +5,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.Qualification
@@ -24,12 +25,14 @@ class RemovingInstructorQualification {
 
     fun removeInstructorQualification(
         actor: Admin,
+        correlationId: CorrelationId,
         userId: UserId,
         qualificationId: QualificationId
     ): Option<Error> {
         return removeInstructorQualification(userId) {
             it.removeInstructorQualification(
                 actor,
+                correlationId,
                 qualificationId
             )
         }

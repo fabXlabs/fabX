@@ -5,6 +5,7 @@ import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.user.model.Admin
@@ -19,6 +20,7 @@ class ChangingDevice {
 
     fun changeDeviceDetails(
         actor: Admin,
+        correlationId: CorrelationId,
         deviceId: DeviceId,
         name: ChangeableValue<String>,
         background: ChangeableValue<String>,
@@ -28,7 +30,7 @@ class ChangingDevice {
 
         return deviceRepository.getById(deviceId)
             .map {
-                it.changeDetails(actor, name, background, backupBackendUrl)
+                it.changeDetails(actor, correlationId, name, background, backupBackendUrl)
             }
             .flatMap {
                 deviceRepository.store(it)

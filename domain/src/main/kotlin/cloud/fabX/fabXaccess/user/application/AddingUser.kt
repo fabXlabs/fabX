@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.User
@@ -19,6 +20,7 @@ class AddingUser {
 
     fun addUser(
         actor: Admin,
+        correlationId: CorrelationId,
         firstName: String,
         lastName: String,
         wikiName: String
@@ -28,6 +30,7 @@ class AddingUser {
         return User
             .addNew(
                 actor,
+                correlationId,
                 firstName,
                 lastName,
                 wikiName,

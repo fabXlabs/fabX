@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserId
@@ -18,13 +19,14 @@ class DeletingUser {
 
     fun deleteUser(
         actor: Admin,
+        correlationId: CorrelationId,
         userId: UserId
     ): Option<Error> {
         log.debug("deleteUser...")
 
         return userRepository.getById(userId)
             .map {
-                it.delete(actor)
+                it.delete(actor, correlationId)
             }
             .flatMap {
                 userRepository.store(it)

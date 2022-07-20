@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
@@ -31,7 +32,9 @@ internal class AddingMemberQualificationTest {
 
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
+
     private val instructorActor = InstructorFixture.arbitrary(qualifications = setOf(qualificationId))
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private var logger: Logger? = null
     private var userRepository: UserRepository? = null
@@ -67,6 +70,7 @@ internal class AddingMemberQualificationTest {
             userId,
             2,
             instructorActor.id,
+            correlationId,
             qualificationId
         )
 
@@ -82,6 +86,7 @@ internal class AddingMemberQualificationTest {
         // when
         val result = testee!!.addMemberQualification(
             instructorActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -107,6 +112,7 @@ internal class AddingMemberQualificationTest {
         // when
         val result = testee!!.addMemberQualification(
             instructorActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -131,6 +137,7 @@ internal class AddingMemberQualificationTest {
         // when
         val result = testee!!.addMemberQualification(
             instructorActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -150,6 +157,7 @@ internal class AddingMemberQualificationTest {
             userId,
             2,
             instructorActor.id,
+            correlationId,
             qualificationId
         )
 
@@ -167,6 +175,7 @@ internal class AddingMemberQualificationTest {
         // when
         val result = testee!!.addMemberQualification(
             instructorActor,
+            correlationId,
             userId,
             qualificationId
         )

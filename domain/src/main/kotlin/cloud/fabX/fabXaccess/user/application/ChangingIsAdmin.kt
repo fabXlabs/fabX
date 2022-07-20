@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserId
@@ -18,6 +19,7 @@ class ChangingIsAdmin {
 
     fun changeIsAdmin(
         actor: Admin,
+        correlationId: CorrelationId,
         userId: UserId,
         isAdmin: Boolean
     ): Option<Error> {
@@ -27,6 +29,7 @@ class ChangingIsAdmin {
             .flatMap {
                 it.changeIsAdmin(
                     actor,
+                    correlationId,
                     isAdmin
                 )
             }

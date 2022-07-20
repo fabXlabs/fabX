@@ -6,6 +6,7 @@ import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -16,10 +17,11 @@ import org.junit.jupiter.api.assertThrows
 
 internal class ToolTest {
 
+    private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
+
     private val toolId = ToolIdFixture.arbitrary()
     private val aggregateVersion = 42L
-
-    private val adminActor = AdminFixture.arbitrary()
 
     @Test
     fun `given valid values when constructing tool then it is constructed`() {
@@ -63,6 +65,7 @@ internal class ToolTest {
         val expectedSourcingEvent = ToolCreated(
             toolId,
             adminActor.id,
+            correlationId,
             name,
             type,
             time,
@@ -74,6 +77,7 @@ internal class ToolTest {
         // when
         val result = Tool.addNew(
             adminActor,
+            correlationId,
             name,
             type,
             time,
@@ -107,6 +111,7 @@ internal class ToolTest {
             toolId,
             1,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -136,6 +141,7 @@ internal class ToolTest {
         val event1 = ToolCreated(
             toolId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             "name1",
             ToolType.UNLOCK,
             1,
@@ -148,6 +154,7 @@ internal class ToolTest {
             toolId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             name = ChangeableValue.ChangeToValue("name2"),
             type = ChangeableValue.LeaveAsIs,
             time = ChangeableValue.ChangeToValue(2),
@@ -161,6 +168,7 @@ internal class ToolTest {
             toolId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             name = ChangeableValue.ChangeToValue("name3"),
             type = ChangeableValue.ChangeToValue(ToolType.KEEP),
             time = ChangeableValue.LeaveAsIs,
@@ -200,6 +208,7 @@ internal class ToolTest {
         val event1 = ToolCreated(
             toolId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             "name1",
             ToolType.UNLOCK,
             1,
@@ -212,6 +221,7 @@ internal class ToolTest {
             toolId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             name = ChangeableValue.ChangeToValue("name3"),
             type = ChangeableValue.LeaveAsIs,
             time = ChangeableValue.ChangeToValue(3),
@@ -225,6 +235,7 @@ internal class ToolTest {
             toolId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             name = ChangeableValue.ChangeToValue("name2"),
             type = ChangeableValue.ChangeToValue(ToolType.KEEP),
             time = ChangeableValue.LeaveAsIs,
@@ -251,6 +262,7 @@ internal class ToolTest {
         val event1 = ToolCreated(
             toolId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             "name1",
             ToolType.UNLOCK,
             1,
@@ -263,6 +275,7 @@ internal class ToolTest {
             toolId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary()
         )
 
         // when
@@ -284,6 +297,7 @@ internal class ToolTest {
             aggregateRootId = toolId,
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
+            correlationId = correlationId,
             name = ChangeableValue.ChangeToValue("newName"),
             type = ChangeableValue.LeaveAsIs,
             time = ChangeableValue.ChangeToValue(9876),
@@ -296,6 +310,7 @@ internal class ToolTest {
         // when
         val result = tool.changeDetails(
             adminActor,
+            correlationId,
             name = ChangeableValue.ChangeToValue("newName"),
             type = ChangeableValue.LeaveAsIs,
             time = ChangeableValue.ChangeToValue(9876),
@@ -317,11 +332,12 @@ internal class ToolTest {
         val expectedSourcingEvent = ToolDeleted(
             aggregateRootId = toolId,
             aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id
+            actorId = adminActor.id,
+            correlationId = correlationId
         )
 
         // when
-        val result = tool.delete(adminActor)
+        val result = tool.delete(adminActor, correlationId)
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)

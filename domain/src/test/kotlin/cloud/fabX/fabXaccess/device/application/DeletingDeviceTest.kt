@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -28,6 +29,7 @@ import org.mockito.kotlin.whenever
 internal class DeletingDeviceTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
@@ -57,7 +59,8 @@ internal class DeletingDeviceTest {
         val expectedSourcingEvent = DeviceDeleted(
             deviceId,
             43,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         whenever(deviceRepository!!.getById(deviceId))
@@ -69,6 +72,7 @@ internal class DeletingDeviceTest {
         // when
         val result = testee!!.deleteDevice(
             adminActor,
+            correlationId,
             deviceId
         )
 
@@ -87,6 +91,7 @@ internal class DeletingDeviceTest {
         // when
         val result = testee!!.deleteDevice(
             adminActor,
+            correlationId,
             deviceId
         )
 
@@ -104,7 +109,8 @@ internal class DeletingDeviceTest {
         val event = DeviceDeleted(
             deviceId,
             2,
-            adminActor.id
+            adminActor.id,
+            correlationId
         )
 
         val error = ErrorFixture.arbitrary()
@@ -118,6 +124,7 @@ internal class DeletingDeviceTest {
         // when
         val result = testee!!.deleteDevice(
             adminActor,
+            correlationId,
             deviceId
         )
 

@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -29,6 +30,7 @@ import org.mockito.kotlin.whenever
 internal class AddingCardIdentityTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -67,6 +69,7 @@ internal class AddingCardIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             cardId,
             cardSecret
         )
@@ -83,6 +86,7 @@ internal class AddingCardIdentityTest {
         // when
         val result = testee!!.addCardIdentity(
             adminActor,
+            correlationId,
             userId,
             cardId,
             cardSecret
@@ -107,6 +111,7 @@ internal class AddingCardIdentityTest {
         // when
         val result = testee!!.addCardIdentity(
             adminActor,
+            correlationId,
             userId,
             "77665544332211",
             "123456789012345678901234567890"
@@ -139,6 +144,7 @@ internal class AddingCardIdentityTest {
         // when
         val result = testee!!.addCardIdentity(
             adminActor,
+            correlationId,
             userId,
             cardId,
             cardSecret
@@ -162,6 +168,7 @@ internal class AddingCardIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             cardId,
             cardSecret
         )
@@ -180,6 +187,7 @@ internal class AddingCardIdentityTest {
         // when
         val result = testee!!.addCardIdentity(
             adminActor,
+            correlationId,
             userId,
             cardId,
             cardSecret

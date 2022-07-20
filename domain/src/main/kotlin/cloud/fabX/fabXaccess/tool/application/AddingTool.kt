@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.tool.application
 import arrow.core.Option
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.tool.model.IdleState
@@ -20,6 +21,7 @@ class AddingTool {
 
     fun addTool(
         actor: Admin,
+        correlationId: CorrelationId,
         name: String,
         type: ToolType,
         time: Int,
@@ -33,6 +35,7 @@ class AddingTool {
             .store(
                 Tool.addNew(
                     actor,
+                    correlationId,
                     name,
                     type,
                     time,

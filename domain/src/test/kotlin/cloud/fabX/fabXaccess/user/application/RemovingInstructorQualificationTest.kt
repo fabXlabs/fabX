@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -31,6 +32,7 @@ import org.mockito.kotlin.whenever
 internal class RemovingInstructorQualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
@@ -67,6 +69,7 @@ internal class RemovingInstructorQualificationTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             qualificationId
         )
 
@@ -79,6 +82,7 @@ internal class RemovingInstructorQualificationTest {
         // when
         val result = testee!!.removeInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -105,6 +109,7 @@ internal class RemovingInstructorQualificationTest {
         val domainEvent = QualificationDeleted(
             actorId,
             Clock.System.now(),
+            correlationId,
             qualificationId
         )
 
@@ -112,6 +117,7 @@ internal class RemovingInstructorQualificationTest {
             userId,
             2,
             actorId,
+            correlationId,
             qualificationId
         )
 
@@ -147,6 +153,7 @@ internal class RemovingInstructorQualificationTest {
         // when
         val result = testee!!.removeInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -170,6 +177,7 @@ internal class RemovingInstructorQualificationTest {
         // when
         val result = testee!!.removeInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )
@@ -197,6 +205,7 @@ internal class RemovingInstructorQualificationTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             qualificationId
         )
 
@@ -210,6 +219,7 @@ internal class RemovingInstructorQualificationTest {
 
         val result = testee!!.removeInstructorQualification(
             adminActor,
+            correlationId,
             userId,
             qualificationId
         )

@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
@@ -41,6 +42,7 @@ data class User internal constructor(
     companion object {
         fun addNew(
             actor: Admin,
+            correlationId: CorrelationId,
             firstName: String,
             lastName: String,
             wikiName: String,
@@ -51,6 +53,7 @@ data class User internal constructor(
                     UserCreated(
                         DomainModule.userIdFactory().invoke(),
                         actor.id,
+                        correlationId,
                         firstName,
                         lastName,
                         wikiName
@@ -101,6 +104,7 @@ data class User internal constructor(
 
     fun changePersonalInformation(
         actor: Admin,
+        correlationId: CorrelationId,
         firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         wikiName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
@@ -114,6 +118,7 @@ data class User internal constructor(
                 id,
                 aggregateVersion + 1,
                 actor.id,
+                correlationId,
                 firstName,
                 lastName,
                 wikiName
@@ -123,10 +128,18 @@ data class User internal constructor(
 
     fun changeLockState(
         actor: Admin,
+        correlationId: CorrelationId,
         locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
         notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
     ): UserSourcingEvent {
-        return UserLockStateChanged(id, aggregateVersion + 1, actor.id, locked, notes)
+        return UserLockStateChanged(
+            id,
+            aggregateVersion + 1,
+            actor.id,
+            correlationId,
+            locked,
+            notes
+        )
     }
 
     /**
@@ -139,6 +152,7 @@ data class User internal constructor(
      */
     fun addUsernamePasswordIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         username: String,
         hash: String,
         gettingUserByUsername: GettingUserByUsername
@@ -147,7 +161,14 @@ data class User internal constructor(
             .flatMap { requireUniqueUsername(username, gettingUserByUsername) }
             .flatMap { UsernamePasswordIdentity.fromUnvalidated(username, hash) }
             .map {
-                UsernamePasswordIdentityAdded(id, aggregateVersion + 1, actor.id, it.username, it.hash)
+                UsernamePasswordIdentityAdded(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    correlationId,
+                    it.username,
+                    it.hash
+                )
             }
     }
 
@@ -190,6 +211,7 @@ data class User internal constructor(
      */
     fun removeUsernamePasswordIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         username: String
     ): Either<Error, UserSourcingEvent> {
         return identities.firstOrNull { it is UsernamePasswordIdentity && it.username == username }
@@ -205,6 +227,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    correlationId,
                     username
                 )
             }
@@ -212,6 +235,7 @@ data class User internal constructor(
 
     fun addCardIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         cardId: String,
         cardSecret: String,
         gettingUserByCardId: GettingUserByCardId
@@ -219,7 +243,14 @@ data class User internal constructor(
         return requireUniqueCardId(cardId, gettingUserByCardId)
             .flatMap { CardIdentity.fromUnvalidated(cardId, cardSecret) }
             .map {
-                CardIdentityAdded(id, aggregateVersion + 1, actor.id, it.cardId, it.cardSecret)
+                CardIdentityAdded(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    correlationId,
+                    it.cardId,
+                    it.cardSecret
+                )
             }
     }
 
@@ -250,6 +281,7 @@ data class User internal constructor(
      */
     fun removeCardIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         cardId: String
     ): Either<Error, UserSourcingEvent> {
         return identities.firstOrNull { it is CardIdentity && it.cardId == cardId }
@@ -265,6 +297,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    correlationId,
                     cardId
                 )
             }
@@ -272,13 +305,20 @@ data class User internal constructor(
 
     fun addPhoneNrIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         phoneNr: String,
         gettingUserByIdentity: GettingUserByIdentity
     ): Either<Error, UserSourcingEvent> {
         return requireUniquePhoneNr(phoneNr, gettingUserByIdentity)
             .flatMap { PhoneNrIdentity.fromUnvalidated(phoneNr) }
             .map {
-                PhoneNrIdentityAdded(id, aggregateVersion + 1, actor.id, it.phoneNr)
+                PhoneNrIdentityAdded(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    correlationId,
+                    it.phoneNr
+                )
             }
     }
 
@@ -309,6 +349,7 @@ data class User internal constructor(
      */
     fun removePhoneNrIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         phoneNr: String
     ): Either<Error, UserSourcingEvent> {
         return identities.firstOrNull { it is PhoneNrIdentity && it.phoneNr == phoneNr }
@@ -324,6 +365,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    correlationId,
                     phoneNr
                 )
             }
@@ -336,6 +378,7 @@ data class User internal constructor(
      */
     fun addMemberQualification(
         actor: Instructor,
+        correlationId: CorrelationId,
         qualificationId: QualificationId,
         gettingQualificationById: GettingQualificationById
     ): Either<Error, UserSourcingEvent> {
@@ -358,6 +401,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    correlationId,
                     qualificationId
                 )
             }
@@ -386,9 +430,10 @@ data class User internal constructor(
      */
     fun removeMemberQualification(
         actor: Admin,
+        correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeMemberQualification(actor.id, qualificationId)
+        removeMemberQualification(actor.id, correlationId, qualificationId)
 
     /**
      * Removes the user's member qualification (triggered by a domain event).
@@ -397,10 +442,11 @@ data class User internal constructor(
         domainEvent: DomainEvent,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeMemberQualification(domainEvent.actorId, qualificationId)
+        removeMemberQualification(domainEvent.actorId, domainEvent.correlationId, qualificationId)
 
     private fun removeMemberQualification(
         actorId: ActorId,
+        correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
         return memberQualifications.firstOrNull { it == qualificationId }
@@ -416,6 +462,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    correlationId,
                     qualificationId
                 )
             }
@@ -428,6 +475,7 @@ data class User internal constructor(
      */
     fun addInstructorQualification(
         actor: Admin,
+        correlationId: CorrelationId,
         qualificationId: QualificationId,
         gettingQualificationById: GettingQualificationById
     ): Either<Error, UserSourcingEvent> {
@@ -449,6 +497,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    correlationId,
                     qualificationId
                 )
             }
@@ -461,9 +510,10 @@ data class User internal constructor(
      */
     fun removeInstructorQualification(
         actor: Admin,
+        correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeInstructorQualification(actor.id, qualificationId)
+        removeInstructorQualification(actor.id, correlationId, qualificationId)
 
     /**
      * Removes the user's instructor qualification (triggered by a domain event).
@@ -472,10 +522,11 @@ data class User internal constructor(
         domainEvent: DomainEvent,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeInstructorQualification(domainEvent.actorId, qualificationId)
+        removeInstructorQualification(domainEvent.actorId, domainEvent.correlationId, qualificationId)
 
     private fun removeInstructorQualification(
         actorId: ActorId,
+        correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
         return instructorQualifications?.firstOrNull { it == qualificationId }
@@ -491,6 +542,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    correlationId,
                     qualificationId
                 )
             }
@@ -501,6 +553,7 @@ data class User internal constructor(
      */
     fun changeIsAdmin(
         actor: Admin,
+        correlationId: CorrelationId,
         isAdmin: Boolean
     ): Either<Error, UserSourcingEvent> {
         return Either.conditionally(this.isAdmin != isAdmin, {
@@ -514,15 +567,17 @@ data class User internal constructor(
                 id,
                 aggregateVersion + 1,
                 actor.id,
+                correlationId,
                 isAdmin
             )
         })
     }
 
     fun delete(
-        actor: Admin
+        actor: Admin,
+        correlationId: CorrelationId
     ): UserSourcingEvent {
-        return UserDeleted(id, aggregateVersion + 1, actor.id)
+        return UserDeleted(id, aggregateVersion + 1, actor.id, correlationId)
     }
 
     fun hasIdentity(userIdentity: UserIdentity) = identities.contains(userIdentity)

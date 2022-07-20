@@ -6,6 +6,7 @@ import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.user.model.AdminFixture
@@ -17,10 +18,11 @@ import org.junit.jupiter.api.assertThrows
 
 internal class QualificationTest {
 
+    private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
+
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val aggregateVersion = 123L
-
-    private val adminActor = AdminFixture.arbitrary()
 
     @Test
     fun `given valid values when constructing qualification then it is constructed`() {
@@ -55,6 +57,7 @@ internal class QualificationTest {
         val expectedSourcingEvent = QualificationCreated(
             qualificationId,
             adminActor.id,
+            correlationId,
             name,
             description,
             colour,
@@ -64,6 +67,7 @@ internal class QualificationTest {
         // when
         val result = Qualification.addNew(
             adminActor,
+            correlationId,
             name,
             description,
             colour,
@@ -95,6 +99,7 @@ internal class QualificationTest {
             qualificationId,
             1,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             name = ChangeableValue.ChangeToValue("quali"),
             description = ChangeableValue.ChangeToValue("quali description"),
             colour = ChangeableValue.ChangeToValue("#000000"),
@@ -118,6 +123,7 @@ internal class QualificationTest {
         val event1 = QualificationCreated(
             qualificationId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             "name1",
             "description1",
             "#000001",
@@ -127,6 +133,7 @@ internal class QualificationTest {
             qualificationId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             ChangeableValue.ChangeToValue("name2"),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.ChangeToValue("#000002"),
@@ -136,6 +143,7 @@ internal class QualificationTest {
             qualificationId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.ChangeToValue("description3"),
             ChangeableValue.ChangeToValue("#000003"),
@@ -166,6 +174,7 @@ internal class QualificationTest {
         val event1 = QualificationCreated(
             qualificationId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             "name1",
             "description1",
             "#000001",
@@ -175,6 +184,7 @@ internal class QualificationTest {
             qualificationId,
             3,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.ChangeToValue("description3"),
             ChangeableValue.ChangeToValue("#000003"),
@@ -184,6 +194,7 @@ internal class QualificationTest {
             qualificationId,
             2,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             ChangeableValue.ChangeToValue("name2"),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.ChangeToValue("#000002"),
@@ -207,6 +218,7 @@ internal class QualificationTest {
         val event1 = QualificationCreated(
             qualificationId,
             adminActor.id,
+            CorrelationIdFixture.arbitrary(),
             "name1",
             "description1",
             "#000001",
@@ -216,7 +228,8 @@ internal class QualificationTest {
         val event2 = QualificationDeleted(
             qualificationId,
             2,
-            adminActor.id
+            adminActor.id,
+            CorrelationIdFixture.arbitrary(),
         )
 
         // when
@@ -237,6 +250,7 @@ internal class QualificationTest {
             aggregateRootId = qualificationId,
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
+            correlationId = correlationId,
             name = ChangeableValue.ChangeToValue("newName"),
             description = ChangeableValue.LeaveAsIs,
             colour = ChangeableValue.ChangeToValue("#000042"),
@@ -246,6 +260,7 @@ internal class QualificationTest {
         // when
         val result = qualification.changeDetails(
             adminActor,
+            correlationId,
             name = ChangeableValue.ChangeToValue("newName"),
             description = ChangeableValue.LeaveAsIs,
             colour = ChangeableValue.ChangeToValue("#000042"),
@@ -265,13 +280,14 @@ internal class QualificationTest {
         val expectedSourcingEvent = QualificationDeleted(
             aggregateRootId = qualificationId,
             aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id
+            actorId = adminActor.id,
+            correlationId = correlationId
         )
 
         val gettingToolsByQualificationId = GettingToolsByQualificationId { setOf() }
 
         // when
-        val result = qualification.delete(adminActor, gettingToolsByQualificationId)
+        val result = qualification.delete(adminActor, correlationId, gettingToolsByQualificationId)
 
         // then
         assertThat(result)
@@ -304,5 +320,4 @@ internal class QualificationTest {
                     "orderNr=50)"
         )
     }
-
 }

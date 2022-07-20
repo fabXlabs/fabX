@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -29,6 +30,7 @@ import org.mockito.kotlin.whenever
 internal class RemovingUsernamePasswordIdentityTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -67,6 +69,7 @@ internal class RemovingUsernamePasswordIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             username
         )
 
@@ -79,6 +82,7 @@ internal class RemovingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.removeUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             username
         )
@@ -102,6 +106,7 @@ internal class RemovingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.removeUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             "username"
         )
@@ -129,6 +134,7 @@ internal class RemovingUsernamePasswordIdentityTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             username
         )
 
@@ -143,6 +149,7 @@ internal class RemovingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.removeUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             username
         )
@@ -168,6 +175,7 @@ internal class RemovingUsernamePasswordIdentityTest {
         // when
         val result = testee!!.removeUsernamePasswordIdentity(
             adminActor,
+            correlationId,
             userId,
             "unknownUsername"
         )

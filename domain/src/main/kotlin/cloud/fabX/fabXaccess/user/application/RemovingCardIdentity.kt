@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.CardIdentity
@@ -19,6 +20,7 @@ class RemovingCardIdentity {
 
     fun removeCardIdentity(
         actor: Admin,
+        correlationId: CorrelationId,
         userId: UserId,
         cardId: String
     ): Option<Error> {
@@ -28,6 +30,7 @@ class RemovingCardIdentity {
             .flatMap {
                 it.removeCardIdentity(
                     actor,
+                    correlationId,
                     cardId
                 )
             }

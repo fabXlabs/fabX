@@ -8,6 +8,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class ChangingQualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
@@ -65,6 +67,7 @@ internal class ChangingQualificationTest {
             qualificationId,
             2,
             adminActor.id,
+            correlationId,
             newName,
             newDescription,
             newColour,
@@ -80,6 +83,7 @@ internal class ChangingQualificationTest {
         // when
         val result = testee!!.changeQualificationDetails(
             adminActor,
+            correlationId,
             qualificationId,
             newName,
             newDescription,
@@ -108,6 +112,7 @@ internal class ChangingQualificationTest {
         // when
         val result = testee!!.changeQualificationDetails(
             adminActor,
+            correlationId,
             qualificationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -130,6 +135,7 @@ internal class ChangingQualificationTest {
             qualificationId,
             2,
             adminActor.id,
+            correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -147,6 +153,7 @@ internal class ChangingQualificationTest {
         // when
         val result = testee!!.changeQualificationDetails(
             adminActor,
+            correlationId,
             qualificationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

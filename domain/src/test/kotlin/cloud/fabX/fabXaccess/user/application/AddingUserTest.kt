@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -28,6 +29,7 @@ import org.mockito.kotlin.whenever
 internal class AddingUserTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -65,6 +67,7 @@ internal class AddingUserTest {
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
+            correlationId,
             firstName,
             lastName,
             wikiName
@@ -79,6 +82,7 @@ internal class AddingUserTest {
         // when
         val result = testee!!.addUser(
             adminActor,
+            correlationId,
             firstName,
             lastName,
             wikiName
@@ -102,6 +106,7 @@ internal class AddingUserTest {
         // when
         val result = testee!!.addUser(
             adminActor,
+            correlationId,
             "first",
             "last",
             wikiName
@@ -123,6 +128,7 @@ internal class AddingUserTest {
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
+            correlationId,
             firstName,
             lastName,
             wikiName
@@ -139,6 +145,7 @@ internal class AddingUserTest {
         // when
         val result = testee!!.addUser(
             adminActor,
+            correlationId,
             firstName,
             lastName,
             wikiName

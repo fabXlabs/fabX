@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -30,6 +31,7 @@ import org.mockito.kotlin.whenever
 internal class ChangingIsAdminTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
 
@@ -63,6 +65,7 @@ internal class ChangingIsAdminTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             newIsAdmin
         )
 
@@ -75,6 +78,7 @@ internal class ChangingIsAdminTest {
         // when
         val result = testee!!.changeIsAdmin(
             adminActor,
+            correlationId,
             userId,
             newIsAdmin
         )
@@ -98,6 +102,7 @@ internal class ChangingIsAdminTest {
         // when
         val result = testee!!.changeIsAdmin(
             adminActor,
+            correlationId,
             userId,
             true
         )
@@ -123,6 +128,7 @@ internal class ChangingIsAdminTest {
         // when
         val result = testee!!.changeIsAdmin(
             adminActor,
+            correlationId,
             userId,
             newIsAdmin
         )
@@ -144,6 +150,7 @@ internal class ChangingIsAdminTest {
             userId,
             2,
             adminActor.id,
+            correlationId,
             newIsAdmin
         )
 
@@ -158,6 +165,7 @@ internal class ChangingIsAdminTest {
         // when
         val result = testee!!.changeIsAdmin(
             adminActor,
+            correlationId,
             userId,
             newIsAdmin
         )

@@ -5,6 +5,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -26,6 +27,7 @@ import org.mockito.kotlin.whenever
 internal class AddingToolTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
 
@@ -62,6 +64,7 @@ internal class AddingToolTest {
         val expectedSourcingEvent = ToolCreated(
             toolId,
             adminActor.id,
+            correlationId,
             name,
             toolType,
             time,
@@ -76,6 +79,7 @@ internal class AddingToolTest {
         // when
         val result = testee!!.addTool(
             adminActor,
+            correlationId,
             name,
             toolType,
             time,
@@ -101,6 +105,7 @@ internal class AddingToolTest {
         val event = ToolCreated(
             toolId,
             adminActor.id,
+            correlationId,
             name,
             toolType,
             time,
@@ -117,6 +122,7 @@ internal class AddingToolTest {
         // when
         val result = testee!!.addTool(
             adminActor,
+            correlationId,
             name,
             toolType,
             time,

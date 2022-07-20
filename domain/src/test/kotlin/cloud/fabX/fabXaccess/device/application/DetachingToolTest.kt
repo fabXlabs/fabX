@@ -7,6 +7,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -31,6 +32,7 @@ import org.mockito.kotlin.whenever
 internal class DetachingToolTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
@@ -68,6 +70,7 @@ internal class DetachingToolTest {
             deviceId,
             2,
             adminActor.id,
+            correlationId,
             pin
         )
 
@@ -80,6 +83,7 @@ internal class DetachingToolTest {
         // when
         val result = testee!!.detachTool(
             adminActor,
+            correlationId,
             deviceId,
             pin
         )
@@ -104,6 +108,7 @@ internal class DetachingToolTest {
         val domainEvent = ToolDeleted(
             actorId,
             Clock.System.now(),
+            correlationId,
             toolId
         )
 
@@ -111,6 +116,7 @@ internal class DetachingToolTest {
             deviceId,
             2,
             actorId,
+            correlationId,
             pin
         )
 
@@ -149,6 +155,7 @@ internal class DetachingToolTest {
         // when
         val result = testee!!.detachTool(
             adminActor,
+            correlationId,
             deviceId,
             pin
         )
@@ -170,6 +177,7 @@ internal class DetachingToolTest {
         // when
         val result = testee!!.detachTool(
             adminActor,
+            correlationId,
             deviceId,
             42
         )
@@ -196,6 +204,7 @@ internal class DetachingToolTest {
             deviceId,
             2,
             adminActor.id,
+            correlationId,
             pin
         )
 
@@ -210,6 +219,7 @@ internal class DetachingToolTest {
         // when
         val result = testee!!.detachTool(
             adminActor,
+            correlationId,
             deviceId,
             pin
         )

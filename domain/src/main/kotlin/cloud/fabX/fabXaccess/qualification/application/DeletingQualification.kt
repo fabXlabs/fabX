@@ -4,6 +4,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationId
@@ -22,13 +23,14 @@ class DeletingQualification {
 
     fun deleteQualification(
         actor: Admin,
+        correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Option<Error> {
         log.debug("deleteQualification...")
 
         return qualificationRepository.getById(qualificationId)
             .flatMap {
-                it.delete(actor, gettingToolsByQualificationId)
+                it.delete(actor, correlationId, gettingToolsByQualificationId)
             }
             .flatMap {
                 qualificationRepository.store(it)
@@ -43,6 +45,7 @@ class DeletingQualification {
                     QualificationDeleted(
                         actor.id,
                         clock.now(),
+                        correlationId,
                         qualificationId
                     )
                 )

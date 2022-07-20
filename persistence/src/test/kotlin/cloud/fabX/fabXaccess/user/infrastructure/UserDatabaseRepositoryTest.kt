@@ -6,6 +6,7 @@ import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
@@ -37,8 +38,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class UserDatabaseRepositoryTest {
-    val userId = UserIdFixture.static(1234)
-    val actorId = UserIdFixture.static(1)
+    private val userId = UserIdFixture.static(1234)
+    private val actorId = UserIdFixture.static(1)
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     @Test
     fun `given empty repository when getting user by id then returns user not found error`() {
@@ -71,6 +73,7 @@ internal class UserDatabaseRepositoryTest {
             val event1 = UserCreated(
                 userId,
                 actorId,
+                correlationId,
                 firstName = "first",
                 lastName = "last",
                 wikiName = "wiki"
@@ -81,6 +84,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                correlationId,
                 locked = ChangeableValue.ChangeToValue(true),
                 notes = ChangeableValue.ChangeToValue("some notes")
             )
@@ -118,6 +122,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                correlationId,
                 locked = ChangeableValue.ChangeToValue(false),
                 notes = ChangeableValue.ChangeToValue(null)
             )
@@ -145,6 +150,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 version,
                 actorId,
+                correlationId,
                 locked = ChangeableValue.ChangeToValue(false),
                 notes = ChangeableValue.ChangeToValue(null)
             )
@@ -183,6 +189,7 @@ internal class UserDatabaseRepositoryTest {
             val user1event1 = UserCreated(
                 userId,
                 actorId,
+                correlationId,
                 firstName = "first1",
                 lastName = "last1",
                 wikiName = "wiki1"
@@ -193,6 +200,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                correlationId,
                 locked = ChangeableValue.ChangeToValue(true),
                 notes = ChangeableValue.ChangeToValue("some notes")
             )
@@ -201,6 +209,7 @@ internal class UserDatabaseRepositoryTest {
             val user2event1 = UserCreated(
                 userId2,
                 actorId,
+                correlationId,
                 firstName = "first2",
                 lastName = "last2",
                 wikiName = "wiki2"
@@ -211,6 +220,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                correlationId,
                 firstName = ChangeableValue.ChangeToValue("first1v3"),
                 lastName = ChangeableValue.LeaveAsIs,
                 wikiName = ChangeableValue.LeaveAsIs
@@ -220,6 +230,7 @@ internal class UserDatabaseRepositoryTest {
             val user3event1 = UserCreated(
                 userId3,
                 actorId,
+                correlationId,
                 firstName = "first3",
                 lastName = "last3",
                 wikiName = "wiki3"
@@ -230,6 +241,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 2,
                 actorId,
+                correlationId,
                 firstName = ChangeableValue.ChangeToValue("first2v2"),
                 lastName = ChangeableValue.ChangeToValue("last2v2"),
                 wikiName = ChangeableValue.ChangeToValue("wiki2v2")
@@ -239,7 +251,8 @@ internal class UserDatabaseRepositoryTest {
             val user3event2 = UserDeleted(
                 userId3,
                 2,
-                actorId
+                actorId,
+                correlationId
             )
             repository!!.store(user3event2)
         }
@@ -328,6 +341,7 @@ internal class UserDatabaseRepositoryTest {
             val user1Created = UserCreated(
                 userId,
                 actorId,
+                correlationId,
                 firstName = "first1",
                 lastName = "last1",
                 wikiName = "wiki1"
@@ -338,6 +352,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                correlationId,
                 "username1",
                 "FyGrfqsvzCwU8UtVqZUI4MQ3pp3TTsOF6J//QLdSEoE="
             )
@@ -347,6 +362,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                correlationId,
                 "11223344556677",
                 "2312D5DFD79E5AA85BD0F43B565665BA3CEFAFF60689ACF8F49A7FADA0004756"
             )
@@ -355,6 +371,7 @@ internal class UserDatabaseRepositoryTest {
             val user2Created = UserCreated(
                 userId2,
                 actorId,
+                correlationId,
                 firstName = "first2",
                 lastName = "last2",
                 wikiName = "wiki2"
@@ -365,6 +382,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 2,
                 actorId,
+                correlationId,
                 "username2",
                 "Fp6cwyJURizWnWI2yWSsgg3FfrFErl/+vvkgdWsBdH8="
             )
@@ -374,6 +392,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 3,
                 actorId,
+                correlationId,
                 "AA11BB22CC33DD",
                 "F4B726CC27C2413227382ABF095D09B1A13B00FC6AD1B1B5D75C4A954628C807"
             )
@@ -495,6 +514,7 @@ internal class UserDatabaseRepositoryTest {
             val user1Created = UserCreated(
                 userId,
                 actorId,
+                correlationId,
                 firstName = "first1",
                 lastName = "last1",
                 wikiName = "wiki1"
@@ -505,6 +525,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                correlationId,
                 qualificationId
             )
             repository!!.store(user1MemberQualificationAdded)
@@ -514,6 +535,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                correlationId,
                 qualificationId2
             )
             repository!!.store(user1InstructorQualificationAdded)
@@ -522,6 +544,7 @@ internal class UserDatabaseRepositoryTest {
             val user2Created = UserCreated(
                 userId2,
                 actorId,
+                correlationId,
                 firstName = "first2",
                 lastName = "last2",
                 wikiName = "wiki2"
@@ -532,6 +555,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 2,
                 actorId,
+                correlationId,
                 qualificationId
             )
             repository!!.store(user2InstructorQualificationAdded)
@@ -539,6 +563,7 @@ internal class UserDatabaseRepositoryTest {
             val user3Created = UserCreated(
                 userId3,
                 actorId,
+                correlationId,
                 firstName = "first3",
                 lastName = "last3",
                 wikiName = "wiki3"
@@ -549,6 +574,7 @@ internal class UserDatabaseRepositoryTest {
                 userId3,
                 2,
                 actorId,
+                correlationId,
                 qualificationId
             )
             repository!!.store(user3MemberQualificationAdded)

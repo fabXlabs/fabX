@@ -5,6 +5,7 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
@@ -23,6 +24,7 @@ import org.mockito.kotlin.whenever
 internal class AddingQualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
@@ -57,6 +59,7 @@ internal class AddingQualificationTest {
         val expectedSourcingEvent = QualificationCreated(
             qualificationId,
             adminActor.id,
+            correlationId,
             name,
             description,
             colour,
@@ -69,6 +72,7 @@ internal class AddingQualificationTest {
         // when
         val result = testee!!.addQualification(
             adminActor,
+            correlationId,
             name,
             description,
             colour,
@@ -90,6 +94,7 @@ internal class AddingQualificationTest {
         val event = QualificationCreated(
             qualificationId,
             adminActor.id,
+            correlationId,
             name,
             description,
             colour,
@@ -104,6 +109,7 @@ internal class AddingQualificationTest {
         // when
         val result = testee!!.addQualification(
             adminActor,
+            correlationId,
             name,
             description,
             colour,

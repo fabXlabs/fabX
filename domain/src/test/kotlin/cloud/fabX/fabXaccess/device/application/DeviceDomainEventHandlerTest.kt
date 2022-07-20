@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.device.application
 import arrow.core.None
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
@@ -24,6 +25,7 @@ import org.mockito.kotlin.whenever
 internal class DeviceDomainEventHandlerTest {
 
     private val actorId: ActorId = UserIdFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
 
@@ -54,6 +56,7 @@ internal class DeviceDomainEventHandlerTest {
         val domainEvent = ToolDeleted(
             actorId,
             Clock.System.now(),
+            correlationId,
             toolId
         )
 

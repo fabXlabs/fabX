@@ -5,6 +5,7 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
@@ -22,10 +23,11 @@ class DetachingTool {
 
     fun detachTool(
         actor: Admin,
+        correlationId: CorrelationId,
         deviceId: DeviceId,
         pin: Int
     ): Option<Error> =
-        detachTool(deviceId) { it.detachTool(actor, pin) }
+        detachTool(deviceId) { it.detachTool(actor, correlationId, pin) }
 
     internal fun detachTool(
         domainEvent: DomainEvent,
