@@ -5,21 +5,21 @@ import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.ToolDeleted
-import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 
 class DeviceDomainEventHandler(
     private val detachingTool: DetachingTool = DetachingTool()
 ) : DomainEventHandler {
 
     private val log = logger()
-    private val gettingDevicesByTool: GettingDevicesByTool = DomainModule.gettingDevicesByTool()
+    private val gettingDevicesByAttachedTool: GettingDevicesByAttachedTool = DomainModule.gettingDevicesByTool()
 
     override fun handle(domainEvent: DomainEvent) {
         log.debug("ignoring event $domainEvent")
     }
 
     override fun handle(domainEvent: ToolDeleted) {
-        gettingDevicesByTool.getByTool(domainEvent.toolId)
+        gettingDevicesByAttachedTool.getByAttachedTool(domainEvent.toolId)
             .flatMap { device ->
                 device.attachedTools
                     .filter { it.value == domainEvent.toolId }

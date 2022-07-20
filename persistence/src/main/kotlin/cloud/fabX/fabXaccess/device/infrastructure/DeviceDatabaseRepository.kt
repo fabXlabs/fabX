@@ -14,10 +14,10 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdentity
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
-import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.tool.model.ToolId
 
-class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByTool {
+class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
     private val events = mutableListOf<DeviceSourcingEvent>()
 
     override fun getAll(): Set<Device> {
@@ -81,7 +81,7 @@ class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, Gett
             .toOption()
             .toEither { Error.DeviceNotFoundByIdentity("Not able to find device for given identity.") }
 
-    override fun getByTool(toolId: ToolId): Set<Device> {
+    override fun getByAttachedTool(toolId: ToolId): Set<Device> {
         return getAll()
             .filter { it.hasAttachedTool(toolId) }
             .toSet()

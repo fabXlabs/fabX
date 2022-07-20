@@ -15,8 +15,6 @@ fun interface GettingDeviceByIdentity {
     fun getByIdentity(identity: DeviceIdentity): Either<Error, Device>
 }
 
-// TODO rename to GettingDevicesByAttachedTool
-fun interface GettingDevicesByTool {
-    // TODO rename to getByAttachedTool
-    fun getByTool(toolId: ToolId): Set<Device>
+fun interface GettingDevicesByAttachedTool {
+    fun getByAttachedTool(toolId: ToolId): Set<Device>
 }

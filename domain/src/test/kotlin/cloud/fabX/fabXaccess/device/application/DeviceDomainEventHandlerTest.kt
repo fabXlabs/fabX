@@ -7,7 +7,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
-import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import kotlinx.datetime.Clock
@@ -28,7 +28,7 @@ internal class DeviceDomainEventHandlerTest {
     private val toolId = ToolIdFixture.arbitrary()
 
     private var logger: Logger? = null
-    private var gettingDevicesByTool: GettingDevicesByTool? = null
+    private var gettingDevicesByAttachedTool: GettingDevicesByAttachedTool? = null
     private var detachingTool: DetachingTool? = null
 
     private var testee: DeviceDomainEventHandler? = null
@@ -36,14 +36,14 @@ internal class DeviceDomainEventHandlerTest {
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock gettingDevicesByTool: GettingDevicesByTool,
+        @Mock gettingDevicesByAttachedTool: GettingDevicesByAttachedTool,
         @Mock detachingTool: DetachingTool
     ) {
         this.logger = logger
-        this.gettingDevicesByTool = gettingDevicesByTool
+        this.gettingDevicesByAttachedTool = gettingDevicesByAttachedTool
         this.detachingTool = detachingTool
         DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureGettingDevicesByTool(gettingDevicesByTool)
+        DomainModule.configureGettingDevicesByTool(gettingDevicesByAttachedTool)
 
         testee = DeviceDomainEventHandler(detachingTool)
     }
@@ -69,7 +69,7 @@ internal class DeviceDomainEventHandlerTest {
             attachedTools = mapOf(3 to toolId, 4 to toolId)
         )
 
-        whenever(gettingDevicesByTool!!.getByTool(toolId))
+        whenever(gettingDevicesByAttachedTool!!.getByAttachedTool(toolId))
             .thenReturn(setOf(device1, device2))
 
         whenever(detachingTool!!.detachTool(domainEvent, deviceId1, 2))

@@ -14,7 +14,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
-import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.device.model.ToolAttached
 import cloud.fabX.fabXaccess.tool.model.ToolId
@@ -426,10 +426,10 @@ internal class DeviceDatabaseRepositoryTest {
             expectedDeviceIds: Set<DeviceId>
         ) {
             // given
-            val repository = this.repository!! as GettingDevicesByTool
+            val repository = this.repository!! as GettingDevicesByAttachedTool
 
             // when
-            val result = repository.getByTool(toolId)
+            val result = repository.getByAttachedTool(toolId)
 
             // then
             assertThat(result)
