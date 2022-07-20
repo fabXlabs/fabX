@@ -8,7 +8,8 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
@@ -16,7 +17,6 @@ import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
 import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 import cloud.fabX.fabXaccess.user.model.User
-import cloud.fabX.fabXaccess.user.model.UserId
 import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent

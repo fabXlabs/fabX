@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.device.model
 
-import cloud.fabX.fabXaccess.tool.model.ToolId
+import cloud.fabX.fabXaccess.common.model.DeviceId
+import cloud.fabX.fabXaccess.common.model.ToolId
 
 object DeviceFixture {
 

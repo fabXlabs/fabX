@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess.user.model
 
+import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.common.model.newUserId
 import java.util.UUID
 
 object UserIdFixture {

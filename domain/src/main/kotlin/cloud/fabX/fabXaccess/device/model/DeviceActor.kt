@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.device.model
 
 import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.ActorId
+import cloud.fabX.fabXaccess.common.model.DeviceId
 
 /**
  * An acting device. Sometimes acting on behalf of a User.

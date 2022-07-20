@@ -1,7 +1,5 @@
 package cloud.fabX.fabXaccess.common.model
 
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
-import cloud.fabX.fabXaccess.tool.model.ToolId
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 

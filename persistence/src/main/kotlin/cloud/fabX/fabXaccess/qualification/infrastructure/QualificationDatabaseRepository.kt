@@ -7,8 +7,8 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.Qualification
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
 

@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess.qualification.model
 
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.newQualificationId
 import java.util.UUID
 
 object QualificationIdFixture {

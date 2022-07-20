@@ -1,7 +1,8 @@
 package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.getOrElse
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.UserId
 
 object InstructorFixture {
     fun arbitrary(

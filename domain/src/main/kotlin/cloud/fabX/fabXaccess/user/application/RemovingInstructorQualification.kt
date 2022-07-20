@@ -8,11 +8,11 @@ import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.qualification.model.Qualification
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.User
-import cloud.fabX.fabXaccess.user.model.UserId
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 
 /**

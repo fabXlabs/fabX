@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.getOrElse
+import cloud.fabX.fabXaccess.common.model.UserId
 
 object AdminFixture {
     fun arbitrary(

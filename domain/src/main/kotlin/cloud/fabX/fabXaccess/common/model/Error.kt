@@ -1,10 +1,5 @@
 package cloud.fabX.fabXaccess.common.model
 
-import cloud.fabX.fabXaccess.device.model.DeviceId
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
-import cloud.fabX.fabXaccess.tool.model.ToolId
-import cloud.fabX.fabXaccess.user.model.UserId
-
 sealed class Error(open val message: String, open val parameters: Map<String, String> = emptyMap()) {
     data class UserNotFound(
         override val message: String,

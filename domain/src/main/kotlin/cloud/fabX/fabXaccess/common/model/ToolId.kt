@@ -1,6 +1,5 @@
-package cloud.fabX.fabXaccess.tool.model
+package cloud.fabX.fabXaccess.common.model
 
-import cloud.fabX.fabXaccess.common.model.EntityId
 import java.util.UUID
 
 /**

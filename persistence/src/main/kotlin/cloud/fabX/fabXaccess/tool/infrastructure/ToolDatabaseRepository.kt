@@ -7,10 +7,10 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.Tool
-import cloud.fabX.fabXaccess.tool.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
 

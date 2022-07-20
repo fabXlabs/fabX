@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.user.model
 
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 
 object UserFixture {

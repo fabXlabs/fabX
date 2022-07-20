@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.tool.model
 
-import cloud.fabX.fabXaccess.qualification.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 
 object ToolFixture {

@@ -7,15 +7,15 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.toOption
+import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.Device
-import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.device.model.DeviceIdentity
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
-import cloud.fabX.fabXaccess.tool.model.ToolId
 
 class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
     private val events = mutableListOf<DeviceSourcingEvent>()

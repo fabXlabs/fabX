@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess.tool.model
 
+import cloud.fabX.fabXaccess.common.model.ToolId
+import cloud.fabX.fabXaccess.common.model.newToolId
 import java.util.UUID
 
 object ToolIdFixture {

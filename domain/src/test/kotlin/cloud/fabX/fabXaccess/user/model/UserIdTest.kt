@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.user.model
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.common.model.newUserId
 import org.junit.jupiter.api.Test
 
 internal class UserIdTest {
