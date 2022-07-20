@@ -6,10 +6,13 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isSameAs
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
+import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
 import org.junit.jupiter.api.BeforeEach
@@ -21,18 +24,24 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class GettingQualificationTest {
 
+    private val adminActor = AdminFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
+    private var logger: Logger? = null
     private var qualificationRepository: QualificationRepository? = null
 
     private var testee: GettingQualification? = null
 
     @BeforeEach
     fun `configure DomainModule`(
+        @Mock logger: Logger,
         @Mock qualificationRepository: QualificationRepository
     ) {
+        this.logger = logger
         this.qualificationRepository = qualificationRepository
 
+        DomainModule.configureLoggerFactory { logger }
         DomainModule.configureQualificationRepository(qualificationRepository)
 
         testee = GettingQualification()
@@ -50,7 +59,7 @@ internal class GettingQualificationTest {
             .thenReturn(qualifications)
 
         // when
-        val result = testee!!.getAll()
+        val result = testee!!.getAll(adminActor, correlationId)
 
         // then
         assertThat(result)
@@ -66,7 +75,7 @@ internal class GettingQualificationTest {
             .thenReturn(qualification.right())
 
         // when
-        val result = testee!!.getById(qualificationId)
+        val result = testee!!.getById(adminActor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -83,7 +92,7 @@ internal class GettingQualificationTest {
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getById(qualificationId)
+        val result = testee!!.getById(adminActor, correlationId, qualificationId)
 
         // then
         assertThat(result)
