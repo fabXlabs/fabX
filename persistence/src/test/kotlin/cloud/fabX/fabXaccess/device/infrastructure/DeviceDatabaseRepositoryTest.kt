@@ -10,24 +10,41 @@ import cloud.fabX.fabXaccess.device.model.DeviceCreated
 import cloud.fabX.fabXaccess.device.model.DeviceDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceDetailsChanged
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
+import cloud.fabX.fabXaccess.device.model.DeviceId
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
+import cloud.fabX.fabXaccess.device.model.ToolAttached
+import cloud.fabX.fabXaccess.tool.model.ToolId
+import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
 import isRight
 import isSome
+import java.util.stream.Stream
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsProvider
+import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
 
 internal class DeviceDatabaseRepositoryTest {
-    private val deviceId = DeviceIdFixture.static(4242)
-    private val actorId = UserIdFixture.static(1234)
+    companion object {
+        private val deviceId = DeviceIdFixture.static(4242)
+        private val deviceId2 = DeviceIdFixture.static(4343)
+
+        private val toolId1 = ToolIdFixture.static(678)
+        private val toolId2 = ToolIdFixture.static(679)
+
+        private val actorId = UserIdFixture.static(1234)
+    }
 
     @Test
     fun `given empty repository when getting device by id then returns device not found error`() {
@@ -339,6 +356,94 @@ internal class DeviceDatabaseRepositoryTest {
                 .isEqualTo(
                     Error.DeviceNotFoundByIdentity("Not able to find device for given identity.")
                 )
+        }
+    }
+
+    @Nested
+    internal inner class GivenEventsForDevicesWithAttachedToolsStoredInRepository {
+
+
+        private var repository: DeviceDatabaseRepository? = null
+
+        @BeforeEach
+        fun setup() {
+            repository = DeviceDatabaseRepository()
+
+            val device1Created = DeviceCreated(
+                deviceId,
+                actorId,
+                name = "device1",
+                background = "https://example.com/1.bmp",
+                backupBackendUrl = "https://backup.example.com",
+                mac = "aabbccddeeff",
+                secret = "supersecret"
+            )
+            repository!!.store(device1Created)
+
+            val device1Tool1Attached = ToolAttached(
+                deviceId,
+                2,
+                actorId,
+                1,
+                toolId1
+            )
+            repository!!.store(device1Tool1Attached)
+
+            val device1Tool2Attached = ToolAttached(
+                deviceId,
+                3,
+                actorId,
+                2,
+                toolId2
+            )
+            repository!!.store(device1Tool2Attached)
+
+            val device2Created = DeviceCreated(
+                deviceId2,
+                actorId,
+                name = "device2",
+                background = "https://background.com/device2.bmp",
+                backupBackendUrl = "https://backup2.example.com",
+                mac = "aabbccddee22",
+                secret = "supersecret2"
+            )
+            repository!!.store(device2Created)
+
+            val device2Tool2Attached = ToolAttached(
+                deviceId2,
+                2,
+                actorId,
+                3,
+                toolId2
+            )
+            repository!!.store(device2Tool2Attached)
+        }
+
+        @ParameterizedTest
+        @ArgumentsSource(ToolIdProvider::class)
+        fun `when getting by tool then returns expected devices`(
+            toolId: ToolId,
+            expectedDeviceIds: Set<DeviceId>
+        ) {
+            // given
+            val repository = this.repository!! as GettingDevicesByTool
+
+            // when
+            val result = repository.getByTool(toolId)
+
+            // then
+            assertThat(result)
+                .transform { s -> s.map { it.id }.toSet() }
+                .isEqualTo(expectedDeviceIds)
+        }
+    }
+
+    class ToolIdProvider : ArgumentsProvider {
+        override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+            return Stream.of(
+                Arguments.of(toolId1, setOf(deviceId)),
+                Arguments.of(toolId2, setOf(deviceId, deviceId2))
+            )
         }
     }
 }

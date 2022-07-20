@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
 import cloud.fabX.fabXaccess.device.model.newDeviceId
 import cloud.fabX.fabXaccess.logging.LogbackLoggerFactory
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
@@ -47,6 +48,7 @@ object AppConfiguration {
     private val toolRepository: ToolRepository
     private val userRepository: UserRepository
 
+    private val gettingDevicesByTool: GettingDevicesByTool
     private val gettingToolsByQualificationId: GettingToolsByQualificationId
     private val gettingUserByUsername: GettingUserByUsername
     private val gettingUserByIdentity: GettingUserByIdentity
@@ -74,6 +76,7 @@ object AppConfiguration {
         toolRepository = ToolDatabaseRepository()
         userRepository = UserDatabaseRepository()
 
+        gettingDevicesByTool = deviceRepository
         gettingToolsByQualificationId = toolRepository
         gettingUserByUsername = userRepository
         gettingUserByIdentity = userRepository
@@ -115,6 +118,7 @@ object AppConfiguration {
         DomainModule.configureToolRepository(toolRepository)
         DomainModule.configureUserRepository(userRepository)
 
+        DomainModule.configureGettingDevicesByTool(gettingDevicesByTool)
         DomainModule.configureGettingToolsByQualificationId(gettingToolsByQualificationId)
         DomainModule.configureGettingUserByUsername(gettingUserByUsername)
         DomainModule.configureGettingUserByIdentity(gettingUserByIdentity)

@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.device.application.DeviceDomainEventHandler
 import cloud.fabX.fabXaccess.device.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.GettingDevicesByTool
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
@@ -40,6 +41,7 @@ object DomainModule {
     private var toolRepository: ToolRepository? = null
     private var userRepository: UserRepository? = null
 
+    private var gettingDevicesByTool: GettingDevicesByTool? = null
     private var gettingToolsByQualificationId: GettingToolsByQualificationId? = null
     private var gettingUserByUsername: GettingUserByUsername? = null
     private var gettingUserByIdentity: GettingUserByIdentity? = null
@@ -67,6 +69,7 @@ object DomainModule {
             require(qualificationRepository)
             require(toolRepository)
             require(userRepository)
+            require(gettingDevicesByTool)
             require(gettingToolsByQualificationId)
             require(gettingUserByUsername)
             require(gettingUserByIdentity)
@@ -124,6 +127,10 @@ object DomainModule {
 
     fun configureUserRepository(userRepository: UserRepository) {
         this.userRepository = userRepository
+    }
+
+    fun configureGettingDevicesByTool(gettingDevicesByTool: GettingDevicesByTool) {
+        this.gettingDevicesByTool = gettingDevicesByTool
     }
 
     fun configureGettingToolsByQualificationId(gettingToolsByQualificationId: GettingToolsByQualificationId) {
@@ -200,6 +207,10 @@ object DomainModule {
 
     internal fun userRepository(): UserRepository {
         return require(userRepository)
+    }
+
+    internal fun gettingDevicesByTool(): GettingDevicesByTool {
+        return require(gettingDevicesByTool)
     }
 
     internal fun gettingToolsQualificationId(): GettingToolsByQualificationId {

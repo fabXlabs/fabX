@@ -10,14 +10,17 @@ import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.ToolDetached
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -77,6 +80,49 @@ internal class DetachingToolTest {
         // when
         val result = testee!!.detachTool(
             adminActor,
+            deviceId,
+            pin
+        )
+
+        // then
+        assertThat(result).isNone()
+    }
+
+    @Test
+    fun `given triggered by domain event when detaching tool then sourcing event is created and stored`() {
+        val toolId = ToolIdFixture.arbitrary()
+
+        val pin = 3
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion = 1,
+            attachedTools = mapOf(pin to toolId)
+        )
+
+        val actorId = UserIdFixture.arbitrary()
+
+        val domainEvent = ToolDeleted(
+            actorId,
+            Clock.System.now(),
+            toolId
+        )
+
+        val expectedSourcingEvent = ToolDetached(
+            deviceId,
+            2,
+            actorId,
+            pin
+        )
+
+        whenever(deviceRepository!!.getById(deviceId))
+            .thenReturn(device.right())
+
+        whenever(deviceRepository!!.store(expectedSourcingEvent))
+            .thenReturn(None)
+
+        // when
+        val result = testee!!.detachTool(
+            domainEvent,
             deviceId,
             pin
         )

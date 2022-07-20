@@ -7,8 +7,10 @@ import arrow.core.Some
 import arrow.core.flatMap
 import arrow.core.getOrNone
 import cloud.fabX.fabXaccess.DomainModule
+import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
+import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.PinInUse
 import cloud.fabX.fabXaccess.common.model.Error.PinNotInUse
@@ -116,8 +118,28 @@ data class Device internal constructor(
             }
     }
 
+    /**
+     * Detaches the tool at the given pin.
+     *
+     * @return error if the pin is not in use, sourcing event otherwise
+     */
     fun detachTool(
         actor: Admin,
+        pin: Int
+    ): Either<Error, DeviceSourcingEvent> =
+        detachTool(actor.id, pin)
+
+    /**
+     * Detaches the tool (triggered by a domain event).
+     */
+    internal fun detachTool(
+        domainEvent: DomainEvent,
+        pin: Int
+    ): Either<Error, DeviceSourcingEvent> =
+        detachTool(domainEvent.actorId, pin)
+
+    private fun detachTool(
+        actorId: ActorId,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> {
         return attachedTools.getOrNone(pin)
@@ -128,7 +150,7 @@ data class Device internal constructor(
                 ToolDetached(
                     id,
                     aggregateVersion + 1,
-                    actor.id,
+                    actorId,
                     pin
                 )
             }
@@ -145,6 +167,8 @@ data class Device internal constructor(
     }
 
     fun hasIdentity(deviceIdentity: DeviceIdentity) = identity == deviceIdentity
+
+    fun hasAttachedTool(toolId: ToolId): Boolean = attachedTools.any { it.value == toolId }
 
     class EventHistoryDoesNotStartWithDeviceCreated(message: String) : Exception(message)
 }

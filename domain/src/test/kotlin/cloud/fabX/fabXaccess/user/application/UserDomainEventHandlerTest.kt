@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import arrow.core.None
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -79,6 +80,15 @@ internal class UserDomainEventHandlerTest {
 
         whenever(gettingUsersByInstructorQualification!!.getByInstructorQualification(qualificationId))
             .thenReturn(setOf(user1, user3))
+
+        whenever(removingMemberQualification!!.removeMemberQualification(domainEvent, userId1, qualificationId))
+            .thenReturn(None)
+        whenever(removingMemberQualification!!.removeMemberQualification(domainEvent, userId2, qualificationId))
+            .thenReturn(None)
+        whenever(removingInstructorQualification!!.removeInstructorQualification(domainEvent, userId1, qualificationId))
+            .thenReturn(None)
+        whenever(removingInstructorQualification!!.removeInstructorQualification(domainEvent, userId3, qualificationId))
+            .thenReturn(None)
 
         // when
         testee!!.handle(domainEvent)

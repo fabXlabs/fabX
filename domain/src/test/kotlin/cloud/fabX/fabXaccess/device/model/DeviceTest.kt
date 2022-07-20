@@ -11,13 +11,16 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
 import isRight
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -455,6 +458,44 @@ internal class DeviceTest {
     }
 
     @Test
+    fun `given triggered by domain event when detaching tool then returns sourcing event`() {
+        // given
+        val pin = 3
+        val toolId = ToolIdFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion,
+            attachedTools = mapOf(
+                pin to toolId
+            )
+        )
+
+        val actorId = UserIdFixture.arbitrary()
+
+        val domainEvent = ToolDeleted(
+            actorId,
+            Clock.System.now(),
+            toolId
+        )
+
+        val expectedSourcingEvent = ToolDetached(
+            aggregateRootId = deviceId,
+            aggregateVersion = aggregateVersion + 1,
+            actorId = actorId,
+            pin = pin
+        )
+
+        // when
+        val result = device.detachTool(domainEvent, pin)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
     fun `given pin is not in use when detaching tool then returns error`() {
         // given
         val pin = 3
@@ -522,6 +563,34 @@ internal class DeviceTest {
 
         // when
         val result = device.hasIdentity(MacSecretIdentity(mac, secret))
+
+        // then
+        assertThat(result).isEqualTo(expectedResult)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        value = [
+            "123, true",
+            "0, false",
+            "1, false",
+            "124, false"
+        ]
+    )
+    fun `when checking has attached tools then returns expected result`(
+        toCheck: Int,
+        expectedResult: Boolean
+    ) {
+        // given
+        val toolId = ToolIdFixture.static(123)
+        val toolIdToCheck = ToolIdFixture.static(toCheck)
+
+        val device = DeviceFixture.arbitrary(
+            attachedTools = mapOf(1 to toolId)
+        )
+
+        // when
+        val result = device.hasAttachedTool(toolIdToCheck)
 
         // then
         assertThat(result).isEqualTo(expectedResult)
