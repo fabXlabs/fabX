@@ -12,7 +12,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
-import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.InstructorFixture
 import isLeft
 import isRight
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +24,7 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class GettingQualificationTest {
 
-    private val adminActor = AdminFixture.arbitrary()
+    private val actor = InstructorFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
@@ -59,7 +59,7 @@ internal class GettingQualificationTest {
             .thenReturn(qualifications)
 
         // when
-        val result = testee!!.getAll(adminActor, correlationId)
+        val result = testee!!.getAll(actor, correlationId)
 
         // then
         assertThat(result)
@@ -75,7 +75,7 @@ internal class GettingQualificationTest {
             .thenReturn(qualification.right())
 
         // when
-        val result = testee!!.getById(adminActor, correlationId, qualificationId)
+        val result = testee!!.getById(actor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -92,7 +92,7 @@ internal class GettingQualificationTest {
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getById(adminActor, correlationId, qualificationId)
+        val result = testee!!.getById(actor, correlationId, qualificationId)
 
         // then
         assertThat(result)
