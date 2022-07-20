@@ -15,7 +15,6 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.ToolDetached
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
-import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome

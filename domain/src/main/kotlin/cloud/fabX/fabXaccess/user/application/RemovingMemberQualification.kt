@@ -5,7 +5,6 @@ import arrow.core.Option
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
-import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.Qualification
