@@ -48,7 +48,7 @@ allprojects {
     }
 
     dependencies {
-        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.5.31"))
+        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.6.0"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:$arrowVersion")
 
