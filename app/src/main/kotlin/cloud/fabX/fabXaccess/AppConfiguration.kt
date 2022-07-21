@@ -158,6 +158,8 @@ object AppConfiguration {
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
     }
+
+    internal fun userRepository(): UserRepository = userRepository
 }
 
 @Suppress("unused") // receiver T is required to infer class to create logger for
