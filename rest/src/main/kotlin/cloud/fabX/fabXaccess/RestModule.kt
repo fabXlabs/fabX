@@ -114,6 +114,7 @@ object RestModule {
         publicPort = null
         loggerFactory = null
         gettingQualification = null
+        addingQualification = null
         qualificationController = null
     }
 

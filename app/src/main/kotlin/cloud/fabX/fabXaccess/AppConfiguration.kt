@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.logging.LogbackLoggerFactory
+import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
@@ -29,40 +30,47 @@ import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
 import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlin.system.exitProcess
 import kotlinx.datetime.Clock
 
 object AppConfiguration {
 
-    private val log: Logger
+    private lateinit var log: Logger
 
-    private val clock: Clock
+    private lateinit var clock: Clock
 
-    internal val loggerFactory: LoggerFactory
-    private val deviceIdFactory: DeviceIdFactory
-    private val qualificationIdFactory: QualificationIdFactory
-    private val toolIdFactory: ToolIdFactory
-    private val userIdFactory: UserIdFactory
+    internal lateinit var loggerFactory: LoggerFactory
+    private lateinit var deviceIdFactory: DeviceIdFactory
+    private lateinit var qualificationIdFactory: QualificationIdFactory
+    private lateinit var toolIdFactory: ToolIdFactory
+    private lateinit var userIdFactory: UserIdFactory
 
-    private val deviceRepository: DeviceRepository
-    private val qualificationRepository: QualificationRepository
-    private val toolRepository: ToolRepository
-    private val userRepository: UserRepository
+    private lateinit var deviceRepository: DeviceRepository
+    private lateinit var qualificationRepository: QualificationRepository
+    private lateinit var toolRepository: ToolRepository
+    private lateinit var userRepository: UserRepository
 
-    private val gettingDevicesByAttachedTool: GettingDevicesByAttachedTool
-    private val gettingToolsByQualificationId: GettingToolsByQualificationId
-    private val gettingUserByUsername: GettingUserByUsername
-    private val gettingUserByIdentity: GettingUserByIdentity
-    private val gettingUserByWikiName: GettingUserByWikiName
-    private val gettingUserByCardId: GettingUserByCardId
-    private val gettingUsersByMemberQualification: GettingUsersByMemberQualification
-    private val gettingUsersByInstructorQualification: GettingUsersByInstructorQualification
+    private lateinit var gettingDevicesByAttachedTool: GettingDevicesByAttachedTool
+    private lateinit var gettingToolsByQualificationId: GettingToolsByQualificationId
+    private lateinit var gettingUserByUsername: GettingUserByUsername
+    private lateinit var gettingUserByIdentity: GettingUserByIdentity
+    private lateinit var gettingUserByWikiName: GettingUserByWikiName
+    private lateinit var gettingUserByCardId: GettingUserByCardId
+    private lateinit var gettingUsersByMemberQualification: GettingUsersByMemberQualification
+    private lateinit var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification
 
-    private val domainEventPublisher: SynchronousDomainEventPublisher
+    private lateinit var domainEventPublisher: SynchronousDomainEventPublisher
 
-    private val gettingQualification: GettingQualification
+    private lateinit var gettingQualification: GettingQualification
+    private lateinit var addingQualification: AddingQualification
 
     init {
+        configure()
+    }
+
+    internal fun configure() {
+        DomainModule.reset()
+        RestModule.reset()
+
         loggerFactory = LogbackLoggerFactory()
         log = loggerFactory.invoke(AppConfiguration::class.java)
         log.info("Configuring modules...")
@@ -74,19 +82,22 @@ object AppConfiguration {
         toolIdFactory = { newToolId() }
         userIdFactory = { newUserId() }
 
-        deviceRepository = DeviceDatabaseRepository()
+        val deviceDatabaseRepository = DeviceDatabaseRepository()
+        val toolDatabaseRepository = ToolDatabaseRepository()
+        val userDatabaseRepository = UserDatabaseRepository()
+        deviceRepository = deviceDatabaseRepository
         qualificationRepository = QualificationDatabaseRepository()
-        toolRepository = ToolDatabaseRepository()
-        userRepository = UserDatabaseRepository()
+        toolRepository = toolDatabaseRepository
+        userRepository = userDatabaseRepository
 
-        gettingDevicesByAttachedTool = deviceRepository
-        gettingToolsByQualificationId = toolRepository
-        gettingUserByUsername = userRepository
-        gettingUserByIdentity = userRepository
-        gettingUserByWikiName = userRepository
-        gettingUserByCardId = userRepository
-        gettingUsersByMemberQualification = userRepository
-        gettingUsersByInstructorQualification = userRepository
+        gettingDevicesByAttachedTool = deviceDatabaseRepository
+        gettingToolsByQualificationId = toolDatabaseRepository
+        gettingUserByUsername = userDatabaseRepository
+        gettingUserByIdentity = userDatabaseRepository
+        gettingUserByWikiName = userDatabaseRepository
+        gettingUserByCardId = userDatabaseRepository
+        gettingUsersByMemberQualification = userDatabaseRepository
+        gettingUsersByInstructorQualification = userDatabaseRepository
 
         domainEventPublisher = SynchronousDomainEventPublisher()
 
@@ -94,17 +105,18 @@ object AppConfiguration {
 
         if (!DomainModule.isFullyConfigured()) {
             log.error("DomainModule not fully configured!")
-            exitProcess(-1)
+            throw IllegalStateException("DomainModule not fully configured!")
         }
 
         // get domain services
         gettingQualification = DomainModule.gettingQualification()
+        addingQualification = DomainModule.addingQualification()
 
         configureRest()
 
         if (!RestModule.isFullyConfigured()) {
             log.error("RestModule not fully configured!")
-            exitProcess(-1)
+            throw IllegalStateException("RestModule not fully configured!")
         }
 
 
@@ -144,6 +156,7 @@ object AppConfiguration {
         RestModule.configurePort(8080)
         RestModule.configureLoggerFactory(loggerFactory)
         RestModule.configureGettingQualification(gettingQualification)
+        RestModule.configureAddingQualification(addingQualification)
     }
 }
 

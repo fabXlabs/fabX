@@ -1,3 +1,4 @@
+val ktorVersion: String by rootProject
 val kotlinxDateTimeVersion: String by project
 
 plugins {
@@ -15,5 +16,8 @@ dependencies {
     implementation(project(":persistence"))
     implementation(project(":logging"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+
     testImplementation(testFixtures(project(":domain")))
+    testImplementation("io.ktor:ktor-serialization:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 }

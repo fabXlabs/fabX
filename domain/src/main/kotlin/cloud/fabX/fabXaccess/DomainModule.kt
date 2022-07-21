@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.UserIdFactory
 import cloud.fabX.fabXaccess.device.application.DeviceDomainEventHandler
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
+import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
@@ -52,9 +53,10 @@ object DomainModule {
     private var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification? = null
 
     // own services
-    private val userDomainEventHandler: UserDomainEventHandler by lazy { UserDomainEventHandler() }
-    private val deviceDomainEventHandler: DeviceDomainEventHandler by lazy { DeviceDomainEventHandler() }
-    private val gettingQualification: GettingQualification by lazy { GettingQualification() }
+    private var userDomainEventHandler: UserDomainEventHandler? = null
+    private var deviceDomainEventHandler: DeviceDomainEventHandler? = null
+    private var gettingQualification: GettingQualification? = null
+    private var addingQualification: AddingQualification? = null
 
 
     @Suppress("DuplicatedCode")
@@ -85,6 +87,39 @@ object DomainModule {
             System.err.println(e.message)
             false
         }
+    }
+
+    @Suppress("DuplicatedCode")
+    fun reset() {
+        loggerFactory = null
+
+        clock = null
+
+        domainEventPublisher = null
+
+        deviceIdFactory = null
+        qualificationIdFactory = null
+        toolIdFactory = null
+        userIdFactory = null
+
+        deviceRepository = null
+        qualificationRepository = null
+        toolRepository = null
+        userRepository = null
+
+        gettingDevicesByAttachedTool = null
+        gettingToolsByQualificationId = null
+        gettingUserByUsername = null
+        gettingUserByIdentity = null
+        gettingUserByWikiName = null
+        gettingUserByCardId = null
+        gettingUsersByMemberQualification = null
+        gettingUsersByInstructorQualification = null
+
+        userDomainEventHandler = null
+        deviceDomainEventHandler = null
+        gettingQualification = null
+        addingQualification = null
     }
 
     fun configureLoggerFactory(loggerFactory: LoggerFactory) {
@@ -163,11 +198,49 @@ object DomainModule {
         this.gettingUsersByInstructorQualification = gettingUsersByInstructorQualification
     }
 
-    fun userDomainEventHandler(): DomainEventHandler = userDomainEventHandler
+    fun userDomainEventHandler(): DomainEventHandler {
+        val handler = userDomainEventHandler
+        return if (handler != null) {
+            handler
+        } else {
+            val newHandler = UserDomainEventHandler()
+            userDomainEventHandler = newHandler
+            newHandler
+        }
+    }
 
-    fun deviceDomainEventHandler(): DomainEventHandler = deviceDomainEventHandler
+    fun deviceDomainEventHandler(): DomainEventHandler {
+        val handler = deviceDomainEventHandler
+        return if (handler != null) {
+            handler
+        } else {
+            val newHandler = DeviceDomainEventHandler()
+            deviceDomainEventHandler = newHandler
+            newHandler
+        }
+    }
 
-    fun gettingQualification(): GettingQualification = gettingQualification
+    fun gettingQualification(): GettingQualification {
+        val service = gettingQualification
+        return if (service != null) {
+            service
+        } else {
+            val newService = GettingQualification()
+            gettingQualification = newService
+            newService
+        }
+    }
+
+    fun addingQualification(): AddingQualification {
+        val service = addingQualification
+        return if (service != null) {
+            service
+        } else {
+            val newService = AddingQualification()
+            addingQualification = newService
+            newService
+        }
+    }
 
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)

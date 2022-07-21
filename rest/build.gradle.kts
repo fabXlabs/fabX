@@ -14,6 +14,7 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-serialization:$ktorVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+
     testImplementation(testFixtures(project(":domain")))
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 }
