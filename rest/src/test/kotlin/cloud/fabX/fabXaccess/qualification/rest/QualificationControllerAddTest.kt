@@ -28,7 +28,7 @@ import org.mockito.kotlin.whenever
 @ExperimentalSerializationApi
 @MockitoSettings
 class QualificationControllerAddTest {
-    private var addingQualification: AddingQualification? = null
+    private lateinit var addingQualification: AddingQualification
 
     @BeforeEach
     fun `configure RestModule`(
@@ -53,7 +53,7 @@ class QualificationControllerAddTest {
         val requestBody = QualificationCreationDetails(name, description, colour, orderNr)
 
         whenever(
-            addingQualification!!.addQualification(
+            addingQualification.addQualification(
                 any(),
                 any(),
                 eq(name),

@@ -29,7 +29,7 @@ import org.mockito.kotlin.whenever
 @ExperimentalSerializationApi
 @MockitoSettings
 internal class QualificationControllerGetTest {
-    private var gettingQualification: GettingQualification? = null
+    private lateinit var gettingQualification: GettingQualification
 
     @BeforeEach
     fun `configure RestModule`(
@@ -46,7 +46,7 @@ internal class QualificationControllerGetTest {
     @Test
     fun `given no qualifications when get qualifications then returns empty set`() = withTestApp {
         // given
-        whenever(gettingQualification!!.getAll(any(), any()))
+        whenever(gettingQualification.getAll(any(), any()))
             .thenReturn(setOf())
 
         // when
@@ -83,7 +83,7 @@ internal class QualificationControllerGetTest {
             2
         )
 
-        whenever(gettingQualification!!.getAll(any(), any()))
+        whenever(gettingQualification.getAll(any(), any()))
             .thenReturn(setOf(qualification1, qualification2))
 
         val mappedQualification1 = Qualification(
@@ -137,7 +137,7 @@ internal class QualificationControllerGetTest {
             1
         )
 
-        whenever(gettingQualification!!.getById(any(), any(), eq(qualificationId)))
+        whenever(gettingQualification.getById(any(), any(), eq(qualificationId)))
             .thenReturn(qualification.right())
 
         // when
@@ -157,7 +157,7 @@ internal class QualificationControllerGetTest {
         val qualificationId = QualificationIdFixture.arbitrary()
         val error = Error.QualificationNotFound("msg", qualificationId)
 
-        whenever(gettingQualification!!.getById(any(), any(), eq(qualificationId)))
+        whenever(gettingQualification.getById(any(), any(), eq(qualificationId)))
             .thenReturn(error.left())
 
         // when
