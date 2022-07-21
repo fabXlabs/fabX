@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test
 
 internal class QualificationTest {
     @Test
-    fun `when mapping to rest model then returns mapped`() {
+    fun `when mapping domain model to rest model then returns mapped`() {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
         val qualification = QualificationFixture.arbitrary(

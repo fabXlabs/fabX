@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.UserIdFactory
 import cloud.fabX.fabXaccess.device.application.DeviceDomainEventHandler
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
+import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
@@ -53,6 +54,7 @@ object DomainModule {
     // own services
     private val userDomainEventHandler: UserDomainEventHandler by lazy { UserDomainEventHandler() }
     private val deviceDomainEventHandler: DeviceDomainEventHandler by lazy { DeviceDomainEventHandler() }
+    private val gettingQualification: GettingQualification by lazy { GettingQualification() }
 
 
     @Suppress("DuplicatedCode")
@@ -164,6 +166,8 @@ object DomainModule {
     fun userDomainEventHandler(): DomainEventHandler = userDomainEventHandler
 
     fun deviceDomainEventHandler(): DomainEventHandler = deviceDomainEventHandler
+
+    fun gettingQualification(): GettingQualification = gettingQualification
 
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)

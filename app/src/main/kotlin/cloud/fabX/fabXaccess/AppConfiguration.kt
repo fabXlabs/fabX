@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.logging.LogbackLoggerFactory
+import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
@@ -59,6 +60,8 @@ object AppConfiguration {
 
     private val domainEventPublisher: SynchronousDomainEventPublisher
 
+    private val gettingQualification: GettingQualification
+
     init {
         loggerFactory = LogbackLoggerFactory()
         log = loggerFactory.invoke(AppConfiguration::class.java)
@@ -88,17 +91,22 @@ object AppConfiguration {
         domainEventPublisher = SynchronousDomainEventPublisher()
 
         configureDomain()
-        configureRest()
 
         if (!DomainModule.isFullyConfigured()) {
             log.error("DomainModule not fully configured!")
             exitProcess(-1)
         }
 
+        // get domain services
+        gettingQualification = DomainModule.gettingQualification()
+
+        configureRest()
+
         if (!RestModule.isFullyConfigured()) {
             log.error("RestModule not fully configured!")
             exitProcess(-1)
         }
+
 
         log.info("...all modules configured")
     }
@@ -133,7 +141,9 @@ object AppConfiguration {
     }
 
     private fun configureRest() {
-        RestModule.configure(loggerFactory)
+        RestModule.configurePort(8080)
+        RestModule.configureLoggerFactory(loggerFactory)
+        RestModule.configureGettingQualification(gettingQualification)
     }
 }
 
