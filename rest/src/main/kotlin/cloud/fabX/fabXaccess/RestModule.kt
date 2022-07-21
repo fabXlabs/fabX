@@ -3,13 +3,18 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.newUserId
+import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.user.model.Admin
 import io.ktor.application.Application
+import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
+import io.ktor.features.StatusPages
+import io.ktor.http.HttpStatusCode
+import io.ktor.response.respond
 import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.json
@@ -87,6 +92,13 @@ object RestModule {
                 prettyPrint = false
                 isLenient = false
             })
+        }
+
+        install(StatusPages) {
+            exception<kotlinx.serialization.SerializationException> { cause ->
+                cause.printStackTrace()
+                call.respond(HttpStatusCode.UnprocessableEntity, RestError(cause.localizedMessage))
+            }
         }
 
         routing {
