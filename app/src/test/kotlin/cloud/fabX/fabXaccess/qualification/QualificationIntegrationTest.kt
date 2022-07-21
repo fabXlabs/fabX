@@ -7,6 +7,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.AppConfiguration
 import cloud.fabX.fabXaccess.RestModule
+import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.qualification.rest.Qualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails
 import io.ktor.http.ContentType
@@ -39,11 +40,12 @@ class QualificationIntegrationTest {
         }
     }
 
-    internal fun TestApplicationEngine.givenQualification() {
-        val name = "qualification1"
-        val description = "some qualification"
-        val colour = "#aabbcc"
-        val orderNr = 42
+    internal fun TestApplicationEngine.givenQualification(
+        name: String = "qualification",
+        description: String = "some qualification",
+        colour: String = "#aabbcc",
+        orderNr: Int = 42
+    ) {
         val requestBody = QualificationCreationDetails(name, description, colour, orderNr)
 
         val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
@@ -54,6 +56,10 @@ class QualificationIntegrationTest {
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 
         // TODO return id (which requires endpoint returning id)?
+    }
+
+    internal fun TestApplicationEngine.givenQualifications(count: Int) {
+        (0..count).map { givenQualification(name = "qualification $it", description = "some qualification $it") }
     }
 
     internal inline fun <reified T> Assert<String>.isJson() = transform { Json.decodeFromString<T>(it) }
@@ -72,6 +78,55 @@ class QualificationIntegrationTest {
             .isNotNull()
             .isJson<Set<Qualification>>()
             .transform { it.map { q -> q.name } }
-            .containsExactlyInAnyOrder("qualification1")
+            .containsExactlyInAnyOrder("qualification")
+    }
+
+    @Test
+    fun `given multiple qualifications when get qualifications then returns qualifications`() = withTestApp {
+        // given
+        givenQualifications(10)
+
+        val expectedQualificationNames = (0..10).map { "qualification $it" }.toSet()
+
+        // when
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification")
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Set<Qualification>>()
+            .transform { it.map { q -> q.name }.toSet() }
+            .isEqualTo(expectedQualificationNames)
+    }
+
+    @Test
+    fun `given incomplete body when adding qualification then returns http unprocessable entity`() = withTestApp {
+        // given
+        val incompleteRequestBody = "{" +
+                "\"name\": \"qualification\"," +
+                "\"description\": \"some qualification\"," +
+                "\"colour\": \"#001122\"" +
+                // orderNr missing
+                "}"
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
+            setBody(incompleteRequestBody)
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<RestError>()
+            .isEqualTo(
+                RestError(
+                    "Field 'orderNr' is required for type with serial name " +
+                            "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
+                            "but it was missing"
+                )
+            )
     }
 }
