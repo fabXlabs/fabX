@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.user.model
 
 import assertk.assertThat
 import assertk.assertions.isNotNull
+import assertk.assertions.isTrue
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newUserId
 import org.junit.jupiter.api.Test
 
@@ -17,4 +19,17 @@ internal class UserIdTest {
         assertThat(id.value).isNotNull()
     }
 
+    @Test
+    fun `when serializing to string and back then is equal`() {
+        // given
+        val id = newUserId()
+        val serialized = id.serialize()
+        val id2 = UserId.fromString(serialized)
+
+        // when
+        val result = (id == id2)
+
+        // then
+        assertThat(result).isTrue()
+    }
 }

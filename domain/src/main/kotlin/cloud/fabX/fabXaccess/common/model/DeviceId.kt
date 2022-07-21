@@ -5,7 +5,17 @@ import java.util.UUID
 /**
  * Technical (artificial) ID of a Device.
  */
-data class DeviceId(override val value: UUID) : EntityId<UUID>, ActorId
+data class DeviceId(override val value: UUID) : EntityId<UUID>, ActorId {
+    companion object {
+        fun fromString(s: String): DeviceId {
+            return DeviceId(UUID.fromString(s))
+        }
+    }
+
+    fun serialize(): String {
+        return value.toString()
+    }
+}
 
 typealias DeviceIdFactory = () -> DeviceId
 

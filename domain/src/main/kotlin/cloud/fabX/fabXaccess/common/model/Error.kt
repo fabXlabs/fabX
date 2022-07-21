@@ -4,7 +4,7 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     data class UserNotFound(
         override val message: String,
         val userId: UserId
-    ) : Error(message, mapOf("userId" to userId.toString()))
+    ) : Error(message, mapOf("userId" to userId.serialize()))
 
     data class UserNotFoundByIdentity(
         override val message: String
@@ -61,27 +61,27 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     data class MemberQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId
-    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class MemberQualificationAlreadyFound(
         override val message: String,
         val qualificationId: QualificationId
-    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class InstructorQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId
-    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class InstructorQualificationAlreadyFound(
         override val message: String,
         val qualificationId: QualificationId
-    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class QualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId
-    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class QualificationInUse(
         override val message: String,
@@ -90,7 +90,7 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     ) : Error(
         message,
         mapOf(
-            "qualificationId" to qualificationId.toString(),
+            "qualificationId" to qualificationId.serialize(),
             "toolIds" to toolIds.joinToString()
         )
     )
@@ -98,7 +98,7 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     data class DeviceNotFound(
         override val message: String,
         val deviceId: DeviceId
-    ) : Error(message, mapOf("deviceId" to deviceId.toString()))
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize()))
 
     data class DeviceNotFoundByIdentity(
         override val message: String
@@ -107,7 +107,7 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     data class ToolNotFound(
         override val message: String,
         val toolId: ToolId
-    ) : Error(message, mapOf("toolId" to toolId.toString()))
+    ) : Error(message, mapOf("toolId" to toolId.serialize()))
 
     data class PinInUse(
         override val message: String,
@@ -154,5 +154,5 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     data class InstructorPermissionNotFound(
         override val message: String,
         val qualificationId: QualificationId
-    ) : Error(message, mapOf("qualificationId" to qualificationId.toString()))
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 }
