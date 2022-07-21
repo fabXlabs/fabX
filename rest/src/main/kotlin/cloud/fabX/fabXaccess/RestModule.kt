@@ -3,8 +3,9 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.newUserId
-import cloud.fabX.fabXaccess.qualification.rest.QualificationController
+import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
+import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.user.model.Admin
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -23,6 +24,7 @@ object RestModule {
     private var publicPort: Int? = null
     private var loggerFactory: LoggerFactory? = null
     private var gettingQualification: GettingQualification? = null
+    private var addingQualification: AddingQualification? = null
 
     // controller
     private var qualificationController: QualificationController? = null
@@ -35,6 +37,7 @@ object RestModule {
             require(publicPort)
             require(loggerFactory)
             require(gettingQualification)
+            require(addingQualification)
 
             true
         } catch (e: IllegalArgumentException) {
@@ -55,17 +58,24 @@ object RestModule {
         this.gettingQualification = gettingQualification
     }
 
+    fun configureAddingQualification(addingQualification: AddingQualification) {
+        this.addingQualification = addingQualification
+    }
+
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
     }
 
-    internal fun qualificationController(): QualificationController {
+    private fun qualificationController(): QualificationController {
         val instance = qualificationController
 
         return if (instance != null) {
             instance
         } else {
-            val newInstance = QualificationController(require(gettingQualification))
+            val newInstance = QualificationController(
+                require(gettingQualification),
+                require(addingQualification)
+            )
             qualificationController = newInstance
             newInstance
         }
@@ -108,7 +118,7 @@ object RestModule {
     }
 
     private inline fun <reified T : Any> require(value: T?): T =
-        requireNotNull(value) { "DomainModule has to be configured (missing ${T::class.qualifiedName})" }
+        requireNotNull(value) { "RestModule has to be configured (missing ${T::class.qualifiedName})" }
 }
 
 @Suppress("unused") // receiver T is required to infer class to create logger for

@@ -8,6 +8,7 @@ plugins {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":logging"))
 
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")

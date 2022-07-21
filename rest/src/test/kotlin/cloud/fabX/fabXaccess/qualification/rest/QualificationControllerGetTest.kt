@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.RestModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
+import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -27,17 +28,19 @@ import org.mockito.kotlin.whenever
 
 @ExperimentalSerializationApi
 @MockitoSettings
-internal class QualificationControllerTest {
+internal class QualificationControllerGetTest {
     private var gettingQualification: GettingQualification? = null
 
     @BeforeEach
     fun `configure RestModule`(
-        @Mock gettingQualification: GettingQualification
+        @Mock gettingQualification: GettingQualification,
+        @Mock addingQualification: AddingQualification
     ) {
         this.gettingQualification = gettingQualification
 
         RestModule.reset()
         RestModule.configureGettingQualification(gettingQualification)
+        RestModule.configureAddingQualification(addingQualification)
     }
 
     @Test
