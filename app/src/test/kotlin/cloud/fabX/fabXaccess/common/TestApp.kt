@@ -23,6 +23,25 @@ internal fun withTestApp(
 
     val setupCorrelationId = newCorrelationId()
 
+    val memberUserId = newUserId()
+    val memberCreated = UserCreated(
+        memberUserId,
+        SystemActorId,
+        setupCorrelationId,
+        firstName = "Member",
+        lastName = "",
+        wikiName = "member"
+    )
+
+    val memberUsernamePasswordIdentityAdded = UsernamePasswordIdentityAdded(
+        memberUserId,
+        2,
+        SystemActorId,
+        setupCorrelationId,
+        username = "member",
+        hash = "GTs+xQn4hIhy4gEKY0xPE6yaJVTesoxzBPk7izh0+pQ=" // password: s3cr3t
+    )
+
     val adminUserId = newUserId()
     val adminCreated = UserCreated(
         adminUserId,
@@ -50,8 +69,9 @@ internal fun withTestApp(
         isAdmin = true
     )
 
-
     listOf(
+        memberCreated,
+        memberUsernamePasswordIdentityAdded,
         adminCreated,
         adminUsernamePasswordIdentityAdded,
         adminIsAdminChanged
@@ -67,10 +87,13 @@ internal fun withTestApp(
 }
 
 @InternalAPI
+internal fun TestApplicationRequest.addMemberAuth() = addBasicAuth("member", "s3cr3t")
+
+@InternalAPI
 internal fun TestApplicationRequest.addAdminAuth() = addBasicAuth("admin", "super\$ecr3t")
 
 @InternalAPI
-private fun TestApplicationRequest.addBasicAuth(user: String, password: String) {
+internal fun TestApplicationRequest.addBasicAuth(user: String, password: String) {
     val encoded = "$user:$password".toByteArray(Charsets.UTF_8).encodeBase64()
     addHeader(HttpHeaders.Authorization, "Basic $encoded")
 }
