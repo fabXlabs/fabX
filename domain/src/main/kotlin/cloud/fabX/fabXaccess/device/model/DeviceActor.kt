@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 /**
  * An acting device. Sometimes acting on behalf of a User.
  */
+// TODO acting on behalf of a user
 data class DeviceActor(
     val deviceId: DeviceId,
     val mac: String

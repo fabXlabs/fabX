@@ -48,9 +48,8 @@ internal class QualificationControllerGetTest {
     ) {
         this.gettingQualification = gettingQualification
 
-        // TODO replace by non-admin
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-            .thenReturn(UserPrincipalFixture.admin())
+            .thenReturn(UserPrincipalFixture.member())
 
         RestModule.reset()
         RestModule.overrideAuthenticationService(authenticationService)

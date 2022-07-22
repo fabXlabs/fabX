@@ -59,7 +59,7 @@ class QualificationIntegrationTest {
 
         // when
         val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addAdminAuth()
+            addMemberAuth()
         }
 
         // then
@@ -80,7 +80,7 @@ class QualificationIntegrationTest {
 
         // when
         val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addAdminAuth()
+            addMemberAuth()
         }
 
         // then

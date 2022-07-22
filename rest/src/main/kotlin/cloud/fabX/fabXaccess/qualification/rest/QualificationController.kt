@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
+import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
@@ -24,8 +25,7 @@ class QualificationController(
         route("/qualification") {
             get("") {
                 call.respondWithErrorHandler(
-                    // TODO allow any authentication
-                    readAdminAuthentication()
+                    readMemberAuthentication()
                         .map { admin ->
                             gettingQualification
                                 .getAll(
@@ -42,10 +42,9 @@ class QualificationController(
                     ?.let { QualificationId(it) }
                     ?.let { id ->
                         call.respondWithErrorHandler(
-                            // TODO allow any authentication
-                            readAdminAuthentication()
-                                .flatMap { admin ->
-                                    gettingQualification.getById(admin, newCorrelationId(), id)
+                            readMemberAuthentication()
+                                .flatMap { member ->
+                                    gettingQualification.getById(member, newCorrelationId(), id)
                                         .map { it.toRestModel() }
                                 }
                         )

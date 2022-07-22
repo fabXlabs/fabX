@@ -5,7 +5,10 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.logger
 import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.model.Instructor
+import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
 import io.ktor.application.ApplicationCall
@@ -21,5 +24,29 @@ internal fun PipelineContext<*, ApplicationCall>.readAdminAuthentication(): Eith
     call.principal<ErrorPrincipal>()?.let { errorPrincipal ->
         return errorPrincipal.error.left()
     }
-    return Error.NotAuthenticated("Required basic authentication not found.").left()
+    return Error.NotAuthenticated("Required authentication not found.").left()
+}
+
+internal fun PipelineContext<*, ApplicationCall>.readInstructorAuthentication(): Either<Error, Instructor> {
+    call.principal<UserPrincipal>()?.let { userPrincipal ->
+        return userPrincipal.right()
+            .flatMap { it.asInstructor() }
+    }
+    call.principal<ErrorPrincipal>()?.let { errorPrincipal ->
+        return errorPrincipal.error.left()
+    }
+    return Error.NotAuthenticated("Required authentication not found.").left()
+}
+
+internal fun PipelineContext<*, ApplicationCall>.readMemberAuthentication(): Either<Error, Member> {
+    logger().debug("trying to read member authentication")
+
+    call.principal<UserPrincipal>()?.let { userPrincipal ->
+        return userPrincipal.right()
+            .map { it.asMember() }
+    }
+    call.principal<ErrorPrincipal>()?.let { errorPrincipal ->
+        return errorPrincipal.error.left()
+    }
+    return Error.NotAuthenticated("Required authentication not found.").left()
 }
