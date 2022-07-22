@@ -1,11 +1,12 @@
 package cloud.fabX.fabXaccess.tool.application
 
-import arrow.core.Option
+import arrow.core.Either
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolType
@@ -19,7 +20,6 @@ class AddingTool {
     private val log = logger()
     private val toolRepository = DomainModule.toolRepository()
 
-    // TODO return id of created entity
     fun addTool(
         actor: Admin,
         correlationId: CorrelationId,
@@ -29,23 +29,26 @@ class AddingTool {
         idleState: IdleState,
         wikiLink: String,
         requiredQualifications: Set<QualificationId>
-    ): Option<Error> {
+    ): Either<Error, ToolId> {
         log.debug("addTool...")
 
+        val sourcingEvent = Tool.addNew(
+            actor,
+            correlationId,
+            name,
+            type,
+            time,
+            idleState,
+            wikiLink,
+            requiredQualifications
+        )
+
         return toolRepository
-            .store(
-                Tool.addNew(
-                    actor,
-                    correlationId,
-                    name,
-                    type,
-                    time,
-                    idleState,
-                    wikiLink,
-                    requiredQualifications
-                )
-            )
-            .tapNone { log.debug("...addTool done") }
-            .tap { log.debug("...addTool error: $it") }
+            .store(sourcingEvent)
+            .toEither { }
+            .swap()
+            .map { sourcingEvent.aggregateRootId }
+            .tap { log.debug("...addTool done") }
+            .tapLeft { log.debug("...addTool error: $it") }
     }
 }

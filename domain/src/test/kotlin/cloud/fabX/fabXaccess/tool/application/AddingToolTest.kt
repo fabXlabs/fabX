@@ -15,8 +15,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isNone
-import isSome
+import isLeft
+import isRight
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -89,7 +89,9 @@ internal class AddingToolTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(toolId)
     }
 
     @Test
@@ -133,7 +135,7 @@ internal class AddingToolTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }
