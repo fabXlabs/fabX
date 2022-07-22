@@ -1,11 +1,12 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
+import arrow.core.Either
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.User
 
@@ -18,14 +19,13 @@ class AddingUser {
     private val userRepository = DomainModule.userRepository()
     private val gettingUserByWikiName = DomainModule.gettingUserByWikiName()
 
-    // TODO return id of created entity
     fun addUser(
         actor: Admin,
         correlationId: CorrelationId,
         firstName: String,
         lastName: String,
         wikiName: String
-    ): Option<Error> {
+    ): Either<Error, UserId> {
         log.debug("addUser...")
 
         return User
@@ -39,12 +39,10 @@ class AddingUser {
             )
             .flatMap {
                 userRepository.store(it)
-                    .toEither { }
+                    .toEither { it.aggregateRootId }
                     .swap()
             }
-            .swap()
-            .orNone()
-            .tapNone { log.debug("...addUser done") }
-            .tap { log.error("...addUser error: $it") }
+            .tap { log.debug("...addUser done") }
+            .tapLeft { log.error("...addUser error: $it") }
     }
 }

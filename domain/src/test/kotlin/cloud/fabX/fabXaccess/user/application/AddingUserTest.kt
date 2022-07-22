@@ -17,7 +17,9 @@ import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import isLeft
 import isNone
+import isRight
 import isSome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -89,7 +91,9 @@ internal class AddingUserTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(userId)
     }
 
     @Test
@@ -114,7 +118,7 @@ internal class AddingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedDomainError)
     }
 
@@ -153,7 +157,7 @@ internal class AddingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }
