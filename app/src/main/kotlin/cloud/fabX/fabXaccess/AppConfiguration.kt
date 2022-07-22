@@ -62,6 +62,7 @@ object AppConfiguration {
 
     private lateinit var gettingQualification: GettingQualification
     private lateinit var addingQualification: AddingQualification
+    private lateinit var gettingUserByIdentityService: cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 
     init {
         configure()
@@ -111,6 +112,7 @@ object AppConfiguration {
         // get domain services
         gettingQualification = DomainModule.gettingQualification()
         addingQualification = DomainModule.addingQualification()
+        gettingUserByIdentityService = DomainModule.gettingUserByIdentityService()
 
         configureRest()
 
@@ -157,6 +159,7 @@ object AppConfiguration {
         RestModule.configureLoggerFactory(loggerFactory)
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
+        RestModule.configureGettingUserByIdentity(gettingUserByIdentityService)
     }
 
     internal fun userRepository(): UserRepository = userRepository

@@ -1,15 +1,15 @@
 package cloud.fabX.fabXaccess.qualification.rest
 
-import cloud.fabX.fabXaccess.RestModule
+import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import io.ktor.application.call
-import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -23,13 +23,17 @@ class QualificationController(
     val routes: Route.() -> Unit = {
         route("/qualification") {
             get("") {
-                call.respond(
-                    gettingQualification
-                        .getAll(
-                            RestModule.fakeActor,
-                            newCorrelationId()
-                        )
-                        .map { it.toRestModel() }
+                call.respondWithErrorHandler(
+                    // TODO allow any authentication
+                    readAdminAuthentication()
+                        .map { admin ->
+                            gettingQualification
+                                .getAll(
+                                    admin,
+                                    newCorrelationId()
+                                )
+                                .map { it.toRestModel() }
+                        }
                 )
             }
 
@@ -38,8 +42,12 @@ class QualificationController(
                     ?.let { QualificationId(it) }
                     ?.let { id ->
                         call.respondWithErrorHandler(
-                            gettingQualification.getById(RestModule.fakeActor, newCorrelationId(), id)
-                                .map { it.toRestModel() }
+                            // TODO allow any authentication
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    gettingQualification.getById(admin, newCorrelationId(), id)
+                                        .map { it.toRestModel() }
+                                }
                         )
                     }
             }
@@ -47,14 +55,19 @@ class QualificationController(
             post("") {
                 readBody<QualificationCreationDetails>()?.let {
                     call.respondWithErrorHandler(
-                        addingQualification.addQualification(
-                            RestModule.fakeActor,
-                            newCorrelationId(),
-                            it.name,
-                            it.description,
-                            it.colour,
-                            it.orderNr
-                        )
+                        readAdminAuthentication()
+                            .flatMap { admin ->
+                                addingQualification.addQualification(
+                                    admin,
+                                    newCorrelationId(),
+                                    it.name,
+                                    it.description,
+                                    it.colour,
+                                    it.orderNr
+                                )
+                                    .toEither { }
+                                    .swap()
+                            }
                     )
                 }
             }

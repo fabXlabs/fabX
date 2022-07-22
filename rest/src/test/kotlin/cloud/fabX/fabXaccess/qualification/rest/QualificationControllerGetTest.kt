@@ -8,15 +8,20 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.RestModule
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.user.rest.AuthenticationService
+import cloud.fabX.fabXaccess.user.rest.UserPrincipalFixture
+import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
+import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,19 +31,29 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
+@InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
 internal class QualificationControllerGetTest {
     private lateinit var gettingQualification: GettingQualification
 
+    private val username = "some.one"
+    private val password = "supersecret123"
+
     @BeforeEach
     fun `configure RestModule`(
         @Mock gettingQualification: GettingQualification,
-        @Mock addingQualification: AddingQualification
+        @Mock addingQualification: AddingQualification,
+        @Mock authenticationService: AuthenticationService
     ) {
         this.gettingQualification = gettingQualification
 
+        // TODO replace by non-admin
+        whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+            .thenReturn(UserPrincipalFixture.admin())
+
         RestModule.reset()
+        RestModule.overrideAuthenticationService(authenticationService)
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
     }
@@ -50,7 +65,9 @@ internal class QualificationControllerGetTest {
             .thenReturn(setOf())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification")
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
+            addBasicAuth(username, password)
+        }
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
@@ -105,7 +122,9 @@ internal class QualificationControllerGetTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification")
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
+            addBasicAuth(username, password)
+        }
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
@@ -141,7 +160,9 @@ internal class QualificationControllerGetTest {
             .thenReturn(qualification.right())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}")
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
+            addBasicAuth(username, password)
+        }
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
@@ -161,7 +182,9 @@ internal class QualificationControllerGetTest {
             .thenReturn(error.left())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}")
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
+            addBasicAuth(username, password)
+        }
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)

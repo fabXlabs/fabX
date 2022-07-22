@@ -2,15 +2,18 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.common.model.newUserId
 import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
-import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
+import io.ktor.auth.Authentication
+import io.ktor.auth.authenticate
+import io.ktor.auth.basic
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
@@ -28,19 +31,21 @@ object RestModule {
     // external configuration
     private var publicPort: Int? = null
     private var loggerFactory: LoggerFactory? = null
+    private var gettingUserByIdentity: GettingUserByIdentity? = null
     private var gettingQualification: GettingQualification? = null
     private var addingQualification: AddingQualification? = null
 
+    // internal
+    private var authenticationService: AuthenticationService? = null
+
     // controller
     private var qualificationController: QualificationController? = null
-
-    // TODO extract authentication from request
-    internal val fakeActor = Admin(newUserId(), "some.admin")
 
     fun isFullyConfigured(): Boolean {
         return try {
             require(publicPort)
             require(loggerFactory)
+            require(gettingUserByIdentity)
             require(gettingQualification)
             require(addingQualification)
 
@@ -59,6 +64,10 @@ object RestModule {
         this.loggerFactory = loggerFactory
     }
 
+    fun configureGettingUserByIdentity(gettingUserByIdentity: GettingUserByIdentity) {
+        this.gettingUserByIdentity = gettingUserByIdentity
+    }
+
     fun configureGettingQualification(gettingQualification: GettingQualification) {
         this.gettingQualification = gettingQualification
     }
@@ -69,6 +78,27 @@ object RestModule {
 
     internal fun loggerFactory(): LoggerFactory {
         return require(loggerFactory)
+    }
+
+    /**
+     * Only for testing!
+     */
+    internal fun overrideAuthenticationService(authenticationService: AuthenticationService) {
+        this.authenticationService = authenticationService
+    }
+
+    private fun authenticationService(): AuthenticationService {
+        val instance = authenticationService
+
+        return if (instance != null) {
+            instance
+        } else {
+            val newInstance = AuthenticationService(
+                require(gettingUserByIdentity)
+            )
+            authenticationService = newInstance
+            newInstance
+        }
     }
 
     private fun qualificationController(): QualificationController {
@@ -101,9 +131,20 @@ object RestModule {
             }
         }
 
+        install(Authentication) {
+            basic("api-basic") {
+                realm = "fabX"
+                validate { credentials ->
+                    authenticationService().basic(credentials)
+                }
+            }
+        }
+
         routing {
-            route("/api/v1") {
-                qualificationController().routes(this)
+            authenticate("api-basic") {
+                route("/api/v1") {
+                    qualificationController().routes(this)
+                }
             }
         }
     }
@@ -128,6 +169,7 @@ object RestModule {
         gettingQualification = null
         addingQualification = null
         qualificationController = null
+        authenticationService = null
     }
 
     private inline fun <reified T : Any> require(value: T?): T =

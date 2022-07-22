@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import isLeft
 import isRight
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
@@ -41,54 +42,109 @@ internal class GettingUserByIdentityTest {
         testee = GettingUserByIdentity()
     }
 
-    @Test
-    fun `when getting by identity then returns user from repository`() {
-        // given
-        val identity = UsernamePasswordIdentity(
-            "some.one",
-            "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
-        )
-        val user = UserFixture.arbitrary()
+    @Nested
+    internal inner class GivenCorrelationId {
+        @Test
+        fun `when getting by identity then returns user from repository`() {
+            // given
+            val identity = UsernamePasswordIdentity(
+                "some.one",
+                "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
+            )
+            val user = UserFixture.arbitrary()
 
-        whenever(gettingUserByIdentity.getByIdentity(identity))
-            .thenReturn(user.right())
+            whenever(gettingUserByIdentity.getByIdentity(identity))
+                .thenReturn(user.right())
 
-        // when
-        val result = testee.getUserByIdentity(
-            SystemActor,
-            correlationId,
-            identity
-        )
+            // when
+            val result = testee.getUserByIdentity(
+                SystemActor,
+                correlationId,
+                identity
+            )
 
-        // then
-        assertThat(result)
-            .isRight()
-            .isSameAs(user)
+            // then
+            assertThat(result)
+                .isRight()
+                .isSameAs(user)
+        }
+
+        @Test
+        fun `given user not exists when getting by identity then returns error`() {
+            // given
+            val identity = UsernamePasswordIdentity(
+                "some.one",
+                "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
+            )
+
+            val error = ErrorFixture.arbitrary()
+
+            whenever(gettingUserByIdentity.getByIdentity(identity))
+                .thenReturn(error.left())
+
+            // when
+            val result = testee.getUserByIdentity(
+                SystemActor,
+                correlationId,
+                identity
+            )
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isSameAs(error)
+        }
     }
 
-    @Test
-    fun `given user not exists when getting by identity then returns error`() {
-        // given
-        val identity = UsernamePasswordIdentity(
-            "some.one",
-            "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
-        )
+    @Nested
+    internal inner class GivenNoCorrelationId {
+        @Test
+        fun `when getting by identity then returns user from repository`() {
+            // given
+            val identity = UsernamePasswordIdentity(
+                "some.one",
+                "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
+            )
+            val user = UserFixture.arbitrary()
 
-        val error = ErrorFixture.arbitrary()
+            whenever(gettingUserByIdentity.getByIdentity(identity))
+                .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity.getByIdentity(identity))
-            .thenReturn(error.left())
+            // when
+            val result = testee.getUserByIdentity(
+                SystemActor,
+                identity
+            )
 
-        // when
-        val result = testee.getUserByIdentity(
-            SystemActor,
-            correlationId,
-            identity
-        )
+            // then
+            assertThat(result)
+                .isRight()
+                .isSameAs(user)
+        }
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isSameAs(error)
+        @Test
+        fun `given user not exists when getting by identity then returns error`() {
+            // given
+            val identity = UsernamePasswordIdentity(
+                "some.one",
+                "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
+            )
+
+            val error = ErrorFixture.arbitrary()
+
+            whenever(gettingUserByIdentity.getByIdentity(identity))
+                .thenReturn(error.left())
+
+            // when
+            val result = testee.getUserByIdentity(
+                SystemActor,
+                identity
+            )
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isSameAs(error)
+        }
     }
 }

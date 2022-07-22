@@ -1,6 +1,10 @@
 package cloud.fabX.fabXaccess.common.model
 
 sealed class Error(open val message: String, open val parameters: Map<String, String> = emptyMap()) {
+    data class NotAuthenticated(
+        override val message: String
+    ) : Error(message)
+
     data class UserNotFound(
         override val message: String,
         val userId: UserId

@@ -9,7 +9,13 @@ import io.ktor.response.respond
 
 internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHandler(result: Either<Error, T>) {
     result
-        .tap { respond(it) }
+        .tap {
+            if (it == Unit) {
+                respond(HttpStatusCode.OK)
+            } else {
+                respond(it)
+            }
+        }
         .tapLeft { handleError(it) }
 }
 
@@ -22,7 +28,10 @@ internal suspend fun ApplicationCall.respondWithErrorHandler(result: Option<Erro
 internal suspend fun ApplicationCall.handleError(error: Error) {
     when (error) {
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
+        is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
+        is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         // TODO handle all cases
-        else -> respond(HttpStatusCode.InternalServerError, "unmapped error")
+        else -> respond(HttpStatusCode.InternalServerError, "unmapped error: ${error::class.qualifiedName}")
     }
 }

@@ -57,6 +57,7 @@ object DomainModule {
     private var deviceDomainEventHandler: DeviceDomainEventHandler? = null
     private var gettingQualification: GettingQualification? = null
     private var addingQualification: AddingQualification? = null
+    private var gettingUserByIdentityService: cloud.fabX.fabXaccess.user.application.GettingUserByIdentity? = null
 
 
     @Suppress("DuplicatedCode")
@@ -120,6 +121,7 @@ object DomainModule {
         deviceDomainEventHandler = null
         gettingQualification = null
         addingQualification = null
+        gettingUserByIdentityService = null
     }
 
     fun configureLoggerFactory(loggerFactory: LoggerFactory) {
@@ -238,6 +240,17 @@ object DomainModule {
         } else {
             val newService = AddingQualification()
             addingQualification = newService
+            newService
+        }
+    }
+
+    fun gettingUserByIdentityService(): cloud.fabX.fabXaccess.user.application.GettingUserByIdentity {
+        val service = gettingUserByIdentityService
+        return if (service != null) {
+            service
+        } else {
+            val newService = cloud.fabX.fabXaccess.user.application.GettingUserByIdentity()
+            gettingUserByIdentityService = newService
             newService
         }
     }

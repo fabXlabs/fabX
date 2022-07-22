@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.common.withTestApp
@@ -14,9 +15,11 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
+import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.Test
 
+@InternalAPI
 @ExperimentalSerializationApi
 class QualificationIntegrationTest {
 
@@ -26,7 +29,9 @@ class QualificationIntegrationTest {
         givenQualification()
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification")
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
+            addAdminAuth()
+        }
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
@@ -45,7 +50,9 @@ class QualificationIntegrationTest {
         val expectedQualificationNames = (0..10).map { "qualification $it" }.toSet()
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification")
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
+            addAdminAuth()
+        }
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
@@ -68,6 +75,7 @@ class QualificationIntegrationTest {
 
         // when
         val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
+            addAdminAuth()
             setBody(incompleteRequestBody)
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         }

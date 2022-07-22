@@ -26,4 +26,13 @@ class GettingUserByIdentity {
 
         return gettingUserByIdentity.getByIdentity(identity)
     }
+
+    fun getUserByIdentity(
+        actor: SystemActor,
+        identity: UserIdentity
+    ): Either<Error, User> {
+        log.debug("getUserByIdentity (actor: $actor)...")
+
+        return gettingUserByIdentity.getByIdentity(identity)
+    }
 }
