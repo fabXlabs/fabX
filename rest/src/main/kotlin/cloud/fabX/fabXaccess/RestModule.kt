@@ -4,6 +4,7 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
+import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
@@ -34,6 +35,7 @@ object RestModule {
     private var gettingUserByIdentity: GettingUserByIdentity? = null
     private var gettingQualification: GettingQualification? = null
     private var addingQualification: AddingQualification? = null
+    private var deletingQualification: DeletingQualification? = null
 
     // internal
     private var authenticationService: AuthenticationService? = null
@@ -48,6 +50,7 @@ object RestModule {
             require(gettingUserByIdentity)
             require(gettingQualification)
             require(addingQualification)
+            require(deletingQualification)
 
             true
         } catch (e: IllegalArgumentException) {
@@ -74,6 +77,10 @@ object RestModule {
 
     fun configureAddingQualification(addingQualification: AddingQualification) {
         this.addingQualification = addingQualification
+    }
+
+    fun configureDeletingQualification(deletingQualification: DeletingQualification) {
+        this.deletingQualification = deletingQualification
     }
 
     internal fun loggerFactory(): LoggerFactory {
@@ -109,7 +116,8 @@ object RestModule {
         } else {
             val newInstance = QualificationController(
                 require(gettingQualification),
-                require(addingQualification)
+                require(addingQualification),
+                require(deletingQualification)
             )
             qualificationController = newInstance
             newInstance
@@ -170,6 +178,7 @@ object RestModule {
         addingQualification = null
         qualificationController = null
         authenticationService = null
+        deletingQualification = null
     }
 
     private inline fun <reified T : Any> require(value: T?): T =

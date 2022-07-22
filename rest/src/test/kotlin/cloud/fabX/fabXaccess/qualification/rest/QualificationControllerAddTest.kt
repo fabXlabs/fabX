@@ -1,18 +1,19 @@
 package cloud.fabX.fabXaccess.qualification.rest
 
-import arrow.core.None
+import arrow.core.getOrElse
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.RestModule
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
+import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
-import cloud.fabX.fabXaccess.user.rest.UserPrincipalFixture
+import cloud.fabX.fabXaccess.user.rest.UserPrincipal
 import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -37,25 +38,31 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class QualificationControllerAddTest {
     private lateinit var addingQualification: AddingQualification
+    private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
     private val password = "supersecret123"
+
+    private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
     fun `configure RestModule`(
         @Mock gettingQualification: GettingQualification,
         @Mock addingQualification: AddingQualification,
+        @Mock deletingQualification: DeletingQualification,
         @Mock authenticationService: AuthenticationService
     ) {
         this.addingQualification = addingQualification
+        this.authenticationService = authenticationService
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-            .thenReturn(UserPrincipalFixture.admin())
+            .thenReturn(UserPrincipal(actingUser))
 
         RestModule.reset()
         RestModule.overrideAuthenticationService(authenticationService)
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
+        RestModule.configureDeletingQualification(deletingQualification)
     }
 
     @Test
@@ -72,7 +79,7 @@ internal class QualificationControllerAddTest {
 
         whenever(
             addingQualification.addQualification(
-                any(),
+                eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(name),
                 eq(description),

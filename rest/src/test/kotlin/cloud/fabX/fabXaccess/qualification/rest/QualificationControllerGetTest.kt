@@ -12,11 +12,13 @@ import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
+import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
-import cloud.fabX.fabXaccess.user.rest.UserPrincipalFixture
+import cloud.fabX.fabXaccess.user.rest.UserPrincipal
 import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -36,31 +38,37 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class QualificationControllerGetTest {
     private lateinit var gettingQualification: GettingQualification
+    private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
     private val password = "supersecret123"
+
+    private val actingUser = UserFixture.arbitrary()
 
     @BeforeEach
     fun `configure RestModule`(
         @Mock gettingQualification: GettingQualification,
         @Mock addingQualification: AddingQualification,
+        @Mock deletingQualification: DeletingQualification,
         @Mock authenticationService: AuthenticationService
     ) {
         this.gettingQualification = gettingQualification
+        this.authenticationService = authenticationService
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-            .thenReturn(UserPrincipalFixture.member())
+            .thenReturn(UserPrincipal(actingUser))
 
         RestModule.reset()
         RestModule.overrideAuthenticationService(authenticationService)
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
+        RestModule.configureDeletingQualification(deletingQualification)
     }
 
     @Test
     fun `given no qualifications when get qualifications then returns empty set`() = withTestApp {
         // given
-        whenever(gettingQualification.getAll(any(), any()))
+        whenever(gettingQualification.getAll(eq(actingUser.asMember()), any()))
             .thenReturn(setOf())
 
         // when
@@ -99,7 +107,7 @@ internal class QualificationControllerGetTest {
             2
         )
 
-        whenever(gettingQualification.getAll(any(), any()))
+        whenever(gettingQualification.getAll(eq(actingUser.asMember()), any()))
             .thenReturn(setOf(qualification1, qualification2))
 
         val mappedQualification1 = Qualification(
@@ -155,7 +163,7 @@ internal class QualificationControllerGetTest {
             1
         )
 
-        whenever(gettingQualification.getById(any(), any(), eq(qualificationId)))
+        whenever(gettingQualification.getById(eq(actingUser.asMember()), any(), eq(qualificationId)))
             .thenReturn(qualification.right())
 
         // when
@@ -177,7 +185,7 @@ internal class QualificationControllerGetTest {
         val qualificationId = QualificationIdFixture.arbitrary()
         val error = Error.QualificationNotFound("msg", qualificationId)
 
-        whenever(gettingQualification.getById(any(), any(), eq(qualificationId)))
+        whenever(gettingQualification.getById(eq(actingUser.asMember()), any(), eq(qualificationId)))
             .thenReturn(error.left())
 
         // when

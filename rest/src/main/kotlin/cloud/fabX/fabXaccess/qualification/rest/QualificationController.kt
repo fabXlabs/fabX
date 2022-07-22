@@ -9,16 +9,19 @@ import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
+import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import io.ktor.application.call
 import io.ktor.routing.Route
+import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
 
 class QualificationController(
     private val gettingQualification: GettingQualification,
-    private val addingQualification: AddingQualification
+    private val addingQualification: AddingQualification,
+    private val deletingQualification: DeletingQualification
 ) {
 
     val routes: Route.() -> Unit = {
