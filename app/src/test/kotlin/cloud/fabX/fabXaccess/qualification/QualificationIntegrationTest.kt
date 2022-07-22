@@ -53,7 +53,7 @@ class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualifications when get qualifications then returns qualifications`() = withTestApp {
+    fun `given qualification when get qualifications then returns qualifications`() = withTestApp {
         // given
         givenQualification()
 
@@ -90,6 +90,25 @@ class QualificationIntegrationTest {
             .isJson<Set<Qualification>>()
             .transform { it.map { q -> q.name }.toSet() }
             .isEqualTo(expectedQualificationNames)
+    }
+
+    @Test
+    fun `given qualification when get qualification by id then returns qualification`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+
+        // when
+        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/$qualificationId") {
+            addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Qualification>()
+            .transform { it.name }
+            .isEqualTo("qualification")
     }
 
     @Test

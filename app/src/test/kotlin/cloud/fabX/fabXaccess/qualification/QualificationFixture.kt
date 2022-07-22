@@ -23,7 +23,7 @@ internal fun TestApplicationEngine.givenQualification(
     description: String = "some qualification",
     colour: String = "#aabbcc",
     orderNr: Int = 42
-) {
+): String {
     val requestBody = QualificationCreationDetails(name, description, colour, orderNr)
 
     val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
@@ -33,12 +33,11 @@ internal fun TestApplicationEngine.givenQualification(
     }
 
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-
-    // TODO return id (which requires endpoint returning id)?
+    return result.response.content!!
 }
 
 @InternalAPI
 @ExperimentalSerializationApi
-internal fun TestApplicationEngine.givenQualifications(count: Int) {
-    (0..count).map { givenQualification(name = "qualification $it", description = "some qualification $it") }
+internal fun TestApplicationEngine.givenQualifications(count: Int): List<String> {
+    return (0..count).map { givenQualification(name = "qualification $it", description = "some qualification $it") }
 }
