@@ -18,6 +18,7 @@ class AddingUser {
     private val userRepository = DomainModule.userRepository()
     private val gettingUserByWikiName = DomainModule.gettingUserByWikiName()
 
+    // TODO return id of created entity
     fun addUser(
         actor: Admin,
         correlationId: CorrelationId,

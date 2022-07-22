@@ -4,6 +4,7 @@ import arrow.core.None
 import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
@@ -12,7 +13,8 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isNone
+import isLeft
+import isRight
 import isSome
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -80,7 +82,9 @@ internal class AddingQualificationTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(qualificationId)
     }
 
     @Test
@@ -118,7 +122,7 @@ internal class AddingQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

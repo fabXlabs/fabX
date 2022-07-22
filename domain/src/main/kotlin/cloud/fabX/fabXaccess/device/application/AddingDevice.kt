@@ -17,6 +17,7 @@ class AddingDevice {
     private val log = logger()
     private val deviceRepository = DomainModule.deviceRepository()
 
+    // TODO return id of created entity
     fun addDevice(
         actor: Admin,
         correlationId: CorrelationId,

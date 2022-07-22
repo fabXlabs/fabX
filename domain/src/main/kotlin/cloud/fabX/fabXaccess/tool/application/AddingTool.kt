@@ -19,6 +19,7 @@ class AddingTool {
     private val log = logger()
     private val toolRepository = DomainModule.toolRepository()
 
+    // TODO return id of created entity
     fun addTool(
         actor: Admin,
         correlationId: CorrelationId,

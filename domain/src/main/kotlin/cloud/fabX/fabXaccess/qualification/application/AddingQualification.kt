@@ -1,10 +1,11 @@
 package cloud.fabX.fabXaccess.qualification.application
 
-import arrow.core.Option
+import arrow.core.Either
 import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.application.logger
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.user.model.Admin
 
@@ -23,21 +24,24 @@ class AddingQualification {
         description: String,
         colour: String,
         orderNr: Int
-    ): Option<Error> {
+    ): Either<Error, QualificationId> {
         log.debug("addQualification...")
 
+        val sourcingEvent = Qualification.addNew(
+            actor,
+            correlationId,
+            name,
+            description,
+            colour,
+            orderNr
+        )
+
         return qualificationRepository
-            .store(
-                Qualification.addNew(
-                    actor,
-                    correlationId,
-                    name,
-                    description,
-                    colour,
-                    orderNr
-                )
-            )
-            .tapNone { log.debug("...addQualification done") }
-            .tap { log.error("...addQualification error: $it") }
+            .store(sourcingEvent)
+            .toEither { }
+            .swap()
+            .map { sourcingEvent.aggregateRootId }
+            .tap { log.debug("...addQualification done") }
+            .tapLeft { log.error("...addQualification error: $it") }
     }
 }

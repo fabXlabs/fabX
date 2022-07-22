@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.qualification.rest
 
 import arrow.core.None
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
@@ -9,6 +10,7 @@ import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.UserPrincipalFixture
 import io.ktor.auth.UserPasswordCredential
@@ -66,6 +68,8 @@ internal class QualificationControllerAddTest {
 
         val requestBody = QualificationCreationDetails(name, description, colour, orderNr)
 
+        val qualificationId = QualificationIdFixture.arbitrary()
+
         whenever(
             addingQualification.addQualification(
                 any(),
@@ -75,7 +79,7 @@ internal class QualificationControllerAddTest {
                 eq(colour),
                 eq(orderNr)
             )
-        ).thenReturn(None)
+        ).thenReturn(qualificationId.right())
 
         // when
         val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
@@ -86,6 +90,6 @@ internal class QualificationControllerAddTest {
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content).isNull()
+        assertThat(result.response.content).isEqualTo(qualificationId.serialize())
     }
 }

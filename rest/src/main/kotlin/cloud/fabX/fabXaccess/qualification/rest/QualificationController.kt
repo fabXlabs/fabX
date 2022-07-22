@@ -64,9 +64,8 @@ class QualificationController(
                                     it.colour,
                                     it.orderNr
                                 )
-                                    .toEither { }
-                                    .swap()
                             }
+                            .map { it.serialize() }
                     )
                 }
             }
