@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
@@ -19,6 +20,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.util.InternalAPI
+import java.util.UUID
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -161,5 +163,67 @@ class QualificationIntegrationTest {
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `given qualification when deleting qualification then returns http ok`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/qualification/$qualificationId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+    }
+
+    @Test
+    fun `given unknown qualification when deleting qualification then returns http not found`() = withTestApp {
+        // given
+        val qualificationId = UUID.fromString("7f635917-048c-41e2-8946-35070a20e539")
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/qualification/$qualificationId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<RestError>()
+            .isEqualTo(
+                RestError(
+                    "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
+                    mapOf(
+                        "qualificationId" to qualificationId.toString()
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when deleting qualification then returns http forbidden`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/qualification/$qualificationId") {
+            addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<RestError>()
+            .isEqualTo(
+                RestError(
+                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
+                )
+            )
     }
 }

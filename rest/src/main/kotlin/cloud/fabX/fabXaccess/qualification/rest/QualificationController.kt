@@ -72,6 +72,25 @@ class QualificationController(
                     )
                 }
             }
+
+            delete("/{id}") {
+                readUUIDParameter("id")
+                    ?.let { QualificationId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    deletingQualification.deleteQualification(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                                        .toEither { }
+                                        .swap()
+                                }
+                        )
+                    }
+            }
         }
     }
 }
