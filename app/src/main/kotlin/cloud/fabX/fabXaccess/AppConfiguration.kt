@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.logging.LogbackLoggerFactory
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
+import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
@@ -62,6 +63,7 @@ object AppConfiguration {
 
     private lateinit var gettingQualification: GettingQualification
     private lateinit var addingQualification: AddingQualification
+    private lateinit var deletingQualification: DeletingQualification
     private lateinit var gettingUserByIdentityService: cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 
     init {
@@ -112,6 +114,7 @@ object AppConfiguration {
         // get domain services
         gettingQualification = DomainModule.gettingQualification()
         addingQualification = DomainModule.addingQualification()
+        deletingQualification = DomainModule.deletingQualification()
         gettingUserByIdentityService = DomainModule.gettingUserByIdentityService()
 
         configureRest()
@@ -159,6 +162,7 @@ object AppConfiguration {
         RestModule.configureLoggerFactory(loggerFactory)
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
+        RestModule.configureDeletingQualification(deletingQualification)
         RestModule.configureGettingUserByIdentity(gettingUserByIdentityService)
     }
 
