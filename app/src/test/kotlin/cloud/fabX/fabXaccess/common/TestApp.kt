@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common
 import cloud.fabX.fabXaccess.AppConfiguration
 import cloud.fabX.fabXaccess.RestModule
 import cloud.fabX.fabXaccess.common.model.SystemActorId
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.model.newUserId
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
@@ -14,6 +15,7 @@ import io.ktor.server.testing.TestApplicationRequest
 import io.ktor.server.testing.withTestApplication
 import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
+import java.util.UUID
 import kotlinx.coroutines.runBlocking
 
 internal fun withTestApp(
@@ -23,7 +25,7 @@ internal fun withTestApp(
 
     val setupCorrelationId = newCorrelationId()
 
-    val memberUserId = newUserId()
+    val memberUserId = UserId(UUID.fromString("c63b3a7d-bd18-4272-b4ed-4bcf9683c602"))
     val memberCreated = UserCreated(
         memberUserId,
         SystemActorId,
@@ -42,7 +44,7 @@ internal fun withTestApp(
         hash = "GTs+xQn4hIhy4gEKY0xPE6yaJVTesoxzBPk7izh0+pQ=" // password: s3cr3t
     )
 
-    val adminUserId = newUserId()
+    val adminUserId = UserId(UUID.fromString("337be01a-fee3-4938-8dc3-c801d37c0e95"))
     val adminCreated = UserCreated(
         adminUserId,
         SystemActorId,
@@ -76,8 +78,6 @@ internal fun withTestApp(
         adminUsernamePasswordIdentityAdded,
         adminIsAdminChanged
     ).forEach { AppConfiguration.userRepository().store(it) }
-
-    println(AppConfiguration.userRepository().getAll())
 
     runBlocking {
         withTestApplication(RestModule.moduleConfiguration) {
