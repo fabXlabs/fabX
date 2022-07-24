@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
@@ -56,6 +57,7 @@ object DomainModule {
     // own services
     private var userDomainEventHandler: UserDomainEventHandler? = null
     private var deviceDomainEventHandler: DeviceDomainEventHandler? = null
+    private var gettingUser: GettingUser? = null
     private var gettingQualification: GettingQualification? = null
     private var addingQualification: AddingQualification? = null
     private var deletingQualification: DeletingQualification? = null
@@ -121,6 +123,7 @@ object DomainModule {
 
         userDomainEventHandler = null
         deviceDomainEventHandler = null
+        gettingUser = null
         gettingQualification = null
         addingQualification = null
         deletingQualification = null
@@ -222,6 +225,17 @@ object DomainModule {
             val newHandler = DeviceDomainEventHandler()
             deviceDomainEventHandler = newHandler
             newHandler
+        }
+    }
+
+    fun gettingUser(): GettingUser {
+        val service = gettingUser
+        return if (service != null) {
+            service
+        } else {
+            val newService = GettingUser()
+            gettingUser = newService
+            newService
         }
     }
 

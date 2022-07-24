@@ -23,6 +23,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
@@ -60,6 +61,8 @@ object AppConfiguration {
     private lateinit var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification
 
     private lateinit var domainEventPublisher: SynchronousDomainEventPublisher
+
+    private lateinit var gettingUser: GettingUser
 
     private lateinit var gettingQualification: GettingQualification
     private lateinit var addingQualification: AddingQualification
@@ -112,6 +115,7 @@ object AppConfiguration {
         }
 
         // get domain services
+        gettingUser = DomainModule.gettingUser()
         gettingQualification = DomainModule.gettingQualification()
         addingQualification = DomainModule.addingQualification()
         deletingQualification = DomainModule.deletingQualification()
@@ -163,6 +167,7 @@ object AppConfiguration {
         RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
         RestModule.configureDeletingQualification(deletingQualification)
+        RestModule.configureGettingUser(gettingUser)
         RestModule.configureGettingUserByIdentity(gettingUserByIdentityService)
     }
 

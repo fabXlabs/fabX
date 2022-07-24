@@ -7,8 +7,10 @@ import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
+import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
+import cloud.fabX.fabXaccess.user.rest.UserController
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -32,6 +34,7 @@ object RestModule {
     // external configuration
     private var publicPort: Int? = null
     private var loggerFactory: LoggerFactory? = null
+    private var gettingUser: GettingUser? = null
     private var gettingUserByIdentity: GettingUserByIdentity? = null
     private var gettingQualification: GettingQualification? = null
     private var addingQualification: AddingQualification? = null
@@ -42,11 +45,13 @@ object RestModule {
 
     // controller
     private var qualificationController: QualificationController? = null
+    private var userController: UserController? = null
 
     fun isFullyConfigured(): Boolean {
         return try {
             require(publicPort)
             require(loggerFactory)
+            require(gettingUser)
             require(gettingUserByIdentity)
             require(gettingQualification)
             require(addingQualification)
@@ -65,6 +70,10 @@ object RestModule {
 
     fun configureLoggerFactory(loggerFactory: LoggerFactory) {
         this.loggerFactory = loggerFactory
+    }
+
+    fun configureGettingUser(gettingUser: GettingUser) {
+        this.gettingUser = gettingUser
     }
 
     fun configureGettingUserByIdentity(gettingUserByIdentity: GettingUserByIdentity) {
@@ -124,6 +133,20 @@ object RestModule {
         }
     }
 
+    private fun userController(): UserController {
+        val instance = userController
+
+        return if (instance != null) {
+            instance
+        } else {
+            val newInstance = UserController(
+                require(gettingUser)
+            )
+            userController = newInstance
+            newInstance
+        }
+    }
+
     val moduleConfiguration: Application.() -> Unit = {
         install(ContentNegotiation) {
             json(Json {
@@ -152,6 +175,7 @@ object RestModule {
             authenticate("api-basic") {
                 route("/api/v1") {
                     qualificationController().routes(this)
+                    userController().routes(this)
                 }
             }
         }
@@ -172,13 +196,20 @@ object RestModule {
     }
 
     fun reset() {
+        // external
         publicPort = null
         loggerFactory = null
+        gettingUser = null
         gettingQualification = null
         addingQualification = null
-        qualificationController = null
-        authenticationService = null
         deletingQualification = null
+
+        // internal services
+        authenticationService = null
+
+        // internal controller
+        qualificationController = null
+        userController = null
     }
 
     private inline fun <reified T : Any> require(value: T?): T =

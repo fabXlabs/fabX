@@ -9,10 +9,9 @@ import cloud.fabX.fabXaccess.RestModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.mockAll
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
-import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
-import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -51,19 +50,15 @@ internal class QualificationControllerAddTest {
 
     @BeforeEach
     fun `configure RestModule`(
-        @Mock gettingQualification: GettingQualification,
         @Mock addingQualification: AddingQualification,
-        @Mock deletingQualification: DeletingQualification,
         @Mock authenticationService: AuthenticationService
     ) {
         this.addingQualification = addingQualification
         this.authenticationService = authenticationService
 
-        RestModule.reset()
+        mockAll()
         RestModule.overrideAuthenticationService(authenticationService)
-        RestModule.configureGettingQualification(gettingQualification)
         RestModule.configureAddingQualification(addingQualification)
-        RestModule.configureDeletingQualification(deletingQualification)
     }
 
     @Test

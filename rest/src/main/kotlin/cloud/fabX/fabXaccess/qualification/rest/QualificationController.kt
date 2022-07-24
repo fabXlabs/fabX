@@ -22,6 +22,7 @@ class QualificationController(
     private val gettingQualification: GettingQualification,
     private val addingQualification: AddingQualification,
     private val deletingQualification: DeletingQualification
+    // TODO changing qualification
 ) {
 
     val routes: Route.() -> Unit = {
@@ -29,10 +30,10 @@ class QualificationController(
             get("") {
                 call.respondWithErrorHandler(
                     readMemberAuthentication()
-                        .map { admin ->
+                        .map { member ->
                             gettingQualification
                                 .getAll(
-                                    admin,
+                                    member,
                                     newCorrelationId()
                                 )
                                 .map { it.toRestModel() }
