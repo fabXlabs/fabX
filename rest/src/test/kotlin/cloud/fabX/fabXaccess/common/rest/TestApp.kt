@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.common.rest
 
-import cloud.fabX.fabXaccess.RestModule
+import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.logging.LogbackLoggerFactory
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
@@ -14,21 +14,21 @@ import org.mockito.Mockito
 internal fun withTestApp(
     block: TestApplicationEngine.() -> Unit
 ) {
-    RestModule.configureLoggerFactory(LogbackLoggerFactory())
+    RestApp.configureLoggerFactory(LogbackLoggerFactory())
 
     runBlocking {
-        withTestApplication(RestModule.moduleConfiguration) {
+        withTestApplication(RestApp.moduleConfiguration) {
             block()
         }
     }
 }
 
 internal fun mockAll() {
-    RestModule.reset()
+    RestApp.reset()
 
-    RestModule.configureGettingUser(Mockito.mock(GettingUser::class.java))
+    RestApp.configureGettingUser(Mockito.mock(GettingUser::class.java))
 
-    RestModule.configureGettingQualification(Mockito.mock(GettingQualification::class.java))
-    RestModule.configureAddingQualification(Mockito.mock(AddingQualification::class.java))
-    RestModule.configureDeletingQualification(Mockito.mock(DeletingQualification::class.java))
+    RestApp.configureGettingQualification(Mockito.mock(GettingQualification::class.java))
+    RestApp.configureAddingQualification(Mockito.mock(AddingQualification::class.java))
+    RestApp.configureDeletingQualification(Mockito.mock(DeletingQualification::class.java))
 }

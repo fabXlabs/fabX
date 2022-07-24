@@ -4,12 +4,12 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
@@ -27,6 +27,7 @@ data class Qualification internal constructor(
 
     companion object {
         fun addNew(
+            qualificationIdFactory: QualificationIdFactory,
             actor: Admin,
             correlationId: CorrelationId,
             name: String,
@@ -35,7 +36,7 @@ data class Qualification internal constructor(
             orderNr: Int
         ): QualificationSourcingEvent {
             return QualificationCreated(
-                DomainModule.qualificationIdFactory().invoke(),
+                qualificationIdFactory.invoke(),
                 actor.id,
                 correlationId,
                 name,

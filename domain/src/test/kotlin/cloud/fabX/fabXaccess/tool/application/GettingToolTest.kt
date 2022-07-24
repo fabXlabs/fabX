@@ -4,13 +4,9 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isSameAs
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.device.application.GettingDevice
-import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
-import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolRepository

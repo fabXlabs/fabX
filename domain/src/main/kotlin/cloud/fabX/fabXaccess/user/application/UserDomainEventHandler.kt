@@ -1,20 +1,22 @@
 package cloud.fabX.fabXaccess.user.application
 
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
+import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
+import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
+import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 
-// TODO use DI library instead of creating service multiple times?
 class UserDomainEventHandler(
-    private val removingMemberQualification: RemovingMemberQualification = RemovingMemberQualification(),
-    private val removingInstructorQualification: RemovingInstructorQualification = RemovingInstructorQualification()
+    loggerFactory: LoggerFactory,
+    private val removingMemberQualification: RemovingMemberQualification,
+    private val removingInstructorQualification: RemovingInstructorQualification,
+    private val gettingUsersByMemberQualification: GettingUsersByMemberQualification,
+    private val gettingUsersByInstructorQualification: GettingUsersByInstructorQualification
 ) : DomainEventHandler {
 
-    private val log = logger()
-    private val gettingUsersByMemberQualification = DomainModule.gettingUsersByMemberQualification()
-    private val gettingUsersByInstructorQualification = DomainModule.gettingUsersByInstructorQualification()
+    private val log: Logger = loggerFactory.invoke(this::class.java)
 
     override fun handle(domainEvent: DomainEvent) {
         log.debug("ignoring event $domainEvent")

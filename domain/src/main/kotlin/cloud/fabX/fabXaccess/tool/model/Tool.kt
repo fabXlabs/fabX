@@ -3,12 +3,12 @@ package cloud.fabX.fabXaccess.tool.model
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
+import cloud.fabX.fabXaccess.common.model.ToolIdFactory
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
@@ -28,6 +28,7 @@ data class Tool internal constructor(
 
     companion object {
         fun addNew(
+            toolIdFactory: ToolIdFactory,
             actor: Admin,
             correlationId: CorrelationId,
             name: String,
@@ -38,7 +39,7 @@ data class Tool internal constructor(
             requiredQualifications: Set<QualificationId>
         ): ToolSourcingEvent {
             return ToolCreated(
-                DomainModule.toolIdFactory().invoke(),
+                toolIdFactory.invoke(),
                 actor.id,
                 correlationId,
                 name,

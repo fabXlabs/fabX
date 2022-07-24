@@ -5,7 +5,7 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import cloud.fabX.fabXaccess.RestModule
+import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
@@ -57,8 +57,8 @@ internal class QualificationControllerAddTest {
         this.authenticationService = authenticationService
 
         mockAll()
-        RestModule.overrideAuthenticationService(authenticationService)
-        RestModule.configureAddingQualification(addingQualification)
+        RestApp.overrideAuthenticationService(authenticationService)
+        RestApp.configureAddingQualification(addingQualification)
     }
 
     @Test

@@ -2,21 +2,22 @@ package cloud.fabX.fabXaccess.qualification.application
 
 import arrow.core.Option
 import arrow.core.flatMap
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
 
 /**
  * Service to handle changing qualification properties.
  */
-class ChangingQualification {
-
-    private val log = logger()
-    private val qualificationRepository = DomainModule.qualificationRepository()
+class ChangingQualification(
+    loggerFactory: LoggerFactory,
+    private val qualificationRepository: QualificationRepository
+) {
+    private val log = loggerFactory.invoke(this::class.java)
 
     fun changeQualificationDetails(
         actor: Admin,

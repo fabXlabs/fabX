@@ -8,7 +8,6 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -17,6 +16,7 @@ import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.common.model.UserIdFactory
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
@@ -42,6 +42,7 @@ data class User internal constructor(
 
     companion object {
         fun addNew(
+            userIdFactory: UserIdFactory,
             actor: Admin,
             correlationId: CorrelationId,
             firstName: String,
@@ -52,7 +53,7 @@ data class User internal constructor(
             return requireUniqueWikiName(wikiName, gettingUserByWikiName)
                 .map {
                     UserCreated(
-                        DomainModule.userIdFactory().invoke(),
+                        userIdFactory.invoke(),
                         actor.id,
                         correlationId,
                         firstName,

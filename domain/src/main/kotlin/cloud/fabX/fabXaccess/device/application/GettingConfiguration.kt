@@ -3,21 +3,23 @@ package cloud.fabX.fabXaccess.device.application
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.sequenceEither
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceActor
+import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.Tool
+import cloud.fabX.fabXaccess.tool.model.ToolRepository
 
 /**
  * Service for a device to get its configuration.
  */
-class GettingConfiguration {
-
-    private val log = logger()
-    private val deviceRepository = DomainModule.deviceRepository()
-    private val toolRepository = DomainModule.toolRepository()
+class GettingConfiguration(
+    loggerFactory: LoggerFactory,
+    private val deviceRepository: DeviceRepository,
+    private val toolRepository: ToolRepository
+) {
+    private val log = loggerFactory.invoke(this::class.java)
 
     fun getConfiguration(
         actor: DeviceActor

@@ -2,20 +2,21 @@ package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.Option
 import arrow.core.flatMap
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
 
 /**
  * Service to handle deleting a device.
  */
-class DeletingDevice {
-
-    private val log = logger()
-    private val deviceRepository = DomainModule.deviceRepository()
+class DeletingDevice(
+    loggerFactory: LoggerFactory,
+    private val deviceRepository: DeviceRepository
+) {
+    private val log = loggerFactory.invoke(this::class.java)
 
     fun deleteDevice(
         actor: Admin,

@@ -4,7 +4,6 @@ import arrow.core.None
 import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger

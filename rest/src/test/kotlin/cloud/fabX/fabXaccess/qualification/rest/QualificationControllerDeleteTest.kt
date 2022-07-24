@@ -6,7 +6,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
-import cloud.fabX.fabXaccess.RestModule
+import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
@@ -57,8 +57,8 @@ internal class QualificationControllerDeleteTest {
         this.authenticationService = authenticationService
 
         mockAll()
-        RestModule.overrideAuthenticationService(authenticationService)
-        RestModule.configureDeletingQualification(deletingQualification)
+        RestApp.overrideAuthenticationService(authenticationService)
+        RestApp.configureDeletingQualification(deletingQualification)
     }
 
     @Test

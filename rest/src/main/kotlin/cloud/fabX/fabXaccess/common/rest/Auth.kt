@@ -5,7 +5,6 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.logger
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.Member
@@ -39,8 +38,6 @@ internal fun PipelineContext<*, ApplicationCall>.readInstructorAuthentication():
 }
 
 internal fun PipelineContext<*, ApplicationCall>.readMemberAuthentication(): Either<Error, Member> {
-    logger().debug("trying to read member authentication")
-
     call.principal<UserPrincipal>()?.let { userPrincipal ->
         return userPrincipal.right()
             .map { it.asMember() }

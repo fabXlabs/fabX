@@ -2,24 +2,28 @@ package cloud.fabX.fabXaccess.qualification.application
 
 import arrow.core.Option
 import arrow.core.flatMap
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
+import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to handle deleting a qualification.
  */
-class DeletingQualification {
-
-    private val log = logger()
-    private val clock = DomainModule.clock()
-    private val domainEventPublisher = DomainModule.domainEventPublisher()
-    private val qualificationRepository = DomainModule.qualificationRepository()
-    private val gettingToolsByQualificationId = DomainModule.gettingToolsQualificationId()
+class DeletingQualification(
+    loggerFactory: LoggerFactory,
+    private val clock: Clock,
+    private val domainEventPublisher: DomainEventPublisher,
+    private val qualificationRepository: QualificationRepository,
+    private val gettingToolsByQualificationId: GettingToolsByQualificationId
+) {
+    private val log = loggerFactory.invoke(this::class.java)
 
     fun deleteQualification(
         actor: Admin,

@@ -5,7 +5,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import cloud.fabX.fabXaccess.RestModule
+import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.mockAll
@@ -54,8 +54,8 @@ class UserControllerGetTest {
             .thenReturn(UserPrincipal(actingUser))
 
         mockAll()
-        RestModule.overrideAuthenticationService(authenticationService)
-        RestModule.configureGettingUser(gettingUser)
+        RestApp.overrideAuthenticationService(authenticationService)
+        RestApp.configureGettingUser(gettingUser)
     }
 
     @Test

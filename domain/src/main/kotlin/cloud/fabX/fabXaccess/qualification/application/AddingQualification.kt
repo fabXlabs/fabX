@@ -1,21 +1,24 @@
 package cloud.fabX.fabXaccess.qualification.application
 
 import arrow.core.Either
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.common.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.Qualification
+import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
 
 /**
  * Service to add new qualifications.
  */
-class AddingQualification {
-
-    private val log = logger()
-    private val qualificationRepository = DomainModule.qualificationRepository()
+class AddingQualification(
+    loggerFactory: LoggerFactory,
+    private val qualificationRepository: QualificationRepository,
+    private val qualificationIdFactory: QualificationIdFactory
+) {
+    private val log = loggerFactory.invoke(this::class.java)
 
     fun addQualification(
         actor: Admin,
@@ -28,6 +31,7 @@ class AddingQualification {
         log.debug("addQualification...")
 
         val sourcingEvent = Qualification.addNew(
+            qualificationIdFactory,
             actor,
             correlationId,
             name,

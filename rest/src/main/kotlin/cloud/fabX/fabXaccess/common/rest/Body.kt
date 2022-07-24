@@ -1,6 +1,5 @@
 package cloud.fabX.fabXaccess.common.rest
 
-import cloud.fabX.fabXaccess.logger
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
@@ -13,7 +12,6 @@ internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall
     return try {
         call.receive()
     } catch (e: ContentTransformationException) {
-        logger().debug(e.stackTraceToString())
         call.respond(
             HttpStatusCode.BadRequest,
             "Cannot deserialize request body as type ${T::class.qualifiedName}: ${e.localizedMessage}"

@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.None
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Logger

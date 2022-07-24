@@ -1,18 +1,17 @@
 package cloud.fabX.fabXaccess.device.application
 
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 
 class DeviceDomainEventHandler(
-    private val detachingTool: DetachingTool = DetachingTool()
+    loggerFactory: LoggerFactory,
+    private val detachingTool: DetachingTool,
+    private val gettingDevicesByAttachedTool: GettingDevicesByAttachedTool
 ) : DomainEventHandler {
-
-    private val log = logger()
-    private val gettingDevicesByAttachedTool: GettingDevicesByAttachedTool = DomainModule.gettingDevicesByTool()
+    private val log = loggerFactory.invoke(this::class.java)
 
     override fun handle(domainEvent: DomainEvent) {
         log.debug("ignoring event $domainEvent")

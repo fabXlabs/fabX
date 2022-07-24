@@ -6,12 +6,12 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.flatMap
 import arrow.core.getOrNone
-import cloud.fabX.fabXaccess.DomainModule
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
+import cloud.fabX.fabXaccess.common.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.PinInUse
@@ -35,6 +35,7 @@ data class Device internal constructor(
 
     companion object {
         fun addNew(
+            deviceIdFactory: DeviceIdFactory,
             actor: Admin,
             correlationId: CorrelationId,
             name: String,
@@ -43,7 +44,7 @@ data class Device internal constructor(
             identity: MacSecretIdentity
         ): DeviceSourcingEvent {
             return DeviceCreated(
-                DomainModule.deviceIdFactory().invoke(),
+                deviceIdFactory.invoke(),
                 actor.id,
                 correlationId,
                 name,

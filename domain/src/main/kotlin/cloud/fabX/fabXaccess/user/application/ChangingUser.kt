@@ -2,22 +2,25 @@ package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.Option
 import arrow.core.flatMap
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
+import cloud.fabX.fabXaccess.user.model.UserRepository
 
 /**
  * Service to handle changing user properties.
  */
-class ChangingUser {
-
-    private val log = logger()
-    private val userRepository = DomainModule.userRepository()
-    private val gettingUserByWikiName = DomainModule.gettingUserByWikiName()
+class ChangingUser(
+    loggerFactory: LoggerFactory,
+    private val userRepository: UserRepository,
+    private val gettingUserByWikiName: GettingUserByWikiName
+) {
+    private val log: Logger = loggerFactory.invoke(this::class.java)
 
     fun changePersonalInformation(
         actor: Admin,

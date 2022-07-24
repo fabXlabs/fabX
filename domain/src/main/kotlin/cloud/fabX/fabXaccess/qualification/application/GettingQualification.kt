@@ -1,21 +1,22 @@
 package cloud.fabX.fabXaccess.qualification.application
 
 import arrow.core.Either
-import cloud.fabX.fabXaccess.DomainModule
-import cloud.fabX.fabXaccess.common.application.logger
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.Qualification
+import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 
 /**
  * Service to get qualifications.
  */
-class GettingQualification {
-
-    private val log = logger()
-    private val qualificationRepository = DomainModule.qualificationRepository()
+class GettingQualification(
+    loggerFactory: LoggerFactory,
+    private val qualificationRepository: QualificationRepository
+) {
+    private val log = loggerFactory.invoke(this::class.java)
 
     fun getAll(
         actor: Actor,

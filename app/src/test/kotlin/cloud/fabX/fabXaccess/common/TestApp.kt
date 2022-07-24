@@ -1,11 +1,10 @@
 package cloud.fabX.fabXaccess.common
 
 import cloud.fabX.fabXaccess.AppConfiguration
-import cloud.fabX.fabXaccess.RestModule
+import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
-import cloud.fabX.fabXaccess.common.model.newUserId
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
@@ -80,7 +79,7 @@ internal fun withTestApp(
     ).forEach { AppConfiguration.userRepository().store(it) }
 
     runBlocking {
-        withTestApplication(RestModule.moduleConfiguration) {
+        withTestApplication(RestApp.moduleConfiguration) {
             block()
         }
     }
