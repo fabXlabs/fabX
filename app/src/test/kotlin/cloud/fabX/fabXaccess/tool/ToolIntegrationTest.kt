@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test
 
 @InternalAPI
 @ExperimentalSerializationApi
-class ToolIntegrationTest {
+internal class ToolIntegrationTest {
 
     @Test
     fun `given no authentication when get tools then returns http unauthorized`() = withTestApp {

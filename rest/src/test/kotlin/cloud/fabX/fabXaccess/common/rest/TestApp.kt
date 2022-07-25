@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.common.rest
 
 import cloud.fabX.fabXaccess.RestApp
+import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
@@ -44,6 +45,8 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AddingTool::class.java) }
         bindInstance { Mockito.mock(ChangingTool::class.java) }
         bindInstance { Mockito.mock(DeletingTool::class.java) }
+
+        bindInstance { Mockito.mock(GettingDevice::class.java) }
 
         diSetup()
     }

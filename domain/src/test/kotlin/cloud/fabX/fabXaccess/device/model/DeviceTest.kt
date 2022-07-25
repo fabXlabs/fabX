@@ -45,8 +45,8 @@ internal class DeviceTest {
             "Woodworking",
             "https://example.com/image.bmp",
             "https://fabx-backup.example.com",
-            MacSecretIdentity("aabbccddeeff", "supersecret"),
-            mapOf()
+            mapOf(),
+            MacSecretIdentity("aabbccddeeff", "supersecret")
         )
 
         // then
@@ -172,8 +172,8 @@ internal class DeviceTest {
                     "name2",
                     "background1",
                     "backupUrl3",
-                    MacSecretIdentity("aabbccddeeff", "supersecret"),
-                    mapOf()
+                    mapOf(),
+                    MacSecretIdentity("aabbccddeeff", "supersecret")
                 )
             )
     }
@@ -630,8 +630,8 @@ internal class DeviceTest {
             "Woodworking",
             "https://example.com/image.bmp",
             "https://fabx-backup.example.com",
-            MacSecretIdentity("aabbccddeeff", "supersecret"),
-            mapOf(3 to ToolIdFixture.static(345))
+            mapOf(3 to ToolIdFixture.static(345)),
+            MacSecretIdentity("aabbccddeeff", "supersecret")
         )
 
         // when
@@ -644,8 +644,8 @@ internal class DeviceTest {
                     "name=Woodworking, " +
                     "background=https://example.com/image.bmp, " +
                     "backupBackendUrl=https://fabx-backup.example.com, " +
-                    "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret), " +
-                    "attachedTools={3=ToolId(value=b6f53dde-e176-3672-8b65-819b4c168e6f)})"
+                    "attachedTools={3=ToolId(value=b6f53dde-e176-3672-8b65-819b4c168e6f)}, " +
+                    "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret))"
         )
     }
 }

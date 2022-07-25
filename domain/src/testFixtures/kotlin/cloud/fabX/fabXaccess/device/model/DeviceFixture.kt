@@ -20,8 +20,8 @@ object DeviceFixture {
         name,
         background,
         backupBackendUrl,
-        MacSecretIdentity(mac, secret),
-        attachedTools
+        attachedTools,
+        MacSecretIdentity(mac, secret)
     )
 
     fun withIdentity(

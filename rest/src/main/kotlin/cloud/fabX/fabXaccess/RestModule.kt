@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess
 
+import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -13,7 +14,18 @@ val restModule = DI.Module("rest") {
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
     bindSingleton { ToolController(instance(), instance(), instance(), instance()) }
+    bindSingleton { DeviceController(instance()) }
     bindSingleton { UserController(instance()) }
 
-    bindSingleton { RestApp(instance(), instance(tag = "port"), instance(), instance(), instance(), instance()) }
+    bindSingleton {
+        RestApp(
+            instance(),
+            instance(tag = "port"),
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance()
+        )
+    }
 }

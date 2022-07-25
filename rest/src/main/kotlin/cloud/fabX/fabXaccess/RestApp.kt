@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.rest.Error
+import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -32,6 +33,7 @@ class RestApp(
     private val authenticationService: AuthenticationService,
     private val qualificationController: QualificationController,
     private val toolController: ToolController,
+    private val deviceController: DeviceController,
     private val userController: UserController
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
@@ -65,6 +67,7 @@ class RestApp(
                 route("/api/v1") {
                     qualificationController.routes(this)
                     toolController.routes(this)
+                    deviceController.routes(this)
                     userController.routes(this)
                 }
             }

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test
 
 @InternalAPI
 @ExperimentalSerializationApi
-class QualificationIntegrationTest {
+internal class QualificationIntegrationTest {
 
     @Test
     fun `given no authentication when get qualification then returns http unauthorized`() = withTestApp {

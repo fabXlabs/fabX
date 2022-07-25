@@ -29,8 +29,8 @@ data class Device internal constructor(
     val name: String,
     val background: String,
     val backupBackendUrl: String,
-    internal val identity: MacSecretIdentity,
-    internal val attachedTools: Map<Int, ToolId>
+    val attachedTools: Map<Int, ToolId>,
+    internal val identity: MacSecretIdentity
 ) : AggregateRootEntity<DeviceId> {
 
     companion object {

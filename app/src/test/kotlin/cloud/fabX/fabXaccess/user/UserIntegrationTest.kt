@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 
 @InternalAPI
 @ExperimentalSerializationApi
-class UserIntegrationTest {
+internal class UserIntegrationTest {
 
     @Test
     fun `given no authentication when get users then returns http unauthorized`() = withTestApp {
