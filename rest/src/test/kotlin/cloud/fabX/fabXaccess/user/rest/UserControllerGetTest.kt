@@ -5,10 +5,8 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
-import cloud.fabX.fabXaccess.common.rest.mockAll
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.application.GettingUser
@@ -18,11 +16,13 @@ import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.kodein.di.bindInstance
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.any
@@ -52,14 +52,15 @@ class UserControllerGetTest {
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
-
-        mockAll()
-        RestApp.overrideAuthenticationService(authenticationService)
-        RestApp.configureGettingUser(gettingUser)
     }
 
+    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+        bindInstance(overrides = true) { gettingUser }
+        bindInstance(overrides = true) { authenticationService }
+    }, block)
+
     @Test
-    fun `given no users when get users then returns empty set`() = withTestApp {
+    fun `given no users when get users then returns empty set`() = withConfiguredTestApp {
         // given
         whenever(
             gettingUser.getAll(
@@ -82,7 +83,7 @@ class UserControllerGetTest {
     }
 
     @Test
-    fun `when get users then returns mapped users`() = withTestApp {
+    fun `when get users then returns mapped users`() = withConfiguredTestApp {
         // given
         val userId1 = UserIdFixture.arbitrary()
         val user1 = UserFixture.arbitrary(

@@ -5,11 +5,9 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
-import cloud.fabX.fabXaccess.common.rest.mockAll
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -22,6 +20,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
 import io.ktor.util.InternalAPI
@@ -30,6 +29,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.kodein.di.bindInstance
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.any
@@ -55,14 +55,15 @@ internal class QualificationControllerAddTest {
     ) {
         this.addingQualification = addingQualification
         this.authenticationService = authenticationService
-
-        mockAll()
-        RestApp.overrideAuthenticationService(authenticationService)
-        RestApp.configureAddingQualification(addingQualification)
     }
 
+    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+        bindInstance(overrides = true) { addingQualification }
+        bindInstance(overrides = true) { authenticationService }
+    }, block)
+
     @Test
-    fun `when adding qualification then returns http ok`() = withTestApp {
+    fun `when adding qualification then returns http ok`() = withConfiguredTestApp {
         // given
         val name = "qualification1"
         val description = "some qualification"
@@ -100,34 +101,35 @@ internal class QualificationControllerAddTest {
     }
 
     @Test
-    fun `given no admin authentication when adding qualification then returns http forbidden`() = withTestApp {
-        // given
-        val requestBody = QualificationCreationDetails(
-            "qualification1",
-            "some qualification",
-            "#aabbcc",
-            42
-        )
+    fun `given no admin authentication when adding qualification then returns http forbidden`() =
+        withConfiguredTestApp {
+            // given
+            val requestBody = QualificationCreationDetails(
+                "qualification1",
+                "some qualification",
+                "#aabbcc",
+                42
+            )
 
-        val message = "abc123"
-        val error = Error.UserNotAdmin(message)
+            val message = "abc123"
+            val error = Error.UserNotAdmin(message)
 
-        whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-            .thenReturn(ErrorPrincipal(error))
+            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+                .thenReturn(ErrorPrincipal(error))
 
-        // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+            // when
+            val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
+                addBasicAuth(username, password)
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(Json.encodeToString(requestBody))
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(result.response.content)
+                .isNotNull()
+                .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
+                .transform { it.message }
+                .isEqualTo(message)
         }
-
-        // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .transform { it.message }
-            .isEqualTo(message)
-    }
 }

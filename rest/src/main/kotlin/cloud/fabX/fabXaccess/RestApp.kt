@@ -68,7 +68,8 @@ class RestApp(
         }
     }
 
-    public fun start() {
+    fun start() {
+        log.debug("starting RestApp...")
         embeddedServer(Netty, environment = applicationEngineEnvironment {
 
             module {

@@ -6,11 +6,9 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
-import cloud.fabX.fabXaccess.common.rest.mockAll
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
@@ -21,11 +19,13 @@ import cloud.fabX.fabXaccess.user.rest.UserPrincipal
 import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.kodein.di.bindInstance
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.any
@@ -54,14 +54,15 @@ internal class QualificationControllerGetTest {
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
-
-        mockAll()
-        RestApp.overrideAuthenticationService(authenticationService)
-        RestApp.configureGettingQualification(gettingQualification)
     }
 
+    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+        bindInstance(overrides = true) { gettingQualification }
+        bindInstance(overrides = true) { authenticationService }
+    }, block)
+
     @Test
-    fun `given no qualifications when get qualifications then returns empty set`() = withTestApp {
+    fun `given no qualifications when get qualifications then returns empty set`() = withConfiguredTestApp {
         // given
         whenever(gettingQualification.getAll(eq(actingUser.asMember()), any()))
             .thenReturn(setOf())
@@ -80,7 +81,7 @@ internal class QualificationControllerGetTest {
     }
 
     @Test
-    fun `when get qualifications then returns mapped qualifications`() = withTestApp {
+    fun `when get qualifications then returns mapped qualifications`() = withConfiguredTestApp {
         // given
         val qualificationId1 = QualificationIdFixture.arbitrary()
         val qualification1 = QualificationFixture.arbitrary(
@@ -137,67 +138,69 @@ internal class QualificationControllerGetTest {
     }
 
     @Test
-    fun `given qualification exists when get qualification by id then returns mapped qualification`() = withTestApp {
-        // given
-        val qualificationId = QualificationIdFixture.arbitrary()
-        val qualification = QualificationFixture.arbitrary(
-            qualificationId,
-            41,
-            "qualification1",
-            "description 1",
-            "#111111",
-            1
-        )
+    fun `given qualification exists when get qualification by id then returns mapped qualification`() =
+        withConfiguredTestApp {
+            // given
+            val qualificationId = QualificationIdFixture.arbitrary()
+            val qualification = QualificationFixture.arbitrary(
+                qualificationId,
+                41,
+                "qualification1",
+                "description 1",
+                "#111111",
+                1
+            )
 
-        val mappedQualification = Qualification(
-            qualificationId.serialize(),
-            41,
-            "qualification1",
-            "description 1",
-            "#111111",
-            1
-        )
+            val mappedQualification = Qualification(
+                qualificationId.serialize(),
+                41,
+                "qualification1",
+                "description 1",
+                "#111111",
+                1
+            )
 
-        whenever(gettingQualification.getById(eq(actingUser.asMember()), any(), eq(qualificationId)))
-            .thenReturn(qualification.right())
+            whenever(gettingQualification.getById(eq(actingUser.asMember()), any(), eq(qualificationId)))
+                .thenReturn(qualification.right())
 
-        // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
-            addBasicAuth(username, password)
+            // when
+            val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
+                addBasicAuth(username, password)
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+            assertThat(result.response.content)
+                .isNotNull()
+                .isJson<Qualification>()
+                .isEqualTo(mappedQualification)
         }
-
-        // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Qualification>()
-            .isEqualTo(mappedQualification)
-    }
 
     @Test
-    fun `given qualification not found when get qualification by id then returns mapped error`() = withTestApp {
-        // given
-        val qualificationId = QualificationIdFixture.arbitrary()
-        val error = Error.QualificationNotFound("msg", qualificationId)
+    fun `given qualification not found when get qualification by id then returns mapped error`() =
+        withConfiguredTestApp {
+            // given
+            val qualificationId = QualificationIdFixture.arbitrary()
+            val error = Error.QualificationNotFound("msg", qualificationId)
 
-        whenever(gettingQualification.getById(eq(actingUser.asMember()), any(), eq(qualificationId)))
-            .thenReturn(error.left())
+            whenever(gettingQualification.getById(eq(actingUser.asMember()), any(), eq(qualificationId)))
+                .thenReturn(error.left())
 
-        // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
-            addBasicAuth(username, password)
-        }
+            // when
+            val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
+                addBasicAuth(username, password)
+            }
 
-        // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "msg",
-                    mapOf("qualificationId" to qualificationId.serialize())
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+            assertThat(result.response.content)
+                .isNotNull()
+                .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
+                .isEqualTo(
+                    cloud.fabX.fabXaccess.common.rest.Error(
+                        "msg",
+                        mapOf("qualificationId" to qualificationId.serialize())
+                    )
                 )
-            )
-    }
+        }
 }
