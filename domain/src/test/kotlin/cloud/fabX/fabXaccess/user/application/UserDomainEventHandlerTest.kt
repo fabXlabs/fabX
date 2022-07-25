@@ -49,11 +49,13 @@ internal class UserDomainEventHandlerTest {
         this.removingMemberQualification = removingMemberQualification
         this.removingInstructorQualification = removingInstructorQualification
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureGettingUsersByMemberQualification(gettingUsersByMemberQualification)
-        DomainModule.configureGettingUsersByInstructorQualification(gettingUsersByInstructorQualification)
-
-        testee = UserDomainEventHandler(removingMemberQualification, removingInstructorQualification)
+        testee = UserDomainEventHandler(
+            { logger },
+            removingMemberQualification,
+            removingInstructorQualification,
+            gettingUsersByMemberQualification,
+            gettingUsersByInstructorQualification
+        )
     }
 
 

@@ -58,8 +58,6 @@ internal class DeviceTest {
     @Test
     fun `when adding new device then returns expected sourcing event`() {
         // given
-        DomainModule.configureDeviceIdFactory { deviceId }
-
         val name = "name"
         val background = "https://example.com/bg.bmp"
         val backupBackendUrl = "https://backup.example.com"
@@ -78,6 +76,7 @@ internal class DeviceTest {
 
         // when
         val result = Device.addNew(
+            { deviceId },
             adminActor,
             correlationId,
             name,

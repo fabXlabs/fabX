@@ -51,11 +51,7 @@ internal class AddingMemberQualificationTest {
         this.userRepository = userRepository
         this.qualificationRepository = qualificationRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-        DomainModule.configureQualificationRepository(qualificationRepository)
-
-        testee = AddingMemberQualification()
+        testee = AddingMemberQualification({ logger }, qualificationRepository, userRepository)
     }
 
     @Test

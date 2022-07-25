@@ -51,12 +51,7 @@ internal class DeletingToolTest {
         this.domainEventPublisher = domainEventPublisher
         this.toolRepository = toolRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureClock(FixedClock(fixedInstant))
-        DomainModule.configureDomainEventPublisher(domainEventPublisher)
-        DomainModule.configureToolRepository(toolRepository)
-
-        testee = DeletingTool()
+        testee = DeletingTool({ logger }, FixedClock(fixedInstant), domainEventPublisher, toolRepository)
     }
 
     @Test

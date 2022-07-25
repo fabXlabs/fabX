@@ -40,10 +40,7 @@ internal class GettingDeviceTest {
         this.logger = logger
         this.deviceRepository = deviceRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureDeviceRepository(deviceRepository)
-
-        testee = GettingDevice()
+        testee = GettingDevice({ logger }, deviceRepository)
     }
 
     @Test

@@ -43,11 +43,7 @@ internal class AddingToolTest {
         this.logger = logger
         this.toolRepository = toolRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureToolIdFactory { toolId }
-        DomainModule.configureToolRepository(toolRepository)
-
-        testee = AddingTool()
+        testee = AddingTool({ logger }, toolRepository, { toolId })
     }
 
     @Test

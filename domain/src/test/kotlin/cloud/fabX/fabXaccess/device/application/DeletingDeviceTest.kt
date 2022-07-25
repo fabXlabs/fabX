@@ -44,10 +44,8 @@ internal class DeletingDeviceTest {
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureDeviceRepository(deviceRepository)
 
-        testee = DeletingDevice()
+        testee = DeletingDevice({ logger }, deviceRepository)
     }
 
     @Test

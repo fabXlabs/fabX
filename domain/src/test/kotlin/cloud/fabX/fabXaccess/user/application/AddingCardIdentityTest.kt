@@ -49,11 +49,7 @@ internal class AddingCardIdentityTest {
         this.userRepository = userRepository
         this.gettingUserByCardId = gettingUserByCardId
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-        DomainModule.configureGettingUserByCardId(gettingUserByCardId)
-
-        testee = AddingCardIdentity()
+        testee = AddingCardIdentity({ logger }, userRepository, gettingUserByCardId)
     }
 
     @Test

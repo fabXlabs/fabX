@@ -46,8 +46,6 @@ internal class QualificationTest {
     @Test
     fun `when adding new qualification then returns expected souring event`() {
         // given
-        DomainModule.configureQualificationIdFactory { qualificationId }
-
         val name = "name"
         val description = "description"
         val colour = "#123456"
@@ -65,6 +63,7 @@ internal class QualificationTest {
 
         // when
         val result = Qualification.addNew(
+            { qualificationId },
             adminActor,
             correlationId,
             name,

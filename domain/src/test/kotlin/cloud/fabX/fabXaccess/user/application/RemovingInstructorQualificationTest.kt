@@ -49,10 +49,7 @@ internal class RemovingInstructorQualificationTest {
         this.logger = logger
         this.userRepository = userRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-
-        testee = RemovingInstructorQualification()
+        testee = RemovingInstructorQualification({ logger }, userRepository)
     }
 
     @Test

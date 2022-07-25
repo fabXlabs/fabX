@@ -40,10 +40,7 @@ internal class GettingQualificationTest {
         this.logger = logger
         this.qualificationRepository = qualificationRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureQualificationRepository(qualificationRepository)
-
-        testee = GettingQualification()
+        testee = GettingQualification({ logger }, qualificationRepository)
     }
 
     @Test

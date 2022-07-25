@@ -48,11 +48,8 @@ internal class AddingPhoneNrIdentityTest {
         this.logger = logger
         this.userRepository = userRepository
         this.gettingUserByIdentity = gettingUserByIdentity
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-        DomainModule.configureGettingUserByIdentity(gettingUserByIdentity)
 
-        testee = AddingPhoneNrIdentity()
+        testee = AddingPhoneNrIdentity({ logger }, userRepository, gettingUserByIdentity)
     }
 
     @Test

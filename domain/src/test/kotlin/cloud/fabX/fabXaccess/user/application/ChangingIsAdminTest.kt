@@ -46,10 +46,8 @@ internal class ChangingIsAdminTest {
     ) {
         this.logger = logger
         this.userRepository = userRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
 
-        testee = ChangingIsAdmin()
+        testee = ChangingIsAdmin({ logger }, userRepository)
     }
 
     @ParameterizedTest

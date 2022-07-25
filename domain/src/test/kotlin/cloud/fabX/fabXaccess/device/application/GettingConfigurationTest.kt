@@ -43,11 +43,7 @@ internal class GettingConfigurationTest {
         this.deviceRepository = deviceRepository
         this.toolRepository = toolRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureDeviceRepository(deviceRepository)
-        DomainModule.configureToolRepository(toolRepository)
-
-        testee = GettingConfiguration()
+        testee = GettingConfiguration({ logger }, deviceRepository, toolRepository)
     }
 
     @Nested

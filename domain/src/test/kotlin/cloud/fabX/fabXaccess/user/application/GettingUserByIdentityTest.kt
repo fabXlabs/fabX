@@ -35,10 +35,7 @@ internal class GettingUserByIdentityTest {
         this.logger = logger
         this.gettingUserByIdentity = gettingUserByIdentity
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureGettingUserByIdentity(gettingUserByIdentity)
-
-        testee = GettingUserByIdentity()
+        testee = GettingUserByIdentity({ logger }, gettingUserByIdentity)
     }
 
     @Nested

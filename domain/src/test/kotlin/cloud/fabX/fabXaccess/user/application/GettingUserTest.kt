@@ -40,10 +40,7 @@ internal class GettingUserTest {
         this.logger = logger
         this.userRepository = userRepository
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-
-        testee = GettingUser()
+        testee = GettingUser({ logger }, userRepository)
     }
 
     @Test

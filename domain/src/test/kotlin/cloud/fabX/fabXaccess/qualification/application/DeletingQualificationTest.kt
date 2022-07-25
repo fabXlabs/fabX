@@ -58,13 +58,13 @@ internal class DeletingQualificationTest {
         this.qualificationRepository = qualificationRepository
         this.gettingToolsByQualificationId = gettingToolsByQualificationId
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureClock(FixedClock(fixedInstant))
-        DomainModule.configureDomainEventPublisher(domainEventPublisher)
-        DomainModule.configureQualificationRepository(qualificationRepository)
-        DomainModule.configureGettingToolsByQualificationId(gettingToolsByQualificationId)
-
-        testee = DeletingQualification()
+        testee = DeletingQualification(
+            { logger },
+            FixedClock(fixedInstant),
+            domainEventPublisher,
+            qualificationRepository,
+            gettingToolsByQualificationId
+        )
     }
 
     @Test

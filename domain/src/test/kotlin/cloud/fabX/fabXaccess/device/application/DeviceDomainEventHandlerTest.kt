@@ -43,10 +43,8 @@ internal class DeviceDomainEventHandlerTest {
         this.logger = logger
         this.gettingDevicesByAttachedTool = gettingDevicesByAttachedTool
         this.detachingTool = detachingTool
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureGettingDevicesByTool(gettingDevicesByAttachedTool)
 
-        testee = DeviceDomainEventHandler(detachingTool)
+        testee = DeviceDomainEventHandler({ logger }, detachingTool, gettingDevicesByAttachedTool)
     }
 
     @Test

@@ -52,11 +52,7 @@ internal class ChangingUserTest {
         this.userRepository = userRepository
         this.gettingUserByWikiName = gettingUserByWikiName
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-        DomainModule.configureGettingUserByWikiName(gettingUserByWikiName)
-
-        testee = ChangingUser()
+        testee = ChangingUser({ logger }, userRepository, gettingUserByWikiName)
     }
 
     @Test

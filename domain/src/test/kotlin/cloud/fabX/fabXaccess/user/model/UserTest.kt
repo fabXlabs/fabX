@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
+import cloud.fabX.fabXaccess.common.model.newUserId
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft
@@ -64,8 +65,6 @@ internal class UserTest {
     @Test
     fun `when adding new user then returns expected sourcing event`() {
         // given
-        DomainModule.configureUserIdFactory { userId }
-
         val firstName = "first"
         val lastName = "last"
         val wikiName = "wiki"
@@ -81,6 +80,7 @@ internal class UserTest {
 
         // when
         val result = User.addNew(
+            { userId },
             adminActor,
             correlationId,
             firstName,
@@ -107,6 +107,7 @@ internal class UserTest {
 
         // when
         val result = User.addNew(
+            { newUserId() },
             adminActor,
             correlationId,
             "first",

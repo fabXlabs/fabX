@@ -47,10 +47,8 @@ internal class DetachingToolTest {
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureDeviceRepository(deviceRepository)
 
-        testee = DetachingTool()
+        testee = DetachingTool({ logger }, deviceRepository)
     }
 
     @Test

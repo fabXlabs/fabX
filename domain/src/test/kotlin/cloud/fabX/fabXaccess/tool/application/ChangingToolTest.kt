@@ -46,10 +46,8 @@ internal class ChangingToolTest {
     ) {
         this.logger = logger
         this.toolRepository = toolRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureToolRepository(toolRepository)
 
-        testee = ChangingTool()
+        testee = ChangingTool({ logger }, toolRepository)
     }
 
     @Test

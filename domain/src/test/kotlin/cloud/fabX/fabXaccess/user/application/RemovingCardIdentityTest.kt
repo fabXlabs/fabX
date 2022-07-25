@@ -46,10 +46,8 @@ internal class RemovingCardIdentityTest {
     ) {
         this.logger = logger
         this.userRepository = userRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
 
-        testee = RemovingCardIdentity()
+        testee = RemovingCardIdentity({ logger }, userRepository)
     }
 
     @Test

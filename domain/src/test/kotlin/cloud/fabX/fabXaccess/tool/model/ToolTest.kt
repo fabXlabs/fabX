@@ -49,8 +49,6 @@ internal class ToolTest {
     @Test
     fun `when adding new tool then returns expected sourcing event`() {
         // given
-        DomainModule.configureToolIdFactory { toolId }
-
         val qualificationId1 = QualificationIdFixture.arbitrary()
         val qualificationId2 = QualificationIdFixture.arbitrary()
 
@@ -75,6 +73,7 @@ internal class ToolTest {
 
         // when
         val result = Tool.addNew(
+            { toolId },
             adminActor,
             correlationId,
             name,

@@ -48,11 +48,8 @@ internal class AddingUsernamePasswordIdentityTest {
         this.logger = logger
         this.userRepository = userRepository
         this.gettingUserByUsername = gettingUserByUsername
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
-        DomainModule.configureGettingUserByUsername(gettingUserByUsername)
 
-        testee = AddingUsernamePasswordIdentity()
+        testee = AddingUsernamePasswordIdentity({ logger }, userRepository, gettingUserByUsername)
     }
 
     @Test

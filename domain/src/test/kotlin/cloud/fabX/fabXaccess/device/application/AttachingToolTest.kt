@@ -49,11 +49,8 @@ internal class AttachingToolTest {
         this.logger = logger
         this.deviceRepository = deviceRepository
         this.toolRepository = toolRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureDeviceRepository(deviceRepository)
-        DomainModule.configureToolRepository(toolRepository)
 
-        testee = AttachingTool()
+        testee = AttachingTool({ logger }, deviceRepository, toolRepository)
     }
 
     @Test

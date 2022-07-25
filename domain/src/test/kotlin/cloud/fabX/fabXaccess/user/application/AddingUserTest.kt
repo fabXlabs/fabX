@@ -48,12 +48,7 @@ internal class AddingUserTest {
         this.userRepository = userRepository
         this.gettingUserByWikiName = gettingUserByWikiName
 
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserIdFactory { userId }
-        DomainModule.configureUserRepository(userRepository)
-        DomainModule.configureGettingUserByWikiName(gettingUserByWikiName)
-
-        testee = AddingUser()
+        testee = AddingUser({ logger }, userRepository, gettingUserByWikiName, { userId })
     }
 
     @Test

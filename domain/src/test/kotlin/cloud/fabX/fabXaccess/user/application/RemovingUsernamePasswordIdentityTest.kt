@@ -45,10 +45,8 @@ internal class RemovingUsernamePasswordIdentityTest {
     ) {
         this.logger = logger
         this.userRepository = userRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureUserRepository(userRepository)
 
-        testee = RemovingUsernamePasswordIdentity()
+        testee = RemovingUsernamePasswordIdentity({ logger }, userRepository)
     }
 
     @Test

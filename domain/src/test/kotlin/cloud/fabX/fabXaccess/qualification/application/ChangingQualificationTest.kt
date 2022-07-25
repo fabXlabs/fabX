@@ -46,10 +46,8 @@ internal class ChangingQualificationTest {
     ) {
         this.logger = logger
         this.qualificationRepository = qualificationRepository
-        DomainModule.configureLoggerFactory { logger }
-        DomainModule.configureQualificationRepository(qualificationRepository)
 
-        testee = ChangingQualification()
+        testee = ChangingQualification({ logger }, qualificationRepository)
     }
 
     @Test
