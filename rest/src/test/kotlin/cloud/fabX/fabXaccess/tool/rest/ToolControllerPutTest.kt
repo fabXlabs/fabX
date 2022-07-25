@@ -42,7 +42,7 @@ import org.mockito.kotlin.whenever
 @InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
-class ToolControllerPutTest {
+internal class ToolControllerPutTest {
     private lateinit var changingTool: ChangingTool
     private lateinit var authenticationService: AuthenticationService
 

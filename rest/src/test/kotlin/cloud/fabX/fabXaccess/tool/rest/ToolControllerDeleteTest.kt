@@ -35,7 +35,7 @@ import org.mockito.kotlin.whenever
 @InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
-class ToolControllerDeleteTest {
+internal class ToolControllerDeleteTest {
     private lateinit var deletingTool: DeletingTool
     private lateinit var authenticationService: AuthenticationService
 
