@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.common.rest.RestError
+import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -47,7 +47,7 @@ class RestApp(
         install(StatusPages) {
             exception<kotlinx.serialization.SerializationException> { cause ->
                 cause.printStackTrace()
-                call.respond(HttpStatusCode.UnprocessableEntity, RestError(cause.localizedMessage))
+                call.respond(HttpStatusCode.UnprocessableEntity, Error(cause.localizedMessage, mapOf()))
             }
         }
 

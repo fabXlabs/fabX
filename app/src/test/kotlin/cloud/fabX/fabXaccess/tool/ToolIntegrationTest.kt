@@ -321,4 +321,65 @@ class ToolIntegrationTest {
                     )
                 )
         }
+
+    @Test
+    fun `given tool when deleting tool then returns http ok`() = withTestApp {
+        // given
+        val toolId = givenTool()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/tool/$toolId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+    }
+
+    @Test
+    fun `given unknown tool when deleting tool then returns http not found`() = withTestApp {
+        // given
+        val invalidToolId = ToolIdFixture.arbitrary().serialize()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/tool/$invalidToolId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "Tool with id ToolId(value=$invalidToolId) not found.",
+                    mapOf("toolId" to invalidToolId)
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when deleting tool then returns http forbidden`() = withTestApp {
+        val toolId = givenTool()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/tool/$toolId") {
+            addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
+                    mapOf()
+                )
+            )
+    }
 }

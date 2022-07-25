@@ -12,7 +12,6 @@ import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
-import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.rest.Qualification
@@ -139,12 +138,13 @@ class QualificationIntegrationTest {
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
             .isNotNull()
-            .isJson<RestError>()
+            .isJson<Error>()
             .isEqualTo(
-                RestError(
+                Error(
                     "Field 'orderNr' is required for type with serial name " +
                             "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
-                            "but it was missing"
+                            "but it was missing",
+                    mapOf()
                 )
             )
     }
@@ -271,9 +271,9 @@ class QualificationIntegrationTest {
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
             .isNotNull()
-            .isJson<RestError>()
+            .isJson<Error>()
             .isEqualTo(
-                RestError(
+                Error(
                     "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
                     mapOf(
                         "qualificationId" to qualificationId.toString()
@@ -296,10 +296,11 @@ class QualificationIntegrationTest {
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
             .isNotNull()
-            .isJson<RestError>()
+            .isJson<Error>()
             .isEqualTo(
-                RestError(
+                Error(
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
+                    mapOf()
                 )
             )
     }

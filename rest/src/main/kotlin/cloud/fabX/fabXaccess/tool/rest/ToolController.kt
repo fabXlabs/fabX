@@ -12,9 +12,11 @@ import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.tool.application.AddingTool
 import cloud.fabX.fabXaccess.tool.application.ChangingTool
+import cloud.fabX.fabXaccess.tool.application.DeletingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
 import io.ktor.application.call
 import io.ktor.routing.Route
+import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
@@ -23,7 +25,8 @@ import io.ktor.routing.route
 class ToolController(
     private val gettingTool: GettingTool,
     private val addingTool: AddingTool,
-    private val changingTool: ChangingTool
+    private val changingTool: ChangingTool,
+    private val deletingTool: DeletingTool
 ) {
 
     val routes: Route.() -> Unit = {
@@ -110,6 +113,25 @@ class ToolController(
                             )
                         }
                 }
+            }
+
+            delete("/{id}") {
+                readUUIDParameter("id")
+                    ?.let { ToolId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    deletingTool.deleteTool(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                                        .toEither { }
+                                        .swap()
+                                }
+                        )
+                    }
             }
         }
     }

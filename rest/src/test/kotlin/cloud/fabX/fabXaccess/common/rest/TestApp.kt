@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.restModule
 import cloud.fabX.fabXaccess.tool.application.AddingTool
 import cloud.fabX.fabXaccess.tool.application.ChangingTool
+import cloud.fabX.fabXaccess.tool.application.DeletingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
@@ -42,6 +43,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingTool::class.java) }
         bindInstance { Mockito.mock(AddingTool::class.java) }
         bindInstance { Mockito.mock(ChangingTool::class.java) }
+        bindInstance { Mockito.mock(DeletingTool::class.java) }
 
         diSetup()
     }
