@@ -12,7 +12,7 @@ val restModule = DI.Module("rest") {
     bindSingleton { AuthenticationService(instance()) }
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
-    bindSingleton { ToolController(instance()) }
+    bindSingleton { ToolController(instance(), instance()) }
     bindSingleton { UserController(instance()) }
 
     bindSingleton { RestApp(instance(), instance(tag = "port"), instance(), instance(), instance(), instance()) }
