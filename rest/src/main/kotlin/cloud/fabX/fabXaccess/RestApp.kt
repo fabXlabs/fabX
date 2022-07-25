@@ -4,6 +4,7 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
+import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.UserController
 import io.ktor.application.Application
@@ -27,10 +28,11 @@ import kotlinx.serialization.json.Json
 
 class RestApp(
     loggerFactory: LoggerFactory,
-    private var publicPort: Int,
-    private var authenticationService: AuthenticationService,
-    private var qualificationController: QualificationController,
-    private var userController: UserController
+    private val publicPort: Int,
+    private val authenticationService: AuthenticationService,
+    private val qualificationController: QualificationController,
+    private val toolController: ToolController,
+    private val userController: UserController
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -62,6 +64,7 @@ class RestApp(
             authenticate("api-basic") {
                 route("/api/v1") {
                     qualificationController.routes(this)
+                    toolController.routes(this)
                     userController.routes(this)
                 }
             }
