@@ -1,12 +1,17 @@
 package cloud.fabX.fabXaccess.common
 
-import cloud.fabX.fabXaccess.AppConfiguration
 import cloud.fabX.fabXaccess.RestApp
+import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.domainModule
+import cloud.fabX.fabXaccess.loggingModule
+import cloud.fabX.fabXaccess.persistenceModule
+import cloud.fabX.fabXaccess.restModule
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
+import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import io.ktor.http.HttpHeaders
 import io.ktor.server.testing.TestApplicationEngine
@@ -16,11 +21,29 @@ import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Clock
+import org.kodein.di.DI
+import org.kodein.di.bindConstant
+import org.kodein.di.bindSingleton
+import org.kodein.di.instance
 
 internal fun withTestApp(
     block: TestApplicationEngine.() -> Unit
 ) {
-    AppConfiguration.configure()
+    val testApp = DI {
+        import(domainModule)
+        import(restModule)
+        import(persistenceModule)
+        import(loggingModule)
+
+        bindConstant(tag = "port") { -1 }
+
+        bindSingleton<DomainEventPublisher> { SynchronousDomainEventPublisher() }
+        bindSingleton<Clock> { Clock.System }
+    }
+
+    val restApp: RestApp by testApp.instance()
+    val userRepository: UserRepository by testApp.instance()
 
     val setupCorrelationId = newCorrelationId()
 
@@ -76,10 +99,10 @@ internal fun withTestApp(
         adminCreated,
         adminUsernamePasswordIdentityAdded,
         adminIsAdminChanged
-    ).forEach { AppConfiguration.userRepository().store(it) }
+    ).forEach { userRepository.store(it) }
 
     runBlocking {
-        withTestApplication(RestApp.moduleConfiguration) {
+        withTestApplication(restApp.moduleConfiguration) {
             block()
         }
     }
