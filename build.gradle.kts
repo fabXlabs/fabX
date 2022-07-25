@@ -9,7 +9,7 @@ val mockitoJunitVersion: String by project
 
 plugins {
     base
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
     jacoco
 }
 
@@ -49,7 +49,7 @@ allprojects {
     }
 
     dependencies {
-        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.6.0"))
+        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.6.10"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:$arrowVersion")
         implementation("org.kodein.di:kodein-di:$kodeinVersion")
