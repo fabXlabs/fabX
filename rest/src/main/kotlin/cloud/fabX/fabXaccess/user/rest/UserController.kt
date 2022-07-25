@@ -1,7 +1,10 @@
 package cloud.fabX.fabXaccess.user.rest
 
+import arrow.core.flatMap
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
+import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import io.ktor.application.call
@@ -27,6 +30,24 @@ class UserController(
                                 .map { it.toRestModel() }
                         }
                 )
+            }
+            get("{id}") {
+                readUUIDParameter("id")
+                    ?.let { UserId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    gettingUser
+                                        .getById(
+                                            admin,
+                                            newCorrelationId(),
+                                            id
+                                        )
+                                        .map { it.toRestModel() }
+                                }
+                        )
+                    }
             }
         }
     }

@@ -30,6 +30,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
         is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
+        is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         // TODO handle all cases
         else -> respond(HttpStatusCode.InternalServerError, "unmapped error: ${error::class.qualifiedName}")

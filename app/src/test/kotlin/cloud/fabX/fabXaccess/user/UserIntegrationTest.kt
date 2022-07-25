@@ -93,4 +93,31 @@ class UserIntegrationTest {
                 )
             )
     }
+
+    @Test
+    fun `given user when get user by id then returns user`() = withTestApp {
+        // given
+
+        // when
+        val result = handleRequest(HttpMethod.Get, "/api/v1/user/c63b3a7d-bd18-4272-b4ed-4bcf9683c602") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    "c63b3a7d-bd18-4272-b4ed-4bcf9683c602",
+                    2,
+                    "Member",
+                    "",
+                    "member",
+                    false,
+                    null
+                )
+            )
+    }
 }
