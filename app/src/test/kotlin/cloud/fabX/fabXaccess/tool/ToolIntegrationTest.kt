@@ -5,17 +5,21 @@ import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.tool.rest.IdleState
 import cloud.fabX.fabXaccess.tool.rest.Tool
 import cloud.fabX.fabXaccess.tool.rest.ToolCreationDetails
+import cloud.fabX.fabXaccess.tool.rest.ToolDetails
 import cloud.fabX.fabXaccess.tool.rest.ToolType
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -169,4 +173,152 @@ class ToolIntegrationTest {
             .transform { it.requiredQualifications }
             .containsExactlyInAnyOrder(qualificationId)
     }
+
+    @Test
+    fun `given non-admin authentication when adding tool then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = ToolCreationDetails(
+            "tool",
+            ToolType.UNLOCK,
+            123,
+            IdleState.IDLE_HIGH,
+            "https://example.com/tool",
+            setOf()
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/tool") {
+            addMemberAuth()
+            setBody(Json.encodeToString(requestBody))
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `given tool when changing tool then returns http ok`() = withTestApp {
+        // given
+        val toolId = givenTool()
+
+        val qualificationId = givenQualification()
+
+        val requestBody = ToolDetails(
+            ChangeableValue("newName"),
+            null,
+            ChangeableValue(987),
+            ChangeableValue(IdleState.IDLE_LOW),
+            ChangeableValue(false),
+            null,
+            ChangeableValue(setOf(qualificationId))
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/tool/$toolId") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/tool/$toolId") {
+            addMemberAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<Tool>()
+            .isEqualTo(
+                Tool(
+                    toolId,
+                    2,
+                    "newName",
+                    ToolType.UNLOCK,
+                    987,
+                    IdleState.IDLE_LOW,
+                    false,
+                    "https://example.com/tool",
+                    setOf(qualificationId)
+                )
+            )
+    }
+
+    @Test
+    fun `given invalid tool when changing tool then returns http not found`() = withTestApp {
+        // given
+        val invalidToolId = ToolIdFixture.arbitrary().serialize()
+
+        val requestBody = ToolDetails(
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/tool/$invalidToolId") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "Tool with id ToolId(value=$invalidToolId) not found.",
+                    mapOf(
+                        "toolId" to invalidToolId
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `given invalid required qualification when changing tool then returns http unprocessable entity`() =
+        withTestApp {
+            // given
+            val toolId = givenTool()
+
+            val invalidQualificationId = QualificationIdFixture.arbitrary().serialize()
+
+            val requestBody = ToolDetails(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                ChangeableValue(setOf(invalidQualificationId))
+            )
+
+            // when
+            val result = handleRequest(HttpMethod.Put, "/api/v1/tool/$toolId") {
+                addAdminAuth()
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(Json.encodeToString(requestBody))
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
+            assertThat(result.response.content)
+                .isNotNull()
+                .isJson<Error>()
+                .isEqualTo(
+                    Error(
+                        "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
+                        mapOf("qualificationId" to invalidQualificationId)
+                    )
+                )
+        }
 }

@@ -16,15 +16,16 @@ sealed class ChangeableValue<out T> {
             return "LeaveAsIs"
         }
     }
+
     data class ChangeToValue<T>(val value: T) : ChangeableValue<T>()
 }
 
-fun <T> ChangeableValue<T>.valueToChangeTo(previous: T): T = when(this) {
+fun <T> ChangeableValue<T>.valueToChangeTo(previous: T): T = when (this) {
     is ChangeableValue.ChangeToValue -> value
     ChangeableValue.LeaveAsIs -> previous
 }
 
-fun <T> ChangeableValue<T>.asOption(): Option<T> = when(this) {
+fun <T> ChangeableValue<T>.asOption(): Option<T> = when (this) {
     is ChangeableValue.ChangeToValue -> value.some()
     ChangeableValue.LeaveAsIs -> None
 }
@@ -32,7 +33,7 @@ fun <T> ChangeableValue<T>.asOption(): Option<T> = when(this) {
 fun <T, L, R> ChangeableValue<T>.bimap(
     mapLeaveAsIs: () -> L,
     mapChangeToValue: (T) -> R
-): Either<L, R> = when(this) {
+): Either<L, R> = when (this) {
     is ChangeableValue.ChangeToValue -> mapChangeToValue(value).right()
     ChangeableValue.LeaveAsIs -> mapLeaveAsIs().left()
 }
@@ -40,7 +41,7 @@ fun <T, L, R> ChangeableValue<T>.bimap(
 fun <T, L, R> ChangeableValue<T>.biFlatmap(
     mapLeaveAsIs: () -> Either<L, R>,
     mapChangeToValue: (T) -> Either<L, R>
-): Either<L, R> = when(this) {
+): Either<L, R> = when (this) {
     is ChangeableValue.ChangeToValue -> mapChangeToValue(value)
     ChangeableValue.LeaveAsIs -> mapLeaveAsIs()
 }

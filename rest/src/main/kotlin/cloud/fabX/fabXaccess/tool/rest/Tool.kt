@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.tool.rest
 
+import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -73,4 +74,15 @@ data class ToolCreationDetails(
     val idleState: IdleState,
     val wikiLink: String,
     val requiredQualifications: Set<String>
+)
+
+@Serializable
+data class ToolDetails(
+    val name: ChangeableValue<String>?,
+    val type: ChangeableValue<ToolType>?,
+    val time: ChangeableValue<Int>?,
+    val idleState: ChangeableValue<IdleState>?,
+    val enabled: ChangeableValue<Boolean>?,
+    val wikiLink: ChangeableValue<String>?,
+    val requiredQualifications: ChangeableValue<Set<String>>?
 )

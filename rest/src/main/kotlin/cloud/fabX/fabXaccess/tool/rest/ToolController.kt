@@ -9,17 +9,21 @@ import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
+import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.tool.application.AddingTool
+import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
 import io.ktor.application.call
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.put
 import io.ktor.routing.route
 
 class ToolController(
     private val gettingTool: GettingTool,
-    private val addingTool: AddingTool
+    private val addingTool: AddingTool,
+    private val changingTool: ChangingTool
 ) {
 
     val routes: Route.() -> Unit = {
@@ -75,6 +79,36 @@ class ToolController(
                             }
                             .map { it.serialize() }
                     )
+                }
+            }
+
+            put("/{id}") {
+                readBody<ToolDetails>()?.let {
+                    readUUIDParameter("id")
+                        ?.let { ToolId(it) }
+                        ?.let { id ->
+                            call.respondWithErrorHandler(
+                                readAdminAuthentication()
+                                    .flatMap { admin ->
+                                        changingTool.changeToolDetails(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            it.name.toDomain(),
+                                            it.type.toDomain { it.toDomainModel() },
+                                            it.time.toDomain(),
+                                            it.idleState.toDomain { it.toDomainModel() },
+                                            it.enabled.toDomain(),
+                                            it.wikiLink.toDomain(),
+                                            it.requiredQualifications.toDomain {
+                                                it.map(QualificationId::fromString).toSet()
+                                            }
+                                        )
+                                            .toEither { }
+                                            .swap()
+                                    }
+                            )
+                        }
                 }
             }
         }

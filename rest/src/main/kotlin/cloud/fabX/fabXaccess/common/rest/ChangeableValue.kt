@@ -14,3 +14,13 @@ fun <T> ChangeableValue<T>?.toDomain(): cloud.fabX.fabXaccess.common.model.Chang
         cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs
     }
 }
+
+fun <T, S> ChangeableValue<T>?.toDomain(
+    map: (T) -> S
+): cloud.fabX.fabXaccess.common.model.ChangeableValue<S> {
+    return if (this != null) {
+        cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(map(this.newValue))
+    } else {
+        cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs
+    }
+}
