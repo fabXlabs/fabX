@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
@@ -9,10 +10,14 @@ import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.rest.ChangeableValue
+import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.rest.RestError
 import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.rest.Qualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails
+import cloud.fabX.fabXaccess.qualification.rest.QualificationDetails
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -163,6 +168,78 @@ class QualificationIntegrationTest {
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `given qualification when changing qualification then returns http ok`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+
+        val requestBody = QualificationDetails(
+            name = ChangeableValue("newName"),
+            description = null,
+            colour = ChangeableValue("#112233"),
+            orderNr = ChangeableValue(100)
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/qualification/${qualificationId}") {
+            addAdminAuth()
+            setBody(Json.encodeToString(requestBody))
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/qualification/$qualificationId") {
+            addMemberAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<Qualification>()
+            .all {
+                transform { it.name }.isEqualTo("newName")
+                transform { it.description }.isEqualTo("some qualification")
+                transform { it.colour }.isEqualTo("#112233")
+                transform { it.orderNr }.isEqualTo(100)
+            }
+    }
+
+    @Test
+    fun `given invalid qualification when changing qualification then returns http not found`() = withTestApp {
+        // given
+        val qualificationId = QualificationIdFixture.arbitrary().serialize()
+
+        val requestBody = QualificationDetails(
+            name = null,
+            description = null,
+            colour = null,
+            orderNr = null
+        )
+
+        // when
+        val result =
+            handleRequest(HttpMethod.Put, "/api/v1/qualification/$qualificationId") {
+                addAdminAuth()
+                setBody(Json.encodeToString(requestBody))
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "Qualification with id QualificationId(value=$qualificationId) not found.",
+                    mapOf(
+                        "qualificationId" to qualificationId
+                    )
+                )
+            )
     }
 
     @Test

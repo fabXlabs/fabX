@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.rest
 
+import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,4 +28,12 @@ data class QualificationCreationDetails(
     val description: String,
     val colour: String,
     val orderNr: Int
+)
+
+@Serializable
+data class QualificationDetails(
+    val name: ChangeableValue<String>?,
+    val description: ChangeableValue<String>?,
+    val colour: ChangeableValue<String>?,
+    val orderNr: ChangeableValue<Int>?,
 )

@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common.rest
 import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
+import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.restModule
@@ -30,6 +31,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingUserByIdentity::class.java) }
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }
+        bindInstance { Mockito.mock(ChangingQualification::class.java) }
         bindInstance { Mockito.mock(DeletingQualification::class.java) }
         bindInstance { Mockito.mock(GettingUser::class.java) }
 
