@@ -8,8 +8,8 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.Tool
-import cloud.fabX.fabXaccess.tool.model.ToolRepository
 
 /**
  * Service for a device to get its configuration.
@@ -17,7 +17,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 class GettingConfiguration(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
-    private val toolRepository: ToolRepository
+    private val gettingToolById: GettingToolById
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -31,7 +31,7 @@ class GettingConfiguration(
             .flatMap {
                 it.attachedTools.entries
                     .map { e ->
-                        toolRepository.getById(e.value)
+                        gettingToolById.getToolById(e.value)
                             .map { tool -> e.key to tool }
                     }
                     .sequenceEither()

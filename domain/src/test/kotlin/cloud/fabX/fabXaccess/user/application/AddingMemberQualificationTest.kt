@@ -9,9 +9,9 @@ import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
-import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.InstructorFixture
 import cloud.fabX.fabXaccess.user.model.MemberQualificationAdded
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -35,23 +35,23 @@ internal class AddingMemberQualificationTest {
     private val instructorActor = InstructorFixture.arbitrary(qualifications = setOf(qualificationId))
     private val correlationId = CorrelationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var qualificationRepository: QualificationRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var gettingQualificationById: GettingQualificationById
 
-    private var testee: AddingMemberQualification? = null
+    private lateinit var testee: AddingMemberQualification
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
         @Mock userRepository: UserRepository,
-        @Mock qualificationRepository: QualificationRepository
+        @Mock qualificationRepository: GettingQualificationById
     ) {
         this.logger = logger
         this.userRepository = userRepository
-        this.qualificationRepository = qualificationRepository
+        this.gettingQualificationById = qualificationRepository
 
-        testee = AddingMemberQualification({ logger }, qualificationRepository, userRepository)
+        testee = AddingMemberQualification({ logger }, userRepository, qualificationRepository)
     }
 
     @Test
@@ -69,17 +69,17 @@ internal class AddingMemberQualificationTest {
             qualificationId
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(qualificationRepository!!.getQualificationById(qualificationId))
+        whenever(gettingQualificationById.getQualificationById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addMemberQualification(
+        val result = testee.addMemberQualification(
             instructorActor,
             correlationId,
             userId,
@@ -89,10 +89,10 @@ internal class AddingMemberQualificationTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository!!, qualificationRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(qualificationRepository!!).getQualificationById(qualificationId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository, gettingQualificationById)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(gettingQualificationById).getQualificationById(qualificationId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
         inOrder.verifyNoMoreInteractions()
     }
 
@@ -101,11 +101,11 @@ internal class AddingMemberQualificationTest {
         // given
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addMemberQualification(
+        val result = testee.addMemberQualification(
             instructorActor,
             correlationId,
             userId,
@@ -123,14 +123,14 @@ internal class AddingMemberQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(qualificationRepository!!.getQualificationById(qualificationId))
+        whenever(gettingQualificationById.getQualificationById(qualificationId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addMemberQualification(
+        val result = testee.addMemberQualification(
             instructorActor,
             correlationId,
             userId,
@@ -158,17 +158,17 @@ internal class AddingMemberQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(qualificationRepository!!.getQualificationById(qualificationId))
+        whenever(gettingQualificationById.getQualificationById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addMemberQualification(
+        val result = testee.addMemberQualification(
             instructorActor,
             correlationId,
             userId,

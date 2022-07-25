@@ -12,9 +12,9 @@ import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
-import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import isLeft
 import isRight
 import org.junit.jupiter.api.BeforeEach
@@ -27,23 +27,23 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class GettingConfigurationTest {
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
-    private var toolRepository: ToolRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
+    private lateinit var toolRepository: GettingToolById
 
-    private var testee: GettingConfiguration? = null
+    private lateinit var testee: GettingConfiguration
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
         @Mock deviceRepository: DeviceRepository,
-        @Mock toolRepository: ToolRepository
+        @Mock gettingToolById: GettingToolById
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
-        this.toolRepository = toolRepository
+        this.toolRepository = gettingToolById
 
-        testee = GettingConfiguration({ logger }, deviceRepository, toolRepository)
+        testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById)
     }
 
     @Nested
@@ -65,7 +65,7 @@ internal class GettingConfigurationTest {
                 attachedTools = mapOf(pin1 to toolId1, pin2 to toolId2)
             )
 
-            whenever(deviceRepository!!.getById(deviceId))
+            whenever(deviceRepository.getById(deviceId))
                 .thenReturn(device.right())
         }
 
@@ -77,7 +77,7 @@ internal class GettingConfigurationTest {
                 time = 1
             )
 
-            whenever(toolRepository!!.getById(toolId1))
+            whenever(toolRepository.getToolById(toolId1))
                 .thenReturn(tool1.right())
 
             val tool2 = ToolFixture.arbitrary(
@@ -86,7 +86,7 @@ internal class GettingConfigurationTest {
                 time = 2
             )
 
-            whenever(toolRepository!!.getById(toolId2))
+            whenever(toolRepository.getToolById(toolId2))
                 .thenReturn(tool2.right())
         }
 
@@ -96,7 +96,7 @@ internal class GettingConfigurationTest {
             val deviceActor = DeviceActor(deviceId, "aabbccddee42")
 
             // when
-            val result = testee!!.getConfiguration(deviceActor)
+            val result = testee.getConfiguration(deviceActor)
 
             // then
             assertThat(result)
@@ -127,11 +127,11 @@ internal class GettingConfigurationTest {
 
         val expectedError = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(unknownDeviceId))
+        whenever(deviceRepository.getById(unknownDeviceId))
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getConfiguration(unknownDeviceActor)
+        val result = testee.getConfiguration(unknownDeviceActor)
 
         // then
         assertThat(result)
@@ -157,14 +157,14 @@ internal class GettingConfigurationTest {
 
         val deviceActor = DeviceActor(deviceId, "aabbccddee42")
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getToolById(toolId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.getConfiguration(deviceActor)
+        val result = testee.getConfiguration(deviceActor)
 
         // then
         assertThat(result)

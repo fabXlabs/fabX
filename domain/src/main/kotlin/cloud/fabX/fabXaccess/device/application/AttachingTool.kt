@@ -8,7 +8,7 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
-import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
 
 /**
@@ -17,7 +17,7 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class AttachingTool(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
-    private val toolRepository: ToolRepository
+    private val gettingToolById: GettingToolById
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -37,7 +37,7 @@ class AttachingTool(
                     correlationId,
                     pin,
                     toolId,
-                    toolRepository
+                    gettingToolById
                 )
             }
             .flatMap {

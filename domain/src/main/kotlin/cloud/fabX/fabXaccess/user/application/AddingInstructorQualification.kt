@@ -8,8 +8,8 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.Qualification
-import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
@@ -19,7 +19,7 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 class AddingInstructorQualification(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val qualificationRepository: QualificationRepository
+    private val gettingQualificationById: GettingQualificationById
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -37,7 +37,7 @@ class AddingInstructorQualification(
                     actor,
                     correlationId,
                     qualificationId,
-                    qualificationRepository
+                    gettingQualificationById
                 )
             }
             .flatMap {
