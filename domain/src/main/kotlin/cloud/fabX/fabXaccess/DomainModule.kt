@@ -59,8 +59,8 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingQualification(instance(), instance()) }
 
     // tool
-    bindSingleton { AddingTool(instance(), instance(), instance()) }
-    bindSingleton { ChangingTool(instance(), instance()) }
+    bindSingleton { AddingTool(instance(), instance(), instance(), instance()) }
+    bindSingleton { ChangingTool(instance(), instance(), instance()) }
     bindSingleton { DeletingTool(instance(), instance(), instance(), instance()) }
     bindSingleton { GettingTool(instance(), instance()) }
 

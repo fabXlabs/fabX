@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolDetailsChanged
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
@@ -34,20 +35,23 @@ internal class ChangingToolTest {
 
     private val toolId = ToolIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var toolRepository: ToolRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var toolRepository: ToolRepository
+    private lateinit var gettingQualificationById: GettingQualificationById
 
-    private var testee: ChangingTool? = null
+    private lateinit var testee: ChangingTool
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock toolRepository: ToolRepository
+        @Mock toolRepository: ToolRepository,
+        @Mock gettingQualificationById: GettingQualificationById
     ) {
         this.logger = logger
         this.toolRepository = toolRepository
+        this.gettingQualificationById = gettingQualificationById
 
-        testee = ChangingTool({ logger }, toolRepository)
+        testee = ChangingTool({ logger }, toolRepository, gettingQualificationById)
     }
 
     @Test
@@ -77,14 +81,14 @@ internal class ChangingToolTest {
             newRequiredQualifications
         )
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(tool.right())
 
-        whenever(toolRepository!!.store(expectedSourcingEvent))
+        whenever(toolRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.changeToolDetails(
+        val result = testee.changeToolDetails(
             adminActor,
             correlationId,
             toolId,
@@ -100,9 +104,9 @@ internal class ChangingToolTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(toolRepository!!)
-        inOrder.verify(toolRepository!!).getById(toolId)
-        inOrder.verify(toolRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(toolRepository)
+        inOrder.verify(toolRepository).getById(toolId)
+        inOrder.verify(toolRepository).store(expectedSourcingEvent)
     }
 
     @Test
@@ -110,11 +114,11 @@ internal class ChangingToolTest {
         // given
         val error = ErrorFixture.arbitrary()
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.changeToolDetails(
+        val result = testee.changeToolDetails(
             adminActor,
             correlationId,
             toolId,
@@ -154,14 +158,14 @@ internal class ChangingToolTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(tool.right())
 
-        whenever(toolRepository!!.store(event))
+        whenever(toolRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.changeToolDetails(
+        val result = testee.changeToolDetails(
             adminActor,
             correlationId,
             toolId,

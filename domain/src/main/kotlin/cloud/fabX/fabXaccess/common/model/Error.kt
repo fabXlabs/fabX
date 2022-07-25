@@ -1,5 +1,9 @@
 package cloud.fabX.fabXaccess.common.model
 
+// TODO distinguish between an entity itself not being found and a reference not being found
+//      e.g. when adding a qualification to a member and the qualification does not exist,
+//      return a ReferencedQualificationNotFound instead of QualificationNotFound, as that
+//      would be mapped to an HTTP 404 instead of e.g. unprocessable entity
 sealed class Error(open val message: String, open val parameters: Map<String, String> = emptyMap()) {
     data class NotAuthenticated(
         override val message: String
@@ -83,6 +87,11 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class QualificationNotFound(
+        override val message: String,
+        val qualificationId: QualificationId
+    ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
+
+    data class ReferencedQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))

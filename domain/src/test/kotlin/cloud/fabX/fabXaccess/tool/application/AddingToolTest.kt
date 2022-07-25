@@ -7,6 +7,7 @@ import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolCreated
@@ -30,20 +31,23 @@ internal class AddingToolTest {
 
     private val toolId = ToolIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var toolRepository: ToolRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var toolRepository: ToolRepository
+    private lateinit var gettingQualificationById: GettingQualificationById
 
-    private var testee: AddingTool? = null
+    private lateinit var testee: AddingTool
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock toolRepository: ToolRepository
+        @Mock toolRepository: ToolRepository,
+        @Mock gettingQualificationById: GettingQualificationById
     ) {
         this.logger = logger
         this.toolRepository = toolRepository
+        this.gettingQualificationById = gettingQualificationById
 
-        testee = AddingTool({ logger }, toolRepository, { toolId })
+        testee = AddingTool({ logger }, toolRepository, { toolId }, gettingQualificationById)
     }
 
     @Test
@@ -68,11 +72,11 @@ internal class AddingToolTest {
             requiredQualifications,
         )
 
-        whenever(toolRepository!!.store(expectedSourcingEvent))
+        whenever(toolRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addTool(
+        val result = testee.addTool(
             adminActor,
             correlationId,
             name,
@@ -113,11 +117,11 @@ internal class AddingToolTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(toolRepository!!.store(event))
+        whenever(toolRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addTool(
+        val result = testee.addTool(
             adminActor,
             correlationId,
             name,

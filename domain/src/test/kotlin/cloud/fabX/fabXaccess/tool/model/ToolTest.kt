@@ -1,15 +1,22 @@
 package cloud.fabX.fabXaccess.tool.model
 
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
+import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import isLeft
 import isNone
+import isRight
 import isSome
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -50,7 +57,10 @@ internal class ToolTest {
     fun `when adding new tool then returns expected sourcing event`() {
         // given
         val qualificationId1 = QualificationIdFixture.arbitrary()
+        val qualification1 = QualificationFixture.arbitrary(qualificationId1)
+
         val qualificationId2 = QualificationIdFixture.arbitrary()
+        val qualification2 = QualificationFixture.arbitrary(qualificationId2)
 
         val name = "name"
         val type = ToolType.KEEP
@@ -81,11 +91,57 @@ internal class ToolTest {
             time,
             idleState,
             wikiLink,
-            requiredQualifications
+            requiredQualifications,
+            GettingQualificationById {
+                return@GettingQualificationById when (it) {
+                    qualificationId1 -> qualification1.right()
+                    qualificationId2 -> qualification2.right()
+                    else -> throw IllegalArgumentException("unexpected qualification id")
+                }
+            }
         )
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given invalid qualification id when adding new tool then returns error`() {
+        // given
+        val invalidQualificationId = QualificationIdFixture.arbitrary()
+
+        val error = Error.QualificationNotFound("msg", invalidQualificationId)
+
+        // when
+        val result = Tool.addNew(
+            { toolId },
+            adminActor,
+            correlationId,
+            "tool",
+            ToolType.UNLOCK,
+            123,
+            IdleState.IDLE_LOW,
+            "https://example.com/tool",
+            setOf(invalidQualificationId),
+            GettingQualificationById {
+                return@GettingQualificationById when (it) {
+                    invalidQualificationId -> error.left()
+                    else -> throw IllegalArgumentException("unexpected qualification id")
+                }
+            }
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.ReferencedQualificationNotFound(
+                    "msg",
+                    invalidQualificationId
+                )
+            )
     }
 
     @Test
@@ -290,6 +346,7 @@ internal class ToolTest {
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = aggregateVersion)
 
         val qualificationId = QualificationIdFixture.arbitrary()
+        val qualification = QualificationFixture.arbitrary(qualificationId)
 
         val expectedSourcingEvent = ToolDetailsChanged(
             aggregateRootId = toolId,
@@ -315,11 +372,57 @@ internal class ToolTest {
             idleState = ChangeableValue.ChangeToValue(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
             wikiLink = ChangeableValue.ChangeToValue("https://example.com/newLink"),
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId))
+            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId)),
+            GettingQualificationById {
+                return@GettingQualificationById when (it) {
+                    qualificationId -> qualification.right()
+                    else -> throw IllegalArgumentException("unexpected qualification id")
+                }
+            }
         )
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given invalid qualification id when changing details then returns error`() {
+        // given
+        val invalidQualificationId = QualificationIdFixture.arbitrary()
+        val error = Error.QualificationNotFound("msg", invalidQualificationId)
+
+        val tool = ToolFixture.arbitrary(toolId, aggregateVersion = aggregateVersion)
+
+        // when
+        val result = tool.changeDetails(
+            adminActor,
+            correlationId,
+            name = ChangeableValue.ChangeToValue("newName"),
+            type = ChangeableValue.LeaveAsIs,
+            time = ChangeableValue.ChangeToValue(9876),
+            idleState = ChangeableValue.ChangeToValue(IdleState.IDLE_LOW),
+            enabled = ChangeableValue.LeaveAsIs,
+            wikiLink = ChangeableValue.ChangeToValue("https://example.com/newLink"),
+            requiredQualifications = ChangeableValue.ChangeToValue(setOf(invalidQualificationId)),
+            GettingQualificationById {
+                return@GettingQualificationById when (it) {
+                    invalidQualificationId -> error.left()
+                    else -> throw IllegalArgumentException("unexpected qualification id")
+                }
+            }
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.ReferencedQualificationNotFound(
+                    "msg",
+                    invalidQualificationId
+                )
+            )
     }
 
     @Test

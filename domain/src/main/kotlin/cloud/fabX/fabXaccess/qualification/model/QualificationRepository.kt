@@ -10,7 +10,7 @@ interface QualificationRepository : GettingQualificationById {
     fun getById(id: QualificationId): Either<Error, Qualification>
     fun store(event: QualificationSourcingEvent): Option<Error>
 
-    override fun getQualificationById(id: QualificationId): Either<Error, Qualification> = getQualificationById(id)
+    override fun getQualificationById(id: QualificationId): Either<Error, Qualification> = getById(id)
 }
 
 fun interface GettingQualificationById {

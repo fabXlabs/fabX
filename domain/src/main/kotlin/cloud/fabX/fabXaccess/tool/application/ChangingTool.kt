@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
+import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
@@ -18,7 +19,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
  */
 class ChangingTool(
     loggerFactory: LoggerFactory,
-    private val toolRepository: ToolRepository
+    private val toolRepository: ToolRepository,
+    private val gettingQualificationById: GettingQualificationById
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -37,7 +39,7 @@ class ChangingTool(
         log.debug("changeToolDetails...")
 
         return toolRepository.getById(toolId)
-            .map {
+            .flatMap {
                 it.changeDetails(
                     actor,
                     correlationId,
@@ -47,7 +49,8 @@ class ChangingTool(
                     idleState,
                     enabled,
                     wikiLink,
-                    requiredQualifications
+                    requiredQualifications,
+                    gettingQualificationById
                 )
             }
             .flatMap {

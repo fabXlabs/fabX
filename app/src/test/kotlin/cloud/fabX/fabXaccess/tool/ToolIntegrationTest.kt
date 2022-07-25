@@ -2,7 +2,6 @@ package cloud.fabX.fabXaccess.tool
 
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
-import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
 import assertk.assertions.isNotNull
@@ -10,6 +9,7 @@ import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -27,7 +27,6 @@ import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @InternalAPI
@@ -98,8 +97,6 @@ class ToolIntegrationTest {
             .isEqualTo(toolId)
     }
 
-    // TODO fix AddingTool and enable test
-    @Disabled
     @Test
     fun `given qualification does not exist when adding tool then returns error`() = withTestApp {
         // given
@@ -122,10 +119,16 @@ class ToolIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
             .isNotNull()
-            .isEmpty()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
+                    mapOf("qualificationId" to invalidQualificationId)
+                )
+            )
     }
 
     @Test
