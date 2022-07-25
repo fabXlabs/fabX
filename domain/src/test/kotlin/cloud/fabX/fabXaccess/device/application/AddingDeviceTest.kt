@@ -28,10 +28,10 @@ internal class AddingDeviceTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
 
-    private var testee: AddingDevice? = null
+    private lateinit var testee: AddingDevice
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -64,11 +64,11 @@ internal class AddingDeviceTest {
             secret
         )
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addDevice(
+        val result = testee.addDevice(
             adminActor,
             correlationId,
             name,
@@ -105,11 +105,11 @@ internal class AddingDeviceTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.store(event))
+        whenever(deviceRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addDevice(
+        val result = testee.addDevice(
             adminActor,
             correlationId,
             name,

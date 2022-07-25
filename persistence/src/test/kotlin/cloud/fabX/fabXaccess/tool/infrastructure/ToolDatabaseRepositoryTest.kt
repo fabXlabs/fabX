@@ -80,7 +80,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForToolStoredInRepository {
 
-        private var repository: ToolRepository? = null
+        private lateinit var repository: ToolRepository
 
         @BeforeEach
         fun setup() {
@@ -97,7 +97,7 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com",
                 setOf(qualificationId)
             )
-            repository!!.store(event1)
+            repository.store(event1)
 
             val event2 = ToolDetailsChanged(
                 toolId,
@@ -112,13 +112,13 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs
             )
-            repository!!.store(event2)
+            repository.store(event2)
         }
 
         @Test
         fun `when getting tool by id then returns tool from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getById(toolId)
@@ -141,7 +141,7 @@ internal class ToolDatabaseRepositoryTest {
         @Test
         fun `when storing then accepts aggregate version number increased by one`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = ToolDetailsChanged(
                 toolId,
@@ -173,7 +173,7 @@ internal class ToolDatabaseRepositoryTest {
         @ValueSource(longs = [-1, 0, 2, 4, 42])
         fun `when storing then not accepts version numbers other than increased by one`(version: Long) {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = ToolDetailsChanged(
                 toolId,
@@ -212,7 +212,7 @@ internal class ToolDatabaseRepositoryTest {
 
         private val qualificationId2 = QualificationIdFixture.static(345)
 
-        private var repository: ToolRepository? = null
+        private lateinit var repository: ToolRepository
 
         @BeforeEach
         fun setup() {
@@ -229,7 +229,7 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com/tool1",
                 setOf(qualificationId)
             )
-            repository!!.store(tool1event1)
+            repository.store(tool1event1)
 
             val tool1event2 = ToolDetailsChanged(
                 toolId,
@@ -244,7 +244,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.ChangeToValue(setOf(qualificationId2))
             )
-            repository!!.store(tool1event2)
+            repository.store(tool1event2)
 
 
             val tool2event1 = ToolCreated(
@@ -258,7 +258,7 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com/tool2",
                 setOf(qualificationId, qualificationId2)
             )
-            repository!!.store(tool2event1)
+            repository.store(tool2event1)
 
             val tool3event1 = ToolCreated(
                 toolId3,
@@ -271,7 +271,7 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com/tool3",
                 setOf(qualificationId2)
             )
-            repository!!.store(tool3event1)
+            repository.store(tool3event1)
 
             val tool2event2 = ToolDeleted(
                 toolId2,
@@ -279,7 +279,7 @@ internal class ToolDatabaseRepositoryTest {
                 actorId,
                 correlationId
             )
-            repository!!.store(tool2event2)
+            repository.store(tool2event2)
 
             val tool3event2 = ToolDetailsChanged(
                 toolId3,
@@ -294,13 +294,13 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.ChangeToValue("https://wiki.example.com/newtool3"),
                 ChangeableValue.LeaveAsIs
             )
-            repository!!.store(tool3event2)
+            repository.store(tool3event2)
         }
 
         @Test
         fun `when getting all tools then returns all tools from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getAll()
@@ -335,7 +335,7 @@ internal class ToolDatabaseRepositoryTest {
 
     @Nested
     internal inner class GivenToolsWithQualificationsStoredInRepository {
-        private var repository: ToolRepository? = null
+        private lateinit var repository: ToolRepository
 
         @BeforeEach
         fun setup() {
@@ -352,7 +352,7 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com/tool1",
                 setOf(qualificationId)
             )
-            repository!!.store(tool1created)
+            repository.store(tool1created)
 
             val tool2created = ToolCreated(
                 toolId2,
@@ -365,7 +365,7 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com/tool2",
                 setOf(qualificationId, qualificationId2)
             )
-            repository!!.store(tool2created)
+            repository.store(tool2created)
 
             val tool3created = ToolCreated(
                 toolId3,
@@ -378,14 +378,14 @@ internal class ToolDatabaseRepositoryTest {
                 "https://wiki.example.com/tool3",
                 setOf(qualificationId2)
             )
-            repository!!.store(tool3created)
+            repository.store(tool3created)
         }
 
         @ParameterizedTest
         @MethodSource("cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepositoryTest#toolAndQualificationIds")
         fun `when getting tools by qualification id then returns tools which require qualification`() {
             // given
-            val repository = this.repository!! as GettingToolsByQualificationId
+            val repository = this.repository as GettingToolsByQualificationId
 
             // when
             val result = repository.getToolsByQualificationId(qualificationId)

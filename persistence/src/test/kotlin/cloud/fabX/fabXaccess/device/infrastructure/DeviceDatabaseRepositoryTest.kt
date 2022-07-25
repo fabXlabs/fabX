@@ -70,7 +70,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDeviceStoredInRepository {
 
-        private var repository: DeviceRepository? = null
+        private lateinit var repository: DeviceRepository
 
         @BeforeEach
         fun setup() {
@@ -86,7 +86,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddeeff",
                 secret = "supersecret"
             )
-            repository!!.store(event1)
+            repository.store(event1)
 
             val event2 = DeviceDetailsChanged(
                 deviceId,
@@ -97,13 +97,13 @@ internal class DeviceDatabaseRepositoryTest {
                 background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
-            repository!!.store(event2)
+            repository.store(event2)
         }
 
         @Test
         fun `when getting device by id then returns device from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getById(deviceId)
@@ -123,7 +123,7 @@ internal class DeviceDatabaseRepositoryTest {
         @Test
         fun `when storing then accepts aggregate version number increased by one`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = DeviceDetailsChanged(
                 deviceId,
@@ -150,7 +150,7 @@ internal class DeviceDatabaseRepositoryTest {
         @ValueSource(longs = [-1, 0, 1, 2, 4, 1234])
         fun `when storing then not accepts version numbers other than increased by one`(version: Long) {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = DeviceDetailsChanged(
                 deviceId,
@@ -187,7 +187,7 @@ internal class DeviceDatabaseRepositoryTest {
         private val deviceId2 = DeviceIdFixture.static(4343)
         private val deviceId3 = DeviceIdFixture.static(4444)
 
-        private var repository: DeviceRepository? = null
+        private lateinit var repository: DeviceRepository
 
         @BeforeEach
         fun setup() {
@@ -203,7 +203,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddeeff",
                 secret = "supersecret"
             )
-            repository!!.store(device1event1)
+            repository.store(device1event1)
 
             val device1event2 = DeviceDetailsChanged(
                 deviceId,
@@ -214,7 +214,7 @@ internal class DeviceDatabaseRepositoryTest {
                 background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
-            repository!!.store(device1event2)
+            repository.store(device1event2)
 
             val device3event1 = DeviceCreated(
                 deviceId3,
@@ -226,7 +226,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddee33",
                 secret = "supersecret3"
             )
-            repository!!.store(device3event1)
+            repository.store(device3event1)
 
             val device2event1 = DeviceCreated(
                 deviceId2,
@@ -238,7 +238,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddee22",
                 secret = "supersecret2"
             )
-            repository!!.store(device2event1)
+            repository.store(device2event1)
 
             val device1event3 = DeviceDetailsChanged(
                 deviceId,
@@ -249,7 +249,7 @@ internal class DeviceDatabaseRepositoryTest {
                 background = ChangeableValue.ChangeToValue("https://example.com/3.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
-            repository!!.store(device1event3)
+            repository.store(device1event3)
 
             val device3event2 = DeviceDeleted(
                 deviceId3,
@@ -257,7 +257,7 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 correlationId,
             )
-            repository!!.store(device3event2)
+            repository.store(device3event2)
 
             val device2event2 = DeviceDetailsChanged(
                 deviceId2,
@@ -268,13 +268,13 @@ internal class DeviceDatabaseRepositoryTest {
                 background = ChangeableValue.LeaveAsIs,
                 backupBackendUrl = ChangeableValue.ChangeToValue("https://backup42.example.com"),
             )
-            repository!!.store(device2event2)
+            repository.store(device2event2)
         }
 
         @Test
         fun `when getting all devices then returns all devices from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getAll()
@@ -308,7 +308,7 @@ internal class DeviceDatabaseRepositoryTest {
 
         private val deviceId2 = DeviceIdFixture.static(4242)
 
-        private var repository: DeviceRepository? = null
+        private lateinit var repository: DeviceRepository
 
         @BeforeEach
         fun setup() {
@@ -324,7 +324,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddeeff",
                 secret = "supersecret"
             )
-            repository!!.store(device1Created)
+            repository.store(device1Created)
 
             val device2Created = DeviceCreated(
                 deviceId2,
@@ -336,13 +336,13 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddee22",
                 secret = "supersecret2"
             )
-            repository!!.store(device2Created)
+            repository.store(device2Created)
         }
 
         @Test
         fun `when getting by known identity then returns device`() {
             // given
-            val repository = this.repository!! as GettingDeviceByIdentity
+            val repository = this.repository as GettingDeviceByIdentity
 
             // when
             val result = repository.getByIdentity(
@@ -358,7 +358,7 @@ internal class DeviceDatabaseRepositoryTest {
         @Test
         fun `when getting by unknown identity then returns error`() {
             // given
-            val repository = this.repository!! as GettingDeviceByIdentity
+            val repository = this.repository as GettingDeviceByIdentity
 
             // when
             val result = repository.getByIdentity(
@@ -378,7 +378,7 @@ internal class DeviceDatabaseRepositoryTest {
     internal inner class GivenEventsForDevicesWithAttachedToolsStoredInRepository {
 
 
-        private var repository: DeviceDatabaseRepository? = null
+        private lateinit var repository: DeviceDatabaseRepository
 
         @BeforeEach
         fun setup() {
@@ -394,7 +394,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddeeff",
                 secret = "supersecret"
             )
-            repository!!.store(device1Created)
+            repository.store(device1Created)
 
             val device1Tool1Attached = ToolAttached(
                 deviceId,
@@ -404,7 +404,7 @@ internal class DeviceDatabaseRepositoryTest {
                 1,
                 toolId1
             )
-            repository!!.store(device1Tool1Attached)
+            repository.store(device1Tool1Attached)
 
             val device1Tool2Attached = ToolAttached(
                 deviceId,
@@ -414,7 +414,7 @@ internal class DeviceDatabaseRepositoryTest {
                 2,
                 toolId2
             )
-            repository!!.store(device1Tool2Attached)
+            repository.store(device1Tool2Attached)
 
             val device2Created = DeviceCreated(
                 deviceId2,
@@ -426,7 +426,7 @@ internal class DeviceDatabaseRepositoryTest {
                 mac = "aabbccddee22",
                 secret = "supersecret2"
             )
-            repository!!.store(device2Created)
+            repository.store(device2Created)
 
             val device2Tool2Attached = ToolAttached(
                 deviceId2,
@@ -436,7 +436,7 @@ internal class DeviceDatabaseRepositoryTest {
                 3,
                 toolId2
             )
-            repository!!.store(device2Tool2Attached)
+            repository.store(device2Tool2Attached)
         }
 
         @ParameterizedTest
@@ -446,7 +446,7 @@ internal class DeviceDatabaseRepositoryTest {
             expectedDeviceIds: Set<DeviceId>
         ) {
             // given
-            val repository = this.repository!! as GettingDevicesByAttachedTool
+            val repository = this.repository as GettingDevicesByAttachedTool
 
             // when
             val result = repository.getByAttachedTool(toolId)

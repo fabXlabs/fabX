@@ -32,10 +32,10 @@ internal class ChangingDeviceTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
 
-    private var testee: ChangingDevice? = null
+    private lateinit var testee: ChangingDevice
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -67,14 +67,14 @@ internal class ChangingDeviceTest {
             newBackupBackendUrl
         )
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.changeDeviceDetails(
+        val result = testee.changeDeviceDetails(
             adminActor,
             correlationId,
             deviceId,
@@ -92,11 +92,11 @@ internal class ChangingDeviceTest {
         // given
         val error = Error.DeviceNotFound("message", deviceId)
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.changeDeviceDetails(
+        val result = testee.changeDeviceDetails(
             adminActor,
             correlationId,
             deviceId,
@@ -128,14 +128,14 @@ internal class ChangingDeviceTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(event))
+        whenever(deviceRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.changeDeviceDetails(
+        val result = testee.changeDeviceDetails(
             adminActor,
             correlationId,
             deviceId,

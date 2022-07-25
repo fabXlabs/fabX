@@ -33,11 +33,11 @@ internal class AddingPhoneNrIdentityTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var gettingUserByIdentity: GettingUserByIdentity? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var gettingUserByIdentity: GettingUserByIdentity
 
-    private var testee: AddingPhoneNrIdentity? = null
+    private lateinit var testee: AddingPhoneNrIdentity
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -67,17 +67,17 @@ internal class AddingPhoneNrIdentityTest {
             phoneNr
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity!!.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
+        whenever(gettingUserByIdentity.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
             .thenReturn(Error.UserNotFoundByIdentity("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addPhoneNrIdentity(
+        val result = testee.addPhoneNrIdentity(
             adminActor,
             correlationId,
             userId,
@@ -87,9 +87,9 @@ internal class AddingPhoneNrIdentityTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
     }
 
     @Test
@@ -97,11 +97,11 @@ internal class AddingPhoneNrIdentityTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addPhoneNrIdentity(
+        val result = testee.addPhoneNrIdentity(
             adminActor,
             correlationId,
             userId,
@@ -126,14 +126,14 @@ internal class AddingPhoneNrIdentityTest {
             "Phone number is already in use."
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity!!.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
+        whenever(gettingUserByIdentity.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
             .thenReturn(otherUser.right())
 
         // when
-        val result = testee!!.addPhoneNrIdentity(
+        val result = testee.addPhoneNrIdentity(
             adminActor,
             correlationId,
             userId,
@@ -163,17 +163,17 @@ internal class AddingPhoneNrIdentityTest {
 
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByIdentity!!.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
+        whenever(gettingUserByIdentity.getByIdentity(UserIdentityFixture.phoneNr(phoneNr)))
             .thenReturn(Error.UserNotFoundByIdentity("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addPhoneNrIdentity(
+        val result = testee.addPhoneNrIdentity(
             adminActor,
             correlationId,
             userId,

@@ -36,10 +36,10 @@ internal class RemovingMemberQualificationTest {
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
 
-    private var testee: RemovingMemberQualification? = null
+    private lateinit var testee: RemovingMemberQualification
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -69,14 +69,14 @@ internal class RemovingMemberQualificationTest {
             qualificationId
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.removeMemberQualification(
+        val result = testee.removeMemberQualification(
             adminActor,
             correlationId,
             userId,
@@ -85,9 +85,9 @@ internal class RemovingMemberQualificationTest {
 
         // then
         assertThat(result).isNone()
-        val inOrder = inOrder(userRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
         inOrder.verifyNoMoreInteractions()
     }
 
@@ -117,14 +117,14 @@ internal class RemovingMemberQualificationTest {
             qualificationId
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.removeMemberQualification(
+        val result = testee.removeMemberQualification(
             domainEvent,
             userId,
             qualificationId
@@ -132,9 +132,9 @@ internal class RemovingMemberQualificationTest {
 
         // then
         assertThat(result).isNone()
-        val inOrder = inOrder(userRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
         inOrder.verifyNoMoreInteractions()
     }
 
@@ -143,11 +143,11 @@ internal class RemovingMemberQualificationTest {
         // given
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.removeMemberQualification(
+        val result = testee.removeMemberQualification(
             adminActor,
             correlationId,
             userId,
@@ -167,11 +167,11 @@ internal class RemovingMemberQualificationTest {
             memberQualifications = setOf()
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.removeMemberQualification(
+        val result = testee.removeMemberQualification(
             adminActor,
             correlationId,
             userId,
@@ -207,13 +207,13 @@ internal class RemovingMemberQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
-        val result = testee!!.removeMemberQualification(
+        val result = testee.removeMemberQualification(
             adminActor,
             correlationId,
             userId,

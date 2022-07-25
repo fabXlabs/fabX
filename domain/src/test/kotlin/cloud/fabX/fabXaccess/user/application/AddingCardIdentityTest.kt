@@ -33,11 +33,11 @@ internal class AddingCardIdentityTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var gettingUserByCardId: GettingUserByCardId? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var gettingUserByCardId: GettingUserByCardId
 
-    private var testee: AddingCardIdentity? = null
+    private lateinit var testee: AddingCardIdentity
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -69,17 +69,17 @@ internal class AddingCardIdentityTest {
             cardSecret
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByCardId!!.getByCardId(cardId))
+        whenever(gettingUserByCardId.getByCardId(cardId))
             .thenReturn(Error.UserNotFoundByCardId("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addCardIdentity(
+        val result = testee.addCardIdentity(
             adminActor,
             correlationId,
             userId,
@@ -90,9 +90,9 @@ internal class AddingCardIdentityTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
     }
 
     @Test
@@ -100,11 +100,11 @@ internal class AddingCardIdentityTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addCardIdentity(
+        val result = testee.addCardIdentity(
             adminActor,
             correlationId,
             userId,
@@ -130,14 +130,14 @@ internal class AddingCardIdentityTest {
 
         val expectedDomainError = Error.CardIdAlreadyInUse("Card id is already in use.")
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByCardId!!.getByCardId(cardId))
+        whenever(gettingUserByCardId.getByCardId(cardId))
             .thenReturn(otherUser.right())
 
         // when
-        val result = testee!!.addCardIdentity(
+        val result = testee.addCardIdentity(
             adminActor,
             correlationId,
             userId,
@@ -170,17 +170,17 @@ internal class AddingCardIdentityTest {
 
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByCardId!!.getByCardId(cardId))
+        whenever(gettingUserByCardId.getByCardId(cardId))
             .thenReturn(Error.UserNotFoundByCardId("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addCardIdentity(
+        val result = testee.addCardIdentity(
             adminActor,
             correlationId,
             userId,

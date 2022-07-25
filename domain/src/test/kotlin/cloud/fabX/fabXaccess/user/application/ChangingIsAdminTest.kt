@@ -34,10 +34,10 @@ internal class ChangingIsAdminTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
 
-    private var testee: ChangingIsAdmin? = null
+    private lateinit var testee: ChangingIsAdmin
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -66,14 +66,14 @@ internal class ChangingIsAdminTest {
             newIsAdmin
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.changeIsAdmin(
+        val result = testee.changeIsAdmin(
             adminActor,
             correlationId,
             userId,
@@ -83,9 +83,9 @@ internal class ChangingIsAdminTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
     }
 
     @Test
@@ -93,11 +93,11 @@ internal class ChangingIsAdminTest {
         // given
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.changeIsAdmin(
+        val result = testee.changeIsAdmin(
             adminActor,
             correlationId,
             userId,
@@ -119,11 +119,11 @@ internal class ChangingIsAdminTest {
 
         val expectedDomainError = Error.UserAlreadyAdmin("User already is admin.")
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.changeIsAdmin(
+        val result = testee.changeIsAdmin(
             adminActor,
             correlationId,
             userId,
@@ -153,14 +153,14 @@ internal class ChangingIsAdminTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.changeIsAdmin(
+        val result = testee.changeIsAdmin(
             adminActor,
             correlationId,
             userId,

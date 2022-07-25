@@ -26,10 +26,10 @@ internal class GettingToolTest {
     private val toolId = ToolIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var toolRepository: ToolRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var toolRepository: ToolRepository
 
-    private var testee: GettingTool? = null
+    private lateinit var testee: GettingTool
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -50,11 +50,11 @@ internal class GettingToolTest {
 
         val tools = setOf(tool1, tool2)
 
-        whenever(toolRepository!!.getAll())
+        whenever(toolRepository.getAll())
             .thenReturn(tools)
 
         // when
-        val result = testee!!.getAll(actor, correlationId)
+        val result = testee.getAll(actor, correlationId)
 
         // then
         assertThat(result)
@@ -66,11 +66,11 @@ internal class GettingToolTest {
         // given
         val tool = ToolFixture.arbitrary()
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(tool.right())
 
         // when
-        val result = testee!!.getById(actor, correlationId, toolId)
+        val result = testee.getById(actor, correlationId, toolId)
 
         // then
         assertThat(result)
@@ -83,11 +83,11 @@ internal class GettingToolTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getById(actor, correlationId, toolId)
+        val result = testee.getById(actor, correlationId, toolId)
 
         // then
         assertThat(result)

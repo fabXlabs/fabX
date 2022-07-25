@@ -35,11 +35,11 @@ internal class DeletingToolTest {
     private val toolId = ToolIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
 
-    private var logger: Logger? = null
-    private var domainEventPublisher: DomainEventPublisher? = null
-    private var toolRepository: ToolRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var domainEventPublisher: DomainEventPublisher
+    private lateinit var toolRepository: ToolRepository
 
-    private var testee: DeletingTool? = null
+    private lateinit var testee: DeletingTool
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -66,14 +66,14 @@ internal class DeletingToolTest {
             correlationId
         )
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(tool.right())
 
-        whenever(toolRepository!!.store(expectedSourcingEvent))
+        whenever(toolRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.deleteTool(
+        val result = testee.deleteTool(
             adminActor,
             correlationId,
             toolId
@@ -81,7 +81,7 @@ internal class DeletingToolTest {
 
         // then
         assertThat(result).isNone()
-        verify(domainEventPublisher!!).publish(
+        verify(domainEventPublisher).publish(
             cloud.fabX.fabXaccess.common.model.ToolDeleted(
                 adminActor.id,
                 fixedInstant,
@@ -96,11 +96,11 @@ internal class DeletingToolTest {
         // given
         val error = ErrorFixture.arbitrary()
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.deleteTool(
+        val result = testee.deleteTool(
             adminActor,
             correlationId,
             toolId
@@ -127,14 +127,14 @@ internal class DeletingToolTest {
         val error = ErrorFixture.arbitrary()
 
 
-        whenever(toolRepository!!.getById(toolId))
+        whenever(toolRepository.getById(toolId))
             .thenReturn(tool.right())
 
-        whenever(toolRepository!!.store(event))
+        whenever(toolRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.deleteTool(
+        val result = testee.deleteTool(
             adminActor,
             correlationId,
             toolId

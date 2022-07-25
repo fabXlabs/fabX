@@ -27,10 +27,10 @@ internal class GettingUserTest {
     private val userId = UserIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
 
-    private var testee: GettingUser? = null
+    private lateinit var testee: GettingUser
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -52,11 +52,11 @@ internal class GettingUserTest {
 
         val users = setOf(user1, user2, user3)
 
-        whenever(userRepository!!.getAll())
+        whenever(userRepository.getAll())
             .thenReturn(users)
 
         // when
-        val result = testee!!.getAll(adminActor, correlationId)
+        val result = testee.getAll(adminActor, correlationId)
 
         // then
         assertThat(result)
@@ -68,11 +68,11 @@ internal class GettingUserTest {
         // given
         val user = UserFixture.arbitrary(userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.getById(adminActor, correlationId, userId)
+        val result = testee.getById(adminActor, correlationId, userId)
 
         // then
         assertThat(result)
@@ -85,11 +85,11 @@ internal class GettingUserTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getById(adminActor, correlationId, userId)
+        val result = testee.getById(adminActor, correlationId, userId)
 
         // then
         assertThat(result)

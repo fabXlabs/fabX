@@ -33,11 +33,11 @@ internal class AddingUsernamePasswordIdentityTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var gettingUserByUsername: GettingUserByUsername? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var gettingUserByUsername: GettingUserByUsername
 
-    private var testee: AddingUsernamePasswordIdentity? = null
+    private lateinit var testee: AddingUsernamePasswordIdentity
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -69,17 +69,17 @@ internal class AddingUsernamePasswordIdentityTest {
             hash
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByUsername!!.getByUsername(username))
+        whenever(gettingUserByUsername.getByUsername(username))
             .thenReturn(Error.UserNotFoundByUsername("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addUsernamePasswordIdentity(
+        val result = testee.addUsernamePasswordIdentity(
             adminActor,
             correlationId,
             userId,
@@ -90,9 +90,9 @@ internal class AddingUsernamePasswordIdentityTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
     }
 
     @Test
@@ -100,11 +100,11 @@ internal class AddingUsernamePasswordIdentityTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addUsernamePasswordIdentity(
+        val result = testee.addUsernamePasswordIdentity(
             adminActor,
             correlationId,
             userId,
@@ -137,17 +137,17 @@ internal class AddingUsernamePasswordIdentityTest {
 
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByUsername!!.getByUsername(username))
+        whenever(gettingUserByUsername.getByUsername(username))
             .thenReturn(Error.UserNotFoundByUsername("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addUsernamePasswordIdentity(
+        val result = testee.addUsernamePasswordIdentity(
             adminActor,
             correlationId,
             userId,
@@ -174,11 +174,11 @@ internal class AddingUsernamePasswordIdentityTest {
         val expectedDomainError =
             Error.UsernamePasswordIdentityAlreadyFound("User already has a username password identity.")
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
         // when
-        val result = testee!!.addUsernamePasswordIdentity(
+        val result = testee.addUsernamePasswordIdentity(
             adminActor,
             correlationId,
             userId,

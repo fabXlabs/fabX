@@ -64,7 +64,7 @@ internal class UserDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
 
-        private var repository: UserRepository? = null
+        private lateinit var repository: UserRepository
 
         @BeforeEach
         fun setup() {
@@ -78,7 +78,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last",
                 wikiName = "wiki"
             )
-            repository!!.store(event1)
+            repository.store(event1)
 
             val event2 = UserLockStateChanged(
                 userId,
@@ -88,13 +88,13 @@ internal class UserDatabaseRepositoryTest {
                 locked = ChangeableValue.ChangeToValue(true),
                 notes = ChangeableValue.ChangeToValue("some notes")
             )
-            repository!!.store(event2)
+            repository.store(event2)
         }
 
         @Test
         fun `when getting user by id then returns user from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getById(userId)
@@ -116,7 +116,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when storing then accepts aggregate version number increased by one`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = UserLockStateChanged(
                 userId,
@@ -144,7 +144,7 @@ internal class UserDatabaseRepositoryTest {
             version: Long
         ) {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = UserLockStateChanged(
                 userId,
@@ -180,7 +180,7 @@ internal class UserDatabaseRepositoryTest {
         private val userId2 = UserIdFixture.static(12345)
         private val userId3 = UserIdFixture.static(123456)
 
-        private var repository: UserRepository? = null
+        private lateinit var repository: UserRepository
 
         @BeforeEach
         fun setup() {
@@ -194,7 +194,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last1",
                 wikiName = "wiki1"
             )
-            repository!!.store(user1event1)
+            repository.store(user1event1)
 
             val user1event2 = UserLockStateChanged(
                 userId,
@@ -204,7 +204,7 @@ internal class UserDatabaseRepositoryTest {
                 locked = ChangeableValue.ChangeToValue(true),
                 notes = ChangeableValue.ChangeToValue("some notes")
             )
-            repository!!.store(user1event2)
+            repository.store(user1event2)
 
             val user2event1 = UserCreated(
                 userId2,
@@ -214,7 +214,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last2",
                 wikiName = "wiki2"
             )
-            repository!!.store(user2event1)
+            repository.store(user2event1)
 
             val user1event3 = UserPersonalInformationChanged(
                 userId,
@@ -225,7 +225,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = ChangeableValue.LeaveAsIs,
                 wikiName = ChangeableValue.LeaveAsIs
             )
-            repository!!.store(user1event3)
+            repository.store(user1event3)
 
             val user3event1 = UserCreated(
                 userId3,
@@ -235,7 +235,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last3",
                 wikiName = "wiki3"
             )
-            repository!!.store(user3event1)
+            repository.store(user3event1)
 
             val user2event2 = UserPersonalInformationChanged(
                 userId2,
@@ -246,7 +246,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = ChangeableValue.ChangeToValue("last2v2"),
                 wikiName = ChangeableValue.ChangeToValue("wiki2v2")
             )
-            repository!!.store(user2event2)
+            repository.store(user2event2)
 
             val user3event2 = UserDeleted(
                 userId3,
@@ -254,13 +254,13 @@ internal class UserDatabaseRepositoryTest {
                 actorId,
                 correlationId
             )
-            repository!!.store(user3event2)
+            repository.store(user3event2)
         }
 
         @Test
         fun `when getting all users then returns all users from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getAll()
@@ -299,7 +299,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by known wiki name then returns user`() {
             // given
-            val repository = this.repository!! as GettingUserByWikiName
+            val repository = this.repository as GettingUserByWikiName
 
             // when
             val result = repository.getByWikiName("wiki2v2")
@@ -313,7 +313,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by unknown wiki name then returns error`() {
             // given
-            val repository = this.repository!! as GettingUserByWikiName
+            val repository = this.repository as GettingUserByWikiName
 
             // when
             val result = repository.getByWikiName("unknownWikiName")
@@ -332,7 +332,7 @@ internal class UserDatabaseRepositoryTest {
 
         private val userId2 = UserIdFixture.static(12345)
 
-        private var repository: UserDatabaseRepository? = null
+        private lateinit var repository: UserDatabaseRepository
 
         @BeforeEach
         fun setup() {
@@ -346,7 +346,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last1",
                 wikiName = "wiki1"
             )
-            repository!!.store(user1Created)
+            repository.store(user1Created)
 
             val user1IdentityAdded = UsernamePasswordIdentityAdded(
                 userId,
@@ -356,7 +356,7 @@ internal class UserDatabaseRepositoryTest {
                 "username1",
                 "FyGrfqsvzCwU8UtVqZUI4MQ3pp3TTsOF6J//QLdSEoE="
             )
-            repository!!.store(user1IdentityAdded)
+            repository.store(user1IdentityAdded)
 
             val user1CardIdentityAdded = CardIdentityAdded(
                 userId,
@@ -366,7 +366,7 @@ internal class UserDatabaseRepositoryTest {
                 "11223344556677",
                 "2312D5DFD79E5AA85BD0F43B565665BA3CEFAFF60689ACF8F49A7FADA0004756"
             )
-            repository!!.store(user1CardIdentityAdded)
+            repository.store(user1CardIdentityAdded)
 
             val user2Created = UserCreated(
                 userId2,
@@ -376,7 +376,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last2",
                 wikiName = "wiki2"
             )
-            repository!!.store(user2Created)
+            repository.store(user2Created)
 
             val user2IdentityAdded = UsernamePasswordIdentityAdded(
                 userId2,
@@ -386,7 +386,7 @@ internal class UserDatabaseRepositoryTest {
                 "username2",
                 "Fp6cwyJURizWnWI2yWSsgg3FfrFErl/+vvkgdWsBdH8="
             )
-            repository!!.store(user2IdentityAdded)
+            repository.store(user2IdentityAdded)
 
             val user2CardIdentityAdded = CardIdentityAdded(
                 userId2,
@@ -396,13 +396,13 @@ internal class UserDatabaseRepositoryTest {
                 "AA11BB22CC33DD",
                 "F4B726CC27C2413227382ABF095D09B1A13B00FC6AD1B1B5D75C4A954628C807"
             )
-            repository!!.store(user2CardIdentityAdded)
+            repository.store(user2CardIdentityAdded)
         }
 
         @Test
         fun `when getting by known identity then returns user`() {
             // given
-            val repository = this.repository!! as GettingUserByIdentity
+            val repository = this.repository as GettingUserByIdentity
 
             // when
             val result = repository.getByIdentity(
@@ -418,7 +418,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by unknown identity then returns error`() {
             // given
-            val repository = this.repository!! as GettingUserByIdentity
+            val repository = this.repository as GettingUserByIdentity
 
             // when
             val result = repository.getByIdentity(
@@ -436,7 +436,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by known username then returns user`() {
             // given
-            val repository = this.repository!! as GettingUserByUsername
+            val repository = this.repository as GettingUserByUsername
 
             // when
             val result = repository.getByUsername("username1")
@@ -450,7 +450,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by unknown username then returns error`() {
             // given
-            val repository = this.repository!! as GettingUserByUsername
+            val repository = this.repository as GettingUserByUsername
 
             // when
             val result = repository.getByUsername("unknownusername")
@@ -466,7 +466,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by known card id then returns user`() {
             // given
-            val repository = this.repository!! as GettingUserByCardId
+            val repository = this.repository as GettingUserByCardId
 
             // when
             val result = repository.getByCardId("AA11BB22CC33DD")
@@ -480,7 +480,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting by unknown card id then returns error`() {
             // given
-            val repository = this.repository!! as GettingUserByCardId
+            val repository = this.repository as GettingUserByCardId
 
             // when
             val unknownCardId = "00000000000000"
@@ -505,7 +505,7 @@ internal class UserDatabaseRepositoryTest {
         private val qualificationId = QualificationIdFixture.static(456)
         private val qualificationId2 = QualificationIdFixture.static(678)
 
-        private var repository: UserDatabaseRepository? = null
+        private lateinit var repository: UserDatabaseRepository
 
         @BeforeEach
         fun setup() {
@@ -519,7 +519,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last1",
                 wikiName = "wiki1"
             )
-            repository!!.store(user1Created)
+            repository.store(user1Created)
 
             val user1MemberQualificationAdded = MemberQualificationAdded(
                 userId,
@@ -528,7 +528,7 @@ internal class UserDatabaseRepositoryTest {
                 correlationId,
                 qualificationId
             )
-            repository!!.store(user1MemberQualificationAdded)
+            repository.store(user1MemberQualificationAdded)
 
 
             val user1InstructorQualificationAdded = InstructorQualificationAdded(
@@ -538,7 +538,7 @@ internal class UserDatabaseRepositoryTest {
                 correlationId,
                 qualificationId2
             )
-            repository!!.store(user1InstructorQualificationAdded)
+            repository.store(user1InstructorQualificationAdded)
 
 
             val user2Created = UserCreated(
@@ -549,7 +549,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last2",
                 wikiName = "wiki2"
             )
-            repository!!.store(user2Created)
+            repository.store(user2Created)
 
             val user2InstructorQualificationAdded = InstructorQualificationAdded(
                 userId2,
@@ -558,7 +558,7 @@ internal class UserDatabaseRepositoryTest {
                 correlationId,
                 qualificationId
             )
-            repository!!.store(user2InstructorQualificationAdded)
+            repository.store(user2InstructorQualificationAdded)
 
             val user3Created = UserCreated(
                 userId3,
@@ -568,7 +568,7 @@ internal class UserDatabaseRepositoryTest {
                 lastName = "last3",
                 wikiName = "wiki3"
             )
-            repository!!.store(user3Created)
+            repository.store(user3Created)
 
             val user3MemberQualificationAdded = MemberQualificationAdded(
                 userId3,
@@ -577,13 +577,13 @@ internal class UserDatabaseRepositoryTest {
                 correlationId,
                 qualificationId
             )
-            repository!!.store(user3MemberQualificationAdded)
+            repository.store(user3MemberQualificationAdded)
         }
 
         @Test
         fun `when getting users by member qualification then returns users who have member qualification`() {
             // given
-            val repository = this.repository!! as GettingUsersByMemberQualification
+            val repository = this.repository as GettingUsersByMemberQualification
 
             // when
             val result = repository.getByMemberQualification(qualificationId)
@@ -597,7 +597,7 @@ internal class UserDatabaseRepositoryTest {
         @Test
         fun `when getting users by instructor qualification then returns users who have instructor qualification`() {
             // given
-            val repository = this.repository!! as GettingUsersByInstructorQualification
+            val repository = this.repository as GettingUsersByInstructorQualification
 
             // when
             val result = repository.getByInstructorQualification(qualificationId2)

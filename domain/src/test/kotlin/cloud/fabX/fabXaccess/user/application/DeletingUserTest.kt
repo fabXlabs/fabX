@@ -30,10 +30,10 @@ internal class DeletingUserTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
 
-    private var testee: DeletingUser? = null
+    private lateinit var testee: DeletingUser
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -58,14 +58,14 @@ internal class DeletingUserTest {
             correlationId
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.deleteUser(
+        val result = testee.deleteUser(
             adminActor,
             correlationId,
             userId
@@ -80,11 +80,11 @@ internal class DeletingUserTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.deleteUser(
+        val result = testee.deleteUser(
             adminActor,
             correlationId,
             userId
@@ -110,14 +110,14 @@ internal class DeletingUserTest {
 
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(event))
+        whenever(userRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.deleteUser(
+        val result = testee.deleteUser(
             adminActor,
             correlationId,
             userId

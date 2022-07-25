@@ -32,10 +32,10 @@ internal class DeletingDeviceTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
 
-    private var testee: DeletingDevice? = null
+    private lateinit var testee: DeletingDevice
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -60,14 +60,14 @@ internal class DeletingDeviceTest {
             correlationId
         )
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.deleteDevice(
+        val result = testee.deleteDevice(
             adminActor,
             correlationId,
             deviceId
@@ -82,11 +82,11 @@ internal class DeletingDeviceTest {
         // given
         val error = Error.DeviceNotFound("message", deviceId)
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.deleteDevice(
+        val result = testee.deleteDevice(
             adminActor,
             correlationId,
             deviceId
@@ -112,14 +112,14 @@ internal class DeletingDeviceTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(event))
+        whenever(deviceRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.deleteDevice(
+        val result = testee.deleteDevice(
             adminActor,
             correlationId,
             deviceId

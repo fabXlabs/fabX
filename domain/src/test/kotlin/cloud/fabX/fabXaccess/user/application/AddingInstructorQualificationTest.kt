@@ -35,11 +35,11 @@ internal class AddingInstructorQualificationTest {
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var qualificationRepository: QualificationRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var qualificationRepository: QualificationRepository
 
-    private var testee: AddingInstructorQualification? = null
+    private lateinit var testee: AddingInstructorQualification
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -69,17 +69,17 @@ internal class AddingInstructorQualificationTest {
             qualificationId
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(qualificationRepository!!.getQualificationById(qualificationId))
+        whenever(qualificationRepository.getQualificationById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addInstructorQualification(
+        val result = testee.addInstructorQualification(
             adminActor,
             correlationId,
             userId,
@@ -89,10 +89,10 @@ internal class AddingInstructorQualificationTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository!!, qualificationRepository!!)
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(qualificationRepository!!).getQualificationById(qualificationId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
+        val inOrder = inOrder(userRepository, qualificationRepository)
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(qualificationRepository).getQualificationById(qualificationId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
         inOrder.verifyNoMoreInteractions()
     }
 
@@ -101,11 +101,11 @@ internal class AddingInstructorQualificationTest {
         // given
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addInstructorQualification(
+        val result = testee.addInstructorQualification(
             adminActor,
             correlationId,
             userId,
@@ -123,14 +123,14 @@ internal class AddingInstructorQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(qualificationRepository!!.getQualificationById(qualificationId))
+        whenever(qualificationRepository.getQualificationById(qualificationId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.addInstructorQualification(
+        val result = testee.addInstructorQualification(
             adminActor,
             correlationId,
             userId,
@@ -158,17 +158,17 @@ internal class AddingInstructorQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(qualificationRepository!!.getQualificationById(qualificationId))
+        whenever(qualificationRepository.getQualificationById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addInstructorQualification(
+        val result = testee.addInstructorQualification(
             adminActor,
             correlationId,
             userId,

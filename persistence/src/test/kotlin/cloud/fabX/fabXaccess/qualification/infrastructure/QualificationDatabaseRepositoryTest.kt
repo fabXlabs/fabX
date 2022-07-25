@@ -51,7 +51,7 @@ internal class QualificationDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForQualificationStoredInRepository {
 
-        private var repository: QualificationRepository? = null
+        private lateinit var repository: QualificationRepository
 
         @BeforeEach
         fun setup() {
@@ -66,7 +66,7 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = "#000000",
                 orderNr = 1
             )
-            repository!!.store(event1)
+            repository.store(event1)
 
             val event2 = QualificationDetailsChanged(
                 qualificationId,
@@ -78,13 +78,13 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = ChangeableValue.LeaveAsIs,
                 orderNr = ChangeableValue.ChangeToValue(100)
             )
-            repository!!.store(event2)
+            repository.store(event2)
         }
 
         @Test
         fun `when getting qualification by id then returns qualification from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getById(qualificationId)
@@ -105,7 +105,7 @@ internal class QualificationDatabaseRepositoryTest {
         @Test
         fun `when storing then accepts aggregate version number increased by one`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = QualificationDetailsChanged(
                 qualificationId,
@@ -133,7 +133,7 @@ internal class QualificationDatabaseRepositoryTest {
         @ValueSource(longs = [-1, 0, 1, 2, 4, 100])
         fun `when storing then not accepts version numbers other than increased by one`(version: Long) {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             val event = QualificationDetailsChanged(
                 qualificationId,
@@ -171,7 +171,7 @@ internal class QualificationDatabaseRepositoryTest {
         private val qualificationId2 = QualificationIdFixture.static(234)
         private val qualificationId3 = QualificationIdFixture.static(345)
 
-        private var repository: QualificationRepository? = null
+        private lateinit var repository: QualificationRepository
 
         @BeforeEach
         fun setup() {
@@ -186,7 +186,7 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = "#000001",
                 orderNr = 1
             )
-            repository!!.store(qualification1event1)
+            repository.store(qualification1event1)
 
             val qualification1event2 = QualificationDetailsChanged(
                 qualificationId,
@@ -198,7 +198,7 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = ChangeableValue.LeaveAsIs,
                 orderNr = ChangeableValue.LeaveAsIs
             )
-            repository!!.store(qualification1event2)
+            repository.store(qualification1event2)
 
             val qualification2event1 = QualificationCreated(
                 qualificationId2,
@@ -209,7 +209,7 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = "#000002",
                 orderNr = 2
             )
-            repository!!.store(qualification2event1)
+            repository.store(qualification2event1)
 
             val qualification3event1 = QualificationCreated(
                 qualificationId3,
@@ -220,7 +220,7 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = "#000003",
                 orderNr = 3
             )
-            repository!!.store(qualification3event1)
+            repository.store(qualification3event1)
 
             val qualification2event2 = QualificationDeleted(
                 qualificationId2,
@@ -228,7 +228,7 @@ internal class QualificationDatabaseRepositoryTest {
                 actorId,
                 correlationId
             )
-            repository!!.store(qualification2event2)
+            repository.store(qualification2event2)
 
             val qualification3event2 = QualificationDetailsChanged(
                 qualificationId3,
@@ -240,13 +240,13 @@ internal class QualificationDatabaseRepositoryTest {
                 colour = ChangeableValue.ChangeToValue("#333333"),
                 orderNr = ChangeableValue.LeaveAsIs
             )
-            repository!!.store(qualification3event2)
+            repository.store(qualification3event2)
         }
 
         @Test
         fun `when getting all qualifications then returns all qualifications from events`() {
             // given
-            val repository = this.repository!!
+            val repository = this.repository
 
             // when
             val result = repository.getAll()

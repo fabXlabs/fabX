@@ -34,11 +34,11 @@ internal class AttachingToolTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
-    private var toolRepository: ToolRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
+    private lateinit var toolRepository: ToolRepository
 
-    private var testee: AttachingTool? = null
+    private lateinit var testee: AttachingTool
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -72,17 +72,17 @@ internal class AttachingToolTest {
             toolId
         )
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(toolRepository!!.getToolById(toolId))
+        whenever(toolRepository.getToolById(toolId))
             .thenReturn(tool.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.attachTool(
+        val result = testee.attachTool(
             adminActor,
             correlationId,
             deviceId,
@@ -103,14 +103,14 @@ internal class AttachingToolTest {
 
         val expectedDomainError = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(toolRepository!!.getToolById(toolId))
+        whenever(toolRepository.getToolById(toolId))
             .thenReturn(expectedDomainError.left())
 
         // when
-        val result = testee!!.attachTool(
+        val result = testee.attachTool(
             adminActor,
             correlationId,
             deviceId,
@@ -129,11 +129,11 @@ internal class AttachingToolTest {
         // given
         val error = Error.DeviceNotFound("", deviceId)
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.attachTool(
+        val result = testee.attachTool(
             adminActor,
             correlationId,
             deviceId,
@@ -167,17 +167,17 @@ internal class AttachingToolTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(toolRepository!!.getToolById(toolId))
+        whenever(toolRepository.getToolById(toolId))
             .thenReturn(tool.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.attachTool(
+        val result = testee.attachTool(
             adminActor,
             correlationId,
             deviceId,

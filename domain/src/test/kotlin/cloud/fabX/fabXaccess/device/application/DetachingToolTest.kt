@@ -35,10 +35,10 @@ internal class DetachingToolTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
 
-    private var testee: DetachingTool? = null
+    private lateinit var testee: DetachingTool
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -71,14 +71,14 @@ internal class DetachingToolTest {
             pin
         )
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.detachTool(
+        val result = testee.detachTool(
             adminActor,
             correlationId,
             deviceId,
@@ -117,14 +117,14 @@ internal class DetachingToolTest {
             pin
         )
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.detachTool(
+        val result = testee.detachTool(
             domainEvent,
             deviceId,
             pin
@@ -143,14 +143,14 @@ internal class DetachingToolTest {
             attachedTools = mapOf()
         )
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
         val pin = 42
         val expectedDomainError = Error.PinNotInUse("No tool attached at pin $pin.", pin)
 
         // when
-        val result = testee!!.detachTool(
+        val result = testee.detachTool(
             adminActor,
             correlationId,
             deviceId,
@@ -168,11 +168,11 @@ internal class DetachingToolTest {
         // given
         val error = Error.DeviceNotFound("", deviceId)
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.detachTool(
+        val result = testee.detachTool(
             adminActor,
             correlationId,
             deviceId,
@@ -207,14 +207,14 @@ internal class DetachingToolTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        whenever(deviceRepository!!.store(expectedSourcingEvent))
+        whenever(deviceRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.detachTool(
+        val result = testee.detachTool(
             adminActor,
             correlationId,
             deviceId,

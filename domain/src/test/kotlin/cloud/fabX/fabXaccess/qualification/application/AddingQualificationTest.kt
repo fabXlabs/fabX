@@ -27,10 +27,10 @@ internal class AddingQualificationTest {
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var qualificationRepository: QualificationRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var qualificationRepository: QualificationRepository
 
-    private var testee: AddingQualification? = null
+    private lateinit var testee: AddingQualification
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -61,11 +61,11 @@ internal class AddingQualificationTest {
             orderNr
         )
 
-        whenever(qualificationRepository!!.store(expectedSourcingEvent))
+        whenever(qualificationRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addQualification(
+        val result = testee.addQualification(
             adminActor,
             correlationId,
             name,
@@ -100,11 +100,11 @@ internal class AddingQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(qualificationRepository!!.store(event))
+        whenever(qualificationRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addQualification(
+        val result = testee.addQualification(
             adminActor,
             correlationId,
             name,

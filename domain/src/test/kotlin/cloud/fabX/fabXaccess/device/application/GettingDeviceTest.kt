@@ -27,10 +27,10 @@ internal class GettingDeviceTest {
     private val deviceId = DeviceIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var deviceRepository: DeviceRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var deviceRepository: DeviceRepository
 
-    private var testee: GettingDevice? = null
+    private lateinit var testee: GettingDevice
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -52,11 +52,11 @@ internal class GettingDeviceTest {
 
         val devices = setOf(device1, device2, device3)
 
-        whenever(deviceRepository!!.getAll())
+        whenever(deviceRepository.getAll())
             .thenReturn(devices)
 
         // when
-        val result = testee!!.getAll(adminActor, correlationId)
+        val result = testee.getAll(adminActor, correlationId)
 
         // then
         assertThat(result)
@@ -68,11 +68,11 @@ internal class GettingDeviceTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId)
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
         // when
-        val result = testee!!.getById(adminActor, correlationId, deviceId)
+        val result = testee.getById(adminActor, correlationId, deviceId)
 
         // then
         assertThat(result)
@@ -85,11 +85,11 @@ internal class GettingDeviceTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 
-        whenever(deviceRepository!!.getById(deviceId))
+        whenever(deviceRepository.getById(deviceId))
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getById(adminActor, correlationId, deviceId)
+        val result = testee.getById(adminActor, correlationId, deviceId)
 
         // then
         assertThat(result)

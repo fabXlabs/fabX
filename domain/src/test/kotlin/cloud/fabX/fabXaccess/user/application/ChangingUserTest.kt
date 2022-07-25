@@ -36,11 +36,11 @@ internal class ChangingUserTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var gettingUserByWikiName: GettingUserByWikiName? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var gettingUserByWikiName: GettingUserByWikiName
 
-    private var testee: ChangingUser? = null
+    private lateinit var testee: ChangingUser
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -74,17 +74,17 @@ internal class ChangingUserTest {
             newWikiName
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByWikiName!!.getByWikiName(newWikiName.value))
+        whenever(gettingUserByWikiName.getByWikiName(newWikiName.value))
             .thenReturn(Error.UserNotFoundByWikiName("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.changePersonalInformation(
+        val result = testee.changePersonalInformation(
             adminActor,
             correlationId,
             userId,
@@ -96,11 +96,11 @@ internal class ChangingUserTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(logger!!, userRepository!!)
-        inOrder.verify(logger!!).debug("changePersonalInformation...")
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(expectedSourcingEvent)
-        inOrder.verify(logger!!).debug("...changePersonalInformation done")
+        val inOrder = inOrder(logger, userRepository)
+        inOrder.verify(logger).debug("changePersonalInformation...")
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(expectedSourcingEvent)
+        inOrder.verify(logger).debug("...changePersonalInformation done")
     }
 
     @Test
@@ -108,11 +108,11 @@ internal class ChangingUserTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.changePersonalInformation(
+        val result = testee.changePersonalInformation(
             adminActor,
             correlationId,
             userId,
@@ -136,16 +136,16 @@ internal class ChangingUserTest {
 
         val otherUser = UserFixture.arbitrary(wikiName = newWikiName.value)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(gettingUserByWikiName!!.getByWikiName(newWikiName.value))
+        whenever(gettingUserByWikiName.getByWikiName(newWikiName.value))
             .thenReturn(otherUser.right())
 
         val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.")
 
         // when
-        val result = testee!!.changePersonalInformation(
+        val result = testee.changePersonalInformation(
             adminActor,
             correlationId,
             userId,
@@ -177,14 +177,14 @@ internal class ChangingUserTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(event))
+        whenever(userRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.changePersonalInformation(
+        val result = testee.changePersonalInformation(
             adminActor,
             correlationId,
             userId,
@@ -216,14 +216,14 @@ internal class ChangingUserTest {
             newNotes
         )
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(eq(expectedSourcingEvent)))
+        whenever(userRepository.store(eq(expectedSourcingEvent)))
             .thenReturn(None)
 
         // when
-        val result = testee!!.changeLockState(
+        val result = testee.changeLockState(
             adminActor,
             correlationId,
             userId,
@@ -234,11 +234,11 @@ internal class ChangingUserTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(logger!!, userRepository!!)
-        inOrder.verify(logger!!).debug("changeLockState...")
-        inOrder.verify(userRepository!!).getById(userId)
-        inOrder.verify(userRepository!!).store(eq(expectedSourcingEvent))
-        inOrder.verify(logger!!).debug("...changeLockState done")
+        val inOrder = inOrder(logger, userRepository)
+        inOrder.verify(logger).debug("changeLockState...")
+        inOrder.verify(userRepository).getById(userId)
+        inOrder.verify(userRepository).store(eq(expectedSourcingEvent))
+        inOrder.verify(logger).debug("...changeLockState done")
     }
 
     @Test
@@ -246,11 +246,11 @@ internal class ChangingUserTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.changeLockState(
+        val result = testee.changeLockState(
             adminActor,
             correlationId,
             userId,
@@ -280,14 +280,14 @@ internal class ChangingUserTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(userRepository!!.getById(userId))
+        whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        whenever(userRepository!!.store(event))
+        whenever(userRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.changeLockState(
+        val result = testee.changeLockState(
             adminActor,
             correlationId,
             userId,

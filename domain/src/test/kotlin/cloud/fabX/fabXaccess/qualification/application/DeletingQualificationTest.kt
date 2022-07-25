@@ -39,12 +39,12 @@ internal class DeletingQualificationTest {
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
 
-    private var logger: Logger? = null
-    private var domainEventPublisher: DomainEventPublisher? = null
-    private var qualificationRepository: QualificationRepository? = null
-    private var gettingToolsByQualificationId: GettingToolsByQualificationId? = null
+    private lateinit var logger: Logger
+    private lateinit var domainEventPublisher: DomainEventPublisher
+    private lateinit var qualificationRepository: QualificationRepository
+    private lateinit var gettingToolsByQualificationId: GettingToolsByQualificationId
 
-    private var testee: DeletingQualification? = null
+    private lateinit var testee: DeletingQualification
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -79,17 +79,17 @@ internal class DeletingQualificationTest {
             correlationId
         )
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
+        whenever(gettingToolsByQualificationId.getToolsByQualificationId(qualificationId))
             .thenReturn(setOf())
 
-        whenever(qualificationRepository!!.store(expectedSourcingEvent))
+        whenever(qualificationRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.deleteQualification(
+        val result = testee.deleteQualification(
             adminActor,
             correlationId,
             qualificationId
@@ -97,7 +97,7 @@ internal class DeletingQualificationTest {
 
         // then
         assertThat(result).isNone()
-        verify(domainEventPublisher!!).publish(
+        verify(domainEventPublisher).publish(
             cloud.fabX.fabXaccess.common.model.QualificationDeleted(
                 adminActor.id,
                 fixedInstant,
@@ -112,11 +112,11 @@ internal class DeletingQualificationTest {
         // given
         val error = Error.QualificationNotFound("message", qualificationId)
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.deleteQualification(
+        val result = testee.deleteQualification(
             adminActor,
             correlationId,
             qualificationId
@@ -142,17 +142,17 @@ internal class DeletingQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
+        whenever(gettingToolsByQualificationId.getToolsByQualificationId(qualificationId))
             .thenReturn(setOf())
 
-        whenever(qualificationRepository!!.store(event))
+        whenever(qualificationRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.deleteQualification(
+        val result = testee.deleteQualification(
             adminActor,
             correlationId,
             qualificationId
@@ -171,14 +171,14 @@ internal class DeletingQualificationTest {
         val toolId = ToolIdFixture.arbitrary()
         val tool = ToolFixture.arbitrary(toolId, requiredQualifications = setOf(qualificationId))
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(gettingToolsByQualificationId!!.getToolsByQualificationId(qualificationId))
+        whenever(gettingToolsByQualificationId.getToolsByQualificationId(qualificationId))
             .thenReturn(setOf(tool))
 
         // when
-        val result = testee!!.deleteQualification(
+        val result = testee.deleteQualification(
             adminActor,
             correlationId,
             qualificationId

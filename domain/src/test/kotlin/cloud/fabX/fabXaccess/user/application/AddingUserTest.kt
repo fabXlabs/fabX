@@ -32,11 +32,11 @@ internal class AddingUserTest {
 
     private val userId = UserIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var userRepository: UserRepository? = null
-    private var gettingUserByWikiName: GettingUserByWikiName? = null
+    private lateinit var logger: Logger
+    private lateinit var userRepository: UserRepository
+    private lateinit var gettingUserByWikiName: GettingUserByWikiName
 
-    private var testee: AddingUser? = null
+    private lateinit var testee: AddingUser
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -67,14 +67,14 @@ internal class AddingUserTest {
             wikiName
         )
 
-        whenever(gettingUserByWikiName!!.getByWikiName(wikiName))
+        whenever(gettingUserByWikiName.getByWikiName(wikiName))
             .thenReturn(Error.UserNotFoundByWikiName("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(None)
 
         // when
-        val result = testee!!.addUser(
+        val result = testee.addUser(
             adminActor,
             correlationId,
             firstName,
@@ -94,13 +94,13 @@ internal class AddingUserTest {
         val wikiName = "wiki"
         val otherUser = UserFixture.arbitrary(wikiName = wikiName)
 
-        whenever(gettingUserByWikiName!!.getByWikiName(wikiName))
+        whenever(gettingUserByWikiName.getByWikiName(wikiName))
             .thenReturn(otherUser.right())
 
         val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.")
 
         // when
-        val result = testee!!.addUser(
+        val result = testee.addUser(
             adminActor,
             correlationId,
             "first",
@@ -132,14 +132,14 @@ internal class AddingUserTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(gettingUserByWikiName!!.getByWikiName(wikiName))
+        whenever(gettingUserByWikiName.getByWikiName(wikiName))
             .thenReturn(Error.UserNotFoundByWikiName("").left())
 
-        whenever(userRepository!!.store(expectedSourcingEvent))
+        whenever(userRepository.store(expectedSourcingEvent))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.addUser(
+        val result = testee.addUser(
             adminActor,
             correlationId,
             firstName,

@@ -27,10 +27,10 @@ internal class GettingQualificationTest {
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var qualificationRepository: QualificationRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var qualificationRepository: QualificationRepository
 
-    private var testee: GettingQualification? = null
+    private lateinit var testee: GettingQualification
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -51,11 +51,11 @@ internal class GettingQualificationTest {
 
         val qualifications = setOf(qualification1, qualification2)
 
-        whenever(qualificationRepository!!.getAll())
+        whenever(qualificationRepository.getAll())
             .thenReturn(qualifications)
 
         // when
-        val result = testee!!.getAll(actor, correlationId)
+        val result = testee.getAll(actor, correlationId)
 
         // then
         assertThat(result)
@@ -67,11 +67,11 @@ internal class GettingQualificationTest {
         // given
         val qualification = QualificationFixture.arbitrary(qualificationId)
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(qualification.right())
 
         // when
-        val result = testee!!.getById(actor, correlationId, qualificationId)
+        val result = testee.getById(actor, correlationId, qualificationId)
 
         // then
         assertThat(result)
@@ -84,11 +84,11 @@ internal class GettingQualificationTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee!!.getById(actor, correlationId, qualificationId)
+        val result = testee.getById(actor, correlationId, qualificationId)
 
         // then
         assertThat(result)

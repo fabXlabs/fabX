@@ -28,11 +28,11 @@ internal class DeviceDomainEventHandlerTest {
 
     private val toolId = ToolIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var gettingDevicesByAttachedTool: GettingDevicesByAttachedTool? = null
-    private var detachingTool: DetachingTool? = null
+    private lateinit var logger: Logger
+    private lateinit var gettingDevicesByAttachedTool: GettingDevicesByAttachedTool
+    private lateinit var detachingTool: DetachingTool
 
-    private var testee: DeviceDomainEventHandler? = null
+    private lateinit var testee: DeviceDomainEventHandler
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -69,22 +69,22 @@ internal class DeviceDomainEventHandlerTest {
             attachedTools = mapOf(3 to toolId, 4 to toolId)
         )
 
-        whenever(gettingDevicesByAttachedTool!!.getByAttachedTool(toolId))
+        whenever(gettingDevicesByAttachedTool.getByAttachedTool(toolId))
             .thenReturn(setOf(device1, device2))
 
-        whenever(detachingTool!!.detachTool(domainEvent, deviceId1, 2))
+        whenever(detachingTool.detachTool(domainEvent, deviceId1, 2))
             .thenReturn(None)
-        whenever(detachingTool!!.detachTool(domainEvent, deviceId2, 3))
+        whenever(detachingTool.detachTool(domainEvent, deviceId2, 3))
             .thenReturn(None)
-        whenever(detachingTool!!.detachTool(domainEvent, deviceId2, 4))
+        whenever(detachingTool.detachTool(domainEvent, deviceId2, 4))
             .thenReturn(None)
 
         // when
-        testee!!.handle(domainEvent)
+        testee.handle(domainEvent)
 
         // then
-        verify(detachingTool!!).detachTool(same(domainEvent), eq(deviceId1), eq(2))
-        verify(detachingTool!!).detachTool(same(domainEvent), eq(deviceId2), eq(3))
-        verify(detachingTool!!).detachTool(same(domainEvent), eq(deviceId2), eq(4))
+        verify(detachingTool).detachTool(same(domainEvent), eq(deviceId1), eq(2))
+        verify(detachingTool).detachTool(same(domainEvent), eq(deviceId2), eq(3))
+        verify(detachingTool).detachTool(same(domainEvent), eq(deviceId2), eq(4))
     }
 }

@@ -27,13 +27,13 @@ internal class UserDomainEventHandlerTest {
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var gettingUsersByMemberQualification: GettingUsersByMemberQualification? = null
-    private var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification? = null
-    private var removingMemberQualification: RemovingMemberQualification? = null
-    private var removingInstructorQualification: RemovingInstructorQualification? = null
+    private lateinit var logger: Logger
+    private lateinit var gettingUsersByMemberQualification: GettingUsersByMemberQualification
+    private lateinit var gettingUsersByInstructorQualification: GettingUsersByInstructorQualification
+    private lateinit var removingMemberQualification: RemovingMemberQualification
+    private lateinit var removingInstructorQualification: RemovingInstructorQualification
 
-    private var testee: UserDomainEventHandler? = null
+    private lateinit var testee: UserDomainEventHandler
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -75,45 +75,45 @@ internal class UserDomainEventHandlerTest {
         val userId2 = UserIdFixture.arbitrary()
         val user2 = UserFixture.arbitrary(userId2)
 
-        whenever(gettingUsersByMemberQualification!!.getByMemberQualification(qualificationId))
+        whenever(gettingUsersByMemberQualification.getByMemberQualification(qualificationId))
             .thenReturn(setOf(user1, user2))
 
         val userId3 = UserIdFixture.arbitrary()
         val user3 = UserFixture.arbitrary(userId3)
 
-        whenever(gettingUsersByInstructorQualification!!.getByInstructorQualification(qualificationId))
+        whenever(gettingUsersByInstructorQualification.getByInstructorQualification(qualificationId))
             .thenReturn(setOf(user1, user3))
 
-        whenever(removingMemberQualification!!.removeMemberQualification(domainEvent, userId1, qualificationId))
+        whenever(removingMemberQualification.removeMemberQualification(domainEvent, userId1, qualificationId))
             .thenReturn(None)
-        whenever(removingMemberQualification!!.removeMemberQualification(domainEvent, userId2, qualificationId))
+        whenever(removingMemberQualification.removeMemberQualification(domainEvent, userId2, qualificationId))
             .thenReturn(None)
-        whenever(removingInstructorQualification!!.removeInstructorQualification(domainEvent, userId1, qualificationId))
+        whenever(removingInstructorQualification.removeInstructorQualification(domainEvent, userId1, qualificationId))
             .thenReturn(None)
-        whenever(removingInstructorQualification!!.removeInstructorQualification(domainEvent, userId3, qualificationId))
+        whenever(removingInstructorQualification.removeInstructorQualification(domainEvent, userId3, qualificationId))
             .thenReturn(None)
 
         // when
-        testee!!.handle(domainEvent)
+        testee.handle(domainEvent)
 
         // then
-        verify(removingMemberQualification!!).removeMemberQualification(
+        verify(removingMemberQualification).removeMemberQualification(
             same(domainEvent),
             eq(userId1),
             eq(qualificationId)
         )
-        verify(removingMemberQualification!!).removeMemberQualification(
+        verify(removingMemberQualification).removeMemberQualification(
             same(domainEvent),
             eq(userId2),
             eq(qualificationId)
         )
 
-        verify(removingInstructorQualification!!).removeInstructorQualification(
+        verify(removingInstructorQualification).removeInstructorQualification(
             same(domainEvent),
             eq(userId1),
             eq(qualificationId)
         )
-        verify(removingInstructorQualification!!).removeInstructorQualification(
+        verify(removingInstructorQualification).removeInstructorQualification(
             same(domainEvent),
             eq(userId3),
             eq(qualificationId)

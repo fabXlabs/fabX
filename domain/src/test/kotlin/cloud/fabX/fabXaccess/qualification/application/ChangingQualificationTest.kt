@@ -34,10 +34,10 @@ internal class ChangingQualificationTest {
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
-    private var logger: Logger? = null
-    private var qualificationRepository: QualificationRepository? = null
+    private lateinit var logger: Logger
+    private lateinit var qualificationRepository: QualificationRepository
 
-    private var testee: ChangingQualification? = null
+    private lateinit var testee: ChangingQualification
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -71,14 +71,14 @@ internal class ChangingQualificationTest {
             newOrderNr
         )
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(qualificationRepository!!.store(eq(expectedSourcingEvent)))
+        whenever(qualificationRepository.store(eq(expectedSourcingEvent)))
             .thenReturn(None)
 
         // when
-        val result = testee!!.changeQualificationDetails(
+        val result = testee.changeQualificationDetails(
             adminActor,
             correlationId,
             qualificationId,
@@ -91,11 +91,11 @@ internal class ChangingQualificationTest {
         // then
         assertThat(result).isNone()
 
-        val inOrder = inOrder(logger!!, qualificationRepository!!)
-        inOrder.verify(logger!!).debug("changeQualificationDetails...")
-        inOrder.verify(qualificationRepository!!).getById(qualificationId)
-        inOrder.verify(qualificationRepository!!).store(expectedSourcingEvent)
-        inOrder.verify(logger!!).debug("...changeQualificationDetails done")
+        val inOrder = inOrder(logger, qualificationRepository)
+        inOrder.verify(logger).debug("changeQualificationDetails...")
+        inOrder.verify(qualificationRepository).getById(qualificationId)
+        inOrder.verify(qualificationRepository).store(expectedSourcingEvent)
+        inOrder.verify(logger).debug("...changeQualificationDetails done")
     }
 
     @Test
@@ -103,11 +103,11 @@ internal class ChangingQualificationTest {
         // given
         val error = Error.QualificationNotFound("message", qualificationId)
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(error.left())
 
         // when
-        val result = testee!!.changeQualificationDetails(
+        val result = testee.changeQualificationDetails(
             adminActor,
             correlationId,
             qualificationId,
@@ -141,14 +141,14 @@ internal class ChangingQualificationTest {
 
         val error = ErrorFixture.arbitrary()
 
-        whenever(qualificationRepository!!.getById(qualificationId))
+        whenever(qualificationRepository.getById(qualificationId))
             .thenReturn(qualification.right())
 
-        whenever(qualificationRepository!!.store(event))
+        whenever(qualificationRepository.store(event))
             .thenReturn(error.some())
 
         // when
-        val result = testee!!.changeQualificationDetails(
+        val result = testee.changeQualificationDetails(
             adminActor,
             correlationId,
             qualificationId,
