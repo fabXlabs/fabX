@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.device
 
 import assertk.assertThat
-import assertk.assertions.isEmpty
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
@@ -17,7 +17,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @InternalAPI
@@ -53,7 +52,9 @@ internal class DeviceIntegrationTest {
     @Test
     fun `given devices when get devices then returns devices`() = withTestApp {
         // given
-        // TODO givenDevice("device1"), 2, 3
+        val deviceId1 = givenDevice("device1", mac = "aabbccaabb01")
+        val deviceId2 = givenDevice("device2", mac = "aabbccaabb02")
+        val deviceId3 = givenDevice("device3", mac = "aabbccaabb03")
 
         // when
         val result = handleRequest(HttpMethod.Get, "/api/v1/device") {
@@ -65,17 +66,17 @@ internal class DeviceIntegrationTest {
         assertThat(result.response.content)
             .isNotNull()
             .isJson<Set<Device>>()
-            .isEmpty() // TODO isNotEmpty
+            .transform { devices -> devices.map { it.id } }
+            .containsExactlyInAnyOrder(deviceId1, deviceId2, deviceId3)
     }
 
-    @Disabled // TODO re-enable once givenDevice is implemented
     @Test
     fun `given device when get device by id then returns device`() = withTestApp {
         // given
-        val deviceId = TODO("givenDevice")
+        val deviceId = givenDevice("newDevice", mac = "001122334455")
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device/") {
+        val result = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
             addAdminAuth()
         }
 
@@ -84,8 +85,16 @@ internal class DeviceIntegrationTest {
         assertThat(result.response.content)
             .isNotNull()
             .isJson<Device>()
-            .transform { it.id }
-            .isEqualTo(deviceId)
+            .isEqualTo(
+                Device(
+                    deviceId,
+                    1,
+                    "newDevice",
+                    "https://example.com/bg.bmp",
+                    "https://backup.example.com",
+                    mapOf()
+                )
+            )
     }
 
     @Test

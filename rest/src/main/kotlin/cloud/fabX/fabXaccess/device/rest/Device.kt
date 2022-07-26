@@ -20,3 +20,12 @@ fun cloud.fabX.fabXaccess.device.model.Device.toRestModel(): Device = Device(
     backupBackendUrl = backupBackendUrl,
     attachedTools = attachedTools.mapValues { it.value.serialize() }
 )
+
+@Serializable
+data class DeviceCreationDetails(
+    val name: String,
+    val background: String,
+    val backupBackendUrl: String,
+    val mac: String,
+    val secret: String
+)

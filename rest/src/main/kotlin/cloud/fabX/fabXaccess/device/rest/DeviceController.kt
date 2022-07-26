@@ -4,16 +4,21 @@ import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
+import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
+import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import io.ktor.application.call
 import io.ktor.routing.Route
 import io.ktor.routing.get
+import io.ktor.routing.post
 import io.ktor.routing.route
 
 class DeviceController(
-    private val gettingDevice: GettingDevice
+    private val gettingDevice: GettingDevice,
+    private val addingDevice: AddingDevice
 ) {
 
     val routes: Route.() -> Unit = {
@@ -49,6 +54,25 @@ class DeviceController(
                                 }
                         )
                     }
+            }
+
+            post("") {
+                readBody<DeviceCreationDetails>()?.let {
+                    call.respondWithErrorHandler(
+                        readAdminAuthentication()
+                            .flatMap { admin ->
+                                addingDevice.addDevice(
+                                    admin,
+                                    newCorrelationId(),
+                                    it.name,
+                                    it.background,
+                                    it.backupBackendUrl,
+                                    MacSecretIdentity(it.mac, it.secret)
+                                )
+                            }
+                            .map { it.serialize() }
+                    )
+                }
             }
         }
     }
