@@ -4,11 +4,13 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
+import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.User
@@ -284,6 +286,50 @@ internal class UserIntegrationTest {
             addMemberAuth()
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `when deleting user then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "User with id UserId(value=$userId) not found.",
+                    mapOf(
+                        "userId" to userId
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when deleting user then returns http forbidden`() = withTestApp {
+        // given
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
+            addMemberAuth()
         }
 
         // then

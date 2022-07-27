@@ -10,9 +10,11 @@ import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.ChangingUser
+import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import io.ktor.application.call
 import io.ktor.routing.Route
+import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
@@ -21,7 +23,8 @@ import io.ktor.routing.route
 class UserController(
     private val gettingUser: GettingUser,
     private val addingUser: AddingUser,
-    private val changingUser: ChangingUser
+    private val changingUser: ChangingUser,
+    private val deletingUser: DeletingUser
 ) {
 
     val routes: Route.() -> Unit = {
@@ -39,6 +42,7 @@ class UserController(
                         }
                 )
             }
+
             get("/{id}") {
                 readUUIDParameter("id")
                     ?.let { UserId(it) }
@@ -57,6 +61,7 @@ class UserController(
                         )
                     }
             }
+
             post("") {
                 readBody<UserCreationDetails>()?.let {
                     call.respondWithErrorHandler(
@@ -74,6 +79,7 @@ class UserController(
                     )
                 }
             }
+
             put("/{id}") {
                 readBody<UserDetails>()?.let {
                     readUUIDParameter("id")
@@ -97,6 +103,7 @@ class UserController(
                         }
                 }
             }
+
             put("/{id}/lock") {
                 readBody<UserLockDetails>()?.let {
                     readUUIDParameter("id")
@@ -119,8 +126,25 @@ class UserController(
                         }
                 }
             }
-            // TODO change user lock state
-            // TODO delete user
+
+            delete("/{id}") {
+                readUUIDParameter("id")
+                    ?.let { UserId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    deletingUser.deleteUser(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                                        .toEither { }
+                                        .swap()
+                                }
+                        )
+                    }
+            }
         }
     }
 }

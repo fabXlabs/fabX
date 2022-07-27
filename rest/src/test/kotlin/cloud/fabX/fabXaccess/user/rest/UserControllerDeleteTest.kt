@@ -1,4 +1,4 @@
-package cloud.fabX.fabXaccess.device.rest
+package cloud.fabX.fabXaccess.user.rest
 
 import arrow.core.None
 import arrow.core.getOrElse
@@ -8,15 +8,13 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.device.application.DetachingTool
-import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
-import cloud.fabX.fabXaccess.user.rest.AuthenticationService
-import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
-import cloud.fabX.fabXaccess.user.rest.UserPrincipal
+import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -36,8 +34,8 @@ import org.mockito.kotlin.whenever
 @InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
-internal class DeviceControllerDetachToolTest {
-    private lateinit var detachingTool: DetachingTool
+internal class UserControllerDeleteTest {
+    private lateinit var deletingUser: DeletingUser
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
@@ -47,41 +45,36 @@ internal class DeviceControllerDetachToolTest {
 
     @BeforeEach
     fun `configure RestModule`(
-        @Mock detachingTool: DetachingTool,
+        @Mock deletingUser: DeletingUser,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.detachingTool = detachingTool
+        this.deletingUser = deletingUser
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { detachingTool }
+        bindInstance(overrides = true) { deletingUser }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when detaching tool then returns http ok`() = withConfiguredTestApp {
+    fun `when deleting user then returns http ok`() = withConfiguredTestApp {
         // given
-        val deviceId = DeviceIdFixture.arbitrary()
-        val pin = 2
+        val userId = UserIdFixture.arbitrary()
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            detachingTool.detachTool(
+            deletingUser.deleteUser(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
-                eq(deviceId),
-                eq(pin),
+                eq(userId)
             )
         ).thenReturn(None)
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/device/${deviceId.serialize()}/attached-tool/$pin"
-        ) {
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/${userId.serialize()}") {
             addBasicAuth(username, password)
         }
 
@@ -91,11 +84,8 @@ internal class DeviceControllerDetachToolTest {
     }
 
     @Test
-    fun `given no admin authentication when detaching tool then returns http forbidden`() = withConfiguredTestApp {
+    fun `given no admin authentication when deleting user then returns http forbidden`() = withConfiguredTestApp {
         // given
-        val deviceId = DeviceIdFixture.arbitrary()
-        val pin = 2
-
         val message = "abc12345"
         val error = Error.UserNotAdmin(message)
 
@@ -103,11 +93,7 @@ internal class DeviceControllerDetachToolTest {
             .thenReturn(ErrorPrincipal(error))
 
         // when
-
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/device/${deviceId.serialize()}/attached-tool/$pin"
-        ) {
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
             addBasicAuth(username, password)
         }
 
@@ -125,18 +111,15 @@ internal class DeviceControllerDetachToolTest {
     }
 
     @Test
-    fun `given invalid device id when detaching tool then returns http bad request`() = withConfiguredTestApp {
+    fun `given invalid user id when deleting user then returns http bad request`() = withConfiguredTestApp {
         // given
-        val invalidDeviceId = "invalidDeviceId"
+        val invalidUserId = "invalidUserId"
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/device/$invalidDeviceId/attached-tool/32"
-        ) {
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/$invalidUserId") {
             addBasicAuth(username, password)
         }
 
@@ -148,68 +131,37 @@ internal class DeviceControllerDetachToolTest {
     }
 
     @Test
-    fun `given invalid pin when detaching tool then returns http bad request`() = withConfiguredTestApp {
+    fun `given domain error when deleting user then returns mapped domain error`() = withConfiguredTestApp {
         // given
-        val invalidPin = "invalidPin"
+        val userId = UserIdFixture.arbitrary()
 
-        whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-            .thenReturn(UserPrincipal(actingUser))
-
-        // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/attached-tool/$invalidPin"
-        ) {
-            addBasicAuth(username, password)
-        }
-
-        // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isEqualTo("Required int parameter \"pin\" not given or invalid.")
-    }
-
-    @Test
-    fun `given domain error when detaching tool then returns mapped domain error`() = withConfiguredTestApp {
-        // given
-        val deviceId = DeviceIdFixture.arbitrary()
-        val pin = 2
-
-        val error = Error.PinNotInUse(
-            "error message",
-            pin
-        )
+        val error = ErrorFixture.arbitrary()
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            detachingTool.detachTool(
+            deletingUser.deleteUser(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
-                eq(deviceId),
-                eq(pin),
+                eq(userId)
             )
         ).thenReturn(error.some())
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/device/${deviceId.serialize()}/attached-tool/$pin"
-        ) {
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/${userId.serialize()}") {
             addBasicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
             .isNotNull()
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
-                    "error message",
-                    mapOf("pin" to pin.toString())
+                    "some message",
+                    mapOf()
                 )
             )
     }
