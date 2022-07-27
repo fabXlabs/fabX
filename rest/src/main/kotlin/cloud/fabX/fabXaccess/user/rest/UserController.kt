@@ -97,6 +97,28 @@ class UserController(
                         }
                 }
             }
+            put("/{id}/lock") {
+                readBody<UserLockDetails>()?.let {
+                    readUUIDParameter("id")
+                        ?.let { UserId(it) }
+                        ?.let { id ->
+                            call.respondWithErrorHandler(
+                                readAdminAuthentication()
+                                    .flatMap { admin ->
+                                        changingUser.changeLockState(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            it.locked.toDomain(),
+                                            it.notes.toDomain()
+                                        )
+                                            .toEither { }
+                                            .swap()
+                                    }
+                            )
+                        }
+                }
+            }
             // TODO change user lock state
             // TODO delete user
         }

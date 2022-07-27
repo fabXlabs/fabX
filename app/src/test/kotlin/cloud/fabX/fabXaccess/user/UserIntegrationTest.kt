@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
+import cloud.fabX.fabXaccess.user.rest.UserLockDetails
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -221,6 +222,65 @@ internal class UserIntegrationTest {
 
         // when
         val result = handleRequest(HttpMethod.Put, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `when changing user lock state then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val requestBody = UserLockDetails(
+            ChangeableValue(true),
+            ChangeableValue("some notes")
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/lock") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    2,
+                    "first",
+                    "last",
+                    "wiki",
+                    true,
+                    "some notes"
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when changing user lock state then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = UserLockDetails(
+            null,
+            null
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/lock") {
             addMemberAuth()
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             setBody(Json.encodeToString(requestBody))

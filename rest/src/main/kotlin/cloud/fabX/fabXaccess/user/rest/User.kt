@@ -39,3 +39,9 @@ data class UserDetails(
     val lastName: ChangeableValue<String>?,
     val wikiName: ChangeableValue<String>?
 )
+
+@Serializable
+data class UserLockDetails(
+    val locked: ChangeableValue<Boolean>?,
+    val notes: ChangeableValue<String?>?
+)
