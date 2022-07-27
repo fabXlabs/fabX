@@ -8,9 +8,12 @@ import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
+import cloud.fabX.fabXaccess.user.rest.UserDetails
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -157,6 +160,67 @@ internal class UserIntegrationTest {
 
         // when
         val result = handleRequest(HttpMethod.Post, "/api/v1/user") {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `when changing user details then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser(firstName = "first", lastName = "last")
+
+        val requestBody = UserDetails(
+            ChangeableValue("newFirstName"),
+            ChangeableValue("newLastName"),
+            null
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    2,
+                    "newFirstName",
+                    "newLastName",
+                    "wiki",
+                    false,
+                    null
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when changing user details then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = UserDetails(
+            null,
+            null,
+            null
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
             addMemberAuth()
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             setBody(Json.encodeToString(requestBody))

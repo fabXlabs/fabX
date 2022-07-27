@@ -7,17 +7,21 @@ import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
+import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingUser
+import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import io.ktor.application.call
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
+import io.ktor.routing.put
 import io.ktor.routing.route
 
 class UserController(
     private val gettingUser: GettingUser,
-    private val addingUser: AddingUser
+    private val addingUser: AddingUser,
+    private val changingUser: ChangingUser
 ) {
 
     val routes: Route.() -> Unit = {
@@ -70,7 +74,31 @@ class UserController(
                     )
                 }
             }
-            // TODO change user details
+            put("/{id}") {
+                readBody<UserDetails>()?.let {
+                    readUUIDParameter("id")
+                        ?.let { UserId(it) }
+                        ?.let { id ->
+                            call.respondWithErrorHandler(
+                                readAdminAuthentication()
+                                    .flatMap { admin ->
+                                        changingUser.changePersonalInformation(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            it.firstName.toDomain(),
+                                            it.lastName.toDomain(),
+                                            it.wikiName.toDomain(),
+                                        )
+                                            .toEither { }
+                                            .swap()
+                                    }
+                            )
+                        }
+                }
+            }
+            // TODO change user lock state
+            // TODO delete user
         }
     }
 }

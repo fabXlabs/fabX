@@ -15,7 +15,7 @@ val restModule = DI.Module("rest") {
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
     bindSingleton { ToolController(instance(), instance(), instance(), instance()) }
     bindSingleton { DeviceController(instance(), instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton { UserController(instance(), instance()) }
+    bindSingleton { UserController(instance(), instance(), instance()) }
 
     bindSingleton {
         RestApp(

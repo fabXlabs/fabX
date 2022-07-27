@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.rest
 
+import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -30,4 +31,11 @@ data class UserCreationDetails(
     val firstName: String,
     val lastName: String,
     val wikiName: String
+)
+
+@Serializable
+data class UserDetails(
+    val firstName: ChangeableValue<String>?,
+    val lastName: ChangeableValue<String>?,
+    val wikiName: ChangeableValue<String>?
 )
