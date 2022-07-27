@@ -17,6 +17,7 @@ import cloud.fabX.fabXaccess.tool.application.AddingTool
 import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.DeletingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
+import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import io.ktor.server.testing.TestApplicationEngine
@@ -40,6 +41,7 @@ internal fun withTestApp(
 
         bindInstance { Mockito.mock(GettingUserByIdentity::class.java) }
         bindInstance { Mockito.mock(GettingUser::class.java) }
+        bindInstance { Mockito.mock(AddingUser::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }

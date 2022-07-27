@@ -10,11 +10,17 @@ import cloud.fabX.fabXaccess.common.addMemberAuth
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.user.rest.User
+import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.setBody
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
 @InternalAPI
@@ -61,6 +67,11 @@ internal class UserIntegrationTest {
     @Test
     fun `given admin authentication when get users then returns users`() = withTestApp {
         // given
+        val userId1 = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
 
         // when
         val result = handleRequest(HttpMethod.Get, "/api/v1/user") {
@@ -90,6 +101,15 @@ internal class UserIntegrationTest {
                     "admin",
                     false,
                     null
+                ),
+                User(
+                    userId1,
+                    1,
+                    "Alan",
+                    "Turing",
+                    "turing",
+                    false,
+                    null
                 )
             )
     }
@@ -97,9 +117,14 @@ internal class UserIntegrationTest {
     @Test
     fun `given user when get user by id then returns user`() = withTestApp {
         // given
+        val userId = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user/c63b3a7d-bd18-4272-b4ed-4bcf9683c602") {
+        val result = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
         }
 
@@ -110,14 +135,34 @@ internal class UserIntegrationTest {
             .isJson<User>()
             .isEqualTo(
                 User(
-                    "c63b3a7d-bd18-4272-b4ed-4bcf9683c602",
-                    2,
-                    "Member",
-                    "",
-                    "member",
+                    userId,
+                    1,
+                    "Alan",
+                    "Turing",
+                    "turing",
                     false,
                     null
                 )
             )
+    }
+
+    @Test
+    fun `given non-admin authentication when adding user then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = UserCreationDetails(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user") {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
     }
 }

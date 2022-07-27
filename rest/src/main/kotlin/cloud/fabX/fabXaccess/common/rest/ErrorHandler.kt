@@ -41,6 +41,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
 
         is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
+        is Error.WikiNameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
 
         // TODO handle all cases
         else -> respond(HttpStatusCode.InternalServerError, "unmapped error: ${error::class.qualifiedName}")
