@@ -43,6 +43,7 @@ class DeletingTool(
             .orNone()
             .tapNone { log.debug("...deleteTool done") }
             .tapNone {
+                log.debug("publishing ToolDeleted event...")
                 domainEventPublisher.publish(
                     ToolDeleted(
                         actor.id,

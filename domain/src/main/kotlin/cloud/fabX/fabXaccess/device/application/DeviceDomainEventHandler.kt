@@ -18,6 +18,7 @@ class DeviceDomainEventHandler(
     }
 
     override fun handle(domainEvent: ToolDeleted) {
+        log.debug("handle ToolDeleted event...")
         gettingDevicesByAttachedTool.getByAttachedTool(domainEvent.toolId)
             .flatMap { device ->
                 device.attachedTools

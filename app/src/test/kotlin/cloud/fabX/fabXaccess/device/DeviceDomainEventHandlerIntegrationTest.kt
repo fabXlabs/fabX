@@ -44,7 +44,7 @@ internal class DeviceDomainEventHandlerIntegrationTest {
             .isEqualTo(
                 Device(
                     deviceId,
-                    2,
+                    3,
                     "device",
                     "https://example.com/bg.bmp",
                     "https://backup.example.com",

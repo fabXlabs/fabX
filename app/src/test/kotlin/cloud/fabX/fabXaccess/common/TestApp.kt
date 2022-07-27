@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.common
 
 import cloud.fabX.fabXaccess.RestApp
-import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
+import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
@@ -23,6 +23,7 @@ import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.kodein.di.DI
+import org.kodein.di.allInstances
 import org.kodein.di.bindConstant
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
@@ -38,8 +39,15 @@ internal fun withTestApp(
 
         bindConstant(tag = "port") { -1 }
 
-        bindSingleton<DomainEventPublisher> { SynchronousDomainEventPublisher() }
-        bindSingleton<Clock> { Clock.System }
+        bindSingleton { SynchronousDomainEventPublisher() }
+        bindSingleton { Clock.System }
+    }
+
+    val domainEventPublisher: SynchronousDomainEventPublisher by testApp.instance()
+    val domainEventHandler: List<DomainEventHandler> by testApp.allInstances()
+
+    domainEventHandler.forEach {
+        domainEventPublisher.addHandler(it)
     }
 
     val restApp: RestApp by testApp.instance()
