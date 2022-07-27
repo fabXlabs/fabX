@@ -371,7 +371,6 @@ internal class ToolIntegrationTest {
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
             .isNotNull()
             .isJson<Error>()

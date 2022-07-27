@@ -247,4 +247,65 @@ internal class DeviceIntegrationTest {
                 )
             )
     }
+
+    @Test
+    fun `given device when deleting device then returns http ok`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "aabbcc001122")
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+    }
+
+    @Test
+    fun `given unknown device when deleting device then returns http not found`() = withTestApp {
+        // given
+        val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$invalidDeviceId") {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "Device with id DeviceId(value=$invalidDeviceId) not found.",
+                    mapOf("deviceId" to invalidDeviceId)
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when deleting device then returns http forbidden`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "aabbcc001122")
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId") {
+            addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
+                    mapOf()
+                )
+            )
+    }
 }

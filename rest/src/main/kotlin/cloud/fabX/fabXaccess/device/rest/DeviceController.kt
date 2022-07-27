@@ -10,10 +10,12 @@ import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
+import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import io.ktor.application.call
 import io.ktor.routing.Route
+import io.ktor.routing.delete
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.put
@@ -22,7 +24,8 @@ import io.ktor.routing.route
 class DeviceController(
     private val gettingDevice: GettingDevice,
     private val addingDevice: AddingDevice,
-    private val changingDevice: ChangingDevice
+    private val changingDevice: ChangingDevice,
+    private val deletingDevice: DeletingDevice
 ) {
 
     val routes: Route.() -> Unit = {
@@ -101,6 +104,25 @@ class DeviceController(
                             )
                         }
                 }
+            }
+
+            delete("/{id}") {
+                readUUIDParameter("id")
+                    ?.let { DeviceId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    deletingDevice.deleteDevice(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                                        .toEither { }
+                                        .swap()
+                                }
+                        )
+                    }
             }
         }
     }
