@@ -9,7 +9,6 @@ import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOn
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
@@ -418,9 +417,12 @@ internal class DeviceTest {
     fun `given tool does not exist when attaching tool then returns error`() {
         // given
         val pin = 3
-        val toolId = ToolIdFixture.arbitrary()
+        val invalidToolId = ToolIdFixture.arbitrary()
 
-        val error = ErrorFixture.arbitrary()
+        val error = Error.ToolNotFound(
+            "error message",
+            invalidToolId
+        )
 
         val device = DeviceFixture.arbitrary(
             deviceId,
@@ -433,14 +435,19 @@ internal class DeviceTest {
             adminActor,
             correlationId,
             pin,
-            toolId,
+            invalidToolId,
             { error.left() }
         )
 
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(error)
+            .isEqualTo(
+                Error.ReferencedToolNotFound(
+                    "error message",
+                    invalidToolId
+                )
+            )
     }
 
     @Test

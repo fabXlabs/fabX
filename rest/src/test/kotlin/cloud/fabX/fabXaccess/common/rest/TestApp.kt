@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common.rest
 
 import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.device.application.AddingDevice
+import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.GettingDevice
@@ -53,6 +54,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AddingDevice::class.java) }
         bindInstance { Mockito.mock(ChangingDevice::class.java) }
         bindInstance { Mockito.mock(DeletingDevice::class.java) }
+        bindInstance { Mockito.mock(AttachingTool::class.java) }
 
         diSetup()
     }

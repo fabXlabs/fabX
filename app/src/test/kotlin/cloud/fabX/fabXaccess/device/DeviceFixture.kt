@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
+import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -41,4 +42,23 @@ internal fun TestApplicationEngine.givenDevice(
 
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
     return result.response.content!!
+}
+
+@InternalAPI
+@ExperimentalSerializationApi
+internal fun TestApplicationEngine.givenToolAttachedToDevice(
+    deviceId: String,
+    pin: Int,
+    toolId: String
+) {
+    val requestBody = ToolAttachmentDetails(toolId)
+
+    // when
+    val result = handleRequest(HttpMethod.Put, "/api/v1/device/$deviceId/attached-tool/$pin") {
+        addAdminAuth()
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(Json.encodeToString(requestBody))
+    }
+
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 }

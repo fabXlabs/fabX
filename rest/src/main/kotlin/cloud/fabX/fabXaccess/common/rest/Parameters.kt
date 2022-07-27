@@ -8,7 +8,13 @@ import io.ktor.util.pipeline.PipelineContext
 import java.util.UUID
 
 suspend inline fun PipelineContext<*, ApplicationCall>.readUUIDParameter(name: String): UUID? {
-    call.parameters[name]?.let { UUID.fromString(it) }?.let {
+    call.parameters[name]?.let {
+        try {
+            UUID.fromString(it)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+    }?.let {
         return it
     }
 
@@ -16,3 +22,11 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readUUIDParameter(name: S
     return null
 }
 
+suspend inline fun PipelineContext<*, ApplicationCall>.readIntParameter(name: String): Int? {
+    call.parameters[name]?.toIntOrNull()?.let {
+        return it
+    }
+
+    call.respond(HttpStatusCode.BadRequest, "Required int parameter \"$name\" not given.")
+    return null
+}

@@ -2,13 +2,16 @@ package cloud.fabX.fabXaccess.device.rest
 
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.model.DeviceId
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
+import cloud.fabX.fabXaccess.common.rest.readIntParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.device.application.AddingDevice
+import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.GettingDevice
@@ -25,7 +28,8 @@ class DeviceController(
     private val gettingDevice: GettingDevice,
     private val addingDevice: AddingDevice,
     private val changingDevice: ChangingDevice,
-    private val deletingDevice: DeletingDevice
+    private val deletingDevice: DeletingDevice,
+    private val attachingTool: AttachingTool
 ) {
 
     val routes: Route.() -> Unit = {
@@ -123,6 +127,39 @@ class DeviceController(
                                 }
                         )
                     }
+            }
+
+            route("/{id}/attached-tool") {
+                put("/{pin}") {
+                    readBody<ToolAttachmentDetails>()
+                        ?.let {
+                            readUUIDParameter("id")
+                                ?.let { DeviceId(it) }
+                                ?.let { id ->
+                                    readIntParameter("pin")
+                                        ?.let { pin ->
+                                            call.respondWithErrorHandler(
+                                                readAdminAuthentication()
+                                                    .flatMap { admin ->
+                                                        attachingTool.attachTool(
+                                                            admin,
+                                                            newCorrelationId(),
+                                                            id,
+                                                            pin,
+                                                            ToolId.fromString(it.toolId)
+                                                        )
+                                                            .toEither { }
+                                                            .swap()
+                                                    }
+                                            )
+                                        }
+                                }
+                        }
+                }
+
+//                delete("/{pin}") {
+//
+//                }
             }
         }
     }

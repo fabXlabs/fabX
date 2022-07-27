@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common.rest
 import kotlinx.serialization.Serializable
 
 // TODO add correlation id
+// TODO add error type/class (from domain model)
 @Serializable
 data class Error(val message: String, val parameters: Map<String, String>)
 

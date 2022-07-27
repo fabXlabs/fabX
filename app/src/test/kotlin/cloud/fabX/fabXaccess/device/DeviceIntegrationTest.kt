@@ -16,6 +16,9 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
 import cloud.fabX.fabXaccess.device.rest.DeviceDetails
+import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
+import cloud.fabX.fabXaccess.tool.givenTool
+import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -294,6 +297,70 @@ internal class DeviceIntegrationTest {
         // when
         val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId") {
             addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
+                    mapOf()
+                )
+            )
+    }
+
+    @Test
+    fun `when attaching tool then returns http ok`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "aabbccddeeff")
+        val pin = 2
+        val toolId = givenTool()
+        val requestBody = ToolAttachmentDetails(toolId)
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/device/$deviceId/attached-tool/$pin") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<Device>()
+            .isEqualTo(
+                Device(
+                    deviceId,
+                    2,
+                    "device",
+                    "https://example.com/bg.bmp",
+                    "https://backup.example.com",
+                    mapOf(2 to toolId)
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when attaching tool then returns http forbidden`() = withTestApp {
+        val deviceId = DeviceIdFixture.arbitrary().serialize()
+        val pin = 2
+        val requestBody = ToolAttachmentDetails(ToolIdFixture.arbitrary().serialize())
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/device/$deviceId/attached-tool/$pin") {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
         }
 
         // then

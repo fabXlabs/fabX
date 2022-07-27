@@ -37,3 +37,8 @@ data class DeviceDetails(
     val background: ChangeableValue<String>?,
     val backupBackendUrl: ChangeableValue<String>?
 )
+
+@Serializable
+data class ToolAttachmentDetails(
+    val toolId: String
+)

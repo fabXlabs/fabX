@@ -122,6 +122,11 @@ sealed class Error(open val message: String, open val parameters: Map<String, St
         val toolId: ToolId
     ) : Error(message, mapOf("toolId" to toolId.serialize()))
 
+    data class ReferencedToolNotFound(
+        override val message: String,
+        val toolId: ToolId
+    ) : Error(message, mapOf("toolId" to toolId.serialize()))
+
     data class PinInUse(
         override val message: String,
         val pin: Int

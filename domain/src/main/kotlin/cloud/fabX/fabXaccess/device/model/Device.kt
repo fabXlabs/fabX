@@ -122,8 +122,18 @@ data class Device internal constructor(
             .swap()
             .flatMap { event ->
                 // assert tool exists
-                return gettingToolById.getToolById(toolId)
+                gettingToolById.getToolById(toolId)
                     .map { event }
+            }
+            .mapLeft {
+                if (it is Error.ToolNotFound) {
+                    Error.ReferencedToolNotFound(
+                        it.message,
+                        it.toolId
+                    )
+                } else {
+                    it
+                }
             }
     }
 
