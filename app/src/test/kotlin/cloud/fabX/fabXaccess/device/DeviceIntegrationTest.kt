@@ -375,4 +375,48 @@ internal class DeviceIntegrationTest {
                 )
             )
     }
+
+    @Test
+    fun `when detaching tool then returns http ok`() = withTestApp {
+        // given
+        val pin = 2
+        val deviceId = givenDevice(mac = "001122334455aa")
+        val toolId = givenTool()
+        givenToolAttachedToDevice(deviceId, pin, toolId)
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId/attached-tool/$pin") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content).isNull()
+    }
+
+    @Test
+    fun `given non-admin authentication when detaching tool then returns http forbidden`() = withTestApp {
+        // given
+        val pin = 2
+        val deviceId = DeviceIdFixture.arbitrary().serialize()
+
+        // when
+        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId/attached-tool/$pin") {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<Error>()
+            .isEqualTo(
+                Error(
+                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
+                    mapOf()
+                )
+            )
+    }
 }

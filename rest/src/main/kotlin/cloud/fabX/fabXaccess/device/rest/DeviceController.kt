@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
+import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import io.ktor.application.call
@@ -29,7 +30,8 @@ class DeviceController(
     private val addingDevice: AddingDevice,
     private val changingDevice: ChangingDevice,
     private val deletingDevice: DeletingDevice,
-    private val attachingTool: AttachingTool
+    private val attachingTool: AttachingTool,
+    private val detachingTool: DetachingTool
 ) {
 
     val routes: Route.() -> Unit = {
@@ -157,9 +159,28 @@ class DeviceController(
                         }
                 }
 
-//                delete("/{pin}") {
-//
-//                }
+                delete("/{pin}") {
+                    readUUIDParameter("id")
+                        ?.let { DeviceId(it) }
+                        ?.let { id ->
+                            readIntParameter("pin")
+                                ?.let { pin ->
+                                    call.respondWithErrorHandler(
+                                        readAdminAuthentication()
+                                            .flatMap { admin ->
+                                                detachingTool.detachTool(
+                                                    admin,
+                                                    newCorrelationId(),
+                                                    id,
+                                                    pin
+                                                )
+                                                    .toEither { }
+                                                    .swap()
+                                            }
+                                    )
+                                }
+                        }
+                }
             }
         }
     }

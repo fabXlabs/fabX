@@ -18,6 +18,7 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readUUIDParameter(name: S
         return it
     }
 
+    // TODO change message to "not given or invalid"
     call.respond(HttpStatusCode.BadRequest, "Required UUID parameter \"$name\" not given.")
     return null
 }
@@ -27,6 +28,7 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readIntParameter(name: St
         return it
     }
 
+    // TODO change message to "not given or invalid"
     call.respond(HttpStatusCode.BadRequest, "Required int parameter \"$name\" not given.")
     return null
 }

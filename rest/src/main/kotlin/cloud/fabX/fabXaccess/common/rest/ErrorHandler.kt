@@ -35,6 +35,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
 
         is Error.ToolNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedToolNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.PinNotInUse -> respond(HttpStatusCode.NotFound, error.toRestModel())
 
         is Error.DeviceNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
 
