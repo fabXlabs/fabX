@@ -180,7 +180,7 @@ internal class DeviceControllerAttachToolTest {
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
         assertThat(result.response.content)
             .isNotNull()
-            .isEqualTo("Required UUID parameter \"id\" not given.")
+            .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
     }
 
     @Test
@@ -207,7 +207,7 @@ internal class DeviceControllerAttachToolTest {
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
         assertThat(result.response.content)
             .isNotNull()
-            .isEqualTo("Required int parameter \"pin\" not given.")
+            .isEqualTo("Required int parameter \"pin\" not given or invalid.")
     }
 
     @Test
