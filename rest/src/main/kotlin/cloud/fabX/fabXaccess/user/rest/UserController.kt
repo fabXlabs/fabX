@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.user.rest
 
 import arrow.core.flatMap
+import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
@@ -8,6 +9,7 @@ import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
+import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
@@ -26,7 +28,8 @@ class UserController(
     private val addingUser: AddingUser,
     private val changingUser: ChangingUser,
     private val deletingUser: DeletingUser,
-    private val changingIsAdmin: ChangingIsAdmin
+    private val changingIsAdmin: ChangingIsAdmin,
+    private val addingInstructorQualification: AddingInstructorQualification
 ) {
 
     val routes: Route.() -> Unit = {
@@ -169,6 +172,31 @@ class UserController(
                                 )
                             }
                     }
+            }
+
+            route("/{id}/instructor-qualification") {
+                post("") {
+                    readBody<QualificationAdditionDetails>()
+                        ?.let {
+                            readUUIDParameter("id")
+                                ?.let { UserId(it) }
+                                ?.let { id ->
+                                    call.respondWithErrorHandler(
+                                        readAdminAuthentication()
+                                            .flatMap { admin ->
+                                                addingInstructorQualification.addInstructorQualification(
+                                                    admin,
+                                                    newCorrelationId(),
+                                                    id,
+                                                    QualificationId.fromString(it.qualificationId)
+                                                )
+                                                    .toEither { }
+                                                    .swap()
+                                            }
+                                    )
+                                }
+                        }
+                }
             }
         }
     }

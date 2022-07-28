@@ -54,3 +54,8 @@ data class UserLockDetails(
 data class IsAdminDetails(
     val isAdmin: Boolean
 )
+
+@Serializable
+data class QualificationAdditionDetails(
+    val qualificationId: String
+)

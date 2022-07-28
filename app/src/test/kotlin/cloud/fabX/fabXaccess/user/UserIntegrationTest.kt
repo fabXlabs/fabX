@@ -12,8 +12,11 @@ import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.qualification.givenQualification
+import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
+import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
@@ -436,4 +439,82 @@ internal class UserIntegrationTest {
                 )
             )
     }
+
+    @Test
+    fun `given non-admin authentication when changing is admin then returns http forbidden`() = withTestApp {
+        // given
+        val userId = givenUser()
+        val requestBody = IsAdminDetails(false)
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `when adding instructor qualification then returns http ok`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+        val userId = givenUser()
+
+        val requestBody = QualificationAdditionDetails(qualificationId)
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/instructor-qualification") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    2,
+                    "first",
+                    "last",
+                    "wiki",
+                    false,
+                    null,
+                    setOf(),
+                    setOf(qualificationId),
+                    false
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when adding instructor qualification then returns http forbidden`() =
+        withTestApp {
+            // given
+            val requestBody = QualificationAdditionDetails(QualificationIdFixture.arbitrary().serialize())
+
+            // when
+            val result = handleRequest(
+                HttpMethod.Post,
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/instructor-qualification"
+            ) {
+                addMemberAuth()
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(Json.encodeToString(requestBody))
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        }
 }
