@@ -141,6 +141,7 @@ internal class QualificationIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "kotlinx.serialization.MissingFieldException",
                     "Field 'orderNr' is required for type with serial name " +
                             "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
                             "but it was missing",
@@ -234,6 +235,7 @@ internal class QualificationIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "QualificationNotFound",
                     "Qualification with id QualificationId(value=$qualificationId) not found.",
                     mapOf(
                         "qualificationId" to qualificationId
@@ -274,6 +276,7 @@ internal class QualificationIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "QualificationNotFound",
                     "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
                     mapOf(
                         "qualificationId" to qualificationId.toString()
@@ -299,6 +302,7 @@ internal class QualificationIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotAdmin",
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
                     mapOf()
                 )

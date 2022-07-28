@@ -77,6 +77,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotAdmin",
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
                     mapOf()
                 )
@@ -148,6 +149,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "DeviceNotFound",
                     "Device with id DeviceId(value=$invalidDeviceId) not found.",
                     mapOf("deviceId" to invalidDeviceId)
                 )
@@ -243,6 +245,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "DeviceNotFound",
                     "Device with id DeviceId(value=$invalidDeviceId) not found.",
                     mapOf(
                         "deviceId" to invalidDeviceId
@@ -283,6 +286,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "DeviceNotFound",
                     "Device with id DeviceId(value=$invalidDeviceId) not found.",
                     mapOf("deviceId" to invalidDeviceId)
                 )
@@ -306,6 +310,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotAdmin",
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
                     mapOf()
                 )
@@ -370,6 +375,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotAdmin",
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
                     mapOf()
                 )
@@ -414,6 +420,7 @@ internal class DeviceIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotAdmin",
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
                     mapOf()
                 )

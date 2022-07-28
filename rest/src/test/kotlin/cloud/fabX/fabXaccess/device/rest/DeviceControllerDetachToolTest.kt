@@ -118,6 +118,7 @@ internal class DeviceControllerDetachToolTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "UserNotAdmin",
                     message,
                     mapOf()
                 )
@@ -208,6 +209,7 @@ internal class DeviceControllerDetachToolTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "PinNotInUse",
                     "error message",
                     mapOf("pin" to pin.toString())
                 )

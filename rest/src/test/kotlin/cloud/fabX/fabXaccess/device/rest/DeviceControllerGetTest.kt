@@ -229,6 +229,7 @@ internal class DeviceControllerGetTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "DeviceNotFound",
                     "msg",
                     mapOf("deviceId" to deviceId.serialize())
                 )

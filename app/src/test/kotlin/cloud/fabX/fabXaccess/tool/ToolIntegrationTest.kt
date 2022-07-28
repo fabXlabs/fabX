@@ -129,6 +129,7 @@ internal class ToolIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "ReferencedQualificationNotFound",
                     "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
                     mapOf("qualificationId" to invalidQualificationId)
                 )
@@ -276,6 +277,7 @@ internal class ToolIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "ToolNotFound",
                     "Tool with id ToolId(value=$invalidToolId) not found.",
                     mapOf(
                         "toolId" to invalidToolId
@@ -316,6 +318,7 @@ internal class ToolIntegrationTest {
                 .isJson<Error>()
                 .isEqualTo(
                     Error(
+                        "ReferencedQualificationNotFound",
                         "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
                         mapOf("qualificationId" to invalidQualificationId)
                     )
@@ -354,6 +357,7 @@ internal class ToolIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "ToolNotFound",
                     "Tool with id ToolId(value=$invalidToolId) not found.",
                     mapOf("toolId" to invalidToolId)
                 )
@@ -376,6 +380,7 @@ internal class ToolIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotAdmin",
                     "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
                     mapOf()
                 )

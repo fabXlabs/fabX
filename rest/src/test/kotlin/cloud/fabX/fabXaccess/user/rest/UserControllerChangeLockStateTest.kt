@@ -168,6 +168,7 @@ internal class UserControllerChangeLockStateTest {
                 .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
                 .isEqualTo(
                     cloud.fabX.fabXaccess.common.rest.Error(
+                        "UserNotAdmin",
                         message,
                         mapOf()
                     )
@@ -261,6 +262,7 @@ internal class UserControllerChangeLockStateTest {
                 .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
                 .isEqualTo(
                     cloud.fabX.fabXaccess.common.rest.Error(
+                        "VersionConflict",
                         "some message",
                         mapOf()
                     )

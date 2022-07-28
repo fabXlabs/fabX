@@ -334,6 +334,7 @@ internal class UserIntegrationTest {
             .isJson<Error>()
             .isEqualTo(
                 Error(
+                    "UserNotFound",
                     "User with id UserId(value=$userId) not found.",
                     mapOf(
                         "userId" to userId

@@ -130,6 +130,7 @@ internal class DeviceControllerAttachToolTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "UserNotAdmin",
                     message,
                     mapOf()
                 )
@@ -253,6 +254,7 @@ internal class DeviceControllerAttachToolTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "ReferencedToolNotFound",
                     "some message",
                     mapOf("toolId" to toolId.serialize())
                 )

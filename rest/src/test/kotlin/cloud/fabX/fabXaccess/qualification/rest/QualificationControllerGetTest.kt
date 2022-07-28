@@ -198,6 +198,7 @@ internal class QualificationControllerGetTest {
                 .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
                 .isEqualTo(
                     cloud.fabX.fabXaccess.common.rest.Error(
+                        "QualificationNotFound",
                         "msg",
                         mapOf("qualificationId" to qualificationId.serialize())
                     )

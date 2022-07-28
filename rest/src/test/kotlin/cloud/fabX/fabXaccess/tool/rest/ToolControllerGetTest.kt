@@ -222,6 +222,7 @@ internal class ToolControllerGetTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "ToolNotFound",
                     "msg",
                     mapOf("toolId" to toolId.serialize())
                 )

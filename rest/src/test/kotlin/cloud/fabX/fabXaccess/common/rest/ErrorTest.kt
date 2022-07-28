@@ -15,6 +15,7 @@ internal class ErrorTest {
         val error = Error.UserNotFound(message, userId)
 
         val expectedResult = Error(
+            "UserNotFound",
             message,
             mapOf("userId" to userId.serialize())
         )

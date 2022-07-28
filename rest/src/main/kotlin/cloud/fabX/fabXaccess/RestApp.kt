@@ -49,7 +49,10 @@ class RestApp(
         install(StatusPages) {
             exception<kotlinx.serialization.SerializationException> { cause ->
                 cause.printStackTrace()
-                call.respond(HttpStatusCode.UnprocessableEntity, Error(cause.localizedMessage, mapOf()))
+                call.respond(
+                    HttpStatusCode.UnprocessableEntity,
+                    Error(cause::class.qualifiedName ?: "unknown", cause.localizedMessage, mapOf())
+                )
             }
         }
 

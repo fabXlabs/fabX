@@ -125,6 +125,7 @@ internal class UserControllerAddTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "UserNotAdmin",
                     message,
                     mapOf()
                 )
@@ -187,6 +188,7 @@ internal class UserControllerAddTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "WikiNameAlreadyInUse",
                     "message 123",
                     mapOf()
                 )

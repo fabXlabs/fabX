@@ -246,6 +246,7 @@ class UserControllerGetTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
+                    "UserNotFound",
                     "msg",
                     mapOf("userId" to userId.serialize())
                 )
