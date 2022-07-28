@@ -9,9 +9,9 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.rest.Qualification
@@ -137,16 +137,11 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "kotlinx.serialization.MissingFieldException",
-                    "Field 'orderNr' is required for type with serial name " +
-                            "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
-                            "but it was missing",
-                    mapOf()
-                )
+            .isError(
+                "kotlinx.serialization.MissingFieldException",
+                "Field 'orderNr' is required for type with serial name " +
+                        "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
+                        "but it was missing"
             )
     }
 
@@ -231,16 +226,10 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "QualificationNotFound",
-                    "Qualification with id QualificationId(value=$qualificationId) not found.",
-                    mapOf(
-                        "qualificationId" to qualificationId
-                    )
-                )
+            .isError(
+                "QualificationNotFound",
+                "Qualification with id QualificationId(value=$qualificationId) not found.",
+                mapOf("qualificationId" to qualificationId)
             )
     }
 
@@ -272,16 +261,10 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "QualificationNotFound",
-                    "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
-                    mapOf(
-                        "qualificationId" to qualificationId.toString()
-                    )
-                )
+            .isError(
+                "QualificationNotFound",
+                "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
+                mapOf("qualificationId" to qualificationId.toString())
             )
     }
 
@@ -298,14 +281,9 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotAdmin",
-                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 }

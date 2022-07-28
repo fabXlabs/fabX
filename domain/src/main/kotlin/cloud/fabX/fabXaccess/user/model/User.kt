@@ -50,7 +50,7 @@ data class User internal constructor(
             wikiName: String,
             gettingUserByWikiName: GettingUserByWikiName
         ): Either<Error, UserSourcingEvent> {
-            return requireUniqueWikiName(wikiName, gettingUserByWikiName)
+            return requireUniqueWikiName(wikiName, gettingUserByWikiName, correlationId)
                 .map {
                     UserCreated(
                         userIdFactory.invoke(),
@@ -83,13 +83,15 @@ data class User internal constructor(
 
         private fun requireUniqueWikiName(
             wikiName: String,
-            gettingUserByWikiName: GettingUserByWikiName
+            gettingUserByWikiName: GettingUserByWikiName,
+            correlationId: CorrelationId
         ): Either<Error, Unit> {
             return gettingUserByWikiName.getByWikiName(wikiName)
                 .swap()
                 .mapLeft {
                     Error.WikiNameAlreadyInUse(
-                        "Wiki name is already in use."
+                        "Wiki name is already in use.",
+                        correlationId
                     )
                 }
                 .flatMap {
@@ -114,7 +116,7 @@ data class User internal constructor(
     ): Either<Error, UserSourcingEvent> {
         return wikiName.biFlatmap(
             { Unit.right() },
-            { requireUniqueWikiName(it, gettingUserByWikiName) }
+            { requireUniqueWikiName(it, gettingUserByWikiName, correlationId) }
         ).map {
             UserPersonalInformationChanged(
                 id,
@@ -159,9 +161,9 @@ data class User internal constructor(
         hash: String,
         gettingUserByUsername: GettingUserByUsername
     ): Either<Error, UserSourcingEvent> {
-        return requireNoUsernamePasswordIdentity()
-            .flatMap { requireUniqueUsername(username, gettingUserByUsername) }
-            .flatMap { UsernamePasswordIdentity.fromUnvalidated(username, hash) }
+        return requireNoUsernamePasswordIdentity(correlationId)
+            .flatMap { requireUniqueUsername(username, gettingUserByUsername, correlationId) }
+            .flatMap { UsernamePasswordIdentity.fromUnvalidated(username, hash, correlationId) }
             .map {
                 UsernamePasswordIdentityAdded(
                     id,
@@ -174,12 +176,15 @@ data class User internal constructor(
             }
     }
 
-    private fun requireNoUsernamePasswordIdentity(): Either<Error, Unit> {
+    private fun requireNoUsernamePasswordIdentity(
+        correlationId: CorrelationId
+    ): Either<Error, Unit> {
         return identities.firstOrNull { it is UsernamePasswordIdentity }
             .toOption()
             .map {
                 Error.UsernamePasswordIdentityAlreadyFound(
-                    "User already has a username password identity."
+                    "User already has a username password identity.",
+                    correlationId
                 )
             }
             .toEither { }
@@ -188,13 +193,15 @@ data class User internal constructor(
 
     private fun requireUniqueUsername(
         username: String,
-        gettingUserByUsername: GettingUserByUsername
+        gettingUserByUsername: GettingUserByUsername,
+        correlationId: CorrelationId
     ): Either<Error, Unit> {
         return gettingUserByUsername.getByUsername(username)
             .swap()
             .mapLeft {
                 Error.UsernameAlreadyInUse(
-                    "Username is already in use."
+                    "Username is already in use.",
+                    correlationId
                 )
             }
             .flatMap {
@@ -221,7 +228,8 @@ data class User internal constructor(
             .toEither {
                 Error.UserIdentityNotFound(
                     "Not able to find identity with username \"$username\".",
-                    mapOf("username" to username)
+                    mapOf("username" to username),
+                    correlationId
                 )
             }
             .map {
@@ -242,8 +250,8 @@ data class User internal constructor(
         cardSecret: String,
         gettingUserByCardId: GettingUserByCardId
     ): Either<Error, UserSourcingEvent> {
-        return requireUniqueCardId(cardId, gettingUserByCardId)
-            .flatMap { CardIdentity.fromUnvalidated(cardId, cardSecret) }
+        return requireUniqueCardId(cardId, gettingUserByCardId, correlationId)
+            .flatMap { CardIdentity.fromUnvalidated(cardId, cardSecret, correlationId) }
             .map {
                 CardIdentityAdded(
                     id,
@@ -258,13 +266,15 @@ data class User internal constructor(
 
     private fun requireUniqueCardId(
         cardId: String,
-        gettingUserByCardId: GettingUserByCardId
+        gettingUserByCardId: GettingUserByCardId,
+        correlationId: CorrelationId
     ): Either<Error, Unit> {
         return gettingUserByCardId.getByCardId(cardId)
             .swap()
             .mapLeft {
                 Error.CardIdAlreadyInUse(
-                    "Card id is already in use."
+                    "Card id is already in use.",
+                    correlationId
                 )
             }
             .flatMap {
@@ -291,7 +301,8 @@ data class User internal constructor(
             .toEither {
                 Error.UserIdentityNotFound(
                     "Not able to find identity with card id $cardId.",
-                    mapOf("cardId" to cardId)
+                    mapOf("cardId" to cardId),
+                    correlationId
                 )
             }
             .map {
@@ -311,7 +322,7 @@ data class User internal constructor(
         phoneNr: String,
         gettingUserByIdentity: GettingUserByIdentity
     ): Either<Error, UserSourcingEvent> {
-        return requireUniquePhoneNr(phoneNr, gettingUserByIdentity)
+        return requireUniquePhoneNr(phoneNr, gettingUserByIdentity, correlationId)
             .flatMap { PhoneNrIdentity.fromUnvalidated(phoneNr) }
             .map {
                 PhoneNrIdentityAdded(
@@ -326,13 +337,15 @@ data class User internal constructor(
 
     private fun requireUniquePhoneNr(
         phoneNr: String,
-        gettingUserByIdentity: GettingUserByIdentity
+        gettingUserByIdentity: GettingUserByIdentity,
+        correlationId: CorrelationId
     ): Either<Error, Unit> {
         return gettingUserByIdentity.getByIdentity(PhoneNrIdentity(phoneNr))
             .swap()
             .mapLeft {
                 Error.PhoneNrAlreadyInUse(
-                    "Phone number is already in use."
+                    "Phone number is already in use.",
+                    correlationId
                 )
             }
             .flatMap {
@@ -359,7 +372,8 @@ data class User internal constructor(
             .toEither {
                 Error.UserIdentityNotFound(
                     "Not able to find identity with phone number $phoneNr.",
-                    mapOf("phoneNr" to phoneNr)
+                    mapOf("phoneNr" to phoneNr),
+                    correlationId
                 )
             }
             .map {
@@ -384,14 +398,15 @@ data class User internal constructor(
         qualificationId: QualificationId,
         gettingQualificationById: GettingQualificationById
     ): Either<Error, UserSourcingEvent> {
-        return requireInstructorWithQualification(actor, qualificationId)
+        return requireInstructorWithQualification(actor, qualificationId, correlationId)
             .flatMap {
                 memberQualifications.firstOrNull { it == qualificationId }
                     .toOption()
                     .map {
                         Error.MemberQualificationAlreadyFound(
                             "User $id already has member qualification $qualificationId.",
-                            qualificationId
+                            qualificationId,
+                            correlationId
                         )
                     }
                     .toEither { }
@@ -411,14 +426,16 @@ data class User internal constructor(
 
     private fun requireInstructorWithQualification(
         actor: Instructor,
-        qualificationId: QualificationId
+        qualificationId: QualificationId,
+        correlationId: CorrelationId
     ): Either<Error, Unit> {
         return Either.conditionally(
             actor.hasQualification(qualificationId),
             {
                 Error.InstructorPermissionNotFound(
                     "Actor not has instructor permission for qualification $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId = correlationId
                 )
             },
             {}
@@ -456,7 +473,8 @@ data class User internal constructor(
             .toEither {
                 Error.MemberQualificationNotFound(
                     "Not able to find member qualification with id $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             }
             .map {
@@ -486,7 +504,8 @@ data class User internal constructor(
             .map {
                 Error.InstructorQualificationAlreadyFound(
                     "User $id already has instructor qualification $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             }
             .toEither { }
@@ -536,7 +555,8 @@ data class User internal constructor(
             .toEither {
                 Error.InstructorQualificationNotFound(
                     "Not able to find instructor qualification with id $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             }
             .map {
@@ -560,9 +580,9 @@ data class User internal constructor(
     ): Either<Error, UserSourcingEvent> {
         return Either.conditionally(this.isAdmin != isAdmin, {
             if (isAdmin) {
-                Error.UserAlreadyAdmin("User already is admin.")
+                Error.UserAlreadyAdmin("User already is admin.", correlationId)
             } else {
-                Error.UserAlreadyNotAdmin("User already not is admin.")
+                Error.UserAlreadyNotAdmin("User already not is admin.", correlationId)
             }
         }, {
             IsAdminChanged(

@@ -184,7 +184,8 @@ internal class RemovingInstructorQualificationTest {
             .isEqualTo(
                 Error.InstructorQualificationNotFound(
                     "Not able to find instructor qualification with id $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             )
     }

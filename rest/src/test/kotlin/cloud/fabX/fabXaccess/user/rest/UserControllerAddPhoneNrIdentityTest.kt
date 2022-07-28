@@ -7,9 +7,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -118,14 +119,9 @@ internal class UserControllerAddPhoneNrIdentityTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
             assertThat(result.response.content)
-                .isNotNull()
-                .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-                .isEqualTo(
-                    cloud.fabX.fabXaccess.common.rest.Error(
-                        "UserNotAdmin",
-                        message,
-                        mapOf()
-                    )
+                .isError(
+                    "UserNotAdmin",
+                    message
                 )
         }
 
@@ -183,7 +179,8 @@ internal class UserControllerAddPhoneNrIdentityTest {
         val phoneNr = "+49123456789"
         val requestBody = PhoneNrIdentity(phoneNr)
 
-        val error = Error.PhoneNrAlreadyInUse("msg678")
+        val correlationId = CorrelationIdFixture.arbitrary()
+        val error = Error.PhoneNrAlreadyInUse("msg678", correlationId)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
@@ -207,14 +204,10 @@ internal class UserControllerAddPhoneNrIdentityTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "PhoneNrAlreadyInUse",
-                    "msg678",
-                    mapOf()
-                )
+            .isError(
+                "PhoneNrAlreadyInUse",
+                "msg678",
+                correlationId = correlationId.serialize()
             )
     }
 }

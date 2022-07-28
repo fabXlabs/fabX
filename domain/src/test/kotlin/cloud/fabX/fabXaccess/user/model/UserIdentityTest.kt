@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.user.model
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import isLeft
 import isRight
@@ -46,9 +47,10 @@ class UserIdentityTest {
     ) {
         // given
         val hash = "h6dLJxkiB+4phuKyqiNC1JBKI+2BXYWq0R8eLiBOYIg="
+        val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = UsernamePasswordIdentity.fromUnvalidated(username, hash)
+        val result = UsernamePasswordIdentity.fromUnvalidated(username, hash, correlationId)
 
         // then
         assertThat(result)
@@ -57,7 +59,8 @@ class UserIdentityTest {
                 Error.UsernameInvalid(
                     "Username is invalid (has to match ^[\\w.]+\$).",
                     username,
-                    UsernamePasswordIdentity.usernameRegex
+                    UsernamePasswordIdentity.usernameRegex,
+                    correlationId
                 )
             )
     }
@@ -75,9 +78,10 @@ class UserIdentityTest {
     ) {
         // given
         val username = "username"
+        val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = UsernamePasswordIdentity.fromUnvalidated(username, hash)
+        val result = UsernamePasswordIdentity.fromUnvalidated(username, hash, correlationId)
 
         // then
         assertThat(result)
@@ -86,7 +90,8 @@ class UserIdentityTest {
                 Error.PasswordHashInvalid(
                     "Password hash is invalid (has to match ^[A-Za-z0-9+/]{43}=\$).",
                     hash,
-                    UsernamePasswordIdentity.hashRegex
+                    UsernamePasswordIdentity.hashRegex,
+                    correlationId
                 )
             )
     }
@@ -126,9 +131,10 @@ class UserIdentityTest {
     fun `given invalid id when building CardIdentity then returns error`(id: String) {
         // given
         val secret = "D1886D05DB5A0CA7A7A2F46D8F85E14E43BBAF75977C517E9D7009BF503D971B"
+        val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = CardIdentity.fromUnvalidated(id, secret)
+        val result = CardIdentity.fromUnvalidated(id, secret, correlationId)
 
         // then
         assertThat(result)
@@ -137,7 +143,8 @@ class UserIdentityTest {
                 Error.CardIdInvalid(
                     "Card id is invalid (has to match ^[0-9A-F]{14}\$).",
                     id,
-                    CardIdentity.cardIdRegex
+                    CardIdentity.cardIdRegex,
+                    correlationId
                 )
             )
     }
@@ -155,9 +162,10 @@ class UserIdentityTest {
     fun `given invalid secret when building CardIdentity then returns error`(secret: String) {
         // given
         val id = "AABBCCDDEEFF00"
+        val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = CardIdentity.fromUnvalidated(id, secret)
+        val result = CardIdentity.fromUnvalidated(id, secret, correlationId)
 
         // then
         assertThat(result)
@@ -166,7 +174,8 @@ class UserIdentityTest {
                 Error.CardSecretInvalid(
                     "Card secret is invalid (has to match ^[0-9A-F]{64}\$).",
                     secret,
-                    CardIdentity.cardSecretRegex
+                    CardIdentity.cardSecretRegex,
+                    correlationId
                 )
             )
     }
@@ -204,9 +213,10 @@ class UserIdentityTest {
         phoneNr: String
     ) {
         // given
+        val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = PhoneNrIdentity.fromUnvalidated(phoneNr)
+        val result = PhoneNrIdentity.fromUnvalidated(phoneNr, correlationId)
 
         // then
         assertThat(result)
@@ -215,7 +225,8 @@ class UserIdentityTest {
                 Error.PhoneNrInvalid(
                     "Phone number is invalid (has to match ^\\+[0-9]+\$).",
                     phoneNr,
-                    PhoneNrIdentity.phoneNrRegex
+                    PhoneNrIdentity.phoneNrRegex,
+                    correlationId
                 )
             )
     }

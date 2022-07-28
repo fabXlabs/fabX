@@ -9,6 +9,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.application.GettingDevice
@@ -225,14 +226,10 @@ internal class DeviceControllerGetTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "DeviceNotFound",
-                    "msg",
-                    mapOf("deviceId" to deviceId.serialize())
-                )
+            .isError(
+                "DeviceNotFound",
+                "msg",
+                mapOf("deviceId" to deviceId.serialize())
             )
     }
 }

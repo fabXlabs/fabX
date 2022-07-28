@@ -147,7 +147,8 @@ internal class DetachingToolTest {
             .thenReturn(device.right())
 
         val pin = 42
-        val expectedDomainError = Error.PinNotInUse("No tool attached at pin $pin.", pin)
+        val expectedDomainError =
+            Error.PinNotInUse("No tool attached at pin $pin.", pin, correlationId)
 
         // when
         val result = testee.detachTool(

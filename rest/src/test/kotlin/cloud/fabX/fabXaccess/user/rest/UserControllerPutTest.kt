@@ -7,10 +7,11 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -124,14 +125,9 @@ internal class UserControllerPutTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "UserNotAdmin",
-                    message,
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                message
             )
     }
 
@@ -191,9 +187,8 @@ internal class UserControllerPutTest {
             null
         )
 
-        val error = Error.WikiNameAlreadyInUse(
-            "msg"
-        )
+        val correlationId = CorrelationIdFixture.arbitrary()
+        val error = Error.WikiNameAlreadyInUse("msg", correlationId)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
@@ -219,14 +214,10 @@ internal class UserControllerPutTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "WikiNameAlreadyInUse",
-                    "msg",
-                    mapOf()
-                )
+            .isError(
+                "WikiNameAlreadyInUse",
+                "msg",
+                correlationId = correlationId.serialize()
             )
     }
 }

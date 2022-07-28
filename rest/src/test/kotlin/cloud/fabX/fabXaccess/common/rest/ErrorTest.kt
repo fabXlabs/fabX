@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common.rest
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import org.junit.jupiter.api.Test
@@ -12,12 +13,14 @@ internal class ErrorTest {
         // given
         val message = "msg123"
         val userId = UserIdFixture.arbitrary()
-        val error = Error.UserNotFound(message, userId)
+        val correlationId = CorrelationIdFixture.arbitrary()
+        val error = Error.UserNotFound(message, userId, correlationId)
 
         val expectedResult = Error(
             "UserNotFound",
             message,
-            mapOf("userId" to userId.serialize())
+            mapOf("userId" to userId.serialize()),
+            correlationId.serialize()
         )
 
         // when

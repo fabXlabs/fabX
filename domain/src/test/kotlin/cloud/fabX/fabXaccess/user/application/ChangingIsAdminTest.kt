@@ -117,7 +117,7 @@ internal class ChangingIsAdminTest {
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, isAdmin = newIsAdmin)
 
-        val expectedDomainError = Error.UserAlreadyAdmin("User already is admin.")
+        val expectedDomainError = Error.UserAlreadyAdmin("User already is admin.", correlationId)
 
         whenever(userRepository.getById(userId))
             .thenReturn(user.right())

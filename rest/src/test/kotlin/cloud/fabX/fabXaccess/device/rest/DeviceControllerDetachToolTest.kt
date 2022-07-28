@@ -7,9 +7,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
@@ -114,14 +115,9 @@ internal class DeviceControllerDetachToolTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "UserNotAdmin",
-                    message,
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                message
             )
     }
 
@@ -177,9 +173,12 @@ internal class DeviceControllerDetachToolTest {
         val deviceId = DeviceIdFixture.arbitrary()
         val pin = 2
 
+        val correlationId = CorrelationIdFixture.arbitrary()
+
         val error = Error.PinNotInUse(
             "error message",
-            pin
+            pin,
+            correlationId
         )
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
@@ -205,14 +204,11 @@ internal class DeviceControllerDetachToolTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "PinNotInUse",
-                    "error message",
-                    mapOf("pin" to pin.toString())
-                )
+            .isError(
+                "PinNotInUse",
+                "error message",
+                mapOf("pin" to pin.toString()),
+                correlationId.serialize()
             )
     }
 }

@@ -51,7 +51,7 @@ class RestApp(
                 cause.printStackTrace()
                 call.respond(
                     HttpStatusCode.UnprocessableEntity,
-                    Error(cause::class.qualifiedName ?: "unknown", cause.localizedMessage, mapOf())
+                    Error(cause::class.qualifiedName ?: "unknown", cause.localizedMessage, mapOf(), null)
                 )
             }
         }

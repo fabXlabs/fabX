@@ -187,7 +187,8 @@ internal class DeletingQualificationTest {
         val expectedError = Error.QualificationInUse(
             "Qualification in use by tools ($toolId).",
             qualificationId,
-            setOf(toolId)
+            setOf(toolId),
+            correlationId
         )
 
         // then

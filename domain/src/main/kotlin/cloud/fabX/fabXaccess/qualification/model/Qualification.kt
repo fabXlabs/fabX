@@ -93,7 +93,7 @@ data class Qualification internal constructor(
         correlationId: CorrelationId,
         gettingToolsByQualificationId: GettingToolsByQualificationId
     ): Either<Error, QualificationSourcingEvent> {
-        return requireQualificationNotInUseByTools(gettingToolsByQualificationId)
+        return requireQualificationNotInUseByTools(gettingToolsByQualificationId, correlationId)
             .map {
                 QualificationDeleted(
                     id,
@@ -105,7 +105,8 @@ data class Qualification internal constructor(
     }
 
     private fun requireQualificationNotInUseByTools(
-        gettingToolsByQualificationId: GettingToolsByQualificationId
+        gettingToolsByQualificationId: GettingToolsByQualificationId,
+        correlationId: CorrelationId
     ): Either<Error, Unit> {
         val tools = gettingToolsByQualificationId.getToolsByQualificationId(id)
 
@@ -117,7 +118,8 @@ data class Qualification internal constructor(
                 Error.QualificationInUse(
                     "Qualification in use by tools ($toolIds).",
                     id,
-                    tools.map { tool -> tool.id }.toSet()
+                    tools.map { tool -> tool.id }.toSet(),
+                    correlationId
                 )
             },
             {}

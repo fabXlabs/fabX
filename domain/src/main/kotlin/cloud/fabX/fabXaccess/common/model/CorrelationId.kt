@@ -5,7 +5,11 @@ import java.util.UUID
 /**
  * ID to correlate events related to a single request.
  */
-data class CorrelationId(val id: UUID)
+data class CorrelationId(val id: UUID) {
+    fun serialize(): String {
+        return id.toString()
+    }
+}
 
 typealias CorrelationIdFactory = () -> CorrelationId
 

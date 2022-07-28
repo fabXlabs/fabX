@@ -128,7 +128,7 @@ internal class AddingCardIdentityTest {
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
-        val expectedDomainError = Error.CardIdAlreadyInUse("Card id is already in use.")
+        val expectedDomainError = Error.CardIdAlreadyInUse("Card id is already in use.", correlationId)
 
         whenever(userRepository.getById(userId))
             .thenReturn(user.right())

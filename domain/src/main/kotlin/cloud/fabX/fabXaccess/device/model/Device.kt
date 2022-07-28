@@ -117,7 +117,7 @@ data class Device internal constructor(
                 )
             }
             .map {
-                PinInUse("Tool (with id $it) already attached at pin $pin.", pin)
+                PinInUse("Tool (with id $it) already attached at pin $pin.", pin, correlationId)
             }
             .swap()
             .flatMap { event ->
@@ -129,7 +129,8 @@ data class Device internal constructor(
                 if (it is Error.ToolNotFound) {
                     Error.ReferencedToolNotFound(
                         it.message,
-                        it.toolId
+                        it.toolId,
+                        correlationId
                     )
                 } else {
                     it
@@ -165,7 +166,7 @@ data class Device internal constructor(
     ): Either<Error, DeviceSourcingEvent> {
         return attachedTools.getOrNone(pin)
             .toEither {
-                PinNotInUse("No tool attached at pin $pin.", pin)
+                PinNotInUse("No tool attached at pin $pin.", pin, correlationId)
             }
             .map {
                 ToolDetached(

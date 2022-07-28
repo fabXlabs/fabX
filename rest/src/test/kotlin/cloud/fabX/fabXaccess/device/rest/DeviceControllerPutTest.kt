@@ -4,12 +4,11 @@ import arrow.core.None
 import arrow.core.getOrElse
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
@@ -126,14 +125,9 @@ internal class DeviceControllerPutTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "UserNotAdmin",
-                    message,
-                    mapOf()
-                )
+            .isError(
+                type = "UserNotAdmin",
+                message = message
             )
     }
 

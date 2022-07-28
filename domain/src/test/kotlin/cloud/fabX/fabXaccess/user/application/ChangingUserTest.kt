@@ -142,7 +142,7 @@ internal class ChangingUserTest {
         whenever(gettingUserByWikiName.getByWikiName(newWikiName.value))
             .thenReturn(otherUser.right())
 
-        val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.")
+        val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.", correlationId)
 
         // when
         val result = testee.changePersonalInformation(

@@ -7,6 +7,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -218,14 +219,10 @@ internal class ToolControllerGetTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "ToolNotFound",
-                    "msg",
-                    mapOf("toolId" to toolId.serialize())
-                )
+            .isError(
+                "ToolNotFound",
+                "msg",
+                mapOf("toolId" to toolId.serialize())
             )
     }
 }

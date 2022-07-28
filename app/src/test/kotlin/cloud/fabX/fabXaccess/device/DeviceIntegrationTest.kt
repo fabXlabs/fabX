@@ -8,9 +8,9 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.rest.Device
@@ -73,14 +73,9 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotAdmin",
-                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
@@ -145,14 +140,10 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "DeviceNotFound",
-                    "Device with id DeviceId(value=$invalidDeviceId) not found.",
-                    mapOf("deviceId" to invalidDeviceId)
-                )
+            .isError(
+                "DeviceNotFound",
+                "Device with id DeviceId(value=$invalidDeviceId) not found.",
+                mapOf("deviceId" to invalidDeviceId)
             )
     }
 
@@ -241,16 +232,10 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "DeviceNotFound",
-                    "Device with id DeviceId(value=$invalidDeviceId) not found.",
-                    mapOf(
-                        "deviceId" to invalidDeviceId
-                    )
-                )
+            .isError(
+                "DeviceNotFound",
+                "Device with id DeviceId(value=$invalidDeviceId) not found.",
+                mapOf("deviceId" to invalidDeviceId)
             )
     }
 
@@ -282,14 +267,10 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "DeviceNotFound",
-                    "Device with id DeviceId(value=$invalidDeviceId) not found.",
-                    mapOf("deviceId" to invalidDeviceId)
-                )
+            .isError(
+                "DeviceNotFound",
+                "Device with id DeviceId(value=$invalidDeviceId) not found.",
+                mapOf("deviceId" to invalidDeviceId)
             )
     }
 
@@ -306,14 +287,9 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotAdmin",
-                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
@@ -371,14 +347,9 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotAdmin",
-                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
@@ -416,14 +387,9 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotAdmin",
-                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 }

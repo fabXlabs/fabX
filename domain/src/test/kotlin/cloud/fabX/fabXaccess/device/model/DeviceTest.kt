@@ -407,7 +407,8 @@ internal class DeviceTest {
             .isEqualTo(
                 Error.PinInUse(
                     "Tool (with id $toolId) already attached at pin $pin.",
-                    pin
+                    pin,
+                    correlationId
                 )
             )
     }
@@ -445,7 +446,8 @@ internal class DeviceTest {
             .isEqualTo(
                 Error.ReferencedToolNotFound(
                     "error message",
-                    invalidToolId
+                    invalidToolId,
+                    correlationId
                 )
             )
     }
@@ -549,7 +551,8 @@ internal class DeviceTest {
             .isEqualTo(
                 Error.PinNotInUse(
                     "No tool attached at pin $pin.",
-                    pin
+                    pin,
+                    correlationId
                 )
             )
 

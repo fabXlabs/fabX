@@ -5,10 +5,10 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -121,14 +121,9 @@ internal class UserControllerAddTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "UserNotAdmin",
-                    message,
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                message
             )
     }
 
@@ -157,9 +152,8 @@ internal class UserControllerAddTest {
             "wiki"
         )
 
-        val error = Error.WikiNameAlreadyInUse(
-            "message 123"
-        )
+        val correlationId = CorrelationIdFixture.arbitrary()
+        val error = Error.WikiNameAlreadyInUse("message 123", correlationId)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
@@ -184,14 +178,10 @@ internal class UserControllerAddTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "WikiNameAlreadyInUse",
-                    "message 123",
-                    mapOf()
-                )
+            .isError(
+                "WikiNameAlreadyInUse",
+                "message 123",
+                correlationId = correlationId.serialize()
             )
     }
 }

@@ -7,9 +7,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -123,14 +124,9 @@ internal class UserControllerAddCardIdentityTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
             assertThat(result.response.content)
-                .isNotNull()
-                .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-                .isEqualTo(
-                    cloud.fabX.fabXaccess.common.rest.Error(
-                        "UserNotAdmin",
-                        message,
-                        mapOf()
-                    )
+                .isError(
+                    "UserNotAdmin",
+                    message
                 )
         }
 
@@ -190,7 +186,8 @@ internal class UserControllerAddCardIdentityTest {
         val cardSecret = "636B2D08298280E107E47B15EBE6336D6629F4FB742243DA3A792A42D5010737"
         val requestBody = CardIdentity(cardId, cardSecret)
 
-        val error = Error.CardIdAlreadyInUse("msg")
+        val correlationId = CorrelationIdFixture.arbitrary()
+        val error = Error.CardIdAlreadyInUse("msg", correlationId)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
@@ -215,14 +212,10 @@ internal class UserControllerAddCardIdentityTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "CardIdAlreadyInUse",
-                    "msg",
-                    mapOf()
-                )
+            .isError(
+                "CardIdAlreadyInUse",
+                "msg",
+                correlationId = correlationId.serialize()
             )
     }
 }

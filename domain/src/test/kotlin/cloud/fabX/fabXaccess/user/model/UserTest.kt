@@ -125,7 +125,7 @@ internal class UserTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(
-                Error.WikiNameAlreadyInUse("Wiki name is already in use.")
+                Error.WikiNameAlreadyInUse("Wiki name is already in use.", correlationId)
             )
     }
 
@@ -619,7 +619,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.WikiNameAlreadyInUse("Wiki name is already in use."))
+            .isEqualTo(Error.WikiNameAlreadyInUse("Wiki name is already in use.", correlationId))
     }
 
     @Test
@@ -713,7 +713,10 @@ internal class UserTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(
-                Error.UsernamePasswordIdentityAlreadyFound("User already has a username password identity.")
+                Error.UsernamePasswordIdentityAlreadyFound(
+                    "User already has a username password identity.",
+                    correlationId
+                )
             )
     }
 
@@ -745,7 +748,8 @@ internal class UserTest {
             .isLeft()
             .isEqualTo(
                 Error.UsernameAlreadyInUse(
-                    "Username is already in use."
+                    "Username is already in use.",
+                    correlationId
                 )
             )
 
@@ -796,7 +800,8 @@ internal class UserTest {
                     "Not able to find identity with username \"unknownusername\".",
                     mapOf(
                         "username" to "unknownusername"
-                    )
+                    ),
+                    correlationId
                 )
             )
     }
@@ -821,7 +826,8 @@ internal class UserTest {
                     "Not able to find identity with username \"unknownusername\".",
                     mapOf(
                         "username" to "unknownusername"
-                    )
+                    ),
+                    correlationId
                 )
             )
     }
@@ -891,7 +897,8 @@ internal class UserTest {
             .isLeft()
             .isEqualTo(
                 Error.CardIdAlreadyInUse(
-                    "Card id is already in use."
+                    "Card id is already in use.",
+                    correlationId
                 )
             )
     }
@@ -940,7 +947,8 @@ internal class UserTest {
                     "Not able to find identity with card id $unknownCardId.",
                     mapOf(
                         "cardId" to unknownCardId
-                    )
+                    ),
+                    correlationId
                 )
             )
     }
@@ -963,7 +971,8 @@ internal class UserTest {
                     "Not able to find identity with card id $unknownCardId.",
                     mapOf(
                         "cardId" to unknownCardId
-                    )
+                    ),
+                    correlationId
                 )
             )
     }
@@ -1028,7 +1037,8 @@ internal class UserTest {
             .isLeft()
             .isEqualTo(
                 Error.PhoneNrAlreadyInUse(
-                    "Phone number is already in use."
+                    "Phone number is already in use.",
+                    correlationId
                 )
             )
     }
@@ -1076,7 +1086,8 @@ internal class UserTest {
             .isEqualTo(
                 Error.UserIdentityNotFound(
                     "Not able to find identity with phone number +123.",
-                    mapOf("phoneNr" to "+123")
+                    mapOf("phoneNr" to "+123"),
+                    correlationId
                 )
             )
     }
@@ -1099,7 +1110,8 @@ internal class UserTest {
             .isEqualTo(
                 Error.UserIdentityNotFound(
                     "Not able to find identity with phone number +4242123.",
-                    mapOf("phoneNr" to "+4242123")
+                    mapOf("phoneNr" to "+4242123"),
+                    correlationId
                 )
             )
     }
@@ -1160,7 +1172,8 @@ internal class UserTest {
                 .isEqualTo(
                     Error.MemberQualificationAlreadyFound(
                         "User $userId already has member qualification $qualificationId.",
-                        qualificationId
+                        qualificationId,
+                        correlationId
                     )
                 )
         }
@@ -1207,7 +1220,8 @@ internal class UserTest {
             .isEqualTo(
                 Error.InstructorPermissionNotFound(
                     "Actor not has instructor permission for qualification $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             )
     }
@@ -1297,7 +1311,8 @@ internal class UserTest {
             .isEqualTo(
                 Error.MemberQualificationNotFound(
                     "Not able to find member qualification with id $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             )
     }
@@ -1355,7 +1370,8 @@ internal class UserTest {
             .isEqualTo(
                 Error.InstructorQualificationAlreadyFound(
                     "User $userId already has instructor qualification $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             )
     }
@@ -1469,7 +1485,8 @@ internal class UserTest {
             .isEqualTo(
                 Error.InstructorQualificationNotFound(
                     "Not able to find instructor qualification with id $qualificationId.",
-                    qualificationId
+                    qualificationId,
+                    correlationId
                 )
             )
     }
@@ -1518,7 +1535,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.UserAlreadyAdmin("User already is admin."))
+            .isEqualTo(Error.UserAlreadyAdmin("User already is admin.", correlationId))
     }
 
     @Test
@@ -1536,7 +1553,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.UserAlreadyNotAdmin("User already not is admin."))
+            .isEqualTo(Error.UserAlreadyNotAdmin("User already not is admin.", correlationId))
     }
 
     @Test

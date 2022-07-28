@@ -172,7 +172,7 @@ internal class AddingUsernamePasswordIdentityTest {
         )
 
         val expectedDomainError =
-            Error.UsernamePasswordIdentityAlreadyFound("User already has a username password identity.")
+            Error.UsernamePasswordIdentityAlreadyFound("User already has a username password identity.", correlationId)
 
         whenever(userRepository.getById(userId))
             .thenReturn(user.right())

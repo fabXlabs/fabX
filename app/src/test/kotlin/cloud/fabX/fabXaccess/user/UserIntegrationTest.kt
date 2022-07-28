@@ -8,9 +8,9 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -336,16 +336,10 @@ internal class UserIntegrationTest {
         }
         assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotFound",
-                    "User with id UserId(value=$userId) not found.",
-                    mapOf(
-                        "userId" to userId
-                    )
-                )
+            .isError(
+                "UserNotFound",
+                "User with id UserId(value=$userId) not found.",
+                mapOf("userId" to userId)
             )
     }
 

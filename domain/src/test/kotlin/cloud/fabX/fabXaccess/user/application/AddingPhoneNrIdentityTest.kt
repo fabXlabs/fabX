@@ -123,7 +123,8 @@ internal class AddingPhoneNrIdentityTest {
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
         val expectedDomainError = Error.PhoneNrAlreadyInUse(
-            "Phone number is already in use."
+            "Phone number is already in use.",
+            correlationId
         )
 
         whenever(userRepository.getById(userId))

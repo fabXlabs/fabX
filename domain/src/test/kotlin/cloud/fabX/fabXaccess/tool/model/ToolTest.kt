@@ -139,7 +139,8 @@ internal class ToolTest {
             .isEqualTo(
                 Error.ReferencedQualificationNotFound(
                     "msg",
-                    invalidQualificationId
+                    invalidQualificationId,
+                    correlationId
                 )
             )
     }
@@ -420,7 +421,8 @@ internal class ToolTest {
             .isEqualTo(
                 Error.ReferencedQualificationNotFound(
                     "msg",
-                    invalidQualificationId
+                    invalidQualificationId,
+                    correlationId
                 )
             )
     }

@@ -9,9 +9,9 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -125,14 +125,10 @@ internal class ToolIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "ReferencedQualificationNotFound",
-                    "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
-                    mapOf("qualificationId" to invalidQualificationId)
-                )
+            .isError(
+                "ReferencedQualificationNotFound",
+                "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
+                mapOf("qualificationId" to invalidQualificationId)
             )
     }
 
@@ -273,16 +269,10 @@ internal class ToolIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "ToolNotFound",
-                    "Tool with id ToolId(value=$invalidToolId) not found.",
-                    mapOf(
-                        "toolId" to invalidToolId
-                    )
-                )
+            .isError(
+                "ToolNotFound",
+                "Tool with id ToolId(value=$invalidToolId) not found.",
+                mapOf("toolId" to invalidToolId)
             )
     }
 
@@ -314,14 +304,10 @@ internal class ToolIntegrationTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
             assertThat(result.response.content)
-                .isNotNull()
-                .isJson<Error>()
-                .isEqualTo(
-                    Error(
-                        "ReferencedQualificationNotFound",
-                        "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
-                        mapOf("qualificationId" to invalidQualificationId)
-                    )
+                .isError(
+                    "ReferencedQualificationNotFound",
+                    "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
+                    mapOf("qualificationId" to invalidQualificationId)
                 )
         }
 
@@ -353,14 +339,10 @@ internal class ToolIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "ToolNotFound",
-                    "Tool with id ToolId(value=$invalidToolId) not found.",
-                    mapOf("toolId" to invalidToolId)
-                )
+            .isError(
+                "ToolNotFound",
+                "Tool with id ToolId(value=$invalidToolId) not found.",
+                mapOf("toolId" to invalidToolId)
             )
     }
 
@@ -376,14 +358,9 @@ internal class ToolIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Error>()
-            .isEqualTo(
-                Error(
-                    "UserNotAdmin",
-                    "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin.",
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 }

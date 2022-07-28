@@ -10,7 +10,7 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -100,14 +100,9 @@ internal class UserControllerDeleteTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "UserNotAdmin",
-                    message,
-                    mapOf()
-                )
+            .isError(
+                "UserNotAdmin",
+                message
             )
     }
 
@@ -157,14 +152,9 @@ internal class UserControllerDeleteTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-            .isEqualTo(
-                cloud.fabX.fabXaccess.common.rest.Error(
-                    "VersionConflict",
-                    "some message",
-                    mapOf()
-                )
+            .isError(
+                "VersionConflict",
+                "some message"
             )
     }
 }

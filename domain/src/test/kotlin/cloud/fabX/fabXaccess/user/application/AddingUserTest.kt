@@ -97,7 +97,7 @@ internal class AddingUserTest {
         whenever(gettingUserByWikiName.getByWikiName(wikiName))
             .thenReturn(otherUser.right())
 
-        val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.")
+        val expectedDomainError = Error.WikiNameAlreadyInUse("Wiki name is already in use.", correlationId)
 
         // when
         val result = testee.addUser(

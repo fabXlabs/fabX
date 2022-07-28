@@ -7,9 +7,10 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import assertk.assertions.isNull
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -108,14 +109,9 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
             assertThat(result.response.content)
-                .isNotNull()
-                .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-                .isEqualTo(
-                    cloud.fabX.fabXaccess.common.rest.Error(
-                        "UserNotAdmin",
-                        message,
-                        mapOf()
-                    )
+                .isError(
+                    "UserNotAdmin",
+                    message
                 )
         }
 
@@ -150,7 +146,8 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
             val userId = UserIdFixture.arbitrary()
             val name = "name123"
 
-            val error = Error.UserIdentityNotFound("msg", mapOf("username" to name))
+            val correlationId = CorrelationIdFixture.arbitrary()
+            val error = Error.UserIdentityNotFound("msg", mapOf("username" to name), correlationId)
 
             whenever(authenticationService.basic(UserPasswordCredential(username, password)))
                 .thenReturn(UserPrincipal(actingUser))
@@ -175,14 +172,11 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
             assertThat(result.response.content)
-                .isNotNull()
-                .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
-                .isEqualTo(
-                    cloud.fabX.fabXaccess.common.rest.Error(
-                        "UserIdentityNotFound",
-                        "msg",
-                        mapOf("username" to name)
-                    )
+                .isError(
+                    "UserIdentityNotFound",
+                    "msg",
+                    mapOf("username" to name),
+                    correlationId.serialize()
                 )
         }
 }

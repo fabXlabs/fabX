@@ -44,7 +44,7 @@ data class Tool internal constructor(
             requiredQualifications: Set<QualificationId>,
             gettingQualificationById: GettingQualificationById
         ): Either<Error, ToolSourcingEvent> {
-            return requireQualificationsExist(requiredQualifications, gettingQualificationById)
+            return requireQualificationsExist(requiredQualifications, gettingQualificationById, correlationId)
                 .map {
                     ToolCreated(
                         toolIdFactory.invoke(),
@@ -80,7 +80,8 @@ data class Tool internal constructor(
 
         private fun requireQualificationsExist(
             qualifications: Set<QualificationId>,
-            gettingQualificationById: GettingQualificationById
+            gettingQualificationById: GettingQualificationById,
+            correlationId: CorrelationId
         ): Either<Error, Unit> {
             return qualifications
                 .map(gettingQualificationById::getQualificationById)
@@ -90,7 +91,8 @@ data class Tool internal constructor(
                     if (it is Error.QualificationNotFound) {
                         Error.ReferencedQualificationNotFound(
                             it.message,
-                            it.qualificationId
+                            it.qualificationId,
+                            correlationId
                         )
                     } else {
                         it
@@ -117,7 +119,8 @@ data class Tool internal constructor(
         return when (requiredQualifications) {
             is ChangeableValue.ChangeToValue -> requireQualificationsExist(
                 requiredQualifications.value,
-                gettingQualificationById
+                gettingQualificationById,
+                correlationId
             )
             is ChangeableValue.LeaveAsIs -> Unit.right()
         }.map {
