@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingUser
+import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
@@ -31,7 +32,8 @@ class UserController(
     private val deletingUser: DeletingUser,
     private val changingIsAdmin: ChangingIsAdmin,
     private val addingInstructorQualification: AddingInstructorQualification,
-    private val removingInstructorQualification: RemovingInstructorQualification
+    private val removingInstructorQualification: RemovingInstructorQualification,
+    private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity
 ) {
 
     val routes: Route.() -> Unit = {
@@ -222,6 +224,37 @@ class UserController(
                                     )
                                 }
                         }
+                }
+            }
+
+            route("/{id}/identity") {
+                route("/username-password") {
+                    post("") {
+                        readBody<UsernamePasswordIdentity>()
+                            ?.let {
+                                readUUIDParameter("id")
+                                    ?.let { UserId(it) }
+                                    ?.let { id ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    addingUsernamePasswordIdentity.addUsernamePasswordIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        it.username,
+                                                        hash(it.password)
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+
+                    // TODO
+                    // delete("/{username}") { }
                 }
             }
         }

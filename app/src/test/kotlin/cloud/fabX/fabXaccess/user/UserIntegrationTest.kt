@@ -21,6 +21,7 @@ import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
 import cloud.fabX.fabXaccess.user.rest.UserLockDetails
+import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -572,6 +573,49 @@ internal class UserIntegrationTest {
                 }/instructor-qualification/${QualificationIdFixture.arbitrary().serialize()}"
             ) {
                 addMemberAuth()
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        }
+
+    @Test
+    fun `when adding username password identity then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+        val requestBody = UsernamePasswordIdentity(
+            "some.one",
+            "supersecret123"
+        )
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/username-password") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    }
+
+    @Test
+    fun `given non-admin authentication when adding username password identity then returns http forbidden`() =
+        withTestApp {
+            // given
+            val requestBody = UsernamePasswordIdentity(
+                "some.one",
+                "supersecret123"
+            )
+
+            // when
+            val result = handleRequest(
+                HttpMethod.Post,
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/username-password"
+            ) {
+                addMemberAuth()
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(Json.encodeToString(requestBody))
             }
 
             // then

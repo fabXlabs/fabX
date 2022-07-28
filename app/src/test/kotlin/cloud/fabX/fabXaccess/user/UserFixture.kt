@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
+import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -74,3 +75,22 @@ internal fun TestApplicationEngine.givenUserIsInstructorFor(
 
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 }
+
+@InternalAPI
+@ExperimentalSerializationApi
+internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
+    userId: String,
+    username: String,
+    password: String
+) {
+    val requestBody = UsernamePasswordIdentity(username, password)
+
+    val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/username-password") {
+        addAdminAuth()
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(Json.encodeToString(requestBody))
+    }
+
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+}
+

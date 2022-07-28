@@ -59,3 +59,9 @@ data class IsAdminDetails(
 data class QualificationAdditionDetails(
     val qualificationId: String
 )
+
+@Serializable
+data class UsernamePasswordIdentity(
+    val username: String,
+    val password: String
+)
