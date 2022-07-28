@@ -8,7 +8,7 @@ object UserIdentityFixture {
         username: String = "someone",
         passwordHash: String = "4Mt7/bEfN/samfzYogSTVcnCleWI1zehSJa4HdcWsMQ="
     ): UsernamePasswordIdentity {
-        return UsernamePasswordIdentity.fromUnvalidated(username, passwordHash)
+        return UsernamePasswordIdentity.fromUnvalidated(username, passwordHash, null)
             .getOrElse { throw IllegalArgumentException("Invalid username or password.") }
     }
 
@@ -16,14 +16,14 @@ object UserIdentityFixture {
         cardId: String = "AABBCCDDEEFF11",
         cardSecret: String = "F4B726CC27C2413227382ABF095D09B1A13B00FC6AD1B1B5D75C4A954628C807"
     ): CardIdentity {
-        return CardIdentity.fromUnvalidated(cardId, cardSecret)
+        return CardIdentity.fromUnvalidated(cardId, cardSecret, null)
             .getOrElse { throw IllegalArgumentException("Invalid card id or secret.") }
     }
 
     fun phoneNr(
         phoneNr: String
     ): PhoneNrIdentity {
-        return PhoneNrIdentity.fromUnvalidated(phoneNr)
+        return PhoneNrIdentity.fromUnvalidated(phoneNr, null)
             .getOrElse { throw IllegalArgumentException("Invalid phone nr.") }
     }
 }

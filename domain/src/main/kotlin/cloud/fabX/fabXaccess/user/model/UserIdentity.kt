@@ -22,7 +22,7 @@ data class UsernamePasswordIdentity(val username: String, val hash: String) : Us
         fun fromUnvalidated(
             username: String,
             hash: String,
-            correlationId: CorrelationId? = null
+            correlationId: CorrelationId?
         ): Either<Error, UsernamePasswordIdentity> {
             return requireValidUsername(username, correlationId)
                 .flatMap { requireValidHash(hash, correlationId) }
@@ -77,7 +77,7 @@ data class CardIdentity(val cardId: String, val cardSecret: String) : UserIdenti
         fun fromUnvalidated(
             cardId: String,
             cardSecret: String,
-            correlationId: CorrelationId? = null
+            correlationId: CorrelationId?
         ): Either<Error, CardIdentity> {
             return requireValidCardId(cardId, correlationId)
                 .flatMap { requireValidCardSecret(cardSecret, correlationId) }
@@ -135,7 +135,7 @@ data class PhoneNrIdentity(val phoneNr: String) : UserIdentity {
 
         fun fromUnvalidated(
             phoneNr: String,
-            correlationId: CorrelationId? = null
+            correlationId: CorrelationId?
         ): Either<Error, PhoneNrIdentity> {
             val normalized = phoneNr.filter { it.isDigit() || it == '+' }
             return requireValidPhoneNr(normalized, correlationId)

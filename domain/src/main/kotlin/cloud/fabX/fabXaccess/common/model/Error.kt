@@ -34,42 +34,42 @@ sealed class Error(
     data class UserIdentityNotFound(
         override val message: String,
         override val parameters: Map<String, String>,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, parameters, correlationId)
 
     data class UsernamePasswordIdentityAlreadyFound(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message)
 
     data class UsernameAlreadyInUse(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, correlationId = correlationId)
 
     data class PhoneNrAlreadyInUse(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message)
 
     data class WikiNameAlreadyInUse(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, correlationId = correlationId)
 
     data class CardIdAlreadyInUse(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message)
 
     data class UserAlreadyAdmin(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, correlationId = correlationId)
 
     data class UserAlreadyNotAdmin(
         override val message: String,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, correlationId = correlationId)
 
     data class UserNotInstructor(override val message: String) : Error(message)
@@ -78,25 +78,25 @@ sealed class Error(
     data class MemberQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()))
 
     data class MemberQualificationAlreadyFound(
         override val message: String,
         val qualificationId: QualificationId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class InstructorQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class InstructorQualificationAlreadyFound(
         override val message: String,
         val qualificationId: QualificationId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class QualificationNotFound(
@@ -107,14 +107,14 @@ sealed class Error(
     data class ReferencedQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class QualificationInUse(
         override val message: String,
         val qualificationId: QualificationId,
         val toolIds: Set<ToolId>,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(
         message,
         mapOf(
@@ -141,7 +141,7 @@ sealed class Error(
     data class ReferencedToolNotFound(
         override val message: String,
         val toolId: ToolId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("toolId" to toolId.serialize()), correlationId)
 
     data class PinInUse(
@@ -153,7 +153,7 @@ sealed class Error(
     data class PinNotInUse(
         override val message: String,
         val pin: Int,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("pin" to pin.toString()), correlationId)
 
     data class VersionConflict(override val message: String) : Error(message)
@@ -196,6 +196,6 @@ sealed class Error(
     data class InstructorPermissionNotFound(
         override val message: String,
         val qualificationId: QualificationId,
-        override val correlationId: CorrelationId?
+        override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 }

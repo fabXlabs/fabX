@@ -14,7 +14,8 @@ class AuthenticationService(
         return UsernamePasswordIdentity
             .fromUnvalidated(
                 credentials.name,
-                hash(credentials.password)
+                hash(credentials.password),
+                null
             )
             .flatMap {
                 gettingUserByIdentity.getUserByIdentity(

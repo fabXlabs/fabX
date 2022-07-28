@@ -323,7 +323,7 @@ data class User internal constructor(
         gettingUserByIdentity: GettingUserByIdentity
     ): Either<Error, UserSourcingEvent> {
         return requireUniquePhoneNr(phoneNr, gettingUserByIdentity, correlationId)
-            .flatMap { PhoneNrIdentity.fromUnvalidated(phoneNr) }
+            .flatMap { PhoneNrIdentity.fromUnvalidated(phoneNr, correlationId) }
             .map {
                 PhoneNrIdentityAdded(
                     id,

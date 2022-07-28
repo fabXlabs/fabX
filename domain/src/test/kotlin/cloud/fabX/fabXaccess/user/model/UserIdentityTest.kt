@@ -26,7 +26,7 @@ class UserIdentityTest {
         // given
 
         // when
-        val result = UsernamePasswordIdentity.fromUnvalidated(username, hash)
+        val result = UsernamePasswordIdentity.fromUnvalidated(username, hash, null)
 
         // then
         assertThat(result)
@@ -111,7 +111,7 @@ class UserIdentityTest {
         // given
 
         // when
-        val result = CardIdentity.fromUnvalidated(cardId, cardSecret)
+        val result = CardIdentity.fromUnvalidated(cardId, cardSecret, null)
 
         // then
         assertThat(result)
@@ -194,7 +194,7 @@ class UserIdentityTest {
         // given
 
         // when
-        val result = PhoneNrIdentity.fromUnvalidated(phoneNr)
+        val result = PhoneNrIdentity.fromUnvalidated(phoneNr, null)
 
         // then
         assertThat(result)
