@@ -52,6 +52,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
             HttpStatusCode.UnprocessableEntity,
             error.toRestModel()
         )
+        is Error.UserIdentityNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // persistence
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
 

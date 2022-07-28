@@ -30,3 +30,12 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readIntParameter(name: St
     call.respond(HttpStatusCode.BadRequest, "Required int parameter \"$name\" not given or invalid.")
     return null
 }
+
+suspend inline fun PipelineContext<*, ApplicationCall>.readStringParameter(name: String): String? {
+    call.parameters[name]?.let {
+        return it
+    }
+
+    call.respond(HttpStatusCode.BadRequest, "Required string parameter \"$name\" not given or invalid.")
+    return null
+}

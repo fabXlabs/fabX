@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
+import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
@@ -17,6 +18,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
+import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import io.ktor.application.call
 import io.ktor.routing.Route
 import io.ktor.routing.delete
@@ -33,7 +35,8 @@ class UserController(
     private val changingIsAdmin: ChangingIsAdmin,
     private val addingInstructorQualification: AddingInstructorQualification,
     private val removingInstructorQualification: RemovingInstructorQualification,
-    private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity
+    private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
+    private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity
 ) {
 
     val routes: Route.() -> Unit = {
@@ -253,8 +256,28 @@ class UserController(
                             }
                     }
 
-                    // TODO
-                    // delete("/{username}") { }
+                    delete("/{username}") {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                readStringParameter("username")
+                                    ?.let { username ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    removingUsernamePasswordIdentity.removeUsernamePasswordIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        username
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
                 }
             }
         }
