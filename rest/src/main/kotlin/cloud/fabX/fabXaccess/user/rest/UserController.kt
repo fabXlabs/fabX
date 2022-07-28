@@ -20,6 +20,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
+import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
@@ -43,7 +44,8 @@ class UserController(
     private val removingMemberQualification: RemovingMemberQualification,
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
-    private val addingCardIdentity: AddingCardIdentity
+    private val addingCardIdentity: AddingCardIdentity,
+    private val removingCardIdentity: RemovingCardIdentity
 ) {
 
     val routes: Route.() -> Unit = {
@@ -352,6 +354,29 @@ class UserController(
                                                         id,
                                                         it.cardId,
                                                         it.cardSecret
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+
+                    delete("/{cardId}") {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                readStringParameter("cardId")
+                                    ?.let { cardId ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    removingCardIdentity.removeCardIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        cardId
                                                     )
                                                         .toEither { }
                                                         .swap()

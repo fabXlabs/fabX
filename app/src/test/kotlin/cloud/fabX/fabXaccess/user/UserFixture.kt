@@ -5,6 +5,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
+import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
@@ -120,3 +121,21 @@ internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 }
 
+@InternalAPI
+@ExperimentalSerializationApi
+internal fun TestApplicationEngine.givenCardIdentity(
+    userId: String,
+    cardId: String,
+    cardSecret: String
+) {
+    val requestBody = CardIdentity(cardId, cardSecret)
+
+    val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/card") {
+        addAdminAuth()
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(Json.encodeToString(requestBody))
+    }
+
+    assertThat(result.response.content).isNull()
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+}

@@ -27,6 +27,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
@@ -62,6 +63,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AddingUsernamePasswordIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingUsernamePasswordIdentity::class.java) }
         bindInstance { Mockito.mock(AddingCardIdentity::class.java) }
+        bindInstance { Mockito.mock(RemovingCardIdentity::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }

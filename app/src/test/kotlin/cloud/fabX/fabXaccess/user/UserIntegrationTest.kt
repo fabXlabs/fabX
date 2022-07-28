@@ -840,4 +840,44 @@ internal class UserIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
     }
+
+    @Test
+    fun `when removing card identity then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val cardId = "11223344556677"
+        givenCardIdentity(
+            userId,
+            cardId,
+            "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        )
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Delete,
+            "/api/v1/user/$userId/identity/card/$cardId"
+        ) {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    }
+
+    @Test
+    fun `given non-admin authentication when removing card identity then returns http forbidden`() = withTestApp {
+        // given
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Delete,
+            "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card/AA11BB22CC33DD"
+        ) {
+            addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
 }
