@@ -151,7 +151,7 @@ internal class UserControllerAddInstructorQualificationTest {
         }
 
     @Test
-    fun `given domain error when adding instructor qualification then returns http ok`() = withConfiguredTestApp {
+    fun `given domain error when adding instructor qualification then returns mapped error`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
         val qualificationId = QualificationIdFixture.arbitrary()

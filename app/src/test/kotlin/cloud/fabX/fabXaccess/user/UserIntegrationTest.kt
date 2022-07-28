@@ -517,4 +517,64 @@ internal class UserIntegrationTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         }
+
+    @Test
+    fun `when removing instructor qualification then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+        val qualificationId = givenQualification()
+        givenUserIsInstructorFor(userId, qualificationId)
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Delete,
+            "/api/v1/user/$userId/instructor-qualification/$qualificationId"
+        ) {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    3,
+                    "first",
+                    "last",
+                    "wiki",
+                    false,
+                    null,
+                    setOf(),
+                    null,
+                    false
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when removing instructor qualification then returns http forbidden`() =
+        withTestApp {
+            // given
+
+            // when
+            val result = handleRequest(
+                HttpMethod.Delete,
+                "/api/v1/user/${
+                    UserIdFixture.arbitrary().serialize()
+                }/instructor-qualification/${QualificationIdFixture.arbitrary().serialize()}"
+            ) {
+                addMemberAuth()
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        }
 }

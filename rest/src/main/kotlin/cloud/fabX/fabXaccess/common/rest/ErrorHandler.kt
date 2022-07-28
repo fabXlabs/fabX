@@ -47,6 +47,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserAlreadyAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserAlreadyNotAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.InstructorQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.InstructorQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // persistence
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
 
