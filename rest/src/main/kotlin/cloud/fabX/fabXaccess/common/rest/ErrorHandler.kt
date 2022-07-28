@@ -27,16 +27,23 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         // domain qualification
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.QualificationInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // domain tool
         is Error.ToolNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedToolNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.PinNotInUse -> respond(HttpStatusCode.NotFound, error.toRestModel())
         // domain device
         is Error.DeviceNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.DeviceNotFoundByIdentity -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.PinInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // domain user
         is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
+        is Error.UserNotFoundByCardId -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.UserNotFoundByUsername -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.UserNotFoundByWikiName -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.WikiNameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.InstructorPermissionNotFound -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserAlreadyAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserAlreadyNotAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.InstructorQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
@@ -45,6 +52,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.MemberQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UsernameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UsernameInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.PasswordHashInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UsernamePasswordIdentityAlreadyFound -> respond(
             HttpStatusCode.UnprocessableEntity,
             error.toRestModel()
@@ -57,8 +65,5 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserIdentityNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // persistence
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-
-        // TODO handle all cases
-        else -> respond(HttpStatusCode.InternalServerError, "unmapped error: ${error::class.qualifiedName}")
     }
 }
