@@ -10,9 +10,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
-import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -48,9 +46,7 @@ internal class QualificationControllerDeleteTest {
 
     @BeforeEach
     fun `configure RestModule`(
-        @Mock gettingQualification: GettingQualification,
         @Mock deletingQualification: DeletingQualification,
-        @Mock addingQualification: AddingQualification,
         @Mock authenticationService: AuthenticationService
     ) {
         this.deletingQualification = deletingQualification
@@ -63,7 +59,7 @@ internal class QualificationControllerDeleteTest {
     }, block)
 
     @Test
-    fun `when delete qualification then returns http ok`() = withConfiguredTestApp {
+    fun `when delete qualification then returns http no content`() = withConfiguredTestApp {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
 
@@ -84,7 +80,7 @@ internal class QualificationControllerDeleteTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

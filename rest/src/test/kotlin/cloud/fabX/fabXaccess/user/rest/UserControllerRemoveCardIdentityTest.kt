@@ -57,7 +57,7 @@ internal class UserControllerRemoveCardIdentityTest {
     }, block)
 
     @Test
-    fun `when removing card identity then returns http ok`() = withConfiguredTestApp {
+    fun `when removing card identity then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
         val cardId = "11223344556677"
@@ -83,7 +83,7 @@ internal class UserControllerRemoveCardIdentityTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

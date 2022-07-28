@@ -62,7 +62,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
     }, block)
 
     @Test
-    fun `when adding username password identity then returns http ok`() = withConfiguredTestApp {
+    fun `when adding username password identity then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
 
@@ -92,7 +92,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

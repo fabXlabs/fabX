@@ -58,7 +58,7 @@ internal class UserControllerRemoveMemberQualificationTest {
     }, block)
 
     @Test
-    fun `when removing member qualification then returns http ok`() = withConfiguredTestApp {
+    fun `when removing member qualification then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
         val qualificationId = QualificationIdFixture.arbitrary()
@@ -84,7 +84,7 @@ internal class UserControllerRemoveMemberQualificationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

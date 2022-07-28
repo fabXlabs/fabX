@@ -58,7 +58,7 @@ internal class UserControllerDeleteTest {
     }, block)
 
     @Test
-    fun `when deleting user then returns http ok`() = withConfiguredTestApp {
+    fun `when deleting user then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
 
@@ -79,7 +79,7 @@ internal class UserControllerDeleteTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

@@ -65,7 +65,7 @@ internal class QualificationControllerPutTest {
     }, block)
 
     @Test
-    fun `when changing qualification then returns http ok`() = withConfiguredTestApp {
+    fun `when changing qualification then returns http no content`() = withConfiguredTestApp {
         // given
         val id = QualificationIdFixture.arbitrary()
 
@@ -99,7 +99,7 @@ internal class QualificationControllerPutTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

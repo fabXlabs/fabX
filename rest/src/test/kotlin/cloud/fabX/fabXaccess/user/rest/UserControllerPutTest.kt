@@ -63,7 +63,7 @@ internal class UserControllerPutTest {
     }, block)
 
     @Test
-    fun `when changing user then returns http ok`() = withConfiguredTestApp {
+    fun `when changing user then returns http no content`() = withConfiguredTestApp {
         // given
         val id = UserIdFixture.arbitrary()
 
@@ -95,7 +95,7 @@ internal class UserControllerPutTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

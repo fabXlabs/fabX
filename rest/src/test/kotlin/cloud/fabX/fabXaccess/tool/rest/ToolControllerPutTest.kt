@@ -66,7 +66,7 @@ internal class ToolControllerPutTest {
     }, block)
 
     @Test
-    fun `when changing tool then returns http ok`() = withConfiguredTestApp {
+    fun `when changing tool then returns http no content`() = withConfiguredTestApp {
         // given
         val id = ToolIdFixture.arbitrary()
 
@@ -113,7 +113,7 @@ internal class ToolControllerPutTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

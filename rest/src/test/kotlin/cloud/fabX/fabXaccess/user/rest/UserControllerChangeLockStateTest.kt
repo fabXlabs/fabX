@@ -106,7 +106,7 @@ internal class UserControllerChangeLockStateTest {
 
     @ParameterizedTest
     @MethodSource("userLockDetailsProvider")
-    fun `when changing user lock state then returns http ok`(
+    fun `when changing user lock state then returns http no content`(
         requestBody: UserLockDetails,
         locked: cloud.fabX.fabXaccess.common.model.ChangeableValue<Boolean>,
         notes: cloud.fabX.fabXaccess.common.model.ChangeableValue<String>,
@@ -135,7 +135,7 @@ internal class UserControllerChangeLockStateTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

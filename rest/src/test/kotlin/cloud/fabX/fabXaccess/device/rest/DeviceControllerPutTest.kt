@@ -65,7 +65,7 @@ internal class DeviceControllerPutTest {
     }, block)
 
     @Test
-    fun `when changing device then returns http ok`() = withConfiguredTestApp {
+    fun `when changing device then returns http no content`() = withConfiguredTestApp {
         // given
         val id = DeviceIdFixture.arbitrary()
 
@@ -97,7 +97,7 @@ internal class DeviceControllerPutTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

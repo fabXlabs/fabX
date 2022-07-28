@@ -62,7 +62,7 @@ internal class UserControllerChangeIsAdminTest {
     }, block)
 
     @Test
-    fun `when changing is admin then returns http ok`() = withConfiguredTestApp {
+    fun `when changing is admin then returns http no content`() = withConfiguredTestApp {
         // given
         val id = UserIdFixture.arbitrary()
 
@@ -90,7 +90,7 @@ internal class UserControllerChangeIsAdminTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

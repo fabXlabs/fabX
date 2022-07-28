@@ -63,7 +63,7 @@ internal class UserControllerAddInstructorQualificationTest {
     }, block)
 
     @Test
-    fun `when adding instructor qualification then returns http ok`() = withConfiguredTestApp {
+    fun `when adding instructor qualification then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
         val qualificationId = QualificationIdFixture.arbitrary()
@@ -89,7 +89,7 @@ internal class UserControllerAddInstructorQualificationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

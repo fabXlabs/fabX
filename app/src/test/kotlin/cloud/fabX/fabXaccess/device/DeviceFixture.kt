@@ -60,5 +60,5 @@ internal fun TestApplicationEngine.givenToolAttachedToDevice(
         setBody(Json.encodeToString(requestBody))
     }
 
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }

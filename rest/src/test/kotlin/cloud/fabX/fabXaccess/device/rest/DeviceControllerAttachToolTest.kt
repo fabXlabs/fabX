@@ -66,7 +66,7 @@ internal class DeviceControllerAttachToolTest {
     }, block)
 
     @Test
-    fun `when attaching tool then returns http ok`() = withConfiguredTestApp {
+    fun `when attaching tool then returns http no content`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
         val pin = 3
@@ -98,7 +98,7 @@ internal class DeviceControllerAttachToolTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

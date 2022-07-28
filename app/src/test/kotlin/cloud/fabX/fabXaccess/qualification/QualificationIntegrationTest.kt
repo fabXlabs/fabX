@@ -172,7 +172,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when changing qualification then returns http ok`() = withTestApp {
+    fun `given qualification when changing qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -191,7 +191,7 @@ internal class QualificationIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/qualification/$qualificationId") {
             addMemberAuth()
@@ -245,7 +245,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when deleting qualification then returns http ok`() = withTestApp {
+    fun `given qualification when deleting qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -255,7 +255,7 @@ internal class QualificationIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

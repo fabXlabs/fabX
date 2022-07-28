@@ -32,7 +32,7 @@ internal class DeviceDomainEventHandlerIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
             addAdminAuth()

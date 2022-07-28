@@ -180,7 +180,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device when changing device then returns http ok`() = withTestApp {
+    fun `given device when changing device then returns http no content`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aa00bb11cc22")
 
@@ -198,7 +198,7 @@ internal class DeviceIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
@@ -255,7 +255,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device when deleting device then returns http ok`() = withTestApp {
+    fun `given device when deleting device then returns http no content`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aabbcc001122")
 
@@ -265,7 +265,7 @@ internal class DeviceIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 
@@ -318,7 +318,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `when attaching tool then returns http ok`() = withTestApp {
+    fun `when attaching tool then returns http no content`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aabbccddeeff")
         val pin = 2
@@ -333,7 +333,7 @@ internal class DeviceIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
@@ -383,7 +383,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `when detaching tool then returns http ok`() = withTestApp {
+    fun `when detaching tool then returns http no content`() = withTestApp {
         // given
         val pin = 2
         val deviceId = givenDevice(mac = "001122334455aa")
@@ -397,7 +397,7 @@ internal class DeviceIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

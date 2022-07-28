@@ -48,7 +48,7 @@ internal class UserIdentityIntegrationTest {
             ) {
                 addAdminAuth()
             }
-            assertThat(removeResult.response.status()).isEqualTo(HttpStatusCode.OK)
+            assertThat(removeResult.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
             // when
             val result = handleRequest(HttpMethod.Get, "/api/v1/tool") {

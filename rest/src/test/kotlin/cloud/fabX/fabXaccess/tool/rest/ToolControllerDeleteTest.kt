@@ -60,7 +60,7 @@ internal class ToolControllerDeleteTest {
     }, block)
 
     @Test
-    fun `when delete tool then returns http ok`() = withConfiguredTestApp {
+    fun `when delete tool then returns http no content`() = withConfiguredTestApp {
         // given
         val toolId = ToolIdFixture.arbitrary()
 
@@ -81,7 +81,7 @@ internal class ToolControllerDeleteTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

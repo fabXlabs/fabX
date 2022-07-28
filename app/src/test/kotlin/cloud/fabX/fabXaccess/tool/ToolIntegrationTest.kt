@@ -199,7 +199,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given tool when changing tool then returns http ok`() = withTestApp {
+    fun `given tool when changing tool then returns http no content`() = withTestApp {
         // given
         val toolId = givenTool()
 
@@ -223,7 +223,7 @@ internal class ToolIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/tool/$toolId") {
@@ -326,7 +326,7 @@ internal class ToolIntegrationTest {
         }
 
     @Test
-    fun `given tool when deleting tool then returns http ok`() = withTestApp {
+    fun `given tool when deleting tool then returns http no content`() = withTestApp {
         // given
         val toolId = givenTool()
 
@@ -336,7 +336,7 @@ internal class ToolIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

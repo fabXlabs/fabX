@@ -59,7 +59,7 @@ internal class DeviceControllerDeleteTest {
     }, block)
 
     @Test
-    fun `when delete device then returns http ok`() = withConfiguredTestApp {
+    fun `when delete device then returns http no content`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
 
@@ -80,7 +80,7 @@ internal class DeviceControllerDeleteTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

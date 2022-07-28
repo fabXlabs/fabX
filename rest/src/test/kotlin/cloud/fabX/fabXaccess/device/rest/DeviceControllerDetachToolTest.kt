@@ -60,7 +60,7 @@ internal class DeviceControllerDetachToolTest {
     }, block)
 
     @Test
-    fun `when detaching tool then returns http ok`() = withConfiguredTestApp {
+    fun `when detaching tool then returns http no content`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
         val pin = 2
@@ -86,7 +86,7 @@ internal class DeviceControllerDetachToolTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

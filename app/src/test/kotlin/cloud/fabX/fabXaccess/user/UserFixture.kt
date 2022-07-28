@@ -60,7 +60,7 @@ internal fun TestApplicationEngine.givenUserIsAdmin(
         setBody(Json.encodeToString(requestBody))
     }
 
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
 @InternalAPI
@@ -77,7 +77,7 @@ internal fun TestApplicationEngine.givenUserIsInstructorFor(
         setBody(Json.encodeToString(requestBody))
     }
 
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
 @InternalAPI
@@ -100,7 +100,7 @@ internal fun TestApplicationEngine.givenUserHasQualificationFor(
         setBody(Json.encodeToString(requestBody))
     }
 
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
 @InternalAPI
@@ -119,7 +119,7 @@ internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
     }
 
     assertThat(result.response.content).isNull()
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
 @InternalAPI
@@ -138,7 +138,7 @@ internal fun TestApplicationEngine.givenCardIdentity(
     }
 
     assertThat(result.response.content).isNull()
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
 @InternalAPI
@@ -156,5 +156,5 @@ internal fun TestApplicationEngine.givenPhoneNrIdentity(
     }
 
     assertThat(result.response.content).isNull()
-    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }

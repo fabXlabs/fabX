@@ -10,8 +10,7 @@ internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHa
     result
         .tap {
             if (it == Unit) {
-                // TODO Change to NoContent
-                respond(HttpStatusCode.OK)
+                respond(HttpStatusCode.NoContent)
             } else {
                 respond(it)
             }

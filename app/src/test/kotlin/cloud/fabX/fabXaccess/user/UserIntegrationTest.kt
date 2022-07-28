@@ -192,7 +192,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when changing user details then returns http ok`() = withTestApp {
+    fun `when changing user details then returns http no content`() = withTestApp {
         // given
         val userId = givenUser(firstName = "first", lastName = "last")
 
@@ -210,7 +210,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -256,7 +256,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when changing user lock state then returns http ok`() = withTestApp {
+    fun `when changing user lock state then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -273,7 +273,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -318,7 +318,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when deleting user then returns http ok`() = withTestApp {
+    fun `when deleting user then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -328,7 +328,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
@@ -363,7 +363,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin when changing is admin then returns http ok`() = withTestApp {
+    fun `given non-admin when changing is admin then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -377,7 +377,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -403,7 +403,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given admin when changing is admin then returns http ok`() = withTestApp {
+    fun `given admin when changing is admin then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         givenUserIsAdmin(userId, true)
@@ -418,7 +418,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -461,7 +461,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when adding instructor qualification then returns http ok`() = withTestApp {
+    fun `when adding instructor qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
         val userId = givenUser()
@@ -476,7 +476,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -522,7 +522,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing instructor qualification then returns http ok`() = withTestApp {
+    fun `when removing instructor qualification then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         val qualificationId = givenQualification()
@@ -537,7 +537,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -582,7 +582,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when adding member qualification then returns http ok`() = withTestApp {
+    fun `when adding member qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -605,7 +605,7 @@ internal class UserIntegrationTest {
 
         // then
         assertThat(result.response.content).isNull()
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -652,7 +652,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing member qualification then returns http ok`() = withTestApp {
+    fun `when removing member qualification then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         val qualificationId = givenQualification()
@@ -669,7 +669,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
@@ -721,7 +721,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when adding username password identity then returns http ok`() = withTestApp {
+    fun `when adding username password identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         val requestBody = UsernamePasswordIdentity(
@@ -737,7 +737,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
@@ -764,7 +764,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing username password identity then returns http ok`() = withTestApp {
+    fun `when removing username password identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -780,7 +780,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
@@ -801,7 +801,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when adding card identity then returns http ok`() = withTestApp {
+    fun `when adding card identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -817,7 +817,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
@@ -843,7 +843,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when removing card identity then returns http ok`() = withTestApp {
+    fun `when removing card identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -863,7 +863,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
@@ -883,7 +883,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when adding phone number identity then returns http ok`() = withTestApp {
+    fun `when adding phone number identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -898,7 +898,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
@@ -921,7 +921,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when removing phone number identity then returns http ok`() = withTestApp {
+    fun `when removing phone number identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -937,7 +937,7 @@ internal class UserIntegrationTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test

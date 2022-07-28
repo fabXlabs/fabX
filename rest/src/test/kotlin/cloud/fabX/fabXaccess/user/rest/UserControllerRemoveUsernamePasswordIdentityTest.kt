@@ -57,7 +57,7 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
     }, block)
 
     @Test
-    fun `when removing username password identity then returns http ok`() = withConfiguredTestApp {
+    fun `when removing username password identity then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
         val name = "name123"
@@ -83,7 +83,7 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 

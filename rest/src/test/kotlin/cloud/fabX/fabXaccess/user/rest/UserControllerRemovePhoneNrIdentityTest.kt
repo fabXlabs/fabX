@@ -57,7 +57,7 @@ internal class UserControllerRemovePhoneNrIdentityTest {
     }, block)
 
     @Test
-    fun `when removing phone number identity then returns http ok`() = withConfiguredTestApp {
+    fun `when removing phone number identity then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
         val phoneNr = "+49123456789"
@@ -83,7 +83,7 @@ internal class UserControllerRemovePhoneNrIdentityTest {
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
         assertThat(result.response.content).isNull()
     }
 
