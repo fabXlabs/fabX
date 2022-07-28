@@ -98,7 +98,10 @@ internal class UserIntegrationTest {
                     "",
                     "member",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    false
                 ),
                 User(
                     "337be01a-fee3-4938-8dc3-c801d37c0e95",
@@ -107,7 +110,10 @@ internal class UserIntegrationTest {
                     "",
                     "admin",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    true
                 ),
                 User(
                     userId1,
@@ -116,7 +122,10 @@ internal class UserIntegrationTest {
                     "Turing",
                     "turing",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    false
                 )
             )
     }
@@ -148,7 +157,10 @@ internal class UserIntegrationTest {
                     "Turing",
                     "turing",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    false
                 )
             )
     }
@@ -209,7 +221,10 @@ internal class UserIntegrationTest {
                     "newLastName",
                     "wiki",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    false
                 )
             )
     }
@@ -269,7 +284,10 @@ internal class UserIntegrationTest {
                     "last",
                     "wiki",
                     true,
-                    "some notes"
+                    "some notes",
+                    setOf(),
+                    null,
+                    false
                 )
             )
     }
@@ -354,7 +372,6 @@ internal class UserIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 
-        // TODO ability to get whether user is admin (extend rest.User?)
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
         }
@@ -370,7 +387,10 @@ internal class UserIntegrationTest {
                     "last",
                     "wiki",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    true
                 )
             )
     }
@@ -393,7 +413,6 @@ internal class UserIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 
-        // TODO ability to get whether user is admin (extend rest.User?)
         val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
             addAdminAuth()
         }
@@ -409,7 +428,10 @@ internal class UserIntegrationTest {
                     "last",
                     "wiki",
                     false,
-                    null
+                    null,
+                    setOf(),
+                    null,
+                    false
                 )
             )
     }

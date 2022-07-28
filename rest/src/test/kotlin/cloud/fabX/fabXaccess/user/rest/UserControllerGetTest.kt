@@ -88,6 +88,7 @@ class UserControllerGetTest {
     fun `when get users then returns mapped users`() = withConfiguredTestApp {
         // given
         val userId1 = UserIdFixture.arbitrary()
+        val qualification11 = QualificationIdFixture.arbitrary()
         val user1 = UserFixture.arbitrary(
             userId1,
             34,
@@ -97,12 +98,15 @@ class UserControllerGetTest {
             false,
             "notes1",
             setOf(UsernamePasswordIdentity("username1", "hash1")),
-            setOf(QualificationIdFixture.arbitrary()),
+            setOf(qualification11),
             null,
             false
         )
 
         val userId2 = UserIdFixture.arbitrary()
+        val qualification21 = QualificationIdFixture.arbitrary()
+        val qualification22 = QualificationIdFixture.arbitrary()
+        val qualification23 = QualificationIdFixture.arbitrary()
         val user2 = UserFixture.arbitrary(
             userId2,
             87,
@@ -112,8 +116,8 @@ class UserControllerGetTest {
             true,
             null,
             setOf(UsernamePasswordIdentity("username2", "hash2")),
-            setOf(QualificationIdFixture.arbitrary(), QualificationIdFixture.arbitrary()),
-            setOf(QualificationIdFixture.arbitrary()),
+            setOf(qualification21, qualification22),
+            setOf(qualification23),
             true
         )
 
@@ -131,7 +135,10 @@ class UserControllerGetTest {
             "last1",
             "wiki1",
             false,
-            "notes1"
+            "notes1",
+            setOf(qualification11.serialize()),
+            null,
+            false
         )
 
         val mappedUser2 = User(
@@ -141,7 +148,10 @@ class UserControllerGetTest {
             "last2",
             "wiki2",
             true,
-            null
+            null,
+            setOf(qualification21.serialize(), qualification22.serialize()),
+            setOf(qualification23.serialize()),
+            true
         )
 
         // when
@@ -161,6 +171,7 @@ class UserControllerGetTest {
     fun `given user exists when get user by id then returns mapped user`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
+        val qualificationId = QualificationIdFixture.arbitrary()
         val user = UserFixture.arbitrary(
             userId,
             34,
@@ -170,7 +181,7 @@ class UserControllerGetTest {
             false,
             "notes1",
             setOf(UsernamePasswordIdentity("username1", "hash1")),
-            setOf(QualificationIdFixture.arbitrary()),
+            setOf(qualificationId),
             null,
             false
         )
@@ -182,7 +193,10 @@ class UserControllerGetTest {
             "last1",
             "wiki1",
             false,
-            "notes1"
+            "notes1",
+            setOf(qualificationId.serialize()),
+            null,
+            false
         )
 
         whenever(

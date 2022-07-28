@@ -11,9 +11,10 @@ data class User(
     val lastName: String,
     val wikiName: String,
     val locked: Boolean,
-    val notes: String?
-    // TODO member/instructor qualifications?
-    // TODO isAdmin?
+    val notes: String?,
+    val memberQualifications: Set<String>,
+    val instructorQualifications: Set<String>?,
+    val isAdmin: Boolean
 )
 
 fun cloud.fabX.fabXaccess.user.model.User.toRestModel() = User(
@@ -23,7 +24,10 @@ fun cloud.fabX.fabXaccess.user.model.User.toRestModel() = User(
     lastName = lastName,
     wikiName = wikiName,
     locked = locked,
-    notes = notes
+    notes = notes,
+    memberQualifications = memberQualifications.map { it.serialize() }.toSet(),
+    instructorQualifications = instructorQualifications?.map { it.serialize() }?.toSet(),
+    isAdmin = isAdmin
 )
 
 @Serializable

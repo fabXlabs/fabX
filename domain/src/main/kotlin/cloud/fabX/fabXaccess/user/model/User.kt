@@ -32,9 +32,9 @@ data class User internal constructor(
     val locked: Boolean,
     val notes: String?,
     internal val identities: Set<UserIdentity>,
-    internal val memberQualifications: Set<QualificationId>,
-    internal val instructorQualifications: Set<QualificationId>?,
-    internal val isAdmin: Boolean
+    val memberQualifications: Set<QualificationId>,
+    val instructorQualifications: Set<QualificationId>?,
+    val isAdmin: Boolean
 ) : AggregateRootEntity<UserId> {
 
     private val name: String
