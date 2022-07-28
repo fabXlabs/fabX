@@ -919,4 +919,41 @@ internal class UserIntegrationTest {
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
     }
+
+    @Test
+    fun `when removing phone number identity then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val phoneNr = "+491123581321"
+        givenPhoneNrIdentity(userId, phoneNr)
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Delete,
+            "/api/v1/user/$userId/identity/phone/$phoneNr"
+        ) {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    }
+
+    @Test
+    fun `given non-admin authentication when removing phone number identity then returns http forbidden`() =
+        withTestApp {
+            // given
+
+            // when
+            val result = handleRequest(
+                HttpMethod.Delete,
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone/+491123581321"
+            ) {
+                addMemberAuth()
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        }
 }

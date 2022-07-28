@@ -24,6 +24,7 @@ import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
+import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import io.ktor.application.call
 import io.ktor.routing.Route
@@ -47,7 +48,8 @@ class UserController(
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
     private val addingCardIdentity: AddingCardIdentity,
     private val removingCardIdentity: RemovingCardIdentity,
-    private val addingPhoneNrIdentity: AddingPhoneNrIdentity
+    private val addingPhoneNrIdentity: AddingPhoneNrIdentity,
+    private val removingPhoneNrIdentity: RemovingPhoneNrIdentity
 ) {
 
     val routes: Route.() -> Unit = {
@@ -404,6 +406,29 @@ class UserController(
                                                         newCorrelationId(),
                                                         id,
                                                         it.phoneNr
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+
+                    delete("/{phoneNr}") {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                readStringParameter("phoneNr")
+                                    ?.let { phoneNr ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    removingPhoneNrIdentity.removePhoneNrIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        phoneNr
                                                     )
                                                         .toEither { }
                                                         .swap()

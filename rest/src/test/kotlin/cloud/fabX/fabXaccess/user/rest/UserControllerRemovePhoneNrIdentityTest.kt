@@ -11,7 +11,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import io.ktor.auth.UserPasswordCredential
@@ -33,8 +33,8 @@ import org.mockito.kotlin.whenever
 @InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
-internal class UserControllerRemoveCardIdentityTest {
-    private lateinit var removingCardIdentity: RemovingCardIdentity
+internal class UserControllerRemovePhoneNrIdentityTest {
+    private lateinit var removingPhoneNrIdentity: RemovingPhoneNrIdentity
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
@@ -44,40 +44,40 @@ internal class UserControllerRemoveCardIdentityTest {
 
     @BeforeEach
     fun `configure RestModule`(
-        @Mock removingCardIdentity: RemovingCardIdentity,
+        @Mock removingPhoneNrIdentity: RemovingPhoneNrIdentity,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.removingCardIdentity = removingCardIdentity
+        this.removingPhoneNrIdentity = removingPhoneNrIdentity
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { removingCardIdentity }
+        bindInstance(overrides = true) { removingPhoneNrIdentity }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when removing card identity then returns http ok`() = withConfiguredTestApp {
+    fun `when removing phone number identity then returns http ok`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
-        val cardId = "11223344556677"
+        val phoneNr = "+49123456789"
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            removingCardIdentity.removeCardIdentity(
+            removingPhoneNrIdentity.removePhoneNrIdentity(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(userId),
-                eq(cardId)
+                eq(phoneNr)
             )
         ).thenReturn(None)
 
         // when
         val result = handleRequest(
             HttpMethod.Delete,
-            "/api/v1/user/${userId.serialize()}/identity/card/$cardId"
+            "/api/v1/user/${userId.serialize()}/identity/phone/$phoneNr"
         ) {
             addBasicAuth(username, password)
         }
@@ -88,7 +88,7 @@ internal class UserControllerRemoveCardIdentityTest {
     }
 
     @Test
-    fun `given no admin authentication when removing card identity then returns http forbidden`() =
+    fun `given no admin authentication when removing phone number identity then returns http forbidden`() =
         withConfiguredTestApp {
             // given
             val message = "msg123"
@@ -100,7 +100,7 @@ internal class UserControllerRemoveCardIdentityTest {
             // when
             val result = handleRequest(
                 HttpMethod.Delete,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card/AABB1122CCDD33"
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone/+4911235813"
             ) {
                 addBasicAuth(username, password)
             }
@@ -120,7 +120,7 @@ internal class UserControllerRemoveCardIdentityTest {
         }
 
     @Test
-    fun `given invalid user id when removing card identity then returns http bad request`() =
+    fun `given invalid user id when removing phone number identity then returns http bad request`() =
         withConfiguredTestApp {
             // given
             val invalidUserId = "invalidUserId"
@@ -131,7 +131,7 @@ internal class UserControllerRemoveCardIdentityTest {
             // when
             val result = handleRequest(
                 HttpMethod.Delete,
-                "/api/v1/user/$invalidUserId/identity/card/AA11BB22CC33DD"
+                "/api/v1/user/$invalidUserId/identity/phone/+4911235813"
             ) {
                 addBasicAuth(username, password)
             }
@@ -144,30 +144,30 @@ internal class UserControllerRemoveCardIdentityTest {
         }
 
     @Test
-    fun `given domain error when removing card identity then returns http bad request`() =
+    fun `given domain error when removing phone number identity then returns http bad request`() =
         withConfiguredTestApp {
             // given
             val userId = UserIdFixture.arbitrary()
-            val cardId = "AABBCC11223344"
+            val phoneNr = "+4911235813"
 
-            val error = Error.UserIdentityNotFound("msg", mapOf("cardId" to cardId))
+            val error = Error.UserIdentityNotFound("msg", mapOf("phoneNr" to phoneNr))
 
             whenever(authenticationService.basic(UserPasswordCredential(username, password)))
                 .thenReturn(UserPrincipal(actingUser))
 
             whenever(
-                removingCardIdentity.removeCardIdentity(
+                removingPhoneNrIdentity.removePhoneNrIdentity(
                     eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                     any(),
                     eq(userId),
-                    eq(cardId)
+                    eq(phoneNr)
                 )
             ).thenReturn(error.some())
 
             // when
             val result = handleRequest(
                 HttpMethod.Delete,
-                "/api/v1/user/${userId.serialize()}/identity/card/$cardId"
+                "/api/v1/user/${userId.serialize()}/identity/phone/$phoneNr"
             ) {
                 addBasicAuth(username, password)
             }
@@ -181,7 +181,7 @@ internal class UserControllerRemoveCardIdentityTest {
                     cloud.fabX.fabXaccess.common.rest.Error(
                         "UserIdentityNotFound",
                         "msg",
-                        mapOf("cardId" to cardId)
+                        mapOf("phoneNr" to phoneNr)
                     )
                 )
         }

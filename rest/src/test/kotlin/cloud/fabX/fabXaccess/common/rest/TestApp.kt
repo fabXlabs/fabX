@@ -31,6 +31,7 @@ import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
+import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.withTestApplication
@@ -66,6 +67,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AddingCardIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingCardIdentity::class.java) }
         bindInstance { Mockito.mock(AddingPhoneNrIdentity::class.java) }
+        bindInstance { Mockito.mock(RemovingPhoneNrIdentity::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }
