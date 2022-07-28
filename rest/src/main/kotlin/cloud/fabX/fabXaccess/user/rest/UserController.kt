@@ -20,6 +20,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
+import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import io.ktor.application.call
 import io.ktor.routing.Route
@@ -38,6 +39,7 @@ class UserController(
     private val addingInstructorQualification: AddingInstructorQualification,
     private val removingInstructorQualification: RemovingInstructorQualification,
     private val addingMemberQualification: AddingMemberQualification,
+    private val removingMemberQualification: RemovingMemberQualification,
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity
 ) {
@@ -248,6 +250,30 @@ class UserController(
                                                     newCorrelationId(),
                                                     id,
                                                     QualificationId.fromString(it.qualificationId)
+                                                )
+                                                    .toEither { }
+                                                    .swap()
+                                            }
+                                    )
+                                }
+                        }
+                }
+
+                delete("/{qualificationId}") {
+                    readUUIDParameter("id")
+                        ?.let { UserId(it) }
+                        ?.let { id ->
+                            readUUIDParameter("qualificationId")
+                                ?.let { QualificationId(it) }
+                                ?.let { qualificationId ->
+                                    call.respondWithErrorHandler(
+                                        readAdminAuthentication()
+                                            .flatMap { admin ->
+                                                removingMemberQualification.removeMemberQualification(
+                                                    admin,
+                                                    newCorrelationId(),
+                                                    id,
+                                                    qualificationId
                                                 )
                                                     .toEither { }
                                                     .swap()

@@ -650,6 +650,75 @@ internal class UserIntegrationTest {
         }
 
     @Test
+    fun `when removing member qualification then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+        val qualificationId = givenQualification()
+        val qualificationId2 = givenQualification()
+        givenUserHasQualificationFor(userId, qualificationId)
+        givenUserHasQualificationFor(userId, qualificationId2)
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Delete,
+            "/api/v1/user/$userId/member-qualification/$qualificationId"
+        ) {
+            addAdminAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    4,
+                    "first",
+                    "last",
+                    "wiki",
+                    false,
+                    null,
+                    setOf(qualificationId2),
+                    null,
+                    false
+                )
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when removing member qualification then returns http forbidden`() =
+        withTestApp {
+            // given
+            val qualificationId = givenQualification()
+
+            val instructorUserId = givenUser()
+            val instructorUsername = "instructor123"
+            val instructorPassword = "instructorPassword123"
+            givenUsernamePasswordIdentity(instructorUserId, instructorUsername, instructorPassword)
+            givenUserIsInstructorFor(instructorUserId, qualificationId)
+
+            // when
+            val result = handleRequest(
+                HttpMethod.Delete,
+                "/api/v1/user/${
+                    UserIdFixture.arbitrary().serialize()
+                }/member-qualification/$qualificationId"
+            ) {
+                addBasicAuth(instructorUsername, instructorPassword)
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        }
+
+    @Test
     fun `when adding username password identity then returns http ok`() = withTestApp {
         // given
         val userId = givenUser()

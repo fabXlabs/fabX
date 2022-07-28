@@ -44,6 +44,8 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.InstructorQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.MemberQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.MemberQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.UsernameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.UsernameInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UsernamePasswordIdentityAlreadyFound -> respond(
             HttpStatusCode.UnprocessableEntity,
             error.toRestModel()

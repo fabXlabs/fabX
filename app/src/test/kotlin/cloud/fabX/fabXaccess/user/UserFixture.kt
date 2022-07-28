@@ -2,7 +2,9 @@ package cloud.fabX.fabXaccess.user
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
+import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
@@ -78,6 +80,29 @@ internal fun TestApplicationEngine.givenUserIsInstructorFor(
 
 @InternalAPI
 @ExperimentalSerializationApi
+internal fun TestApplicationEngine.givenUserHasQualificationFor(
+    userId: String,
+    qualificationId: String
+) {
+    val instructorUserId = givenUser(wikiName = "instructor-$qualificationId")
+    val instructorUsername = "instructor.$qualificationId".replace('-', '.')
+    val instructorPassword = "instructorPassword123"
+    givenUsernamePasswordIdentity(instructorUserId, instructorUsername, instructorPassword)
+    givenUserIsInstructorFor(instructorUserId, qualificationId)
+
+    val requestBody = QualificationAdditionDetails(qualificationId)
+
+    val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/member-qualification") {
+        addBasicAuth(instructorUsername, instructorPassword)
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(Json.encodeToString(requestBody))
+    }
+
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+}
+
+@InternalAPI
+@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
     userId: String,
     username: String,
@@ -91,6 +116,7 @@ internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
         setBody(Json.encodeToString(requestBody))
     }
 
+    assertThat(result.response.content).isNull()
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 }
 

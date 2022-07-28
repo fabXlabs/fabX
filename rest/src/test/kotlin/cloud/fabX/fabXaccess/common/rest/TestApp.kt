@@ -27,6 +27,7 @@ import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
+import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.withTestApplication
@@ -56,6 +57,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AddingInstructorQualification::class.java) }
         bindInstance { Mockito.mock(RemovingInstructorQualification::class.java) }
         bindInstance { Mockito.mock(AddingMemberQualification::class.java) }
+        bindInstance { Mockito.mock(RemovingMemberQualification::class.java) }
         bindInstance { Mockito.mock(AddingUsernamePasswordIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingUsernamePasswordIdentity::class.java) }
 
