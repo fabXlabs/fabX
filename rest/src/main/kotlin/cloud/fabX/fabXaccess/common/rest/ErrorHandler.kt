@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.common.rest
 
 import arrow.core.Either
-import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.Error
 import io.ktor.application.ApplicationCall
 import io.ktor.http.HttpStatusCode
@@ -18,12 +17,6 @@ internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHa
             }
         }
         .tapLeft { handleError(it) }
-}
-
-internal suspend fun ApplicationCall.respondWithErrorHandler(result: Option<Error>) {
-    result
-        .tapNone { respond(HttpStatusCode.OK) }
-        .tap { handleError(it) }
 }
 
 internal suspend fun ApplicationCall.handleError(error: Error) {
