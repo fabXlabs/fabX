@@ -45,3 +45,8 @@ data class UserLockDetails(
     val locked: ChangeableValue<Boolean>?,
     val notes: ChangeableValue<String?>?
 )
+
+@Serializable
+data class IsAdminDetails(
+    val isAdmin: Boolean
+)

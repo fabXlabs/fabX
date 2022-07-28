@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
@@ -334,5 +335,82 @@ internal class UserIntegrationTest {
 
         // then
         assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `given non-admin when changing is admin then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val requestBody = IsAdminDetails(true)
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        // TODO ability to get whether user is admin (extend rest.User?)
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    2,
+                    "first",
+                    "last",
+                    "wiki",
+                    false,
+                    null
+                )
+            )
+    }
+
+    @Test
+    fun `given admin when changing is admin then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+        givenUserIsAdmin(userId, true)
+
+        val requestBody = IsAdminDetails(false)
+
+        // when
+        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        // TODO ability to get whether user is admin (extend rest.User?)
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    3,
+                    "first",
+                    "last",
+                    "wiki",
+                    false,
+                    null
+                )
+            )
     }
 }

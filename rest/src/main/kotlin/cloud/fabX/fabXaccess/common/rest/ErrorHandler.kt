@@ -11,6 +11,7 @@ internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHa
     result
         .tap {
             if (it == Unit) {
+                // TODO Change to NoContent
                 respond(HttpStatusCode.OK)
             } else {
                 respond(it)
@@ -27,22 +28,25 @@ internal suspend fun ApplicationCall.respondWithErrorHandler(result: Option<Erro
 
 internal suspend fun ApplicationCall.handleError(error: Error) {
     when (error) {
+        // authentication, authorization
         is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
         is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
-
+        // domain qualification
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-
+        // domain tool
         is Error.ToolNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedToolNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.PinNotInUse -> respond(HttpStatusCode.NotFound, error.toRestModel())
-
+        // domain device
         is Error.DeviceNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
-
+        // domain user
         is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
         is Error.WikiNameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-
+        is Error.UserAlreadyAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.UserAlreadyNotAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        // persistence
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
 
         // TODO handle all cases

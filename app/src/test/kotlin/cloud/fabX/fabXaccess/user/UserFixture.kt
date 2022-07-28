@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.user
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.addAdminAuth
+import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
@@ -37,4 +38,21 @@ internal fun TestApplicationEngine.givenUser(
 
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
     return result.response.content!!
+}
+
+@InternalAPI
+@ExperimentalSerializationApi
+internal fun TestApplicationEngine.givenUserIsAdmin(
+    userId: String,
+    isAdmin: Boolean
+) {
+    val requestBody = IsAdminDetails(isAdmin)
+
+    val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
+        addAdminAuth()
+        addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        setBody(Json.encodeToString(requestBody))
+    }
+
+    assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
 }

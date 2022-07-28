@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingUser
+import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
@@ -24,7 +25,8 @@ class UserController(
     private val gettingUser: GettingUser,
     private val addingUser: AddingUser,
     private val changingUser: ChangingUser,
-    private val deletingUser: DeletingUser
+    private val deletingUser: DeletingUser,
+    private val changingIsAdmin: ChangingIsAdmin
 ) {
 
     val routes: Route.() -> Unit = {
@@ -143,6 +145,29 @@ class UserController(
                                         .swap()
                                 }
                         )
+                    }
+            }
+
+            put("/{id}/is-admin") {
+                readBody<IsAdminDetails>()
+                    ?.let {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                call.respondWithErrorHandler(
+                                    readAdminAuthentication()
+                                        .flatMap { admin ->
+                                            changingIsAdmin.changeIsAdmin(
+                                                admin,
+                                                newCorrelationId(),
+                                                id,
+                                                it.isAdmin
+                                            )
+                                                .toEither { }
+                                                .swap()
+                                        }
+                                )
+                            }
                     }
             }
         }
