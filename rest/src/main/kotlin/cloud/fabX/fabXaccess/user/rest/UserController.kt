@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
+import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingUser
@@ -41,7 +42,8 @@ class UserController(
     private val addingMemberQualification: AddingMemberQualification,
     private val removingMemberQualification: RemovingMemberQualification,
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
-    private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity
+    private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
+    private val addingCardIdentity: AddingCardIdentity
 ) {
 
     val routes: Route.() -> Unit = {
@@ -324,6 +326,32 @@ class UserController(
                                                         newCorrelationId(),
                                                         id,
                                                         username
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+                }
+
+                route("/card") {
+                    post("") {
+                        readBody<CardIdentity>()
+                            ?.let {
+                                readUUIDParameter("id")
+                                    ?.let { UserId(it) }
+                                    ?.let { id ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    addingCardIdentity.addCardIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        it.cardId,
+                                                        it.cardSecret
                                                     )
                                                         .toEither { }
                                                         .swap()

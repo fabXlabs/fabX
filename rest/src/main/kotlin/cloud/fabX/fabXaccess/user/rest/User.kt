@@ -65,3 +65,9 @@ data class UsernamePasswordIdentity(
     val username: String,
     val password: String
 )
+
+@Serializable
+data class CardIdentity(
+    val cardId: String,
+    val cardSecret: String
+)

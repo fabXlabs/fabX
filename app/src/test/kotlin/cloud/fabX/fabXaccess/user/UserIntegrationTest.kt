@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.User
@@ -797,4 +798,46 @@ internal class UserIntegrationTest {
             // then
             assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
         }
+
+    @Test
+    fun `when adding card identity then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val requestBody = CardIdentity(cardId, cardSecret)
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/card") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    }
+
+    @Test
+    fun `given non-admin authentication when adding card identity then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = CardIdentity(
+            "11223344556677",
+            "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        )
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Post,
+            "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card"
+        ) {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
 }
