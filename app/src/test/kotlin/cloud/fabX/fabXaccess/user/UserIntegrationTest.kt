@@ -580,6 +580,76 @@ internal class UserIntegrationTest {
         }
 
     @Test
+    fun `when adding member qualification then returns http ok`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+
+        val instructorUserId = givenUser(wikiName = "instructor")
+        val instructorUsername = "instructor123"
+        val instructorPassword = "instructorpassword321"
+        givenUsernamePasswordIdentity(instructorUserId, instructorUsername, instructorPassword)
+        givenUserIsInstructorFor(instructorUserId, qualificationId)
+
+        val userId = givenUser()
+
+        val requestBody = QualificationAdditionDetails(qualificationId)
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/member-qualification") {
+            addBasicAuth(instructorUsername, instructorPassword)
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.content).isNull()
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+
+        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
+            addAdminAuth()
+        }
+        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(resultGet.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(
+                User(
+                    userId,
+                    2,
+                    "first",
+                    "last",
+                    "wiki",
+                    false,
+                    null,
+                    setOf(qualificationId),
+                    null,
+                    false
+                )
+            )
+    }
+
+    @Test
+    fun `given non-instructor authentication when adding member qualification then returns http forbidden`() =
+        withTestApp {
+            // given
+            val qualificationId = QualificationIdFixture.arbitrary().serialize()
+            val requestBody = QualificationAdditionDetails(qualificationId)
+
+            // when
+            val result = handleRequest(
+                HttpMethod.Post,
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification"
+            ) {
+                addAdminAuth()
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(Json.encodeToString(requestBody))
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        }
+
+    @Test
     fun `when adding username password identity then returns http ok`() = withTestApp {
         // given
         val userId = givenUser()

@@ -6,11 +6,13 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
+import cloud.fabX.fabXaccess.common.rest.readInstructorAuthentication
 import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
+import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
@@ -35,6 +37,7 @@ class UserController(
     private val changingIsAdmin: ChangingIsAdmin,
     private val addingInstructorQualification: AddingInstructorQualification,
     private val removingInstructorQualification: RemovingInstructorQualification,
+    private val addingMemberQualification: AddingMemberQualification,
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity
 ) {
@@ -220,6 +223,31 @@ class UserController(
                                                     newCorrelationId(),
                                                     id,
                                                     qualificationId
+                                                )
+                                                    .toEither { }
+                                                    .swap()
+                                            }
+                                    )
+                                }
+                        }
+                }
+            }
+
+            route("/{id}/member-qualification") {
+                post("") {
+                    readBody<QualificationAdditionDetails>()
+                        ?.let {
+                            readUUIDParameter("id")
+                                ?.let { UserId(it) }
+                                ?.let { id ->
+                                    call.respondWithErrorHandler(
+                                        readInstructorAuthentication()
+                                            .flatMap { instructor ->
+                                                addingMemberQualification.addMemberQualification(
+                                                    instructor,
+                                                    newCorrelationId(),
+                                                    id,
+                                                    QualificationId.fromString(it.qualificationId)
                                                 )
                                                     .toEither { }
                                                     .swap()

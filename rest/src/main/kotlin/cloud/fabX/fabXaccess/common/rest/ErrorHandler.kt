@@ -30,6 +30,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
     when (error) {
         // authentication, authorization
         is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
+        is Error.UserNotInstructor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         // domain qualification
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
@@ -48,6 +49,8 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserAlreadyNotAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.InstructorQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.InstructorQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.MemberQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.MemberQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UsernamePasswordIdentityAlreadyFound -> respond(
             HttpStatusCode.UnprocessableEntity,
             error.toRestModel()

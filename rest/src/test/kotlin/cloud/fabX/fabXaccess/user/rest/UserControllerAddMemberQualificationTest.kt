@@ -12,7 +12,7 @@ import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
-import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
+import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import io.ktor.auth.UserPasswordCredential
@@ -36,45 +36,46 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
+
 @InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
-internal class UserControllerAddInstructorQualificationTest {
-    private lateinit var addingInstructorQualification: AddingInstructorQualification
+internal class UserControllerAddMemberQualificationTest {
+    private lateinit var addingMemberQualification: AddingMemberQualification
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
     private val password = "supersecret123"
 
-    private val actingUser = UserFixture.arbitrary(isAdmin = true)
+    private val qualificationId = QualificationIdFixture.arbitrary()
+    private val actingUser = UserFixture.arbitrary(instructorQualifications = setOf(qualificationId))
 
     @BeforeEach
     fun `configure RestModule`(
-        @Mock addingInstructorQualification: AddingInstructorQualification,
+        @Mock addingMemberQualification: AddingMemberQualification,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.addingInstructorQualification = addingInstructorQualification
+        this.addingMemberQualification = addingMemberQualification
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { addingInstructorQualification }
+        bindInstance(overrides = true) { addingMemberQualification }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when adding instructor qualification then returns http ok`() = withConfiguredTestApp {
+    fun `when adding member qualification then returns http ok`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
-        val qualificationId = QualificationIdFixture.arbitrary()
         val requestBody = QualificationAdditionDetails(qualificationId.serialize())
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            addingInstructorQualification.addInstructorQualification(
-                eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
+            addingMemberQualification.addMemberQualification(
+                eq(actingUser.asInstructor().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(userId),
                 eq(qualificationId)
@@ -82,7 +83,7 @@ internal class UserControllerAddInstructorQualificationTest {
         ).thenReturn(None)
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/${userId.serialize()}/instructor-qualification") {
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/${userId.serialize()}/member-qualification") {
             addBasicAuth(username, password)
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             setBody(Json.encodeToString(requestBody))
@@ -94,10 +95,10 @@ internal class UserControllerAddInstructorQualificationTest {
     }
 
     @Test
-    fun `given no admin authentication when adding instructor qualification then returns http forbidden`() =
+    fun `given no instructor authentication when adding member qualification then returns http forbidden`() =
         withConfiguredTestApp {
             // given
-            val requestBody = QualificationAdditionDetails(QualificationIdFixture.arbitrary().serialize())
+            val requestBody = QualificationAdditionDetails(qualificationId.serialize())
 
             val message = "msg123"
             val error = Error.UserNotAdmin(message)
@@ -108,7 +109,7 @@ internal class UserControllerAddInstructorQualificationTest {
             // when
             val result = handleRequest(
                 HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/instructor-qualification"
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification"
             ) {
                 addBasicAuth(username, password)
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
@@ -130,7 +131,7 @@ internal class UserControllerAddInstructorQualificationTest {
         }
 
     @Test
-    fun `given no body when adding instructor qualification then returns http unprocessable entity`() =
+    fun `given no body when adding member qualification then returns http unprocessable entity`() =
         withConfiguredTestApp {
             // given
             whenever(authenticationService.basic(UserPasswordCredential(username, password)))
@@ -139,11 +140,11 @@ internal class UserControllerAddInstructorQualificationTest {
             // when
             val result = handleRequest(
                 HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/instructor-qualification"
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification"
             ) {
                 addBasicAuth(username, password)
                 addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                // empty body
+                // no body
             }
 
             // then
@@ -151,23 +152,44 @@ internal class UserControllerAddInstructorQualificationTest {
         }
 
     @Test
-    fun `given domain error when adding instructor qualification then returns mapped error`() = withConfiguredTestApp {
+    fun `given invalid user id when adding member qualification then returns http bad request`() =
+        withConfiguredTestApp {
+            // given
+            val invalidUserId = "invalidUserId"
+
+            val requestBody = QualificationAdditionDetails(qualificationId.serialize())
+
+            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+                .thenReturn(UserPrincipal(actingUser))
+
+            // when
+            val result = handleRequest(HttpMethod.Post, "/api/v1/user/$invalidUserId/member-qualification") {
+                addBasicAuth(username, password)
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(Json.encodeToString(requestBody))
+            }
+
+            // then
+            assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
+            assertThat(result.response.content)
+                .isNotNull()
+                .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
+        }
+
+    @Test
+    fun `given domain error when adding member qualification then returns mapped error`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
-        val qualificationId = QualificationIdFixture.arbitrary()
         val requestBody = QualificationAdditionDetails(qualificationId.serialize())
 
-        val error = Error.InstructorQualificationAlreadyFound(
-            "some message",
-            qualificationId
-        )
+        val error = Error.MemberQualificationAlreadyFound("msg123", qualificationId)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            addingInstructorQualification.addInstructorQualification(
-                eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
+            addingMemberQualification.addMemberQualification(
+                eq(actingUser.asInstructor().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(userId),
                 eq(qualificationId)
@@ -175,7 +197,7 @@ internal class UserControllerAddInstructorQualificationTest {
         ).thenReturn(error.some())
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/${userId.serialize()}/instructor-qualification") {
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/${userId.serialize()}/member-qualification") {
             addBasicAuth(username, password)
             addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
             setBody(Json.encodeToString(requestBody))
@@ -188,8 +210,8 @@ internal class UserControllerAddInstructorQualificationTest {
             .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
             .isEqualTo(
                 cloud.fabX.fabXaccess.common.rest.Error(
-                    "InstructorQualificationAlreadyFound",
-                    "some message",
+                    "MemberQualificationAlreadyFound",
+                    "msg123",
                     mapOf("qualificationId" to qualificationId.serialize())
                 )
             )

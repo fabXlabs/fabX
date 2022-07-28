@@ -25,6 +25,7 @@ val restModule = DI.Module("rest") {
             instance(),
             instance(),
             instance(),
+            instance(),
             instance()
         )
     }

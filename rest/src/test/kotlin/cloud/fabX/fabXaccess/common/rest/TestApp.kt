@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.DeletingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
+import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
@@ -54,6 +55,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(ChangingIsAdmin::class.java) }
         bindInstance { Mockito.mock(AddingInstructorQualification::class.java) }
         bindInstance { Mockito.mock(RemovingInstructorQualification::class.java) }
+        bindInstance { Mockito.mock(AddingMemberQualification::class.java) }
         bindInstance { Mockito.mock(AddingUsernamePasswordIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingUsernamePasswordIdentity::class.java) }
 
