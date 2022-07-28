@@ -17,6 +17,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
+import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
@@ -875,6 +876,44 @@ internal class UserIntegrationTest {
             "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card/AA11BB22CC33DD"
         ) {
             addMemberAuth()
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `when adding phone number identity then returns http ok`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val phoneNr = "+49123456789"
+        val requestBody = PhoneNrIdentity(phoneNr)
+
+        // when
+        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/phone") {
+            addAdminAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+    }
+
+    @Test
+    fun `given non-admin authentication when adding phone number identity then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = PhoneNrIdentity("+49123456789")
+
+        // when
+        val result = handleRequest(
+            HttpMethod.Post,
+            "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone"
+        ) {
+            addMemberAuth()
+            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            setBody(Json.encodeToString(requestBody))
         }
 
         // then

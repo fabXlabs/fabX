@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
+import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
@@ -45,7 +46,8 @@ class UserController(
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
     private val addingCardIdentity: AddingCardIdentity,
-    private val removingCardIdentity: RemovingCardIdentity
+    private val removingCardIdentity: RemovingCardIdentity,
+    private val addingPhoneNrIdentity: AddingPhoneNrIdentity
 ) {
 
     val routes: Route.() -> Unit = {
@@ -377,6 +379,31 @@ class UserController(
                                                         newCorrelationId(),
                                                         id,
                                                         cardId
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+                }
+
+                route("/phone") {
+                    post("") {
+                        readBody<PhoneNrIdentity>()
+                            ?.let {
+                                readUUIDParameter("id")
+                                    ?.let { UserId(it) }
+                                    ?.let { id ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    addingPhoneNrIdentity.addPhoneNrIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        it.phoneNr
                                                     )
                                                         .toEither { }
                                                         .swap()

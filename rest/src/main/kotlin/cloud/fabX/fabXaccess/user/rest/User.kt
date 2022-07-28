@@ -71,3 +71,8 @@ data class CardIdentity(
     val cardId: String,
     val cardSecret: String
 )
+
+@Serializable
+data class PhoneNrIdentity(
+    val phoneNr: String
+)
