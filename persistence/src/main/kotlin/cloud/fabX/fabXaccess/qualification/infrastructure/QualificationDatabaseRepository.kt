@@ -122,13 +122,14 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
     @Suppress("unused") // supposed to be executed within Transaction
     private fun Transaction.getVersionById(id: QualificationId): Long? {
         return QualificationSourcingEventDAO
+            .slice(QualificationSourcingEventDAO.aggregateVersion)
             .select {
                 QualificationSourcingEventDAO.aggregateRootId.eq(id.value)
             }
             .orderBy(QualificationSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
             .limit(1)
-            .map { it[QualificationSourcingEventDAO.data] }
-            .maxOfOrNull { it.aggregateVersion }
+            .map { it[QualificationSourcingEventDAO.aggregateVersion] }
+            .maxOfOrNull { it }
     }
 
     private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
