@@ -1,4 +1,4 @@
-package cloud.fabX.fabXaccess.device.infrastructure
+package cloud.fabX.fabXaccess.user.infrastructure
 
 import arrow.core.Either
 import arrow.core.None
@@ -6,17 +6,12 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
-import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.jsonb
-import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.ToolId
-import cloud.fabX.fabXaccess.device.model.Device
-import cloud.fabX.fabXaccess.device.model.DeviceIdentity
-import cloud.fabX.fabXaccess.device.model.DeviceRepository
-import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
-import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
-import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
+import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.user.model.User
+import cloud.fabX.fabXaccess.user.model.UserRepository
+import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -30,65 +25,62 @@ import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
-object DeviceSourcingEventDAO : Table("DeviceSourcingEvent") {
+object UserSourcingEventDAO : Table("UserSourcingEvent") {
     val aggregateRootId = uuid("aggregate_root_id")
     val aggregateVersion = long("aggregate_version")
     val actorId = uuid("actor_id")
     val correlationId = uuid("correlation_id")
     val timestamp = timestamp("timestamp")
-    val data = jsonb("data", DeviceSourcingEvent.serializer())
+    val data = jsonb("data", UserSourcingEvent.serializer())
 }
 
-class DeviceDatabaseRepository(
-    private val db: Database
-) : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
-
-    override fun getAll(): Set<Device> {
+class UserExposedRepository(private val db: Database) : UserRepository {
+    override fun getAll(): Set<User> {
         return transaction {
-            DeviceSourcingEventDAO
+            UserSourcingEventDAO
                 .selectAll()
-                .orderBy(DeviceSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
+                .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
                 .asSequence()
                 .map {
-                    it[DeviceSourcingEventDAO.data]
+                    it[UserSourcingEventDAO.data]
                 }
                 .groupBy { it.aggregateRootId }
-                .map { Device.fromSourcingEvents(it.value) }
+                .map { User.fromSourcingEvents(it.value) }
                 .filter { it.isDefined() }
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
         }
     }
 
-    override fun getById(id: DeviceId): Either<Error, Device> {
+    override fun getById(id: UserId): Either<Error, User> {
         val events = transaction {
-            DeviceSourcingEventDAO
+            UserSourcingEventDAO
                 .select {
-                    DeviceSourcingEventDAO.aggregateRootId.eq(id.value)
+                    UserSourcingEventDAO.aggregateRootId.eq(id.value)
                 }
-                .orderBy(DeviceSourcingEventDAO.aggregateVersion)
+                .orderBy(UserSourcingEventDAO.aggregateVersion)
                 .map {
-                    it[DeviceSourcingEventDAO.data]
+                    it[UserSourcingEventDAO.data]
                 }
         }
 
         return if (events.isNotEmpty()) {
-            Device.fromSourcingEvents(events)
+            User.fromSourcingEvents(events)
                 .toEither {
-                    Error.DeviceNotFound(
-                        "Device with id $id not found.",
+                    Error.UserNotFound(
+                        "User with id $id not found.",
                         id
                     )
                 }
         } else {
-            Error.DeviceNotFound(
-                "Device with id $id not found.",
+            Error.UserNotFound(
+                "User with id $id not found.",
                 id
             ).left()
         }
     }
 
-    override fun store(event: DeviceSourcingEvent): Option<Error> {
+    override fun store(event: UserSourcingEvent): Option<Error> {
         return transaction {
             val previousVersion = getVersionById(event.aggregateRootId)
 
@@ -97,12 +89,12 @@ class DeviceDatabaseRepository(
             ) {
                 Some(
                     Error.VersionConflict(
-                        "Previous version of device ${event.aggregateRootId} is $previousVersion, " +
+                        "Previous version of user ${event.aggregateRootId} is $previousVersion, " +
                                 "desired new version is ${event.aggregateVersion}."
                     )
                 )
             } else {
-                DeviceSourcingEventDAO.insert {
+                UserSourcingEventDAO.insert {
                     it[aggregateRootId] = event.aggregateRootId.value
                     it[aggregateVersion] = event.aggregateVersion
                     it[actorId] = event.actorId.value
@@ -116,40 +108,29 @@ class DeviceDatabaseRepository(
         }
     }
 
-    fun getSourcingEvents(): List<DeviceSourcingEvent> {
+    fun getSourcingEvents(): List<UserSourcingEvent> {
         return transaction {
-            DeviceSourcingEventDAO.selectAll()
+            UserSourcingEventDAO.selectAll()
                 // TODO order by something different (timestamp is informative, nothing to depend on)
-                .orderBy(DeviceSourcingEventDAO.timestamp, SortOrder.ASC)
+                .orderBy(UserSourcingEventDAO.timestamp, SortOrder.ASC)
                 .map {
-                    it[DeviceSourcingEventDAO.data]
+                    it[UserSourcingEventDAO.data]
                 }
         }
     }
 
     @Suppress("unused") // supposed to be executed within Transaction
-    private fun Transaction.getVersionById(id: DeviceId): Long? {
-        return DeviceSourcingEventDAO
-            .slice(DeviceSourcingEventDAO.aggregateVersion)
+    private fun Transaction.getVersionById(id: UserId): Long? {
+        return UserSourcingEventDAO
+            .slice(UserSourcingEventDAO.aggregateVersion)
             .select {
-                DeviceSourcingEventDAO.aggregateRootId.eq(id.value)
+                UserSourcingEventDAO.aggregateRootId.eq(id.value)
             }
-            .orderBy(DeviceSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
+            .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
             .limit(1)
-            .map { it[DeviceSourcingEventDAO.aggregateVersion] }
+            .map { it[UserSourcingEventDAO.aggregateVersion] }
             .maxOfOrNull { it }
     }
-
-    override fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
-        getAll()
-            .firstOrNull { it.hasIdentity(identity) }
-            .toOption()
-            .toEither { Error.DeviceNotFoundByIdentity("Not able to find device for given identity.") }
-
-    override fun getByAttachedTool(toolId: ToolId): Set<Device> =
-        getAll()
-            .filter { it.hasAttachedTool(toolId) }
-            .toSet()
 
     private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
         addLogger(StdOutSqlLogger)
