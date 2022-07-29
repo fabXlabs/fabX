@@ -15,7 +15,7 @@ internal class ChangeableValueTest {
     @Test
     fun `when creating ChangeToValue then it pattern matches correctly`() {
         // when
-        val result: ChangeableValue<String> = ChangeableValue.ChangeToValue("new value")
+        val result: ChangeableValue<String> = ChangeableValue.ChangeToValueString("new value")
 
         // then
         when (result) {
@@ -50,7 +50,7 @@ internal class ChangeableValueTest {
     @Test
     fun `given nullable type and null when creating ChangeToValue then it pattern matches correctly`() {
         // when
-        val result: ChangeableValue<String?> = ChangeableValue.ChangeToValue(null)
+        val result: ChangeableValue<String?> = ChangeableValue.ChangeToValueOptionalString(null)
 
         // then
         assertThat(
@@ -65,7 +65,7 @@ internal class ChangeableValueTest {
     @Test
     fun `given nullable type and value when creating ChangeToValue then it pattern matches correctly`() {
         // when
-        val result: ChangeableValue<String?> = ChangeableValue.ChangeToValue("new value")
+        val result: ChangeableValue<String?> = ChangeableValue.ChangeToValueString("new value")
 
         // then
         assertThat(
@@ -80,7 +80,7 @@ internal class ChangeableValueTest {
     @Test
     fun `given ChangeToValue when getting as Option then returns Some`() {
         // given
-        val changeable = ChangeableValue.ChangeToValue("value")
+        val changeable = ChangeableValue.ChangeToValueString("value")
 
         // when
         val result = changeable.asOption()
@@ -106,7 +106,7 @@ internal class ChangeableValueTest {
     @Test
     fun `given ChangeToValue when bimap then returns mapped value`() {
         // given
-        val changeable = ChangeableValue.ChangeToValue("value")
+        val changeable = ChangeableValue.ChangeToValueString("value")
 
         // when
         val result = changeable.bimap(
@@ -146,7 +146,7 @@ internal class ChangeableValueTest {
     @Test
     fun `given ChangeToValue when biFlatmap then returns mapped value`() {
         // given
-        val changeable = ChangeableValue.ChangeToValue("value")
+        val changeable = ChangeableValue.ChangeToValueString("value")
 
         // when
         val result = changeable.biFlatmap(

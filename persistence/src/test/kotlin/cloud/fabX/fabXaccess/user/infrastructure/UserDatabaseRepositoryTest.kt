@@ -85,8 +85,8 @@ internal class UserDatabaseRepositoryTest {
                 2,
                 actorId,
                 correlationId,
-                locked = ChangeableValue.ChangeToValue(true),
-                notes = ChangeableValue.ChangeToValue("some notes")
+                locked = ChangeableValue.ChangeToValueBoolean(true),
+                notes = ChangeableValue.ChangeToValueString("some notes")
             )
             repository.store(event2)
         }
@@ -123,8 +123,8 @@ internal class UserDatabaseRepositoryTest {
                 3,
                 actorId,
                 correlationId,
-                locked = ChangeableValue.ChangeToValue(false),
-                notes = ChangeableValue.ChangeToValue(null)
+                locked = ChangeableValue.ChangeToValueBoolean(false),
+                notes = ChangeableValue.ChangeToValueOptionalString(null)
             )
 
             // when
@@ -151,8 +151,8 @@ internal class UserDatabaseRepositoryTest {
                 version,
                 actorId,
                 correlationId,
-                locked = ChangeableValue.ChangeToValue(false),
-                notes = ChangeableValue.ChangeToValue(null)
+                locked = ChangeableValue.ChangeToValueBoolean(false),
+                notes = ChangeableValue.ChangeToValueOptionalString(null)
             )
 
             // when
@@ -201,8 +201,8 @@ internal class UserDatabaseRepositoryTest {
                 2,
                 actorId,
                 correlationId,
-                locked = ChangeableValue.ChangeToValue(true),
-                notes = ChangeableValue.ChangeToValue("some notes")
+                locked = ChangeableValue.ChangeToValueBoolean(true),
+                notes = ChangeableValue.ChangeToValueOptionalString("some notes")
             )
             repository.store(user1event2)
 
@@ -221,7 +221,7 @@ internal class UserDatabaseRepositoryTest {
                 3,
                 actorId,
                 correlationId,
-                firstName = ChangeableValue.ChangeToValue("first1v3"),
+                firstName = ChangeableValue.ChangeToValueString("first1v3"),
                 lastName = ChangeableValue.LeaveAsIs,
                 wikiName = ChangeableValue.LeaveAsIs
             )
@@ -242,9 +242,9 @@ internal class UserDatabaseRepositoryTest {
                 2,
                 actorId,
                 correlationId,
-                firstName = ChangeableValue.ChangeToValue("first2v2"),
-                lastName = ChangeableValue.ChangeToValue("last2v2"),
-                wikiName = ChangeableValue.ChangeToValue("wiki2v2")
+                firstName = ChangeableValue.ChangeToValueString("first2v2"),
+                lastName = ChangeableValue.ChangeToValueString("last2v2"),
+                wikiName = ChangeableValue.ChangeToValueString("wiki2v2")
             )
             repository.store(user2event2)
 

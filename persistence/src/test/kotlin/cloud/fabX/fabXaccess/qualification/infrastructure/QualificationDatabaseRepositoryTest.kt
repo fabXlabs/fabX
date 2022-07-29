@@ -74,9 +74,9 @@ internal class QualificationDatabaseRepositoryTest {
                 actorId,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
-                description = ChangeableValue.ChangeToValue("a good qualification"),
+                description = ChangeableValue.ChangeToValueString("a good qualification"),
                 colour = ChangeableValue.LeaveAsIs,
-                orderNr = ChangeableValue.ChangeToValue(100)
+                orderNr = ChangeableValue.ChangeToValueInt(100)
             )
             repository.store(event2)
         }
@@ -194,7 +194,7 @@ internal class QualificationDatabaseRepositoryTest {
                 actorId,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
-                description = ChangeableValue.ChangeToValue("description1v2"),
+                description = ChangeableValue.ChangeToValueString("description1v2"),
                 colour = ChangeableValue.LeaveAsIs,
                 orderNr = ChangeableValue.LeaveAsIs
             )
@@ -236,8 +236,8 @@ internal class QualificationDatabaseRepositoryTest {
                 actorId,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
-                description = ChangeableValue.ChangeToValue("description3v2"),
-                colour = ChangeableValue.ChangeToValue("#333333"),
+                description = ChangeableValue.ChangeToValueString("description3v2"),
+                colour = ChangeableValue.ChangeToValueString("#333333"),
                 orderNr = ChangeableValue.LeaveAsIs
             )
             repository.store(qualification3event2)

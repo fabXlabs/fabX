@@ -45,7 +45,7 @@ data class QualificationCreated(
         eventHandler.handle(this, qualification)
 }
 
-// TODO make serializable
+@Serializable
 data class QualificationDetailsChanged(
     override val aggregateRootId: QualificationId,
     override val aggregateVersion: Long,

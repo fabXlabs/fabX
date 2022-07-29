@@ -151,9 +151,9 @@ internal class UserTest {
             1,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            firstName = ChangeableValue.ChangeToValue("first"),
-            lastName = ChangeableValue.ChangeToValue("last"),
-            wikiName = ChangeableValue.ChangeToValue("wiki")
+            firstName = ChangeableValue.ChangeToValueString("first"),
+            lastName = ChangeableValue.ChangeToValueString("last"),
+            wikiName = ChangeableValue.ChangeToValueString("wiki")
         )
 
         // when
@@ -218,26 +218,26 @@ internal class UserTest {
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            firstName = ChangeableValue.ChangeToValue("first2"),
-            lastName = ChangeableValue.ChangeToValue("last2"),
-            wikiName = ChangeableValue.ChangeToValue("wiki2")
+            firstName = ChangeableValue.ChangeToValueString("first2"),
+            lastName = ChangeableValue.ChangeToValueString("last2"),
+            wikiName = ChangeableValue.ChangeToValueString("wiki2")
         )
         val event3 = UserLockStateChanged(
             userId,
             3,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            locked = ChangeableValue.ChangeToValue(true),
-            notes = ChangeableValue.ChangeToValue("some notes")
+            locked = ChangeableValue.ChangeToValueBoolean(true),
+            notes = ChangeableValue.ChangeToValueString("some notes")
         )
         val event4 = UserPersonalInformationChanged(
             userId,
             4,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            firstName = ChangeableValue.ChangeToValue("first4"),
+            firstName = ChangeableValue.ChangeToValueString("first4"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("wiki4")
+            wikiName = ChangeableValue.ChangeToValueString("wiki4")
         )
         val event5 = UserPersonalInformationChanged(
             userId,
@@ -245,8 +245,8 @@ internal class UserTest {
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
             firstName = ChangeableValue.LeaveAsIs,
-            lastName = ChangeableValue.ChangeToValue("last5"),
-            wikiName = ChangeableValue.ChangeToValue("wiki5")
+            lastName = ChangeableValue.ChangeToValueString("last5"),
+            wikiName = ChangeableValue.ChangeToValueString("wiki5")
         )
 
         // when
@@ -288,17 +288,17 @@ internal class UserTest {
             3,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            firstName = ChangeableValue.ChangeToValue("first2"),
+            firstName = ChangeableValue.ChangeToValueString("first2"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("wiki2")
+            wikiName = ChangeableValue.ChangeToValueString("wiki2")
         )
         val event2 = UserLockStateChanged(
             userId,
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            locked = ChangeableValue.ChangeToValue(true),
-            notes = ChangeableValue.ChangeToValue("some notes")
+            locked = ChangeableValue.ChangeToValueBoolean(true),
+            notes = ChangeableValue.ChangeToValueString("some notes")
         )
 
         // then
@@ -570,18 +570,18 @@ internal class UserTest {
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
             correlationId = correlationId,
-            firstName = ChangeableValue.ChangeToValue("newFistName"),
+            firstName = ChangeableValue.ChangeToValueString("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("newWikiName")
+            wikiName = ChangeableValue.ChangeToValueString("newWikiName")
         )
 
         // when
         val result = user.changePersonalInformation(
             actor = adminActor,
             correlationId = correlationId,
-            firstName = ChangeableValue.ChangeToValue("newFistName"),
+            firstName = ChangeableValue.ChangeToValueString("newFistName"),
             lastName = ChangeableValue.LeaveAsIs,
-            wikiName = ChangeableValue.ChangeToValue("newWikiName")
+            wikiName = ChangeableValue.ChangeToValueString("newWikiName")
         ) {
             if (it == "newWikiName") {
                 Error.UserNotFoundByWikiName("").left()
@@ -607,7 +607,7 @@ internal class UserTest {
         val result = user.changePersonalInformation(
             adminActor,
             correlationId,
-            wikiName = ChangeableValue.ChangeToValue("wikiName")
+            wikiName = ChangeableValue.ChangeToValueString("wikiName")
         ) {
             if (it == "wikiName") {
                 otherUser.right()
@@ -632,16 +632,16 @@ internal class UserTest {
             correlationId = correlationId,
             aggregateRootId = userId,
             aggregateVersion = aggregateVersion + 1,
-            locked = ChangeableValue.ChangeToValue(true),
-            notes = ChangeableValue.ChangeToValue(null)
+            locked = ChangeableValue.ChangeToValueBoolean(true),
+            notes = ChangeableValue.ChangeToValueOptionalString(null)
         )
 
         // when
         val result = user.changeLockState(
             actor = adminActor,
             correlationId = correlationId,
-            locked = ChangeableValue.ChangeToValue(true),
-            notes = ChangeableValue.ChangeToValue(null)
+            locked = ChangeableValue.ChangeToValueBoolean(true),
+            notes = ChangeableValue.ChangeToValueOptionalString(null)
         )
 
         // then

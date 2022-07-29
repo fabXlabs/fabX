@@ -110,9 +110,9 @@ internal class DeviceTest {
             1,
             adminActor.id,
             correlationId,
-            name = ChangeableValue.ChangeToValue("name"),
-            background = ChangeableValue.ChangeToValue("https://example.com/bg.bmp"),
-            backupBackendUrl = ChangeableValue.ChangeToValue("https://backup.example.com")
+            name = ChangeableValue.ChangeToValueString("name"),
+            background = ChangeableValue.ChangeToValueString("https://example.com/bg.bmp"),
+            backupBackendUrl = ChangeableValue.ChangeToValueString("https://backup.example.com")
         )
 
         // when
@@ -144,7 +144,7 @@ internal class DeviceTest {
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            ChangeableValue.ChangeToValue("name2"),
+            ChangeableValue.ChangeToValueString("name2"),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
@@ -155,7 +155,7 @@ internal class DeviceTest {
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.ChangeToValue("backupUrl3")
+            ChangeableValue.ChangeToValueString("backupUrl3")
         )
 
         // when
@@ -197,14 +197,14 @@ internal class DeviceTest {
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.ChangeToValue("backupUrl3")
+            ChangeableValue.ChangeToValueString("backupUrl3")
         )
         val event2 = DeviceDetailsChanged(
             deviceId,
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            ChangeableValue.ChangeToValue("name2"),
+            ChangeableValue.ChangeToValueString("name2"),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
@@ -320,18 +320,18 @@ internal class DeviceTest {
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
             correlationId = correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             background = ChangeableValue.LeaveAsIs,
-            backupBackendUrl = ChangeableValue.ChangeToValue("https://new.example.com")
+            backupBackendUrl = ChangeableValue.ChangeToValueString("https://new.example.com")
         )
 
         // when
         val result = device.changeDetails(
             adminActor,
             correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             background = ChangeableValue.LeaveAsIs,
-            backupBackendUrl = ChangeableValue.ChangeToValue("https://new.example.com")
+            backupBackendUrl = ChangeableValue.ChangeToValueString("https://new.example.com")
         )
 
         // then

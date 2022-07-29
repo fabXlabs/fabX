@@ -59,11 +59,11 @@ internal class ChangingToolTest {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 1)
 
-        val newName = ChangeableValue.ChangeToValue("newName")
-        val newType = ChangeableValue.ChangeToValue(ToolType.UNLOCK)
-        val newTime = ChangeableValue.ChangeToValue(42)
-        val newIdleState = ChangeableValue.ChangeToValue(IdleState.IDLE_LOW)
-        val newEnabled = ChangeableValue.ChangeToValue(false)
+        val newName = ChangeableValue.ChangeToValueString("newName")
+        val newType = ChangeableValue.ChangeToValueToolType(ToolType.UNLOCK)
+        val newTime = ChangeableValue.ChangeToValueInt(42)
+        val newIdleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW)
+        val newEnabled = ChangeableValue.ChangeToValueBoolean(false)
         val newWikiLink = ChangeableValue.LeaveAsIs
         val newRequiredQualifications = ChangeableValue.LeaveAsIs
 

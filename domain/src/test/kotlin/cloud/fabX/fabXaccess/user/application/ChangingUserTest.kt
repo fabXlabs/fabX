@@ -60,9 +60,9 @@ internal class ChangingUserTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
-        val newFirstName = ChangeableValue.ChangeToValue("aFirstName")
-        val newLastName = ChangeableValue.ChangeToValue("aLastName")
-        val newWikiName = ChangeableValue.ChangeToValue("aWikiName")
+        val newFirstName = ChangeableValue.ChangeToValueString("aFirstName")
+        val newLastName = ChangeableValue.ChangeToValueString("aLastName")
+        val newWikiName = ChangeableValue.ChangeToValueString("aWikiName")
 
         val expectedSourcingEvent = UserPersonalInformationChanged(
             userId,
@@ -130,7 +130,7 @@ internal class ChangingUserTest {
     @Test
     fun `given domain error when changing personal information then returns domain error`() {
         // given
-        val newWikiName = ChangeableValue.ChangeToValue("aWikiName")
+        val newWikiName = ChangeableValue.ChangeToValueString("aWikiName")
 
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -204,8 +204,8 @@ internal class ChangingUserTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 3)
 
-        val newLocked = ChangeableValue.ChangeToValue(true)
-        val newNotes = ChangeableValue.ChangeToValue("some notes")
+        val newLocked = ChangeableValue.ChangeToValueBoolean(true)
+        val newNotes = ChangeableValue.ChangeToValueString("some notes")
 
         val expectedSourcingEvent = UserLockStateChanged(
             userId,

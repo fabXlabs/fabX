@@ -210,13 +210,18 @@ internal class ToolTest {
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            name = ChangeableValue.ChangeToValue("name2"),
+            name = ChangeableValue.ChangeToValueString("name2"),
             type = ChangeableValue.LeaveAsIs,
-            time = ChangeableValue.ChangeToValue(2),
+            time = ChangeableValue.ChangeToValueInt(2),
             idleState = ChangeableValue.LeaveAsIs,
             enabled = ChangeableValue.LeaveAsIs,
             wikiLink = ChangeableValue.LeaveAsIs,
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId1, qualificationId2))
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
+                setOf(
+                    qualificationId1,
+                    qualificationId2
+                )
+            )
         )
 
         val event3 = ToolDetailsChanged(
@@ -224,13 +229,18 @@ internal class ToolTest {
             3,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            name = ChangeableValue.ChangeToValue("name3"),
-            type = ChangeableValue.ChangeToValue(ToolType.KEEP),
+            name = ChangeableValue.ChangeToValueString("name3"),
+            type = ChangeableValue.ChangeToValueToolType(ToolType.KEEP),
             time = ChangeableValue.LeaveAsIs,
             idleState = ChangeableValue.LeaveAsIs,
-            enabled = ChangeableValue.ChangeToValue(false),
-            wikiLink = ChangeableValue.ChangeToValue("https://example.com/3"),
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId1, qualificationId2))
+            enabled = ChangeableValue.ChangeToValueBoolean(false),
+            wikiLink = ChangeableValue.ChangeToValueString("https://example.com/3"),
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
+                setOf(
+                    qualificationId1,
+                    qualificationId2
+                )
+            )
         )
 
         // when
@@ -277,13 +287,18 @@ internal class ToolTest {
             3,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            name = ChangeableValue.ChangeToValue("name3"),
+            name = ChangeableValue.ChangeToValueString("name3"),
             type = ChangeableValue.LeaveAsIs,
-            time = ChangeableValue.ChangeToValue(3),
+            time = ChangeableValue.ChangeToValueInt(3),
             idleState = ChangeableValue.LeaveAsIs,
             enabled = ChangeableValue.LeaveAsIs,
             wikiLink = ChangeableValue.LeaveAsIs,
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId1, qualificationId2))
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
+                setOf(
+                    qualificationId1,
+                    qualificationId2
+                )
+            )
         )
 
         val event2 = ToolDetailsChanged(
@@ -291,13 +306,18 @@ internal class ToolTest {
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            name = ChangeableValue.ChangeToValue("name2"),
-            type = ChangeableValue.ChangeToValue(ToolType.KEEP),
+            name = ChangeableValue.ChangeToValueString("name2"),
+            type = ChangeableValue.ChangeToValueToolType(ToolType.KEEP),
             time = ChangeableValue.LeaveAsIs,
             idleState = ChangeableValue.LeaveAsIs,
-            enabled = ChangeableValue.ChangeToValue(false),
-            wikiLink = ChangeableValue.ChangeToValue("https://example.com/2"),
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId1, qualificationId2))
+            enabled = ChangeableValue.ChangeToValueBoolean(false),
+            wikiLink = ChangeableValue.ChangeToValueString("https://example.com/2"),
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
+                setOf(
+                    qualificationId1,
+                    qualificationId2
+                )
+            )
         )
 
         // when
@@ -354,26 +374,26 @@ internal class ToolTest {
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
             correlationId = correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             type = ChangeableValue.LeaveAsIs,
-            time = ChangeableValue.ChangeToValue(9876),
-            idleState = ChangeableValue.ChangeToValue(IdleState.IDLE_LOW),
+            time = ChangeableValue.ChangeToValueInt(9876),
+            idleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
-            wikiLink = ChangeableValue.ChangeToValue("https://example.com/newLink"),
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId))
+            wikiLink = ChangeableValue.ChangeToValueString("https://example.com/newLink"),
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId))
         )
 
         // when
         val result = tool.changeDetails(
             adminActor,
             correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             type = ChangeableValue.LeaveAsIs,
-            time = ChangeableValue.ChangeToValue(9876),
-            idleState = ChangeableValue.ChangeToValue(IdleState.IDLE_LOW),
+            time = ChangeableValue.ChangeToValueInt(9876),
+            idleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
-            wikiLink = ChangeableValue.ChangeToValue("https://example.com/newLink"),
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(qualificationId)),
+            wikiLink = ChangeableValue.ChangeToValueString("https://example.com/newLink"),
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId)),
             GettingQualificationById {
                 return@GettingQualificationById when (it) {
                     qualificationId -> qualification.right()
@@ -400,13 +420,13 @@ internal class ToolTest {
         val result = tool.changeDetails(
             adminActor,
             correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             type = ChangeableValue.LeaveAsIs,
-            time = ChangeableValue.ChangeToValue(9876),
-            idleState = ChangeableValue.ChangeToValue(IdleState.IDLE_LOW),
+            time = ChangeableValue.ChangeToValueInt(9876),
+            idleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
-            wikiLink = ChangeableValue.ChangeToValue("https://example.com/newLink"),
-            requiredQualifications = ChangeableValue.ChangeToValue(setOf(invalidQualificationId)),
+            wikiLink = ChangeableValue.ChangeToValueString("https://example.com/newLink"),
+            requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(setOf(invalidQualificationId)),
             GettingQualificationById {
                 return@GettingQualificationById when (it) {
                     invalidQualificationId -> error.left()

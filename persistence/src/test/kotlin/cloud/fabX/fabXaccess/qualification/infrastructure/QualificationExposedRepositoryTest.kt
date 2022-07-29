@@ -4,10 +4,11 @@ import assertk.assertThat
 import assertk.assertions.containsExactly
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
+import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.module
 import cloud.fabX.fabXaccess.qualification.model.QualificationCreated
-import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
+import cloud.fabX.fabXaccess.qualification.model.QualificationDetailsChanged
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
@@ -70,11 +71,15 @@ internal class QualificationExposedRepositoryTest {
             "#000001",
             1
         )
-        val event2 = QualificationDeleted(
+        val event2 = QualificationDetailsChanged(
             qualificationId1,
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
+            ChangeableValue.ChangeToValueString("name2"),
+            ChangeableValue.LeaveAsIs,
+            ChangeableValue.ChangeToValueString("#000002"),
+            ChangeableValue.LeaveAsIs
         )
         val event3 = QualificationCreated(
             qualificationId2,

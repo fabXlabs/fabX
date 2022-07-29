@@ -55,9 +55,9 @@ internal class ChangingQualificationTest {
         // given
         val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 1)
 
-        val newName = ChangeableValue.ChangeToValue("newName")
-        val newDescription = ChangeableValue.ChangeToValue("newDescription")
-        val newColour = ChangeableValue.ChangeToValue("#424242")
+        val newName = ChangeableValue.ChangeToValueString("newName")
+        val newDescription = ChangeableValue.ChangeToValueString("newDescription")
+        val newColour = ChangeableValue.ChangeToValueString("#424242")
         val newOrderNr = ChangeableValue.LeaveAsIs
 
         val expectedSourcingEvent = QualificationDetailsChanged(

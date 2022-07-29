@@ -104,8 +104,8 @@ internal class ToolDatabaseRepositoryTest {
                 2,
                 actorId,
                 correlationId,
-                ChangeableValue.ChangeToValue("name2"),
-                ChangeableValue.ChangeToValue(ToolType.KEEP),
+                ChangeableValue.ChangeToValueString("name2"),
+                ChangeableValue.ChangeToValueToolType(ToolType.KEEP),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -148,7 +148,7 @@ internal class ToolDatabaseRepositoryTest {
                 3,
                 actorId,
                 correlationId,
-                ChangeableValue.ChangeToValue("name3"),
+                ChangeableValue.ChangeToValueString("name3"),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -236,13 +236,13 @@ internal class ToolDatabaseRepositoryTest {
                 2,
                 actorId,
                 correlationId,
-                ChangeableValue.ChangeToValue("name2"),
-                ChangeableValue.ChangeToValue(ToolType.KEEP),
+                ChangeableValue.ChangeToValueString("name2"),
+                ChangeableValue.ChangeToValueToolType(ToolType.KEEP),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
-                ChangeableValue.ChangeToValue(setOf(qualificationId2))
+                ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId2))
             )
             repository.store(tool1event2)
 
@@ -286,12 +286,12 @@ internal class ToolDatabaseRepositoryTest {
                 2,
                 actorId,
                 correlationId,
-                ChangeableValue.ChangeToValue("newName3"),
+                ChangeableValue.ChangeToValueString("newName3"),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
-                ChangeableValue.ChangeToValue(false),
-                ChangeableValue.ChangeToValue("https://wiki.example.com/newtool3"),
+                ChangeableValue.ChangeToValueBoolean(false),
+                ChangeableValue.ChangeToValueString("https://wiki.example.com/newtool3"),
                 ChangeableValue.LeaveAsIs
             )
             repository.store(tool3event2)

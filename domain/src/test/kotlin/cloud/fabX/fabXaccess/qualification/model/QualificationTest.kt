@@ -98,10 +98,10 @@ internal class QualificationTest {
             1,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            name = ChangeableValue.ChangeToValue("quali"),
-            description = ChangeableValue.ChangeToValue("quali description"),
-            colour = ChangeableValue.ChangeToValue("#000000"),
-            orderNr = ChangeableValue.ChangeToValue(42)
+            name = ChangeableValue.ChangeToValueString("quali"),
+            description = ChangeableValue.ChangeToValueString("quali description"),
+            colour = ChangeableValue.ChangeToValueString("#000000"),
+            orderNr = ChangeableValue.ChangeToValueInt(42)
         )
 
         // when
@@ -132,9 +132,9 @@ internal class QualificationTest {
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            ChangeableValue.ChangeToValue("name2"),
+            ChangeableValue.ChangeToValueString("name2"),
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.ChangeToValue("#000002"),
+            ChangeableValue.ChangeToValueString("#000002"),
             ChangeableValue.LeaveAsIs
         )
         val event3 = QualificationDetailsChanged(
@@ -143,8 +143,8 @@ internal class QualificationTest {
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.ChangeToValue("description3"),
-            ChangeableValue.ChangeToValue("#000003"),
+            ChangeableValue.ChangeToValueString("description3"),
+            ChangeableValue.ChangeToValueString("#000003"),
             ChangeableValue.LeaveAsIs
         )
 
@@ -184,8 +184,8 @@ internal class QualificationTest {
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.ChangeToValue("description3"),
-            ChangeableValue.ChangeToValue("#000003"),
+            ChangeableValue.ChangeToValueString("description3"),
+            ChangeableValue.ChangeToValueString("#000003"),
             ChangeableValue.LeaveAsIs
         )
         val event2 = QualificationDetailsChanged(
@@ -193,9 +193,9 @@ internal class QualificationTest {
             2,
             adminActor.id,
             CorrelationIdFixture.arbitrary(),
-            ChangeableValue.ChangeToValue("name2"),
+            ChangeableValue.ChangeToValueString("name2"),
             ChangeableValue.LeaveAsIs,
-            ChangeableValue.ChangeToValue("#000002"),
+            ChangeableValue.ChangeToValueString("#000002"),
             ChangeableValue.LeaveAsIs
         )
 
@@ -249,9 +249,9 @@ internal class QualificationTest {
             aggregateVersion = aggregateVersion + 1,
             actorId = adminActor.id,
             correlationId = correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             description = ChangeableValue.LeaveAsIs,
-            colour = ChangeableValue.ChangeToValue("#000042"),
+            colour = ChangeableValue.ChangeToValueString("#000042"),
             orderNr = ChangeableValue.LeaveAsIs
         )
 
@@ -259,9 +259,9 @@ internal class QualificationTest {
         val result = qualification.changeDetails(
             adminActor,
             correlationId,
-            name = ChangeableValue.ChangeToValue("newName"),
+            name = ChangeableValue.ChangeToValueString("newName"),
             description = ChangeableValue.LeaveAsIs,
-            colour = ChangeableValue.ChangeToValue("#000042"),
+            colour = ChangeableValue.ChangeToValueString("#000042"),
             orderNr = ChangeableValue.LeaveAsIs
         )
 

@@ -53,9 +53,9 @@ internal class ChangingDeviceTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
-        val newName = ChangeableValue.ChangeToValue("newName")
-        val newBackground = ChangeableValue.ChangeToValue("newBackground")
-        val newBackupBackendUrl = ChangeableValue.ChangeToValue("newBackupBackendUrl")
+        val newName = ChangeableValue.ChangeToValueString("newName")
+        val newBackground = ChangeableValue.ChangeToValueString("newBackground")
+        val newBackupBackendUrl = ChangeableValue.ChangeToValueString("newBackupBackendUrl")
 
         val expectedSourcingEvent = DeviceDetailsChanged(
             deviceId,

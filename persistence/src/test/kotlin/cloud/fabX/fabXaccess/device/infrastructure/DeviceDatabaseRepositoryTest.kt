@@ -94,7 +94,7 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
-                background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
+                background = ChangeableValue.ChangeToValueString("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
             repository.store(event2)
@@ -211,7 +211,7 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
-                background = ChangeableValue.ChangeToValue("https://example.com/2.bmp"),
+                background = ChangeableValue.ChangeToValueString("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
             repository.store(device1event2)
@@ -246,7 +246,7 @@ internal class DeviceDatabaseRepositoryTest {
                 actorId,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
-                background = ChangeableValue.ChangeToValue("https://example.com/3.bmp"),
+                background = ChangeableValue.ChangeToValueString("https://example.com/3.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
             repository.store(device1event3)
@@ -266,7 +266,7 @@ internal class DeviceDatabaseRepositoryTest {
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
-                backupBackendUrl = ChangeableValue.ChangeToValue("https://backup42.example.com"),
+                backupBackendUrl = ChangeableValue.ChangeToValueString("https://backup42.example.com"),
             )
             repository.store(device2event2)
         }

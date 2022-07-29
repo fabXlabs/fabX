@@ -6,20 +6,49 @@ import arrow.core.Option
 import arrow.core.left
 import arrow.core.right
 import arrow.core.some
+import cloud.fabX.fabXaccess.tool.model.IdleState
+import cloud.fabX.fabXaccess.tool.model.ToolType
+import kotlinx.serialization.Serializable
 
 /**
  * Represents a value which can be changed to a new value or left as is.
  */
-// TODO make serializable
-//      e.g. via explicit (non-generic) variants of ChangeToValue (i.e. ChangeToValueString, ChangeToValueInt, ...)
+@Serializable
 sealed class ChangeableValue<out T> {
+    @Serializable
     object LeaveAsIs : ChangeableValue<Nothing>() {
         override fun toString(): String {
             return "LeaveAsIs"
         }
     }
 
-    data class ChangeToValue<T>(val value: T) : ChangeableValue<T>()
+    @Serializable
+    sealed class ChangeToValue<T> : ChangeableValue<T>() {
+        abstract val value: T
+    }
+
+    @Serializable
+    data class ChangeToValueInt(override val value: Int) : ChangeToValue<Int>()
+
+    @Serializable
+    data class ChangeToValueString(override val value: String) : ChangeToValue<String>()
+
+    @Serializable
+    data class ChangeToValueOptionalString(override val value: String?) : ChangeToValue<String?>()
+
+    @Serializable
+    data class ChangeToValueToolType(override val value: ToolType) : ChangeToValue<ToolType>()
+
+    @Serializable
+    data class ChangeToValueIdleState(override val value: IdleState) : ChangeToValue<IdleState>()
+
+    @Serializable
+    data class ChangeToValueBoolean(override val value: Boolean) : ChangeToValue<Boolean>()
+
+    @Serializable
+    data class ChangeToValueQualificationSet(override val value: Set<QualificationId>) :
+        ChangeToValue<Set<QualificationId>>()
+
 }
 
 fun <T> ChangeableValue<T>.valueToChangeTo(previous: T): T = when (this) {
