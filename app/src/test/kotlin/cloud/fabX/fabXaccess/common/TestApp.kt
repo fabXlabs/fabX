@@ -5,9 +5,11 @@ import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.device.infrastructure.DeviceSourcingEventDAO
 import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
+import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
 import cloud.fabX.fabXaccess.restModule
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
@@ -22,9 +24,16 @@ import io.ktor.util.encodeBase64
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.allInstances
 import org.kodein.di.bindConstant
+import org.kodein.di.bindInstance
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
@@ -41,6 +50,24 @@ internal fun withTestApp(
 
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
+
+        // TODO dynamically start postgres instance via Testcontainers
+        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+        bindInstance(tag = "dbuser") { "postgres" }
+        bindInstance(tag = "dbpassword") { "postgrespassword" }
+    }
+    val db: Database by testApp.instance()
+
+    transaction(db) {
+        addLogger(StdOutSqlLogger)
+
+        // TODO database migration tool
+        SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
+        SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
+
+        QualificationSourcingEventDAO.deleteAll()
+        DeviceSourcingEventDAO.deleteAll()
     }
 
     val domainEventPublisher: SynchronousDomainEventPublisher by testApp.instance()
