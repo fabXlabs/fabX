@@ -12,12 +12,10 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.select
@@ -34,16 +32,6 @@ object QualificationSourcingEventDAO : Table("QualificationSourcingEvent") {
 }
 
 class QualificationExposedRepository(private val db: Database) : QualificationRepository {
-
-    init {
-        transaction {
-            // TODO database migration tool
-            SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
-
-            // TODO remove following line
-            QualificationSourcingEventDAO.deleteAll()
-        }
-    }
 
     private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
         addLogger(StdOutSqlLogger)
