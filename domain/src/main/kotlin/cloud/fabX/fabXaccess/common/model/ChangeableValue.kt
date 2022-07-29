@@ -10,6 +10,8 @@ import arrow.core.some
 /**
  * Represents a value which can be changed to a new value or left as is.
  */
+// TODO make serializable
+//      e.g. via explicit (non-generic) variants of ChangeToValue (i.e. ChangeToValueString, ChangeToValueInt, ...)
 sealed class ChangeableValue<out T> {
     object LeaveAsIs : ChangeableValue<Nothing>() {
         override fun toString(): String {

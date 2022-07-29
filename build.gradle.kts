@@ -2,6 +2,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 val arrowVersion: String by project
 val kodeinVersion: String by project
+val kotlinxDateTimeVersion: String by project
+val kotlinxSerializationVersion: String by project
+
 val junitVersion: String by project
 val assertKVersion: String by project
 val mockitoKotlinVersion: String by project
@@ -53,6 +56,8 @@ allprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:$arrowVersion")
         implementation("org.kodein.di:kodein-di:$kodeinVersion")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")

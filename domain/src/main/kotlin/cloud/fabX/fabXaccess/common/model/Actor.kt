@@ -7,6 +7,6 @@ interface Actor {
     val name: String
 }
 
-interface ActorId {
+sealed interface ActorId {
     val value: UUID
 }
