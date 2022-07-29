@@ -10,7 +10,7 @@ import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
 val persistenceModule = DI.Module("persistence") {
-    bindSingleton { DeviceDatabaseRepository() }
+    bindSingleton { DeviceDatabaseRepository(instance()) }
     bindSingleton { QualificationDatabaseRepository(instance()) }
     bindSingleton { ToolDatabaseRepository() }
     bindSingleton { UserDatabaseRepository() }

@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to add new devices.
@@ -17,7 +18,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class AddingDevice(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
-    private val deviceIdFactory: DeviceIdFactory
+    private val deviceIdFactory: DeviceIdFactory,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -34,6 +36,7 @@ class AddingDevice(
         val sourcingEvent = Device.addNew(
             deviceIdFactory,
             actor,
+            clock,
             correlationId,
             name,
             background,

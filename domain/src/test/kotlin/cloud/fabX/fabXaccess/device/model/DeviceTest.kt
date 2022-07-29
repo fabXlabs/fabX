@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.device.model
 
+import FixedClock
 import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
@@ -29,6 +30,9 @@ internal class DeviceTest {
 
     private val adminActor = AdminFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private val deviceId = DeviceIdFixture.arbitrary()
     private val aggregateVersion = 567L
@@ -64,6 +68,7 @@ internal class DeviceTest {
         val expectedSourcingEvent = DeviceCreated(
             deviceId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             background,
@@ -77,6 +82,7 @@ internal class DeviceTest {
         val result = Device.addNew(
             { deviceId },
             adminActor,
+            fixedClock,
             correlationId,
             name,
             background,
@@ -109,6 +115,7 @@ internal class DeviceTest {
             deviceId,
             1,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name = ChangeableValue.ChangeToValueString("name"),
             background = ChangeableValue.ChangeToValueString("https://example.com/bg.bmp"),
@@ -132,6 +139,7 @@ internal class DeviceTest {
         val event1 = DeviceCreated(
             deviceId,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             "name1",
             "background1",
@@ -143,6 +151,7 @@ internal class DeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.ChangeToValueString("name2"),
             ChangeableValue.LeaveAsIs,
@@ -152,6 +161,7 @@ internal class DeviceTest {
             deviceId,
             3,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -183,6 +193,7 @@ internal class DeviceTest {
         val event1 = DeviceCreated(
             deviceId,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             "name1",
             "background1",
@@ -194,6 +205,7 @@ internal class DeviceTest {
             deviceId,
             3,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -203,6 +215,7 @@ internal class DeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             ChangeableValue.ChangeToValueString("name2"),
             ChangeableValue.LeaveAsIs,
@@ -236,6 +249,7 @@ internal class DeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             3,
             toolId3
@@ -267,6 +281,7 @@ internal class DeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             1
         )
@@ -287,6 +302,7 @@ internal class DeviceTest {
         val event1 = DeviceCreated(
             deviceId,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary(),
             "Woodworking",
             "https://example.com/image.bmp",
@@ -299,6 +315,7 @@ internal class DeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             CorrelationIdFixture.arbitrary()
         )
 
@@ -316,10 +333,11 @@ internal class DeviceTest {
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = DeviceDetailsChanged(
-            aggregateRootId = deviceId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id,
-            correlationId = correlationId,
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
             name = ChangeableValue.ChangeToValueString("newName"),
             background = ChangeableValue.LeaveAsIs,
             backupBackendUrl = ChangeableValue.ChangeToValueString("https://new.example.com")
@@ -328,6 +346,7 @@ internal class DeviceTest {
         // when
         val result = device.changeDetails(
             adminActor,
+            fixedClock,
             correlationId,
             name = ChangeableValue.ChangeToValueString("newName"),
             background = ChangeableValue.LeaveAsIs,
@@ -353,10 +372,11 @@ internal class DeviceTest {
         )
 
         val expectedSourcingEvent = ToolAttached(
-            aggregateRootId = deviceId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id,
-            correlationId = correlationId,
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
             pin = pin,
             toolId = toolId
         )
@@ -364,6 +384,7 @@ internal class DeviceTest {
         // when
         val result = device.attachTool(
             adminActor,
+            fixedClock,
             correlationId,
             pin,
             toolId,
@@ -395,6 +416,7 @@ internal class DeviceTest {
         // when
         val result = device.attachTool(
             adminActor,
+            fixedClock,
             correlationId,
             pin,
             toolId,
@@ -434,6 +456,7 @@ internal class DeviceTest {
         // when
         val result = device.attachTool(
             adminActor,
+            fixedClock,
             correlationId,
             pin,
             invalidToolId,
@@ -467,16 +490,18 @@ internal class DeviceTest {
         )
 
         val expectedSourcingEvent = ToolDetached(
-            aggregateRootId = deviceId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id,
-            correlationId = correlationId,
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
             pin = pin
         )
 
         // when
         val result = device.detachTool(
             adminActor,
+            fixedClock,
             correlationId,
             pin
         )
@@ -511,15 +536,16 @@ internal class DeviceTest {
         )
 
         val expectedSourcingEvent = ToolDetached(
-            aggregateRootId = deviceId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = actorId,
-            correlationId = correlationId,
+            deviceId,
+            aggregateVersion + 1,
+            actorId,
+            fixedInstant,
+            correlationId,
             pin = pin
         )
 
         // when
-        val result = device.detachTool(domainEvent, pin)
+        val result = device.detachTool(domainEvent, fixedClock, pin)
 
         // then
         assertThat(result)
@@ -541,6 +567,7 @@ internal class DeviceTest {
         // when
         val result = device.detachTool(
             adminActor,
+            fixedClock,
             correlationId,
             pin
         )
@@ -564,14 +591,15 @@ internal class DeviceTest {
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
 
         val expectedSourcingEvent = DeviceDeleted(
-            aggregateRootId = deviceId,
-            aggregateVersion = aggregateVersion + 1,
-            actorId = adminActor.id,
-            correlationId = correlationId
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId
         )
 
         // when
-        val result = device.delete(adminActor, correlationId)
+        val result = device.delete(adminActor, fixedClock, correlationId)
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)

@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -35,6 +36,9 @@ internal class DetachingToolTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
 
@@ -48,7 +52,7 @@ internal class DetachingToolTest {
         this.logger = logger
         this.deviceRepository = deviceRepository
 
-        testee = DetachingTool({ logger }, deviceRepository)
+        testee = DetachingTool({ logger }, deviceRepository, fixedClock)
     }
 
     @Test
@@ -67,6 +71,7 @@ internal class DetachingToolTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             pin
         )
@@ -113,6 +118,7 @@ internal class DetachingToolTest {
             deviceId,
             2,
             actorId,
+            fixedInstant,
             correlationId,
             pin
         )
@@ -202,6 +208,7 @@ internal class DetachingToolTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             pin
         )

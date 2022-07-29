@@ -22,6 +22,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 data class Device internal constructor(
     override val id: DeviceId,
@@ -37,6 +38,7 @@ data class Device internal constructor(
         fun addNew(
             deviceIdFactory: DeviceIdFactory,
             actor: Admin,
+            clock: Clock,
             correlationId: CorrelationId,
             name: String,
             background: String,
@@ -46,6 +48,7 @@ data class Device internal constructor(
             return DeviceCreated(
                 deviceIdFactory.invoke(),
                 actor.id,
+                clock.now(),
                 correlationId,
                 name,
                 background,
@@ -79,6 +82,7 @@ data class Device internal constructor(
 
     fun changeDetails(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         name: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         background: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
@@ -88,6 +92,7 @@ data class Device internal constructor(
             id,
             aggregateVersion + 1,
             actor.id,
+            clock.now(),
             correlationId,
             name,
             background,
@@ -97,6 +102,7 @@ data class Device internal constructor(
 
     fun attachTool(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         pin: Int,
         toolId: ToolId,
@@ -111,6 +117,7 @@ data class Device internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     pin,
                     toolId
@@ -145,22 +152,25 @@ data class Device internal constructor(
      */
     fun detachTool(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> =
-        detachTool(actor.id, correlationId, pin)
+        detachTool(actor.id, clock, correlationId, pin)
 
     /**
      * Detaches the tool (triggered by a domain event).
      */
     internal fun detachTool(
         domainEvent: DomainEvent,
+        clock: Clock,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> =
-        detachTool(domainEvent.actorId, domainEvent.correlationId, pin)
+        detachTool(domainEvent.actorId, clock, domainEvent.correlationId, pin)
 
     private fun detachTool(
         actorId: ActorId,
+        clock: Clock,
         correlationId: CorrelationId,
         pin: Int
     ): Either<Error, DeviceSourcingEvent> {
@@ -173,6 +183,7 @@ data class Device internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    clock.now(),
                     correlationId,
                     pin
                 )
@@ -181,12 +192,14 @@ data class Device internal constructor(
 
     fun delete(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
     ): DeviceSourcingEvent {
         return DeviceDeleted(
             id,
             aggregateVersion + 1,
             actor.id,
+            clock.now(),
             correlationId
         )
     }

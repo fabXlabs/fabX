@@ -43,11 +43,11 @@ import org.kodein.di.instance
 
 val domainModule = DI.Module("domain") {
     // device
-    bindSingleton { AddingDevice(instance(), instance(), instance()) }
-    bindSingleton { AttachingTool(instance(), instance(), instance()) }
-    bindSingleton { ChangingDevice(instance(), instance()) }
-    bindSingleton { DeletingDevice(instance(), instance()) }
-    bindSingleton { DetachingTool(instance(), instance()) }
+    bindSingleton { AddingDevice(instance(), instance(), instance(), instance()) }
+    bindSingleton { AttachingTool(instance(), instance(), instance(), instance()) }
+    bindSingleton { ChangingDevice(instance(), instance(), instance()) }
+    bindSingleton { DeletingDevice(instance(), instance(), instance()) }
+    bindSingleton { DetachingTool(instance(), instance(), instance()) }
     bindSingleton { DeviceDomainEventHandler(instance(), instance(), instance()) }
     bindSingleton { GettingConfiguration(instance(), instance(), instance()) }
     bindSingleton { GettingDevice(instance(), instance()) }

@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.some
 import assertk.assertThat
@@ -14,6 +15,7 @@ import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -28,6 +30,9 @@ internal class AddingDeviceTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
 
@@ -41,7 +46,7 @@ internal class AddingDeviceTest {
         this.logger = logger
         this.deviceRepository = deviceRepository
 
-        testee = AddingDevice({ logger }, deviceRepository, { deviceId })
+        testee = AddingDevice({ logger }, deviceRepository, { deviceId }, fixedClock)
     }
 
     @Test
@@ -56,6 +61,7 @@ internal class AddingDeviceTest {
         val expectedSourcingEvent = DeviceCreated(
             deviceId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             backgroundUrl,
@@ -95,6 +101,7 @@ internal class AddingDeviceTest {
         val event = DeviceCreated(
             deviceId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             backgroundUrl,

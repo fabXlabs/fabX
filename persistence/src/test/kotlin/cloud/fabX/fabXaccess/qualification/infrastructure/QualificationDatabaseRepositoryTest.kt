@@ -1,6 +1,5 @@
 package cloud.fabX.fabXaccess.qualification.infrastructure
 
-import FixedClock
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
@@ -37,8 +36,8 @@ internal class QualificationDatabaseRepositoryTest {
     private val actorId = UserIdFixture.static(42)
     private val correlationId = CorrelationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
-    private val fixedClock = FixedClock(fixedInstant)
 
+    // TODO dynamically start postgres instance via Testcontainers
     private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
         bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
         bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }

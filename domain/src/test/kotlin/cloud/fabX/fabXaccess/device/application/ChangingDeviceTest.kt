@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -18,6 +19,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -32,6 +34,9 @@ internal class ChangingDeviceTest {
 
     private val deviceId = DeviceIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
 
@@ -45,7 +50,7 @@ internal class ChangingDeviceTest {
         this.logger = logger
         this.deviceRepository = deviceRepository
 
-        testee = ChangingDevice({ logger }, deviceRepository)
+        testee = ChangingDevice({ logger }, deviceRepository, fixedClock)
     }
 
     @Test
@@ -61,6 +66,7 @@ internal class ChangingDeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             newName,
             newBackground,
@@ -120,6 +126,7 @@ internal class ChangingDeviceTest {
             deviceId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

@@ -12,13 +12,15 @@ import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service for detaching a tool from a device.
  */
 class DetachingTool(
     loggerFactory: LoggerFactory,
-    private val deviceRepository: DeviceRepository
+    private val deviceRepository: DeviceRepository,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -28,14 +30,14 @@ class DetachingTool(
         deviceId: DeviceId,
         pin: Int
     ): Option<Error> =
-        detachTool(deviceId) { it.detachTool(actor, correlationId, pin) }
+        detachTool(deviceId) { it.detachTool(actor, clock, correlationId, pin) }
 
     internal fun detachTool(
         domainEvent: DomainEvent,
         deviceId: DeviceId,
         pin: Int
     ): Option<Error> =
-        detachTool(deviceId) { it.detachTool(domainEvent, pin) }
+        detachTool(deviceId) { it.detachTool(domainEvent, clock, pin) }
 
     private fun detachTool(
         deviceId: DeviceId,

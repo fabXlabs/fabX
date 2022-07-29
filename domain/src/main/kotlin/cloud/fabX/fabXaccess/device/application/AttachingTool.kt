@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service for attaching a tool to a device.
@@ -17,7 +18,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class AttachingTool(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
-    private val gettingToolById: GettingToolById
+    private val gettingToolById: GettingToolById,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -34,6 +36,7 @@ class AttachingTool(
             .flatMap {
                 it.attachTool(
                     actor,
+                    clock,
                     correlationId,
                     pin,
                     toolId,

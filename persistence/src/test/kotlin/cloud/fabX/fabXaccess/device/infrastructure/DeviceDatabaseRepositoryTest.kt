@@ -4,6 +4,7 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.DeviceId
@@ -14,7 +15,6 @@ import cloud.fabX.fabXaccess.device.model.DeviceDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceDetailsChanged
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
-import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
@@ -26,7 +26,7 @@ import isNone
 import isRight
 import isSome
 import java.util.stream.Stream
-import org.junit.jupiter.api.BeforeEach
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -35,6 +35,9 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
+import org.kodein.di.instance
 
 internal class DeviceDatabaseRepositoryTest {
     companion object {
@@ -46,39 +49,48 @@ internal class DeviceDatabaseRepositoryTest {
 
         private val actorId = UserIdFixture.static(1234)
         private val correlationId = CorrelationIdFixture.arbitrary()
+
+        private val fixedInstant = Clock.System.now()
     }
+
+    // TODO dynamically start postgres instance via Testcontainers
+    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
+        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+        bindInstance(tag = "dbuser") { "postgres" }
+        bindInstance(tag = "dbpassword") { "postgrespassword" }
+    }, block)
 
     @Test
-    fun `given empty repository when getting device by id then returns device not found error`() {
-        // given
-        val repository = DeviceDatabaseRepository()
+    fun `given empty repository when getting device by id then returns device not found error`() =
+        withConfiguredTestApp { di ->
+            // given
+            val repository: DeviceDatabaseRepository by di.instance()
 
-        // when
-        val result = repository.getById(deviceId)
+            // when
+            val result = repository.getById(deviceId)
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(
-                Error.DeviceNotFound(
-                    "Device with id DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) not found.",
-                    deviceId
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.DeviceNotFound(
+                        "Device with id DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) not found.",
+                        deviceId
+                    )
                 )
-            )
-    }
+        }
 
     @Nested
     internal inner class GivenEventsForDeviceStoredInRepository {
 
-        private lateinit var repository: DeviceRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = DeviceDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: DeviceDatabaseRepository by di.instance()
 
             val event1 = DeviceCreated(
                 deviceId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device",
                 background = "https://example.com/1.bmp",
@@ -92,18 +104,21 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.ChangeToValueString("https://example.com/2.bmp"),
                 backupBackendUrl = ChangeableValue.LeaveAsIs
             )
             repository.store(event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting device by id then returns device from events`() {
+        fun `when getting device by id then returns device from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: DeviceDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(deviceId)
@@ -121,14 +136,15 @@ internal class DeviceDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() {
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: DeviceDatabaseRepository by di.instance()
 
             val event = DeviceDetailsChanged(
                 deviceId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
@@ -148,37 +164,39 @@ internal class DeviceDatabaseRepositoryTest {
 
         @ParameterizedTest
         @ValueSource(longs = [-1, 0, 1, 2, 4, 1234])
-        fun `when storing then not accepts version numbers other than increased by one`(version: Long) {
-            // given
-            val repository = this.repository
+        fun `when storing then not accepts version numbers other than increased by one`(version: Long) =
+            withSetupTestApp { di ->
+                // given
+                val repository: DeviceDatabaseRepository by di.instance()
 
-            val event = DeviceDetailsChanged(
-                deviceId,
-                version,
-                actorId,
-                correlationId,
-                name = ChangeableValue.LeaveAsIs,
-                background = ChangeableValue.LeaveAsIs,
-                backupBackendUrl = ChangeableValue.LeaveAsIs
-            )
-
-            // when
-            val result = repository.store(event)
-
-            // then
-            assertThat(result)
-                .isSome()
-                .isEqualTo(
-                    Error.VersionConflict(
-                        "Previous version of device DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) is 2, " +
-                                "desired new version is $version."
-                    )
+                val event = DeviceDetailsChanged(
+                    deviceId,
+                    version,
+                    actorId,
+                    fixedInstant,
+                    correlationId,
+                    name = ChangeableValue.LeaveAsIs,
+                    background = ChangeableValue.LeaveAsIs,
+                    backupBackendUrl = ChangeableValue.LeaveAsIs
                 )
 
-            assertThat(repository.getById(deviceId))
-                .isRight()
-                .transform { it.aggregateVersion }.isEqualTo(2)
-        }
+                // when
+                val result = repository.store(event)
+
+                // then
+                assertThat(result)
+                    .isSome()
+                    .isEqualTo(
+                        Error.VersionConflict(
+                            "Previous version of device DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) is 2, " +
+                                    "desired new version is $version."
+                        )
+                    )
+
+                assertThat(repository.getById(deviceId))
+                    .isRight()
+                    .transform { it.aggregateVersion }.isEqualTo(2)
+            }
     }
 
     @Nested
@@ -187,15 +205,13 @@ internal class DeviceDatabaseRepositoryTest {
         private val deviceId2 = DeviceIdFixture.static(4343)
         private val deviceId3 = DeviceIdFixture.static(4444)
 
-        private lateinit var repository: DeviceRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = DeviceDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: DeviceDatabaseRepository by di.instance()
 
             val device1event1 = DeviceCreated(
                 deviceId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
@@ -209,6 +225,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.ChangeToValueString("https://example.com/2.bmp"),
@@ -219,6 +236,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device3event1 = DeviceCreated(
                 deviceId3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device3",
                 background = "https://background.com/device3.bmp",
@@ -231,6 +249,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device2event1 = DeviceCreated(
                 deviceId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
@@ -244,6 +263,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.ChangeToValueString("https://example.com/3.bmp"),
@@ -255,6 +275,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId3,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
             )
             repository.store(device3event2)
@@ -263,18 +284,21 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 background = ChangeableValue.LeaveAsIs,
                 backupBackendUrl = ChangeableValue.ChangeToValueString("https://backup42.example.com"),
             )
             repository.store(device2event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting all devices then returns all devices from events`() {
+        fun `when getting all devices then returns all devices from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: DeviceDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()
@@ -308,15 +332,13 @@ internal class DeviceDatabaseRepositoryTest {
 
         private val deviceId2 = DeviceIdFixture.static(4242)
 
-        private lateinit var repository: DeviceRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = DeviceDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: DeviceDatabaseRepository by di.instance()
 
             val device1Created = DeviceCreated(
                 deviceId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
@@ -329,6 +351,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device2Created = DeviceCreated(
                 deviceId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
@@ -337,12 +360,14 @@ internal class DeviceDatabaseRepositoryTest {
                 secret = "supersecret2"
             )
             repository.store(device2Created)
+
+            block(di)
         }
 
         @Test
-        fun `when getting by known identity then returns device`() {
+        fun `when getting by known identity then returns device`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingDeviceByIdentity
+            val repository: GettingDeviceByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -356,9 +381,9 @@ internal class DeviceDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown identity then returns error`() {
+        fun `when getting by unknown identity then returns error`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingDeviceByIdentity
+            val repository: GettingDeviceByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -377,16 +402,13 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDevicesWithAttachedToolsStoredInRepository {
 
-
-        private lateinit var repository: DeviceDatabaseRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = DeviceDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: DeviceDatabaseRepository by di.instance()
 
             val device1Created = DeviceCreated(
                 deviceId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device1",
                 background = "https://example.com/1.bmp",
@@ -400,6 +422,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 1,
                 toolId1
@@ -410,6 +433,7 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 2,
                 toolId2
@@ -419,6 +443,7 @@ internal class DeviceDatabaseRepositoryTest {
             val device2Created = DeviceCreated(
                 deviceId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "device2",
                 background = "https://background.com/device2.bmp",
@@ -432,11 +457,14 @@ internal class DeviceDatabaseRepositoryTest {
                 deviceId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 3,
                 toolId2
             )
             repository.store(device2Tool2Attached)
+
+            block(di)
         }
 
         @ParameterizedTest
@@ -444,9 +472,9 @@ internal class DeviceDatabaseRepositoryTest {
         fun `when getting by tool then returns expected devices`(
             toolId: ToolId,
             expectedDeviceIds: Set<DeviceId>
-        ) {
+        ) = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingDevicesByAttachedTool
+            val repository: GettingDevicesByAttachedTool by di.instance()
 
             // when
             val result = repository.getByAttachedTool(toolId)

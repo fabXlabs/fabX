@@ -8,13 +8,15 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to handle deleting a device.
  */
 class DeletingDevice(
     loggerFactory: LoggerFactory,
-    private val deviceRepository: DeviceRepository
+    private val deviceRepository: DeviceRepository,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -27,7 +29,7 @@ class DeletingDevice(
 
         return deviceRepository.getById(deviceId)
             .map {
-                it.delete(actor, correlationId)
+                it.delete(actor, clock, correlationId)
             }
             .flatMap {
                 deviceRepository.store(it)

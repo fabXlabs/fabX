@@ -7,6 +7,7 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.toOption
+import cloud.fabX.fabXaccess.common.jsonb
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
@@ -16,27 +17,63 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
+import kotlinx.datetime.toJavaInstant
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
-class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
-    private val events = mutableListOf<DeviceSourcingEvent>()
+object DeviceSourcingEventDAO : Table("DeviceSourcingEvent") {
+    val aggregateRootId = uuid("aggregate_root_id")
+    val aggregateVersion = long("aggregate_version")
+    val actorId = uuid("actor_id")
+    val correlationId = uuid("correlation_id")
+    val timestamp = timestamp("timestamp")
+    val data = jsonb("data", DeviceSourcingEvent.serializer())
+}
 
+class DeviceDatabaseRepository(
+    private val db: Database
+) : DeviceRepository, GettingDeviceByIdentity,
+    GettingDevicesByAttachedTool {
     override fun getAll(): Set<Device> {
-        return events
-            .sortedBy { it.aggregateVersion }
-            .groupBy { it.aggregateRootId }
-            .map { Device.fromSourcingEvents(it.value) }
-            .filter { it.isDefined() }
-            .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
-            .toSet()
+        return transaction {
+            DeviceSourcingEventDAO
+                .selectAll()
+                .orderBy(DeviceSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
+                .asSequence()
+                .map {
+                    it[DeviceSourcingEventDAO.data]
+                }
+                .groupBy { it.aggregateRootId }
+                .map { Device.fromSourcingEvents(it.value) }
+                .filter { it.isDefined() }
+                .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
+                .toSet()
+        }
     }
 
     override fun getById(id: DeviceId): Either<Error, Device> {
-        val e = events
-            .filter { it.aggregateRootId == id }
-            .sortedBy { it.aggregateVersion }
+        val events = transaction {
+            DeviceSourcingEventDAO
+                .select {
+                    DeviceSourcingEventDAO.aggregateRootId.eq(id.value)
+                }
+                .orderBy(DeviceSourcingEventDAO.aggregateVersion)
+                .map {
+                    it[DeviceSourcingEventDAO.data]
+                }
+        }
 
-        return if (e.isNotEmpty()) {
-            Device.fromSourcingEvents(e)
+        return if (events.isNotEmpty()) {
+            Device.fromSourcingEvents(events)
                 .toEither {
                     Error.DeviceNotFound(
                         "Device with id $id not found.",
@@ -52,27 +89,60 @@ class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, Gett
     }
 
     override fun store(event: DeviceSourcingEvent): Option<Error> {
-        val previousVersion = getVersionById(event.aggregateRootId)
+        return transaction {
+            val previousVersion = getVersionById(event.aggregateRootId)
 
-        return if (previousVersion != null
-            && event.aggregateVersion != previousVersion + 1
-        ) {
-            Some(
-                Error.VersionConflict(
-                    "Previous version of device ${event.aggregateRootId} is $previousVersion, " +
-                            "desired new version is ${event.aggregateVersion}."
+            if (previousVersion != null
+                && event.aggregateVersion != previousVersion + 1
+            ) {
+                Some(
+                    Error.VersionConflict(
+                        "Previous version of device ${event.aggregateRootId} is $previousVersion, " +
+                                "desired new version is ${event.aggregateVersion}."
+                    )
                 )
-            )
-        } else {
-            events.add(event)
-            None
+            } else {
+                DeviceSourcingEventDAO.insert {
+                    it[aggregateRootId] = event.aggregateRootId.value
+                    it[aggregateVersion] = event.aggregateVersion
+                    it[actorId] = event.actorId.value
+                    it[correlationId] = event.correlationId.id
+                    it[timestamp] = event.timestamp.toJavaInstant()
+                    it[data] = event
+                }
+
+                None
+            }
         }
     }
 
-    private fun getVersionById(id: DeviceId): Long? {
-        return events
-            .filter { it.aggregateRootId == id }
-            .maxOfOrNull { it.aggregateVersion }
+    fun getSourcingEvents(): List<DeviceSourcingEvent> {
+        return transaction {
+            DeviceSourcingEventDAO.selectAll()
+                // TODO order by something different (timestamp is informative, nothing to depend on)
+                .orderBy(DeviceSourcingEventDAO.timestamp, SortOrder.ASC)
+                .map {
+                    it[DeviceSourcingEventDAO.data]
+                }
+        }
+    }
+
+    @Suppress("unused") // supposed to be executed within Transaction
+    private fun Transaction.getVersionById(id: DeviceId): Long? {
+        return DeviceSourcingEventDAO
+            .slice(DeviceSourcingEventDAO.aggregateVersion)
+            .select {
+                DeviceSourcingEventDAO.aggregateRootId.eq(id.value)
+            }
+            .orderBy(DeviceSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
+            .limit(1)
+            .map { it[DeviceSourcingEventDAO.aggregateVersion] }
+            .maxOfOrNull { it }
+    }
+
+    private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
+        addLogger(StdOutSqlLogger)
+        statement()
     }
 
     override fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
@@ -81,9 +151,8 @@ class DeviceDatabaseRepository : DeviceRepository, GettingDeviceByIdentity, Gett
             .toOption()
             .toEither { Error.DeviceNotFoundByIdentity("Not able to find device for given identity.") }
 
-    override fun getByAttachedTool(toolId: ToolId): Set<Device> {
-        return getAll()
+    override fun getByAttachedTool(toolId: ToolId): Set<Device> =
+        getAll()
             .filter { it.hasAttachedTool(toolId) }
             .toSet()
-    }
 }
