@@ -37,13 +37,13 @@ sealed class ChangeableValue<out T> {
     data class ChangeToValueOptionalString(override val value: String?) : ChangeToValue<String?>()
 
     @Serializable
+    data class ChangeToValueBoolean(override val value: Boolean) : ChangeToValue<Boolean>()
+
+    @Serializable
     data class ChangeToValueToolType(override val value: ToolType) : ChangeToValue<ToolType>()
 
     @Serializable
     data class ChangeToValueIdleState(override val value: IdleState) : ChangeToValue<IdleState>()
-
-    @Serializable
-    data class ChangeToValueBoolean(override val value: Boolean) : ChangeToValue<Boolean>()
 
     @Serializable
     data class ChangeToValueQualificationSet(override val value: Set<QualificationId>) :

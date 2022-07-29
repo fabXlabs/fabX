@@ -34,7 +34,7 @@ class DeletingQualification(
 
         return qualificationRepository.getById(qualificationId)
             .flatMap {
-                it.delete(actor, correlationId, gettingToolsByQualificationId)
+                it.delete(actor, clock, correlationId, gettingToolsByQualificationId)
             }
             .flatMap {
                 qualificationRepository.store(it)

@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.some
 import assertk.assertThat
@@ -13,6 +14,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -27,6 +29,9 @@ internal class AddingQualificationTest {
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var qualificationRepository: QualificationRepository
 
@@ -40,7 +45,7 @@ internal class AddingQualificationTest {
         this.logger = logger
         this.qualificationRepository = qualificationRepository
 
-        testee = AddingQualification({ logger }, qualificationRepository, { qualificationId })
+        testee = AddingQualification({ logger }, qualificationRepository, { qualificationId }, fixedClock)
     }
 
     @Test
@@ -54,6 +59,7 @@ internal class AddingQualificationTest {
         val expectedSourcingEvent = QualificationCreated(
             qualificationId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             description,
@@ -91,6 +97,7 @@ internal class AddingQualificationTest {
         val event = QualificationCreated(
             qualificationId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             description,

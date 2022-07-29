@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.common.model.QualificationIdFactory
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to add new qualifications.
@@ -16,7 +17,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class AddingQualification(
     loggerFactory: LoggerFactory,
     private val qualificationRepository: QualificationRepository,
-    private val qualificationIdFactory: QualificationIdFactory
+    private val qualificationIdFactory: QualificationIdFactory,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -33,6 +35,7 @@ class AddingQualification(
         val sourcingEvent = Qualification.addNew(
             qualificationIdFactory,
             actor,
+            clock,
             correlationId,
             name,
             description,

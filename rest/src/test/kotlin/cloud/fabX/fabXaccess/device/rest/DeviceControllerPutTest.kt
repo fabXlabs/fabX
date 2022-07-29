@@ -82,9 +82,9 @@ internal class DeviceControllerPutTest {
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(id),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("newName")),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newName")),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("https://backup.example.com/new"))
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("https://backup.example.com/new"))
             )
         ).thenReturn(None)
 

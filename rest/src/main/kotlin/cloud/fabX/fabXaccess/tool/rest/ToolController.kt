@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.tool.rest
 
 import arrow.core.flatMap
+import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
@@ -98,13 +99,15 @@ class ToolController(
                                             newCorrelationId(),
                                             id,
                                             it.name.toDomain(),
-                                            it.type.toDomain { it.toDomainModel() },
+                                            it.type.toDomain { ChangeableValue.ChangeToValueToolType(it.toDomainModel()) },
                                             it.time.toDomain(),
-                                            it.idleState.toDomain { it.toDomainModel() },
+                                            it.idleState.toDomain { ChangeableValue.ChangeToValueIdleState(it.toDomainModel()) },
                                             it.enabled.toDomain(),
                                             it.wikiLink.toDomain(),
                                             it.requiredQualifications.toDomain {
-                                                it.map(QualificationId::fromString).toSet()
+                                                ChangeableValue.ChangeToValueQualificationSet(
+                                                    it.map(QualificationId::fromString).toSet()
+                                                )
                                             }
                                         )
                                             .toEither { }

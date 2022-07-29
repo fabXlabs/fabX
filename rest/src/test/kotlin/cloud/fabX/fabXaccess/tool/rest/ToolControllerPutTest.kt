@@ -90,14 +90,14 @@ internal class ToolControllerPutTest {
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(id),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("newName")),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(cloud.fabX.fabXaccess.tool.model.ToolType.UNLOCK)),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newName")),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueToolType(cloud.fabX.fabXaccess.tool.model.ToolType.UNLOCK)),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(cloud.fabX.fabXaccess.tool.model.IdleState.IDLE_HIGH)),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(false)),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueIdleState(cloud.fabX.fabXaccess.tool.model.IdleState.IDLE_HIGH)),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueBoolean(false)),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
                 eq(
-                    cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(
+                    cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueQualificationSet(
                         setOf(qualificationId1, qualificationId2)
                     )
                 )

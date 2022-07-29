@@ -82,15 +82,15 @@ internal class UserControllerChangeLockStateTest {
                     ChangeableValue(true),
                     ChangeableValue("some notes")
                 ),
-                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(true),
-                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("some notes")
+                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueBoolean(true),
+                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("some notes")
             ),
             Arguments.of(
                 UserLockDetails(
                     ChangeableValue(false),
                     null
                 ),
-                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(false),
+                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueBoolean(false),
                 cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs
             ),
             Arguments.of(
@@ -98,8 +98,8 @@ internal class UserControllerChangeLockStateTest {
                     ChangeableValue(false),
                     ChangeableValue(null)
                 ),
-                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(false),
-                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(null)
+                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueBoolean(false),
+                cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueOptionalString(null)
             )
         )
     }

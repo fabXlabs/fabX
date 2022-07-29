@@ -6,7 +6,6 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -16,8 +15,8 @@ sealed class QualificationSourcingEvent : SourcingEvent {
     abstract override val aggregateRootId: QualificationId
     abstract override val aggregateVersion: Long
     abstract override val actorId: ActorId
-    abstract override val correlationId: CorrelationId
     abstract override val timestamp: Instant
+    abstract override val correlationId: CorrelationId
 
     abstract fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification>
 
@@ -32,12 +31,12 @@ sealed class QualificationSourcingEvent : SourcingEvent {
 data class QualificationCreated(
     override val aggregateRootId: QualificationId,
     override val actorId: ActorId,
+    override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val name: String,
     val description: String,
     val colour: String,
-    val orderNr: Int,
-    override val timestamp: Instant = Clock.System.now()
+    val orderNr: Int
 ) : QualificationSourcingEvent() {
     override val aggregateVersion: Long = 1
 
@@ -50,12 +49,12 @@ data class QualificationDetailsChanged(
     override val aggregateRootId: QualificationId,
     override val aggregateVersion: Long,
     override val actorId: ActorId,
+    override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val name: ChangeableValue<String>,
     val description: ChangeableValue<String>,
     val colour: ChangeableValue<String>,
-    val orderNr: ChangeableValue<Int>,
-    override val timestamp: Instant = Clock.System.now()
+    val orderNr: ChangeableValue<Int>
 ) : QualificationSourcingEvent() {
 
     override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =
@@ -67,8 +66,8 @@ data class QualificationDeleted(
     override val aggregateRootId: QualificationId,
     override val aggregateVersion: Long,
     override val actorId: ActorId,
-    override val correlationId: CorrelationId,
-    override val timestamp: Instant = Clock.System.now(),
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId
 ) : QualificationSourcingEvent() {
 
     override fun processBy(eventHandler: EventHandler, qualification: Option<Qualification>): Option<Qualification> =

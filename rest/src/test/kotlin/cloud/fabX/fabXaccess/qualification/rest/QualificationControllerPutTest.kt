@@ -83,10 +83,10 @@ internal class QualificationControllerPutTest {
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(id),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("newName")),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newName")),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("#aabbcc")),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue(42))
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("#aabbcc")),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueInt(42))
             )
         ).thenReturn(None)
 

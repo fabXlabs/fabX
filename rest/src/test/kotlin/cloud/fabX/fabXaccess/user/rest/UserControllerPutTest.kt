@@ -82,9 +82,9 @@ internal class UserControllerPutTest {
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(id),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("newFirstName")),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newFirstName")),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("newWikiName"))
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newWikiName"))
             )
         ).thenReturn(None)
 
@@ -199,7 +199,7 @@ internal class UserControllerPutTest {
                 any(),
                 eq(id),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue("newLastName")),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newLastName")),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs)
             )
         ).thenReturn(error.some())

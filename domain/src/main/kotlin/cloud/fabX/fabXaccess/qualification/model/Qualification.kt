@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 data class Qualification internal constructor(
     override val id: QualificationId,
@@ -29,15 +30,17 @@ data class Qualification internal constructor(
         fun addNew(
             qualificationIdFactory: QualificationIdFactory,
             actor: Admin,
+            clock: Clock,
             correlationId: CorrelationId,
             name: String,
             description: String,
             colour: String,
-            orderNr: Int
+            orderNr: Int,
         ): QualificationSourcingEvent {
             return QualificationCreated(
                 qualificationIdFactory.invoke(),
                 actor.id,
+                clock.now(),
                 correlationId,
                 name,
                 description,
@@ -70,6 +73,7 @@ data class Qualification internal constructor(
 
     fun changeDetails(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         name: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         description: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
@@ -80,6 +84,7 @@ data class Qualification internal constructor(
             id,
             aggregateVersion + 1,
             actor.id,
+            clock.now(),
             correlationId,
             name,
             description,
@@ -90,6 +95,7 @@ data class Qualification internal constructor(
 
     fun delete(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         gettingToolsByQualificationId: GettingToolsByQualificationId
     ): Either<Error, QualificationSourcingEvent> {
@@ -99,6 +105,7 @@ data class Qualification internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId
                 )
             }

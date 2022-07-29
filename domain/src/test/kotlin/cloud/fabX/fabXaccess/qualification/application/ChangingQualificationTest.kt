@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -18,6 +19,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -34,6 +36,9 @@ internal class ChangingQualificationTest {
 
     private val qualificationId = QualificationIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var qualificationRepository: QualificationRepository
 
@@ -47,7 +52,7 @@ internal class ChangingQualificationTest {
         this.logger = logger
         this.qualificationRepository = qualificationRepository
 
-        testee = ChangingQualification({ logger }, qualificationRepository)
+        testee = ChangingQualification({ logger }, qualificationRepository, fixedClock)
     }
 
     @Test
@@ -64,6 +69,7 @@ internal class ChangingQualificationTest {
             qualificationId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             newName,
             newDescription,
@@ -132,6 +138,7 @@ internal class ChangingQualificationTest {
             qualificationId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

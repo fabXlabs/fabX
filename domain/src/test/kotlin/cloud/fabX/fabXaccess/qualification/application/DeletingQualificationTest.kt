@@ -38,6 +38,7 @@ internal class DeletingQualificationTest {
 
     private val qualificationId = QualificationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var logger: Logger
     private lateinit var domainEventPublisher: DomainEventPublisher
@@ -60,7 +61,7 @@ internal class DeletingQualificationTest {
 
         testee = DeletingQualification(
             { logger },
-            FixedClock(fixedInstant),
+            fixedClock,
             domainEventPublisher,
             qualificationRepository,
             gettingToolsByQualificationId
@@ -76,6 +77,7 @@ internal class DeletingQualificationTest {
             qualificationId,
             124,
             adminActor.id,
+            fixedInstant,
             correlationId
         )
 
@@ -137,6 +139,7 @@ internal class DeletingQualificationTest {
             qualificationId,
             124,
             adminActor.id,
+            fixedInstant,
             correlationId
         )
 

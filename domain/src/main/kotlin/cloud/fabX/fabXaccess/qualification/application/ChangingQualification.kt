@@ -9,13 +9,15 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to handle changing qualification properties.
  */
 class ChangingQualification(
     loggerFactory: LoggerFactory,
-    private val qualificationRepository: QualificationRepository
+    private val qualificationRepository: QualificationRepository,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -32,7 +34,7 @@ class ChangingQualification(
 
         return qualificationRepository.getById(qualificationId)
             .map {
-                it.changeDetails(actor, correlationId, name, description, colour, orderNr)
+                it.changeDetails(actor, clock, correlationId, name, description, colour, orderNr)
             }
             .flatMap {
                 qualificationRepository.store(it)
