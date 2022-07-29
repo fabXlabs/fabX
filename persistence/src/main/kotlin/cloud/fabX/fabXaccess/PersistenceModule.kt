@@ -13,7 +13,7 @@ val persistenceModule = DI.Module("persistence") {
     bindSingleton { DeviceDatabaseRepository(instance()) }
     bindSingleton { QualificationDatabaseRepository(instance()) }
     bindSingleton { ToolDatabaseRepository(instance()) }
-    bindSingleton { UserDatabaseRepository() }
+    bindSingleton { UserDatabaseRepository(instance()) }
     bindSingleton {
         Database.connect(
             instance(tag = "dburl"),

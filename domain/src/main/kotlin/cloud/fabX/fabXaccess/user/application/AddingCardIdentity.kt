@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.CardIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to add a [CardIdentity] to a user.
@@ -18,7 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 class AddingCardIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val gettingUserByCardId: GettingUserByCardId
+    private val gettingUserByCardId: GettingUserByCardId,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -35,6 +37,7 @@ class AddingCardIdentity(
             .flatMap {
                 it.addCardIdentity(
                     actor,
+                    clock,
                     correlationId,
                     cardId,
                     cardSecret,

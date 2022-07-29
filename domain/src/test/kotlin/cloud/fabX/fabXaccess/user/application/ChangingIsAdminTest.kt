@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -17,6 +18,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -34,6 +36,9 @@ internal class ChangingIsAdminTest {
 
     private val userId = UserIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
 
@@ -47,7 +52,7 @@ internal class ChangingIsAdminTest {
         this.logger = logger
         this.userRepository = userRepository
 
-        testee = ChangingIsAdmin({ logger }, userRepository)
+        testee = ChangingIsAdmin({ logger }, userRepository, fixedClock)
     }
 
     @ParameterizedTest
@@ -62,6 +67,7 @@ internal class ChangingIsAdminTest {
             userId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             newIsAdmin
         )
@@ -147,6 +153,7 @@ internal class ChangingIsAdminTest {
             userId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             newIsAdmin
         )

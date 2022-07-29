@@ -9,13 +9,15 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to handle deleting a user.
  */
 class DeletingUser(
     loggerFactory: LoggerFactory,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -28,7 +30,7 @@ class DeletingUser(
 
         return userRepository.getById(userId)
             .map {
-                it.delete(actor, correlationId)
+                it.delete(actor, clock, correlationId)
             }
             .flatMap {
                 userRepository.store(it)

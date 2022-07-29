@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to add a member [Qualification] to a user.
@@ -19,7 +20,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 class AddingMemberQualification(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val gettingQualificationById: GettingQualificationById
+    private val gettingQualificationById: GettingQualificationById,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -35,6 +37,7 @@ class AddingMemberQualification(
             .flatMap {
                 it.addMemberQualification(
                     actor,
+                    clock,
                     correlationId,
                     qualificationId,
                     gettingQualificationById

@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
+import kotlinx.datetime.Clock
 
 /**
  * Service to add a [UsernamePasswordIdentity] to a user.
@@ -18,7 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 class AddingUsernamePasswordIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val gettingUserByUsername: GettingUserByUsername
+    private val gettingUserByUsername: GettingUserByUsername,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -35,6 +37,7 @@ class AddingUsernamePasswordIdentity(
             .flatMap {
                 it.addUsernamePasswordIdentity(
                     actor,
+                    clock,
                     correlationId,
                     username,
                     hash,

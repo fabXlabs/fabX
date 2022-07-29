@@ -4,6 +4,7 @@ import cloud.fabX.fabXaccess.device.infrastructure.DeviceSourcingEventDAO
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
+import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -31,10 +32,12 @@ internal fun withTestApp(
         SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
         SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
         SchemaUtils.createMissingTablesAndColumns(ToolSourcingEventDAO)
+        SchemaUtils.createMissingTablesAndColumns(UserSourcingEventDAO)
 
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()
         ToolSourcingEventDAO.deleteAll()
+        UserSourcingEventDAO.deleteAll()
     }
 
     block(testApp)

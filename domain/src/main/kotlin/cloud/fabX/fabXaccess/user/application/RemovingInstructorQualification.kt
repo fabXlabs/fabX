@@ -15,13 +15,15 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
+import kotlinx.datetime.Clock
 
 /**
  * Service to remove an instructor [Qualification] from a user.
  */
 class RemovingInstructorQualification(
     loggerFactory: LoggerFactory,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -34,6 +36,7 @@ class RemovingInstructorQualification(
         return removeInstructorQualification(userId) {
             it.removeInstructorQualification(
                 actor,
+                clock,
                 correlationId,
                 qualificationId
             )
@@ -48,6 +51,7 @@ class RemovingInstructorQualification(
         return removeInstructorQualification(userId) {
             it.removeInstructorQualification(
                 domainEvent,
+                clock,
                 qualificationId
             )
         }

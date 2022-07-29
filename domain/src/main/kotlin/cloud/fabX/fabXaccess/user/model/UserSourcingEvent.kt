@@ -45,6 +45,7 @@ sealed class UserSourcingEvent : SourcingEvent {
     }
 }
 
+@Serializable
 data class UserCreated(
     override val aggregateRootId: UserId = newUserId(),
     override val actorId: ActorId,
@@ -60,6 +61,7 @@ data class UserCreated(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class UserPersonalInformationChanged(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -75,6 +77,7 @@ data class UserPersonalInformationChanged(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class UserLockStateChanged(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -89,6 +92,7 @@ data class UserLockStateChanged(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class UsernamePasswordIdentityAdded(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -103,6 +107,7 @@ data class UsernamePasswordIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class UsernamePasswordIdentityRemoved(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -116,6 +121,7 @@ data class UsernamePasswordIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class CardIdentityAdded(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -130,6 +136,7 @@ data class CardIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class CardIdentityRemoved(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -143,6 +150,7 @@ data class CardIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class PhoneNrIdentityAdded(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -156,6 +164,7 @@ data class PhoneNrIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class PhoneNrIdentityRemoved(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -169,6 +178,7 @@ data class PhoneNrIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class MemberQualificationAdded(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -182,6 +192,7 @@ data class MemberQualificationAdded(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class MemberQualificationRemoved(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -195,6 +206,7 @@ data class MemberQualificationRemoved(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class InstructorQualificationAdded(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -208,6 +220,7 @@ data class InstructorQualificationAdded(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class InstructorQualificationRemoved(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -221,6 +234,7 @@ data class InstructorQualificationRemoved(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class IsAdminChanged(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,
@@ -234,6 +248,7 @@ data class IsAdminChanged(
         eventHandler.handle(this, user)
 }
 
+@Serializable
 data class UserDeleted(
     override val aggregateRootId: UserId,
     override val aggregateVersion: Long,

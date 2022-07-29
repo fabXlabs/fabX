@@ -3,8 +3,12 @@ package cloud.fabX.fabXaccess.user.infrastructure
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.each
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import assertk.assertions.isTrue
+import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
@@ -25,54 +29,65 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
-import cloud.fabX.fabXaccess.user.model.UserRepository
+import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isLeft
 import isNone
 import isRight
 import isSome
-import org.junit.jupiter.api.BeforeEach
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
+import org.kodein.di.instance
 
 internal class UserDatabaseRepositoryTest {
     private val userId = UserIdFixture.static(1234)
     private val actorId = UserIdFixture.static(1)
     private val correlationId = CorrelationIdFixture.arbitrary()
+    private val fixedInstant = Clock.System.now()
+
+    // TODO dynamically start postgres instance via Testcontainers
+    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
+        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+        bindInstance(tag = "dbuser") { "postgres" }
+        bindInstance(tag = "dbpassword") { "postgrespassword" }
+    }, block)
 
     @Test
-    fun `given empty repository when getting user by id then returns user not found error`() {
-        // given
-        val repository = UserDatabaseRepository()
+    fun `given empty repository when getting user by id then returns user not found error`() =
+        withConfiguredTestApp { di ->
+            // given
+            val repository: UserDatabaseRepository by di.instance()
 
-        // when
-        val result = repository.getById(userId)
+            // when
+            val result = repository.getById(userId)
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(
-                Error.UserNotFound(
-                    "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
-                    userId
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UserNotFound(
+                        "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                        userId
+                    )
                 )
-            )
-    }
+        }
 
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
 
-        private lateinit var repository: UserRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = UserDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: UserDatabaseRepository by di.instance()
 
             val event1 = UserCreated(
                 userId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first",
                 lastName = "last",
@@ -84,17 +99,20 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 locked = ChangeableValue.ChangeToValueBoolean(true),
                 notes = ChangeableValue.ChangeToValueString("some notes")
             )
             repository.store(event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting user by id then returns user from events`() {
+        fun `when getting user by id then returns user from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(userId)
@@ -114,14 +132,15 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() {
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: UserDatabaseRepository by di.instance()
 
             val event = UserLockStateChanged(
                 userId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 locked = ChangeableValue.ChangeToValueBoolean(false),
                 notes = ChangeableValue.ChangeToValueOptionalString(null)
@@ -142,14 +161,15 @@ internal class UserDatabaseRepositoryTest {
         @ValueSource(longs = [-1, 0, 2, 4, 42])
         fun `when storing then not accepts version numbers other than increased by one`(
             version: Long
-        ) {
+        ) = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: UserDatabaseRepository by di.instance()
 
             val event = UserLockStateChanged(
                 userId,
                 version,
                 actorId,
+                fixedInstant,
                 correlationId,
                 locked = ChangeableValue.ChangeToValueBoolean(false),
                 notes = ChangeableValue.ChangeToValueOptionalString(null)
@@ -180,15 +200,13 @@ internal class UserDatabaseRepositoryTest {
         private val userId2 = UserIdFixture.static(12345)
         private val userId3 = UserIdFixture.static(123456)
 
-        private lateinit var repository: UserRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = UserDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: UserDatabaseRepository by di.instance()
 
             val user1event1 = UserCreated(
                 userId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first1",
                 lastName = "last1",
@@ -200,6 +218,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 locked = ChangeableValue.ChangeToValueBoolean(true),
                 notes = ChangeableValue.ChangeToValueOptionalString("some notes")
@@ -209,6 +228,7 @@ internal class UserDatabaseRepositoryTest {
             val user2event1 = UserCreated(
                 userId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first2",
                 lastName = "last2",
@@ -220,6 +240,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = ChangeableValue.ChangeToValueString("first1v3"),
                 lastName = ChangeableValue.LeaveAsIs,
@@ -230,6 +251,7 @@ internal class UserDatabaseRepositoryTest {
             val user3event1 = UserCreated(
                 userId3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first3",
                 lastName = "last3",
@@ -241,6 +263,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = ChangeableValue.ChangeToValueString("first2v2"),
                 lastName = ChangeableValue.ChangeToValueString("last2v2"),
@@ -252,15 +275,18 @@ internal class UserDatabaseRepositoryTest {
                 userId3,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId
             )
             repository.store(user3event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting all users then returns all users from events`() {
+        fun `when getting all users then returns all users from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()
@@ -297,9 +323,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by known wiki name then returns user`() {
+        fun `when getting by known wiki name then returns user`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByWikiName
+            val repository: GettingUserByWikiName by di.instance()
 
             // when
             val result = repository.getByWikiName("wiki2v2")
@@ -311,9 +337,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown wiki name then returns error`() {
+        fun `when getting by unknown wiki name then returns error`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByWikiName
+            val repository: GettingUserByWikiName by di.instance()
 
             // when
             val result = repository.getByWikiName("unknownWikiName")
@@ -325,6 +351,23 @@ internal class UserDatabaseRepositoryTest {
                     Error.UserNotFoundByWikiName("Not able to find user for given wiki name.")
                 )
         }
+
+        @Test
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+            // given
+            val repository: UserDatabaseRepository by di.instance()
+
+            // when
+            val result = repository.getSourcingEvents()
+
+            // then
+            assertThat(result).all {
+                hasSize(7)
+                each {
+                    it.isInstanceOf(UserSourcingEvent::class)
+                }
+            }
+        }
     }
 
     @Nested
@@ -332,15 +375,13 @@ internal class UserDatabaseRepositoryTest {
 
         private val userId2 = UserIdFixture.static(12345)
 
-        private lateinit var repository: UserDatabaseRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = UserDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: UserDatabaseRepository by di.instance()
 
             val user1Created = UserCreated(
                 userId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first1",
                 lastName = "last1",
@@ -352,6 +393,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "username1",
                 "FyGrfqsvzCwU8UtVqZUI4MQ3pp3TTsOF6J//QLdSEoE="
@@ -362,6 +404,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "11223344556677",
                 "2312D5DFD79E5AA85BD0F43B565665BA3CEFAFF60689ACF8F49A7FADA0004756"
@@ -371,6 +414,7 @@ internal class UserDatabaseRepositoryTest {
             val user2Created = UserCreated(
                 userId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first2",
                 lastName = "last2",
@@ -382,6 +426,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "username2",
                 "Fp6cwyJURizWnWI2yWSsgg3FfrFErl/+vvkgdWsBdH8="
@@ -392,17 +437,20 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "AA11BB22CC33DD",
                 "F4B726CC27C2413227382ABF095D09B1A13B00FC6AD1B1B5D75C4A954628C807"
             )
             repository.store(user2CardIdentityAdded)
+
+            block(di)
         }
 
         @Test
-        fun `when getting by known identity then returns user`() {
+        fun `when getting by known identity then returns user`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByIdentity
+            val repository: GettingUserByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -416,9 +464,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown identity then returns error`() {
+        fun `when getting by unknown identity then returns error`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByIdentity
+            val repository: GettingUserByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -434,9 +482,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by known username then returns user`() {
+        fun `when getting by known username then returns user`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByUsername
+            val repository: GettingUserByUsername by di.instance()
 
             // when
             val result = repository.getByUsername("username1")
@@ -448,9 +496,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown username then returns error`() {
+        fun `when getting by unknown username then returns error`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByUsername
+            val repository: GettingUserByUsername by di.instance()
 
             // when
             val result = repository.getByUsername("unknownusername")
@@ -464,9 +512,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by known card id then returns user`() {
+        fun `when getting by known card id then returns user`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByCardId
+            val repository: GettingUserByCardId by di.instance()
 
             // when
             val result = repository.getByCardId("AA11BB22CC33DD")
@@ -478,9 +526,9 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown card id then returns error`() {
+        fun `when getting by unknown card id then returns error`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository as GettingUserByCardId
+            val repository: GettingUserByCardId by di.instance()
 
             // when
             val unknownCardId = "00000000000000"
@@ -505,15 +553,13 @@ internal class UserDatabaseRepositoryTest {
         private val qualificationId = QualificationIdFixture.static(456)
         private val qualificationId2 = QualificationIdFixture.static(678)
 
-        private lateinit var repository: UserDatabaseRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = UserDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: UserDatabaseRepository by di.instance()
 
             val user1Created = UserCreated(
                 userId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first1",
                 lastName = "last1",
@@ -525,6 +571,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 qualificationId
             )
@@ -535,6 +582,7 @@ internal class UserDatabaseRepositoryTest {
                 userId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 qualificationId2
             )
@@ -544,6 +592,7 @@ internal class UserDatabaseRepositoryTest {
             val user2Created = UserCreated(
                 userId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first2",
                 lastName = "last2",
@@ -555,6 +604,7 @@ internal class UserDatabaseRepositoryTest {
                 userId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 qualificationId
             )
@@ -563,6 +613,7 @@ internal class UserDatabaseRepositoryTest {
             val user3Created = UserCreated(
                 userId3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 firstName = "first3",
                 lastName = "last3",
@@ -574,38 +625,43 @@ internal class UserDatabaseRepositoryTest {
                 userId3,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 qualificationId
             )
             repository.store(user3MemberQualificationAdded)
+
+            block(di)
         }
 
         @Test
-        fun `when getting users by member qualification then returns users who have member qualification`() {
-            // given
-            val repository = this.repository as GettingUsersByMemberQualification
+        fun `when getting users by member qualification then returns users who have member qualification`() =
+            withSetupTestApp { di ->
+                // given
+                val repository: GettingUsersByMemberQualification by di.instance()
 
-            // when
-            val result = repository.getByMemberQualification(qualificationId)
+                // when
+                val result = repository.getByMemberQualification(qualificationId)
 
-            // then
-            assertThat(result)
-                .transform { it.map { user -> user.id } }
-                .containsExactlyInAnyOrder(userId, userId3)
-        }
+                // then
+                assertThat(result)
+                    .transform { it.map { user -> user.id } }
+                    .containsExactlyInAnyOrder(userId, userId3)
+            }
 
         @Test
-        fun `when getting users by instructor qualification then returns users who have instructor qualification`() {
-            // given
-            val repository = this.repository as GettingUsersByInstructorQualification
+        fun `when getting users by instructor qualification then returns users who have instructor qualification`() =
+            withSetupTestApp { di ->
+                // given
+                val repository: GettingUsersByInstructorQualification by di.instance()
 
-            // when
-            val result = repository.getByInstructorQualification(qualificationId2)
+                // when
+                val result = repository.getByInstructorQualification(qualificationId2)
 
-            // then
-            assertThat(result)
-                .transform { it.map { user -> user.id } }
-                .containsExactlyInAnyOrder(userId)
-        }
+                // then
+                assertThat(result)
+                    .transform { it.map { user -> user.id } }
+                    .containsExactlyInAnyOrder(userId)
+            }
     }
 }

@@ -15,13 +15,15 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
+import kotlinx.datetime.Clock
 
 /**
  * Service to remove a member [Qualification] from a user.
  */
 class RemovingMemberQualification(
     loggerFactory: LoggerFactory,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -31,14 +33,14 @@ class RemovingMemberQualification(
         userId: UserId,
         qualificationId: QualificationId
     ): Option<Error> =
-        removeMemberQualification(userId) { it.removeMemberQualification(actor, correlationId, qualificationId) }
+        removeMemberQualification(userId) { it.removeMemberQualification(actor, clock, correlationId, qualificationId) }
 
     internal fun removeMemberQualification(
         domainEvent: DomainEvent,
         userId: UserId,
         qualificationId: QualificationId
     ): Option<Error> =
-        removeMemberQualification(userId) { it.removeMemberQualification(domainEvent, qualificationId) }
+        removeMemberQualification(userId) { it.removeMemberQualification(domainEvent, clock, qualificationId) }
 
     private fun removeMemberQualification(
         userId: UserId,

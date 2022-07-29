@@ -65,22 +65,22 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingTool(instance(), instance()) }
 
     // user
-    bindSingleton { AddingCardIdentity(instance(), instance(), instance()) }
-    bindSingleton { AddingInstructorQualification(instance(), instance(), instance()) }
-    bindSingleton { AddingMemberQualification(instance(), instance(), instance()) }
-    bindSingleton { AddingPhoneNrIdentity(instance(), instance(), instance()) }
-    bindSingleton { AddingUser(instance(), instance(), instance(), instance()) }
-    bindSingleton { AddingUsernamePasswordIdentity(instance(), instance(), instance()) }
-    bindSingleton { ChangingIsAdmin(instance(), instance()) }
-    bindSingleton { ChangingUser(instance(), instance(), instance()) }
-    bindSingleton { DeletingUser(instance(), instance()) }
+    bindSingleton { AddingCardIdentity(instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingInstructorQualification(instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingMemberQualification(instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingPhoneNrIdentity(instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingUser(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingUsernamePasswordIdentity(instance(), instance(), instance(), instance()) }
+    bindSingleton { ChangingIsAdmin(instance(), instance(), instance()) }
+    bindSingleton { ChangingUser(instance(), instance(), instance(), instance()) }
+    bindSingleton { DeletingUser(instance(), instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
-    bindSingleton { RemovingCardIdentity(instance(), instance()) }
-    bindSingleton { RemovingInstructorQualification(instance(), instance()) }
-    bindSingleton { RemovingMemberQualification(instance(), instance()) }
-    bindSingleton { RemovingPhoneNrIdentity(instance(), instance()) }
-    bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance()) }
+    bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
+    bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
+    bindSingleton { RemovingMemberQualification(instance(), instance(), instance()) }
+    bindSingleton { RemovingPhoneNrIdentity(instance(), instance(), instance()) }
+    bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
     bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance()) }
 
     bindSingleton { { newDeviceId() } }

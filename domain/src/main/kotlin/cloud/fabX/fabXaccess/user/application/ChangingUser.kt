@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to handle changing user properties.
@@ -18,7 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 class ChangingUser(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val gettingUserByWikiName: GettingUserByWikiName
+    private val gettingUserByWikiName: GettingUserByWikiName,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -36,6 +38,7 @@ class ChangingUser(
             .flatMap {
                 it.changePersonalInformation(
                     actor,
+                    clock,
                     correlationId,
                     firstName,
                     lastName,
@@ -64,7 +67,7 @@ class ChangingUser(
         log.debug("changeLockState...")
 
         return userRepository.getById(userId)
-            .map { it.changeLockState(actor, correlationId, locked, notes) }
+            .map { it.changeLockState(actor, clock, correlationId, locked, notes) }
             .flatMap {
                 userRepository.store(it)
                     .toEither { }

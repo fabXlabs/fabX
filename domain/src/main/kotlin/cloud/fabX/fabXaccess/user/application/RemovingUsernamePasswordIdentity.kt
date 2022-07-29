@@ -10,13 +10,15 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
+import kotlinx.datetime.Clock
 
 /**
  * Service to remove a [UsernamePasswordIdentity] from a user.
  */
 class RemovingUsernamePasswordIdentity(
     loggerFactory: LoggerFactory,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -32,6 +34,7 @@ class RemovingUsernamePasswordIdentity(
             .flatMap {
                 it.removeUsernamePasswordIdentity(
                     actor,
+                    clock,
                     correlationId,
                     username
                 )

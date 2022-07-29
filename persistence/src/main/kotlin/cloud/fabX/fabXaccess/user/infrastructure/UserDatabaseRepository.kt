@@ -7,6 +7,7 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.toOption
+import cloud.fabX.fabXaccess.common.jsonb
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
@@ -20,8 +21,29 @@ import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
+import kotlinx.datetime.toJavaInstant
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
-class UserDatabaseRepository :
+object UserSourcingEventDAO : Table("UserSourcingEvent") {
+    val aggregateRootId = uuid("aggregate_root_id")
+    val aggregateVersion = long("aggregate_version")
+    val actorId = uuid("actor_id")
+    val correlationId = uuid("correlation_id")
+    val timestamp = timestamp("timestamp")
+    val data = jsonb("data", UserSourcingEvent.serializer())
+}
+
+class UserDatabaseRepository(private val db: Database) :
     UserRepository,
     GettingUserByIdentity,
     GettingUserByUsername,
@@ -29,25 +51,38 @@ class UserDatabaseRepository :
     GettingUserByWikiName,
     GettingUsersByMemberQualification,
     GettingUsersByInstructorQualification {
-    private var events = mutableListOf<UserSourcingEvent>()
 
     override fun getAll(): Set<User> {
-        return events
-            .sortedBy { it.aggregateVersion }
-            .groupBy { it.aggregateRootId }
-            .map { User.fromSourcingEvents(it.value) }
-            .filter { it.isDefined() }
-            .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
-            .toSet()
+        return transaction {
+            UserSourcingEventDAO
+                .selectAll()
+                .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
+                .asSequence()
+                .map {
+                    it[UserSourcingEventDAO.data]
+                }
+                .groupBy { it.aggregateRootId }
+                .map { User.fromSourcingEvents(it.value) }
+                .filter { it.isDefined() }
+                .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
+                .toSet()
+        }
     }
 
     override fun getById(id: UserId): Either<Error, User> {
-        val e = events
-            .filter { it.aggregateRootId == id }
-            .sortedBy { it.aggregateVersion }
+        val events = transaction {
+            UserSourcingEventDAO
+                .select {
+                    UserSourcingEventDAO.aggregateRootId.eq(id.value)
+                }
+                .orderBy(UserSourcingEventDAO.aggregateVersion)
+                .map {
+                    it[UserSourcingEventDAO.data]
+                }
+        }
 
-        return if (e.isNotEmpty()) {
-            User.fromSourcingEvents(e)
+        return if (events.isNotEmpty()) {
+            User.fromSourcingEvents(events)
                 .toEither {
                     Error.UserNotFound(
                         "User with id $id not found.",
@@ -63,27 +98,55 @@ class UserDatabaseRepository :
     }
 
     override fun store(event: UserSourcingEvent): Option<Error> {
-        val previousVersion = getVersionById(event.aggregateRootId)
+        return transaction {
+            val previousVersion = getVersionById(event.aggregateRootId)
 
-        return if (previousVersion != null
-            && event.aggregateVersion != previousVersion + 1
-        ) {
-            Some(
-                Error.VersionConflict(
-                    "Previous version of user ${event.aggregateRootId} is $previousVersion, " +
-                            "desired new version is ${event.aggregateVersion}."
+            if (previousVersion != null
+                && event.aggregateVersion != previousVersion + 1
+            ) {
+                Some(
+                    Error.VersionConflict(
+                        "Previous version of user ${event.aggregateRootId} is $previousVersion, " +
+                                "desired new version is ${event.aggregateVersion}."
+                    )
                 )
-            )
-        } else {
-            events.add(event)
-            None
+            } else {
+                UserSourcingEventDAO.insert {
+                    it[aggregateRootId] = event.aggregateRootId.value
+                    it[aggregateVersion] = event.aggregateVersion
+                    it[actorId] = event.actorId.value
+                    it[correlationId] = event.correlationId.id
+                    it[timestamp] = event.timestamp.toJavaInstant()
+                    it[data] = event
+                }
+
+                None
+            }
         }
     }
 
-    private fun getVersionById(id: UserId): Long? {
-        return events
-            .filter { it.aggregateRootId == id }
-            .maxOfOrNull { it.aggregateVersion }
+    fun getSourcingEvents(): List<UserSourcingEvent> {
+        return transaction {
+            UserSourcingEventDAO.selectAll()
+                // TODO order by something different (timestamp is informative, nothing to depend on)
+                .orderBy(UserSourcingEventDAO.timestamp, SortOrder.ASC)
+                .map {
+                    it[UserSourcingEventDAO.data]
+                }
+        }
+    }
+
+    @Suppress("unused") // supposed to be executed within Transaction
+    private fun Transaction.getVersionById(id: UserId): Long? {
+        return UserSourcingEventDAO
+            .slice(UserSourcingEventDAO.aggregateVersion)
+            .select {
+                UserSourcingEventDAO.aggregateRootId.eq(id.value)
+            }
+            .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
+            .limit(1)
+            .map { it[UserSourcingEventDAO.aggregateVersion] }
+            .maxOfOrNull { it }
     }
 
     override fun getByIdentity(identity: UserIdentity): Either<Error, User> =
@@ -115,12 +178,16 @@ class UserDatabaseRepository :
             .filter { it.asMember().hasQualification(qualificationId) }
             .toSet()
 
-    override fun getByInstructorQualification(qualificationId: QualificationId): Set<User> {
-        return getAll()
+    override fun getByInstructorQualification(qualificationId: QualificationId): Set<User> =
+        getAll()
             .filter {
                 it.asInstructor()
                     .fold({ false }, { instructor -> instructor.hasQualification(qualificationId) })
             }
             .toSet()
+
+    private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
+        addLogger(StdOutSqlLogger)
+        statement()
     }
 }

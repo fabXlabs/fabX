@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -18,6 +19,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -37,6 +39,9 @@ internal class AddingPhoneNrIdentityTest {
     private lateinit var userRepository: UserRepository
     private lateinit var gettingUserByIdentity: GettingUserByIdentity
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var testee: AddingPhoneNrIdentity
 
     @BeforeEach
@@ -49,7 +54,7 @@ internal class AddingPhoneNrIdentityTest {
         this.userRepository = userRepository
         this.gettingUserByIdentity = gettingUserByIdentity
 
-        testee = AddingPhoneNrIdentity({ logger }, userRepository, gettingUserByIdentity)
+        testee = AddingPhoneNrIdentity({ logger }, userRepository, gettingUserByIdentity, fixedClock)
     }
 
     @Test
@@ -63,6 +68,7 @@ internal class AddingPhoneNrIdentityTest {
             userId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             phoneNr
         )
@@ -158,6 +164,7 @@ internal class AddingPhoneNrIdentityTest {
             userId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             phoneNr
         )

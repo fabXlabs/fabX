@@ -22,6 +22,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.biFlatmap
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
+import kotlinx.datetime.Clock
 
 data class User internal constructor(
     override val id: UserId,
@@ -44,6 +45,7 @@ data class User internal constructor(
         fun addNew(
             userIdFactory: UserIdFactory,
             actor: Admin,
+            clock: Clock,
             correlationId: CorrelationId,
             firstName: String,
             lastName: String,
@@ -55,6 +57,7 @@ data class User internal constructor(
                     UserCreated(
                         userIdFactory.invoke(),
                         actor.id,
+                        clock.now(),
                         correlationId,
                         firstName,
                         lastName,
@@ -108,6 +111,7 @@ data class User internal constructor(
 
     fun changePersonalInformation(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         firstName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
         lastName: ChangeableValue<String> = ChangeableValue.LeaveAsIs,
@@ -122,6 +126,7 @@ data class User internal constructor(
                 id,
                 aggregateVersion + 1,
                 actor.id,
+                clock.now(),
                 correlationId,
                 firstName,
                 lastName,
@@ -132,6 +137,7 @@ data class User internal constructor(
 
     fun changeLockState(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
         notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
@@ -140,6 +146,7 @@ data class User internal constructor(
             id,
             aggregateVersion + 1,
             actor.id,
+            clock.now(),
             correlationId,
             locked,
             notes
@@ -156,6 +163,7 @@ data class User internal constructor(
      */
     fun addUsernamePasswordIdentity(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         username: String,
         hash: String,
@@ -169,6 +177,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     it.username,
                     it.hash
@@ -220,6 +229,7 @@ data class User internal constructor(
      */
     fun removeUsernamePasswordIdentity(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         username: String
     ): Either<Error, UserSourcingEvent> {
@@ -237,6 +247,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     username
                 )
@@ -245,6 +256,7 @@ data class User internal constructor(
 
     fun addCardIdentity(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         cardId: String,
         cardSecret: String,
@@ -257,6 +269,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     it.cardId,
                     it.cardSecret
@@ -293,6 +306,7 @@ data class User internal constructor(
      */
     fun removeCardIdentity(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         cardId: String
     ): Either<Error, UserSourcingEvent> {
@@ -310,6 +324,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     cardId
                 )
@@ -318,6 +333,7 @@ data class User internal constructor(
 
     fun addPhoneNrIdentity(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         phoneNr: String,
         gettingUserByIdentity: GettingUserByIdentity
@@ -329,6 +345,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     it.phoneNr
                 )
@@ -364,6 +381,7 @@ data class User internal constructor(
      */
     fun removePhoneNrIdentity(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         phoneNr: String
     ): Either<Error, UserSourcingEvent> {
@@ -381,6 +399,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     phoneNr
                 )
@@ -394,6 +413,7 @@ data class User internal constructor(
      */
     fun addMemberQualification(
         actor: Instructor,
+        clock: Clock,
         correlationId: CorrelationId,
         qualificationId: QualificationId,
         gettingQualificationById: GettingQualificationById
@@ -418,6 +438,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     qualificationId
                 )
@@ -449,22 +470,25 @@ data class User internal constructor(
      */
     fun removeMemberQualification(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeMemberQualification(actor.id, correlationId, qualificationId)
+        removeMemberQualification(actor.id, clock, correlationId, qualificationId)
 
     /**
      * Removes the user's member qualification (triggered by a domain event).
      */
     internal fun removeMemberQualification(
         domainEvent: DomainEvent,
+        clock: Clock,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeMemberQualification(domainEvent.actorId, domainEvent.correlationId, qualificationId)
+        removeMemberQualification(domainEvent.actorId, clock, domainEvent.correlationId, qualificationId)
 
     private fun removeMemberQualification(
         actorId: ActorId,
+        clock: Clock,
         correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
@@ -482,6 +506,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    clock.now(),
                     correlationId,
                     qualificationId
                 )
@@ -495,6 +520,7 @@ data class User internal constructor(
      */
     fun addInstructorQualification(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         qualificationId: QualificationId,
         gettingQualificationById: GettingQualificationById
@@ -518,6 +544,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actor.id,
+                    clock.now(),
                     correlationId,
                     qualificationId
                 )
@@ -531,22 +558,25 @@ data class User internal constructor(
      */
     fun removeInstructorQualification(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeInstructorQualification(actor.id, correlationId, qualificationId)
+        removeInstructorQualification(actor.id, clock, correlationId, qualificationId)
 
     /**
      * Removes the user's instructor qualification (triggered by a domain event).
      */
     internal fun removeInstructorQualification(
         domainEvent: DomainEvent,
+        clock: Clock,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> =
-        removeInstructorQualification(domainEvent.actorId, domainEvent.correlationId, qualificationId)
+        removeInstructorQualification(domainEvent.actorId, clock, domainEvent.correlationId, qualificationId)
 
     private fun removeInstructorQualification(
         actorId: ActorId,
+        clock: Clock,
         correlationId: CorrelationId,
         qualificationId: QualificationId
     ): Either<Error, UserSourcingEvent> {
@@ -564,6 +594,7 @@ data class User internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    clock.now(),
                     correlationId,
                     qualificationId
                 )
@@ -575,6 +606,7 @@ data class User internal constructor(
      */
     fun changeIsAdmin(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         isAdmin: Boolean
     ): Either<Error, UserSourcingEvent> {
@@ -589,6 +621,7 @@ data class User internal constructor(
                 id,
                 aggregateVersion + 1,
                 actor.id,
+                clock.now(),
                 correlationId,
                 isAdmin
             )
@@ -597,9 +630,10 @@ data class User internal constructor(
 
     fun delete(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId
     ): UserSourcingEvent {
-        return UserDeleted(id, aggregateVersion + 1, actor.id, correlationId)
+        return UserDeleted(id, aggregateVersion + 1, actor.id, clock.now(), correlationId)
     }
 
     fun hasIdentity(userIdentity: UserIdentity) = identities.contains(userIdentity)

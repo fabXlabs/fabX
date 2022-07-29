@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to add a [PhoneNrIdentity] to a user.
@@ -18,7 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 class AddingPhoneNrIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val gettingUserByIdentity: GettingUserByIdentity
+    private val gettingUserByIdentity: GettingUserByIdentity,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -34,6 +36,7 @@ class AddingPhoneNrIdentity(
             .flatMap {
                 it.addPhoneNrIdentity(
                     actor,
+                    clock,
                     correlationId,
                     phoneNr,
                     gettingUserByIdentity

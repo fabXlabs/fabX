@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -19,6 +20,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -34,6 +36,9 @@ internal class AddingMemberQualificationTest {
 
     private val instructorActor = InstructorFixture.arbitrary(qualifications = setOf(qualificationId))
     private val correlationId = CorrelationIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
@@ -51,7 +56,7 @@ internal class AddingMemberQualificationTest {
         this.userRepository = userRepository
         this.gettingQualificationById = qualificationRepository
 
-        testee = AddingMemberQualification({ logger }, userRepository, qualificationRepository)
+        testee = AddingMemberQualification({ logger }, userRepository, qualificationRepository, fixedClock)
     }
 
     @Test
@@ -65,6 +70,7 @@ internal class AddingMemberQualificationTest {
             userId,
             2,
             instructorActor.id,
+            fixedInstant,
             correlationId,
             qualificationId
         )
@@ -152,6 +158,7 @@ internal class AddingMemberQualificationTest {
             userId,
             2,
             instructorActor.id,
+            fixedInstant,
             correlationId,
             qualificationId
         )

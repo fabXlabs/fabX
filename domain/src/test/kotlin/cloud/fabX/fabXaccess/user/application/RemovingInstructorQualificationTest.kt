@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -36,6 +37,9 @@ internal class RemovingInstructorQualificationTest {
     private val userId = UserIdFixture.arbitrary()
     private val qualificationId = QualificationIdFixture.arbitrary()
 
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
+
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
 
@@ -49,7 +53,7 @@ internal class RemovingInstructorQualificationTest {
         this.logger = logger
         this.userRepository = userRepository
 
-        testee = RemovingInstructorQualification({ logger }, userRepository)
+        testee = RemovingInstructorQualification({ logger }, userRepository, fixedClock)
     }
 
     @Test
@@ -65,6 +69,7 @@ internal class RemovingInstructorQualificationTest {
             userId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             qualificationId
         )
@@ -113,6 +118,7 @@ internal class RemovingInstructorQualificationTest {
             userId,
             2,
             actorId,
+            fixedInstant,
             correlationId,
             qualificationId
         )
@@ -202,6 +208,7 @@ internal class RemovingInstructorQualificationTest {
             userId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             qualificationId
         )

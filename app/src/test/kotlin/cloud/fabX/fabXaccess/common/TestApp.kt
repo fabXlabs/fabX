@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
 import cloud.fabX.fabXaccess.restModule
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
+import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -25,6 +26,7 @@ import io.ktor.util.encodeBase64
 import java.util.UUID
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -67,10 +69,12 @@ internal fun withTestApp(
         SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
         SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
         SchemaUtils.createMissingTablesAndColumns(ToolSourcingEventDAO)
+        SchemaUtils.createMissingTablesAndColumns(UserSourcingEventDAO)
 
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()
         ToolSourcingEventDAO.deleteAll()
+        UserSourcingEventDAO.deleteAll()
     }
 
     val domainEventPublisher: SynchronousDomainEventPublisher by testApp.instance()
@@ -84,11 +88,13 @@ internal fun withTestApp(
     val userRepository: UserRepository by testApp.instance()
 
     val setupCorrelationId = newCorrelationId()
+    val timestamp = Instant.fromEpochMilliseconds(1641085323000)
 
     val memberUserId = UserId(UUID.fromString("c63b3a7d-bd18-4272-b4ed-4bcf9683c602"))
     val memberCreated = UserCreated(
         memberUserId,
         SystemActorId,
+        timestamp,
         setupCorrelationId,
         firstName = "Member",
         lastName = "",
@@ -99,6 +105,7 @@ internal fun withTestApp(
         memberUserId,
         2,
         SystemActorId,
+        timestamp,
         setupCorrelationId,
         username = "member",
         hash = "GTs+xQn4hIhy4gEKY0xPE6yaJVTesoxzBPk7izh0+pQ=" // password: s3cr3t
@@ -108,6 +115,7 @@ internal fun withTestApp(
     val adminCreated = UserCreated(
         adminUserId,
         SystemActorId,
+        timestamp,
         setupCorrelationId,
         firstName = "Admin",
         lastName = "",
@@ -118,6 +126,7 @@ internal fun withTestApp(
         adminUserId,
         2,
         SystemActorId,
+        timestamp,
         setupCorrelationId,
         username = "admin",
         hash = "G3T2Uf9olbUkPV2lFXfgqi61iyCC7i1c2qRTtV1vhNQ=" // password: super$ecr3t
@@ -127,6 +136,7 @@ internal fun withTestApp(
         adminUserId,
         3,
         SystemActorId,
+        timestamp,
         setupCorrelationId,
         isAdmin = true
     )

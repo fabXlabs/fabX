@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -18,6 +19,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isLeft
 import isRight
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -31,6 +33,9 @@ internal class AddingUserTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val userId = UserIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
@@ -48,7 +53,7 @@ internal class AddingUserTest {
         this.userRepository = userRepository
         this.gettingUserByWikiName = gettingUserByWikiName
 
-        testee = AddingUser({ logger }, userRepository, gettingUserByWikiName, { userId })
+        testee = AddingUser({ logger }, userRepository, gettingUserByWikiName, { userId }, fixedClock)
     }
 
     @Test
@@ -61,6 +66,7 @@ internal class AddingUserTest {
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             firstName,
             lastName,
@@ -124,6 +130,7 @@ internal class AddingUserTest {
         val expectedSourcingEvent = UserCreated(
             userId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             firstName,
             lastName,

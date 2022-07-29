@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to add new users.
@@ -20,7 +21,8 @@ class AddingUser(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
     private val gettingUserByWikiName: GettingUserByWikiName,
-    private val userIdFactory: UserIdFactory
+    private val userIdFactory: UserIdFactory,
+    private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -37,6 +39,7 @@ class AddingUser(
             .addNew(
                 userIdFactory,
                 actor,
+                clock,
                 correlationId,
                 firstName,
                 lastName,

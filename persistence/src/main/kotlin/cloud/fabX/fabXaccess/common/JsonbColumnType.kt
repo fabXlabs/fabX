@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.common
 
 import cloud.fabX.fabXaccess.common.model.ActorId
+import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
@@ -50,6 +51,7 @@ fun <T : Any> Table.jsonb(name: String, stringify: (T) -> String, parse: (String
 val module = SerializersModule {
     polymorphic(ActorId::class) {
         subclass(UserId::class)
+        subclass(SystemActorId::class)
     }
 }
 
