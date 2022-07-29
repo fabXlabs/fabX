@@ -4,6 +4,7 @@ import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
@@ -12,50 +13,56 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationDetailsChanged
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
-import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
 import isRight
 import isSome
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
+import org.kodein.di.instance
 
 internal class QualificationDatabaseRepositoryTest {
     private val qualificationId = QualificationIdFixture.static(123)
     private val actorId = UserIdFixture.static(42)
     private val correlationId = CorrelationIdFixture.arbitrary()
 
+    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
+        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+        bindInstance(tag = "dbuser") { "postgres" }
+        bindInstance(tag = "dbpassword") { "postgrespassword" }
+    }, block)
+
     @Test
-    fun `given empty repository when getting qualification by id then returns qualification not found error`() {
-        // given
-        val repository = QualificationDatabaseRepository()
+    fun `given empty repository when getting qualification by id then returns qualification not found error`() =
+        withConfiguredTestApp { di ->
+            // given
+            val repository: QualificationDatabaseRepository by di.instance()
 
-        // when
-        val result = repository.getById(qualificationId)
+            // when
+            val result = repository.getById(qualificationId)
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(
-                Error.QualificationNotFound(
-                    "Qualification with id QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) not found.",
-                    qualificationId
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.QualificationNotFound(
+                        "Qualification with id QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) not found.",
+                        qualificationId
+                    )
                 )
-            )
-    }
+        }
 
     @Nested
     internal inner class GivenEventsForQualificationStoredInRepository {
 
-        private lateinit var repository: QualificationRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = QualificationDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: QualificationDatabaseRepository by di.instance()
 
             val event1 = QualificationCreated(
                 qualificationId,
@@ -79,12 +86,14 @@ internal class QualificationDatabaseRepositoryTest {
                 orderNr = ChangeableValue.ChangeToValueInt(100)
             )
             repository.store(event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting qualification by id then returns qualification from events`() {
+        fun `when getting qualification by id then returns qualification from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: QualificationDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(qualificationId)
@@ -103,9 +112,9 @@ internal class QualificationDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() {
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: QualificationDatabaseRepository by di.instance()
 
             val event = QualificationDetailsChanged(
                 qualificationId,
@@ -131,38 +140,39 @@ internal class QualificationDatabaseRepositoryTest {
 
         @ParameterizedTest
         @ValueSource(longs = [-1, 0, 1, 2, 4, 100])
-        fun `when storing then not accepts version numbers other than increased by one`(version: Long) {
-            // given
-            val repository = this.repository
+        fun `when storing then not accepts version numbers other than increased by one`(version: Long) =
+            withSetupTestApp { di ->
+                // given
+                val repository: QualificationDatabaseRepository by di.instance()
 
-            val event = QualificationDetailsChanged(
-                qualificationId,
-                version,
-                actorId,
-                correlationId,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs
-            )
-
-            // when
-            val result = repository.store(event)
-
-            // then
-            assertThat(result)
-                .isSome()
-                .isEqualTo(
-                    Error.VersionConflict(
-                        "Previous version of qualification QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) is 2, " +
-                                "desired new version is $version."
-                    )
+                val event = QualificationDetailsChanged(
+                    qualificationId,
+                    version,
+                    actorId,
+                    correlationId,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs
                 )
 
-            assertThat(repository.getById(qualificationId))
-                .isRight()
-                .transform { it.aggregateVersion }.isEqualTo(2)
-        }
+                // when
+                val result = repository.store(event)
+
+                // then
+                assertThat(result)
+                    .isSome()
+                    .isEqualTo(
+                        Error.VersionConflict(
+                            "Previous version of qualification QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) is 2, " +
+                                    "desired new version is $version."
+                        )
+                    )
+
+                assertThat(repository.getById(qualificationId))
+                    .isRight()
+                    .transform { it.aggregateVersion }.isEqualTo(2)
+            }
     }
 
     @Nested
@@ -171,11 +181,8 @@ internal class QualificationDatabaseRepositoryTest {
         private val qualificationId2 = QualificationIdFixture.static(234)
         private val qualificationId3 = QualificationIdFixture.static(345)
 
-        private lateinit var repository: QualificationRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = QualificationDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: QualificationDatabaseRepository by di.instance()
 
             val qualification1event1 = QualificationCreated(
                 qualificationId,
@@ -241,12 +248,14 @@ internal class QualificationDatabaseRepositoryTest {
                 orderNr = ChangeableValue.LeaveAsIs
             )
             repository.store(qualification3event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting all qualifications then returns all qualifications from events`() {
+        fun `when getting all qualifications then returns all qualifications from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: QualificationDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()

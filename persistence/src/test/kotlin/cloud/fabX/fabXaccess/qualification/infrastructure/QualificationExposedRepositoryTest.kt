@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
 import org.kodein.di.instance
 
+// TODO move or remove tests to QualificationDatabaseRepositoryTest
 internal class QualificationExposedRepositoryTest {
     private val qualificationId1 = QualificationIdFixture.arbitrary()
     private val qualificationId2 = QualificationIdFixture.arbitrary()
@@ -60,7 +61,7 @@ internal class QualificationExposedRepositoryTest {
         bindInstance(tag = "dbpassword") { "postgrespassword" }
     }) { di ->
         // given
-        val testee: QualificationExposedRepository by di.instance()
+        val testee: QualificationDatabaseRepository by di.instance()
 
         val event1 = QualificationCreated(
             qualificationId1,
@@ -118,7 +119,7 @@ internal class QualificationExposedRepositoryTest {
         bindInstance(tag = "dbpassword") { "postgrespassword" }
     }) { di ->
         // given
-        val testee: QualificationExposedRepository by di.instance()
+        val testee: QualificationDatabaseRepository by di.instance()
 
         val event1 = QualificationCreated(
             qualificationId1,
