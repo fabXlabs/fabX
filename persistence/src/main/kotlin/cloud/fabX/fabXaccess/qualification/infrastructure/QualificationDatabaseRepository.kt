@@ -40,10 +40,9 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
         return transaction {
             QualificationSourcingEventDAO
                 .selectAll()
+                .orderBy(QualificationSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
                 .asSequence()
-                .sortedBy {
-                    QualificationSourcingEventDAO.aggregateVersion
-                }.map {
+                .map {
                     it[QualificationSourcingEventDAO.data]
                 }
                 .groupBy { it.aggregateRootId }
@@ -56,13 +55,14 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
 
     override fun getById(id: QualificationId): Either<Error, Qualification> {
         val events = transaction {
-            QualificationSourcingEventDAO.select {
-                QualificationSourcingEventDAO.aggregateRootId.eq(id.value)
-            }.sortedBy {
-                QualificationSourcingEventDAO.aggregateVersion
-            }.map {
-                it[QualificationSourcingEventDAO.data]
-            }
+            QualificationSourcingEventDAO
+                .select {
+                    QualificationSourcingEventDAO.aggregateRootId.eq(id.value)
+                }
+                .orderBy(QualificationSourcingEventDAO.aggregateVersion)
+                .map {
+                    it[QualificationSourcingEventDAO.data]
+                }
         }
 
         return if (events.isNotEmpty()) {
@@ -111,11 +111,11 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
 
     fun getSourcingEvents(): List<QualificationSourcingEvent> {
         return transaction {
-            addLogger(StdOutSqlLogger)
-
-            QualificationSourcingEventDAO.selectAll().map {
-                it[QualificationSourcingEventDAO.data]
-            }
+            QualificationSourcingEventDAO.selectAll()
+                .orderBy(QualificationSourcingEventDAO.timestamp, SortOrder.ASC)
+                .map {
+                    it[QualificationSourcingEventDAO.data]
+                }
         }
     }
 
@@ -129,7 +129,6 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
             .limit(1)
             .map { it[QualificationSourcingEventDAO.data] }
             .maxOfOrNull { it.aggregateVersion }
-
     }
 
     private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {

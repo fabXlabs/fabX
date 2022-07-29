@@ -3,7 +3,10 @@ package cloud.fabX.fabXaccess.qualification.infrastructure
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.each
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -13,6 +16,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationDetailsChanged
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
@@ -279,6 +283,23 @@ internal class QualificationDatabaseRepositoryTest {
                     3
                 ),
             )
+        }
+
+        @Test
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+            // given
+            val repository: QualificationDatabaseRepository by di.instance()
+
+            // when
+            val result = repository.getSourcingEvents()
+
+            // then
+            assertThat(result).all {
+                hasSize(6)
+                each {
+                    it.isInstanceOf(QualificationSourcingEvent::class)
+                }
+            }
         }
     }
 }
