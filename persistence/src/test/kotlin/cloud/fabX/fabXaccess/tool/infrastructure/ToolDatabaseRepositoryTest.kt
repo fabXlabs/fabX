@@ -3,7 +3,11 @@ package cloud.fabX.fabXaccess.tool.infrastructure
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.each
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
+import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
@@ -15,20 +19,23 @@ import cloud.fabX.fabXaccess.tool.model.ToolDeleted
 import cloud.fabX.fabXaccess.tool.model.ToolDetailsChanged
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
-import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isNone
 import isRight
 import isSome
-import org.junit.jupiter.api.BeforeEach
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
+import org.kodein.di.DI
+import org.kodein.di.bindInstance
+import org.kodein.di.instance
 
 internal class ToolDatabaseRepositoryTest {
 
@@ -42,6 +49,7 @@ internal class ToolDatabaseRepositoryTest {
 
         private val actorId = UserIdFixture.static(987)
         private val correlationId = CorrelationIdFixture.arbitrary()
+        private val fixedInstant = Clock.System.now()
 
         @JvmStatic
         fun toolAndQualificationIds(): Iterable<Arguments> {
@@ -58,37 +66,44 @@ internal class ToolDatabaseRepositoryTest {
         }
     }
 
+    // TODO dynamically start postgres instance via Testcontainers
+    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
+        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+        bindInstance(tag = "dbuser") { "postgres" }
+        bindInstance(tag = "dbpassword") { "postgrespassword" }
+    }, block)
+
     @Test
-    fun `given empty repository when getting tool by id then returns tool not found error`() {
-        // given
-        val repository = ToolDatabaseRepository()
+    fun `given empty repository when getting tool by id then returns tool not found error`() =
+        withConfiguredTestApp { di ->
+            // given
+            val repository: ToolDatabaseRepository by di.instance()
 
-        // when
-        val result = repository.getById(toolId)
+            // when
+            val result = repository.getById(toolId)
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(
-                Error.ToolNotFound(
-                    "Tool with id ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) not found.",
-                    toolId
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.ToolNotFound(
+                        "Tool with id ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) not found.",
+                        toolId
+                    )
                 )
-            )
-    }
+        }
 
     @Nested
     internal inner class GivenEventsForToolStoredInRepository {
 
-        private lateinit var repository: ToolRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = ToolDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: ToolDatabaseRepository by di.instance()
 
             val event1 = ToolCreated(
                 toolId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "name",
                 ToolType.UNLOCK,
@@ -103,6 +118,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 ChangeableValue.ChangeToValueString("name2"),
                 ChangeableValue.ChangeToValueToolType(ToolType.KEEP),
@@ -113,12 +129,14 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs
             )
             repository.store(event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting tool by id then returns tool from events`() {
+        fun `when getting tool by id then returns tool from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: ToolDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(toolId)
@@ -139,14 +157,15 @@ internal class ToolDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() {
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: ToolDatabaseRepository by di.instance()
 
             val event = ToolDetailsChanged(
                 toolId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 ChangeableValue.ChangeToValueString("name3"),
                 ChangeableValue.LeaveAsIs,
@@ -171,37 +190,39 @@ internal class ToolDatabaseRepositoryTest {
 
         @ParameterizedTest
         @ValueSource(longs = [-1, 0, 2, 4, 42])
-        fun `when storing then not accepts version numbers other than increased by one`(version: Long) {
-            // given
-            val repository = this.repository
+        fun `when storing then not accepts version numbers other than increased by one`(version: Long) =
+            withSetupTestApp { di ->
+                // given
+                val repository: ToolDatabaseRepository by di.instance()
 
-            val event = ToolDetailsChanged(
-                toolId,
-                version,
-                actorId,
-                correlationId,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs,
-                ChangeableValue.LeaveAsIs
-            )
-
-            // when
-            val result = repository.store(event)
-
-            // then
-            assertThat(result)
-                .isSome()
-                .isEqualTo(
-                    Error.VersionConflict(
-                        "Previous version of tool ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) is 2, " +
-                                "desired new version is $version."
-                    )
+                val event = ToolDetailsChanged(
+                    toolId,
+                    version,
+                    actorId,
+                    fixedInstant,
+                    correlationId,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs,
+                    ChangeableValue.LeaveAsIs
                 )
-        }
+
+                // when
+                val result = repository.store(event)
+
+                // then
+                assertThat(result)
+                    .isSome()
+                    .isEqualTo(
+                        Error.VersionConflict(
+                            "Previous version of tool ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) is 2, " +
+                                    "desired new version is $version."
+                        )
+                    )
+            }
     }
 
     @Nested
@@ -212,15 +233,13 @@ internal class ToolDatabaseRepositoryTest {
 
         private val qualificationId2 = QualificationIdFixture.static(345)
 
-        private lateinit var repository: ToolRepository
-
-        @BeforeEach
-        fun setup() {
-            repository = ToolDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: ToolDatabaseRepository by di.instance()
 
             val tool1event1 = ToolCreated(
                 toolId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "tool1",
                 ToolType.UNLOCK,
@@ -235,6 +254,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 ChangeableValue.ChangeToValueString("name2"),
                 ChangeableValue.ChangeToValueToolType(ToolType.KEEP),
@@ -250,6 +270,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool2event1 = ToolCreated(
                 toolId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "tool2",
                 ToolType.KEEP,
@@ -263,6 +284,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool3event1 = ToolCreated(
                 toolId3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "tool3",
                 ToolType.KEEP,
@@ -277,6 +299,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId
             )
             repository.store(tool2event2)
@@ -285,6 +308,7 @@ internal class ToolDatabaseRepositoryTest {
                 toolId3,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 ChangeableValue.ChangeToValueString("newName3"),
                 ChangeableValue.LeaveAsIs,
@@ -295,12 +319,14 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs
             )
             repository.store(tool3event2)
+
+            block(di)
         }
 
         @Test
-        fun `when getting all tools then returns all tools from events`() {
+        fun `when getting all tools then returns all tools from events`() = withSetupTestApp { di ->
             // given
-            val repository = this.repository
+            val repository: ToolDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()
@@ -331,19 +357,35 @@ internal class ToolDatabaseRepositoryTest {
                 )
             )
         }
+
+        @Test
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+            // given
+            val repository: ToolDatabaseRepository by di.instance()
+
+            // when
+            val result = repository.getSourcingEvents()
+
+            // then
+            assertThat(result).all {
+                hasSize(6)
+                each {
+                    it.isInstanceOf(ToolSourcingEvent::class)
+                }
+            }
+        }
     }
 
     @Nested
     internal inner class GivenToolsWithQualificationsStoredInRepository {
-        private lateinit var repository: ToolRepository
 
-        @BeforeEach
-        fun setup() {
-            repository = ToolDatabaseRepository()
+        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+            val repository: ToolDatabaseRepository by di.instance()
 
             val tool1created = ToolCreated(
                 toolId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "tool1",
                 ToolType.UNLOCK,
@@ -357,6 +399,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool2created = ToolCreated(
                 toolId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "tool2",
                 ToolType.KEEP,
@@ -370,6 +413,7 @@ internal class ToolDatabaseRepositoryTest {
             val tool3created = ToolCreated(
                 toolId3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 "tool3",
                 ToolType.KEEP,
@@ -379,21 +423,24 @@ internal class ToolDatabaseRepositoryTest {
                 setOf(qualificationId2)
             )
             repository.store(tool3created)
+
+            block(di)
         }
 
         @ParameterizedTest
         @MethodSource("cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepositoryTest#toolAndQualificationIds")
-        fun `when getting tools by qualification id then returns tools which require qualification`() {
-            // given
-            val repository = this.repository as GettingToolsByQualificationId
+        fun `when getting tools by qualification id then returns tools which require qualification`() =
+            withSetupTestApp { di ->
+                // given
+                val repository: GettingToolsByQualificationId by di.instance()
 
-            // when
-            val result = repository.getToolsByQualificationId(qualificationId)
+                // when
+                val result = repository.getToolsByQualificationId(qualificationId)
 
-            // then
-            assertThat(result)
-                .transform { it.map { tool -> tool.id } }
-                .containsExactlyInAnyOrder(toolId, toolId2)
-        }
+                // then
+                assertThat(result)
+                    .transform { it.map { tool -> tool.id } }
+                    .containsExactlyInAnyOrder(toolId, toolId2)
+            }
     }
 }

@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to add new tools.
@@ -22,7 +23,8 @@ class AddingTool(
     loggerFactory: LoggerFactory,
     private val toolRepository: ToolRepository,
     private val toolIdFactory: ToolIdFactory,
-    private val gettingQualificationById: GettingQualificationById
+    private val gettingQualificationById: GettingQualificationById,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -42,6 +44,7 @@ class AddingTool(
             .addNew(
                 toolIdFactory,
                 actor,
+                clock,
                 correlationId,
                 name,
                 type,

@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 /**
  * Service to handle changing tool properties.
@@ -20,7 +21,8 @@ import cloud.fabX.fabXaccess.user.model.Admin
 class ChangingTool(
     loggerFactory: LoggerFactory,
     private val toolRepository: ToolRepository,
-    private val gettingQualificationById: GettingQualificationById
+    private val gettingQualificationById: GettingQualificationById,
+    private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -42,6 +44,7 @@ class ChangingTool(
             .flatMap {
                 it.changeDetails(
                     actor,
+                    clock,
                     correlationId,
                     name,
                     type,

@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.tool.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.some
 import assertk.assertThat
@@ -17,6 +18,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -30,6 +32,9 @@ internal class AddingToolTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var logger: Logger
     private lateinit var toolRepository: ToolRepository
@@ -47,7 +52,7 @@ internal class AddingToolTest {
         this.toolRepository = toolRepository
         this.gettingQualificationById = gettingQualificationById
 
-        testee = AddingTool({ logger }, toolRepository, { toolId }, gettingQualificationById)
+        testee = AddingTool({ logger }, toolRepository, { toolId }, gettingQualificationById, fixedClock)
     }
 
     @Test
@@ -63,6 +68,7 @@ internal class AddingToolTest {
         val expectedSourcingEvent = ToolCreated(
             toolId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             toolType,
@@ -106,6 +112,7 @@ internal class AddingToolTest {
         val event = ToolCreated(
             toolId,
             adminActor.id,
+            fixedInstant,
             correlationId,
             name,
             toolType,

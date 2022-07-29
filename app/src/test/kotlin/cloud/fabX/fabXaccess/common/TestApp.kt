@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
 import cloud.fabX.fabXaccess.restModule
+import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -65,9 +66,11 @@ internal fun withTestApp(
         // TODO database migration tool
         SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
         SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
+        SchemaUtils.createMissingTablesAndColumns(ToolSourcingEventDAO)
 
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()
+        ToolSourcingEventDAO.deleteAll()
     }
 
     val domainEventPublisher: SynchronousDomainEventPublisher by testApp.instance()

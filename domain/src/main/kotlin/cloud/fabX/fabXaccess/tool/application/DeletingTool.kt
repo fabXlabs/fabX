@@ -32,7 +32,7 @@ class DeletingTool(
 
         return toolRepository.getById(toolId)
             .map {
-                it.delete(actor, correlationId)
+                it.delete(actor, clock, correlationId)
             }
             .flatMap {
                 toolRepository.store(it)

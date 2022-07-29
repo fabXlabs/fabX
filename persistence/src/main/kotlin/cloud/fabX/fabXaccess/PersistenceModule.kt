@@ -12,7 +12,7 @@ import org.kodein.di.instance
 val persistenceModule = DI.Module("persistence") {
     bindSingleton { DeviceDatabaseRepository(instance()) }
     bindSingleton { QualificationDatabaseRepository(instance()) }
-    bindSingleton { ToolDatabaseRepository() }
+    bindSingleton { ToolDatabaseRepository(instance()) }
     bindSingleton { UserDatabaseRepository() }
     bindSingleton {
         Database.connect(

@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.datetime.Clock
 
 data class Tool internal constructor(
     override val id: ToolId,
@@ -35,6 +36,7 @@ data class Tool internal constructor(
         fun addNew(
             toolIdFactory: ToolIdFactory,
             actor: Admin,
+            clock: Clock,
             correlationId: CorrelationId,
             name: String,
             type: ToolType,
@@ -49,6 +51,7 @@ data class Tool internal constructor(
                     ToolCreated(
                         toolIdFactory.invoke(),
                         actor.id,
+                        clock.now(),
                         correlationId,
                         name,
                         type,
@@ -106,6 +109,7 @@ data class Tool internal constructor(
 
     fun changeDetails(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId,
         name: ChangeableValue<String>,
         type: ChangeableValue<ToolType>,
@@ -128,6 +132,7 @@ data class Tool internal constructor(
                 id,
                 aggregateVersion + 1,
                 actor.id,
+                clock.now(),
                 correlationId,
                 name,
                 type,
@@ -142,12 +147,14 @@ data class Tool internal constructor(
 
     fun delete(
         actor: Admin,
+        clock: Clock,
         correlationId: CorrelationId
     ): ToolSourcingEvent {
         return ToolDeleted(
             id,
             aggregateVersion + 1,
             actor.id,
+            clock.now(),
             correlationId
         )
     }

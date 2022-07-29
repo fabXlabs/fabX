@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common.infrastructure
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceSourcingEventDAO
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
+import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
@@ -29,9 +30,11 @@ internal fun withTestApp(
         // TODO database migration tool
         SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
         SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
+        SchemaUtils.createMissingTablesAndColumns(ToolSourcingEventDAO)
 
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()
+        ToolSourcingEventDAO.deleteAll()
     }
 
     block(testApp)

@@ -34,6 +34,7 @@ internal class DeletingToolTest {
 
     private val toolId = ToolIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var logger: Logger
     private lateinit var domainEventPublisher: DomainEventPublisher
@@ -51,7 +52,7 @@ internal class DeletingToolTest {
         this.domainEventPublisher = domainEventPublisher
         this.toolRepository = toolRepository
 
-        testee = DeletingTool({ logger }, FixedClock(fixedInstant), domainEventPublisher, toolRepository)
+        testee = DeletingTool({ logger }, fixedClock, domainEventPublisher, toolRepository)
     }
 
     @Test
@@ -63,6 +64,7 @@ internal class DeletingToolTest {
             toolId,
             235,
             adminActor.id,
+            fixedInstant,
             correlationId
         )
 
@@ -121,6 +123,7 @@ internal class DeletingToolTest {
             toolId,
             568,
             adminActor.id,
+            fixedInstant,
             correlationId
         )
 

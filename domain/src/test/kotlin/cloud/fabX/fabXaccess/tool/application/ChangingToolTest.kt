@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.tool.application
 
+import FixedClock
 import arrow.core.None
 import arrow.core.left
 import arrow.core.right
@@ -20,6 +21,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -34,6 +36,9 @@ internal class ChangingToolTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
 
     private val toolId = ToolIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var logger: Logger
     private lateinit var toolRepository: ToolRepository
@@ -51,7 +56,7 @@ internal class ChangingToolTest {
         this.toolRepository = toolRepository
         this.gettingQualificationById = gettingQualificationById
 
-        testee = ChangingTool({ logger }, toolRepository, gettingQualificationById)
+        testee = ChangingTool({ logger }, toolRepository, gettingQualificationById, fixedClock)
     }
 
     @Test
@@ -71,6 +76,7 @@ internal class ChangingToolTest {
             toolId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             newName,
             newType,
@@ -146,6 +152,7 @@ internal class ChangingToolTest {
             toolId,
             2,
             adminActor.id,
+            fixedInstant,
             correlationId,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

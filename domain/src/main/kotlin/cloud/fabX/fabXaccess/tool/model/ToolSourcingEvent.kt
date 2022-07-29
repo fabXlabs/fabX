@@ -34,7 +34,7 @@ data class ToolCreated(
     override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val name: String,
-    val type: ToolType,
+    val toolType: ToolType,
     val time: Int, // in ms
     val idleState: IdleState,
     val wikiLink: String,
@@ -54,7 +54,7 @@ data class ToolDetailsChanged(
     override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val name: ChangeableValue<String>,
-    val type: ChangeableValue<ToolType>,
+    val toolType: ChangeableValue<ToolType>,
     val time: ChangeableValue<Int>,
     val idleState: ChangeableValue<IdleState>,
     val enabled: ChangeableValue<Boolean>,

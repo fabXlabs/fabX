@@ -3,7 +3,10 @@ package cloud.fabX.fabXaccess.device.infrastructure
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.each
+import assertk.assertions.hasSize
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -15,6 +18,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceDeleted
 import cloud.fabX.fabXaccess.device.model.DeviceDetailsChanged
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
@@ -324,6 +328,23 @@ internal class DeviceDatabaseRepositoryTest {
                     "supersecret2"
                 )
             )
+        }
+
+        @Test
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+            // given
+            val repository: DeviceDatabaseRepository by di.instance()
+
+            // when
+            val result = repository.getSourcingEvents()
+
+            // then
+            assertThat(result).all {
+                hasSize(7)
+                each {
+                    it.isInstanceOf(DeviceSourcingEvent::class)
+                }
+            }
         }
     }
 

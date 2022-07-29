@@ -19,7 +19,7 @@ internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
                 id = event.aggregateRootId,
                 aggregateVersion = event.aggregateVersion,
                 name = event.name,
-                type = event.type,
+                type = event.toolType,
                 time = event.time,
                 idleState = event.idleState,
                 enabled = true,
@@ -37,7 +37,7 @@ internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
             t.copy(
                 aggregateVersion = e.aggregateVersion,
                 name = e.name.valueToChangeTo(t.name),
-                type = e.type.valueToChangeTo(t.type),
+                type = e.toolType.valueToChangeTo(t.type),
                 time = e.time.valueToChangeTo(t.time),
                 idleState = e.idleState.valueToChangeTo(t.idleState),
                 enabled = e.enabled.valueToChangeTo(t.enabled),
