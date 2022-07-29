@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.infrastructure
 
+import FixedClock
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
@@ -22,6 +23,7 @@ import isLeft
 import isNone
 import isRight
 import isSome
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -34,6 +36,8 @@ internal class QualificationDatabaseRepositoryTest {
     private val qualificationId = QualificationIdFixture.static(123)
     private val actorId = UserIdFixture.static(42)
     private val correlationId = CorrelationIdFixture.arbitrary()
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
         bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
@@ -71,6 +75,7 @@ internal class QualificationDatabaseRepositoryTest {
             val event1 = QualificationCreated(
                 qualificationId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "quali",
                 description = "description",
@@ -83,6 +88,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 description = ChangeableValue.ChangeToValueString("a good qualification"),
@@ -124,6 +130,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -153,6 +160,7 @@ internal class QualificationDatabaseRepositoryTest {
                     qualificationId,
                     version,
                     actorId,
+                    fixedInstant,
                     correlationId,
                     ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
@@ -191,6 +199,7 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification1event1 = QualificationCreated(
                 qualificationId,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "qualification1",
                 description = "description1",
@@ -203,6 +212,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 description = ChangeableValue.ChangeToValueString("description1v2"),
@@ -214,6 +224,7 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification2event1 = QualificationCreated(
                 qualificationId2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "qualification2",
                 description = "description2",
@@ -225,6 +236,7 @@ internal class QualificationDatabaseRepositoryTest {
             val qualification3event1 = QualificationCreated(
                 qualificationId3,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = "qualification3",
                 description = "description3",
@@ -237,6 +249,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId2,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId
             )
             repository.store(qualification2event2)
@@ -245,6 +258,7 @@ internal class QualificationDatabaseRepositoryTest {
                 qualificationId3,
                 2,
                 actorId,
+                fixedInstant,
                 correlationId,
                 name = ChangeableValue.LeaveAsIs,
                 description = ChangeableValue.ChangeToValueString("description3v2"),
