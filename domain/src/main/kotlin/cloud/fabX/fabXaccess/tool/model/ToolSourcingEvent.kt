@@ -7,16 +7,16 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
 import cloud.fabX.fabXaccess.common.model.ToolId
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
-sealed class ToolSourcingEvent(
-    override val aggregateRootId: ToolId,
-    override val aggregateVersion: Long,
-    override val actorId: ActorId,
-    override val correlationId: CorrelationId,
-    override val timestamp: Instant = Clock.System.now()
-) : SourcingEvent {
+@Serializable
+sealed class ToolSourcingEvent : SourcingEvent {
+    abstract override val aggregateRootId: ToolId
+    abstract override val aggregateVersion: Long
+    abstract override val actorId: ActorId
+    abstract override val correlationId: CorrelationId
+    abstract override val timestamp: Instant
 
     abstract fun processBy(eventHandler: EventHandler, tool: Option<Tool>): Option<Tool>
 
@@ -27,9 +27,11 @@ sealed class ToolSourcingEvent(
     }
 }
 
+@Serializable
 data class ToolCreated(
     override val aggregateRootId: ToolId,
     override val actorId: ActorId,
+    override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val name: String,
     val type: ToolType,
@@ -37,16 +39,19 @@ data class ToolCreated(
     val idleState: IdleState,
     val wikiLink: String,
     val requiredQualifications: Set<QualificationId>
-) : ToolSourcingEvent(aggregateRootId, 1, actorId, correlationId) {
+) : ToolSourcingEvent() {
+    override val aggregateVersion: Long = 1
 
     override fun processBy(eventHandler: EventHandler, tool: Option<Tool>): Option<Tool> =
         eventHandler.handle(this, tool)
 }
 
+@Serializable
 data class ToolDetailsChanged(
     override val aggregateRootId: ToolId,
     override val aggregateVersion: Long,
     override val actorId: ActorId,
+    override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val name: ChangeableValue<String>,
     val type: ChangeableValue<ToolType>,
@@ -55,18 +60,20 @@ data class ToolDetailsChanged(
     val enabled: ChangeableValue<Boolean>,
     val wikiLink: ChangeableValue<String>,
     val requiredQualifications: ChangeableValue<Set<QualificationId>>
-) : ToolSourcingEvent(aggregateRootId, aggregateVersion, actorId, correlationId) {
+) : ToolSourcingEvent() {
 
     override fun processBy(eventHandler: EventHandler, tool: Option<Tool>): Option<Tool> =
         eventHandler.handle(this, tool)
 }
 
+@Serializable
 data class ToolDeleted(
     override val aggregateRootId: ToolId,
     override val aggregateVersion: Long,
     override val actorId: ActorId,
+    override val timestamp: Instant,
     override val correlationId: CorrelationId
-) : ToolSourcingEvent(aggregateRootId, aggregateVersion, actorId, correlationId) {
+) : ToolSourcingEvent() {
 
     override fun processBy(eventHandler: EventHandler, tool: Option<Tool>): Option<Tool> =
         eventHandler.handle(this, tool)
