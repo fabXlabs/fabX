@@ -21,6 +21,8 @@ import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -123,7 +125,7 @@ class UserDatabaseRepository(private val db: Database) :
         }
     }
 
-    fun getSourcingEvents(): List<UserSourcingEvent> {
+    suspend fun getSourcingEvents(): List<UserSourcingEvent> {
         return transaction {
             UserSourcingEventDAO.selectAll()
                 .orderBy(UserSourcingEventDAO.timestamp, SortOrder.ASC)
@@ -184,7 +186,9 @@ class UserDatabaseRepository(private val db: Database) :
             }
             .toSet()
 
-    private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
-        statement()
+    private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {
+        transaction(db) {
+            statement()
+        }
     }
 }
