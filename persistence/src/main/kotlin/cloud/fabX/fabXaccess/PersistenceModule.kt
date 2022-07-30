@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess
 
+import cloud.fabX.fabXaccess.common.LiquibaseMigrationHandler
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
@@ -11,6 +12,8 @@ import org.kodein.di.instance
 
 // TODO indices for some columns
 
+// TODO database operations on Dispatchers.IO thread pool
+
 val persistenceModule = DI.Module("persistence") {
     bindSingleton { DeviceDatabaseRepository(instance()) }
     bindSingleton { QualificationDatabaseRepository(instance()) }
@@ -18,13 +21,17 @@ val persistenceModule = DI.Module("persistence") {
     bindSingleton { UserDatabaseRepository(instance()) }
 
     bindSingleton {
-        PersistenceApp(
-            instance(),
-            instance(),
+        LiquibaseMigrationHandler(
             url = instance(tag = "dburl"),
-            driver = instance(tag = "dbdriver"),
             user = instance(tag = "dbuser"),
             password = instance(tag = "dbpassword")
+        )
+    }
+
+    bindSingleton {
+        PersistenceApp(
+            instance(),
+            instance()
         )
     }
 
