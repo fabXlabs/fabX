@@ -7,6 +7,7 @@ import kotlinx.datetime.Clock
 import org.kodein.di.DI
 import org.kodein.di.allInstances
 import org.kodein.di.bindConstant
+import org.kodein.di.bindInstance
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
@@ -18,7 +19,13 @@ val app = DI {
     import(persistenceModule)
     import(loggingModule)
 
+    // TODO make configurable (via environment variables?)
     bindConstant(tag = "port") { 8080 }
+
+    bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+    bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+    bindInstance(tag = "dbuser") { "postgres" }
+    bindInstance(tag = "dbpassword") { "postgrespassword" }
 
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }
