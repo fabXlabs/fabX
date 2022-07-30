@@ -29,8 +29,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
@@ -77,8 +75,6 @@ internal fun withTestApp(
     val db: Database by testApp.instance()
 
     transaction(db) {
-        addLogger(StdOutSqlLogger)
-
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()
         ToolSourcingEventDAO.deleteAll()

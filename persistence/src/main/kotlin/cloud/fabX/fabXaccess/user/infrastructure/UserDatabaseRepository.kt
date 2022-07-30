@@ -24,10 +24,8 @@ import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.select
@@ -187,7 +185,6 @@ class UserDatabaseRepository(private val db: Database) :
             .toSet()
 
     private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
-        addLogger(StdOutSqlLogger)
         statement()
     }
 }

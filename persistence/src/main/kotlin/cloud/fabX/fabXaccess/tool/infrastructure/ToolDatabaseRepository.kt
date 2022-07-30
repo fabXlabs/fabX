@@ -17,10 +17,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
-import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.select
@@ -136,7 +134,6 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
     }
 
     private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
-        addLogger(StdOutSqlLogger)
         statement()
     }
 
