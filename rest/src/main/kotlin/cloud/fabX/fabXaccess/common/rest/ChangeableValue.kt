@@ -10,6 +10,7 @@ data class ChangeableValue<T>(
     val newValue: T
 )
 
+@Suppress("UNCHECKED_CAST")
 inline fun <reified T> ChangeableValue<T>?.toDomain(): cloud.fabX.fabXaccess.common.model.ChangeableValue<T> {
     return if (this != null) {
         when (newValue) {
