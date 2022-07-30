@@ -134,7 +134,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given device cannot be found when attaching tool then returns error`() {
+    fun `given device cannot be found when attaching tool then returns error`() = runTest {
         // given
         val error = Error.DeviceNotFound("", deviceId)
 

@@ -14,7 +14,6 @@ import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 /**
@@ -29,7 +28,7 @@ class AddingTool(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun addTool(
+    suspend fun addTool(
         actor: Admin,
         correlationId: CorrelationId,
         name: String,
@@ -56,7 +55,7 @@ class AddingTool(
                 gettingQualificationById
             )
             .flatMap {
-                runBlocking { toolRepository.store(it) }
+                toolRepository.store(it)
                     .toEither { it.aggregateRootId }
                     .swap()
             }

@@ -20,12 +20,15 @@ import isLeft
 import isNone
 import isRight
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class DeviceTest {
 
     private val adminActor = AdminFixture.arbitrary()
@@ -359,7 +362,7 @@ internal class DeviceTest {
 
     @Test
     @Suppress("MoveLambdaOutsideParentheses")
-    fun `when attaching tool then returns expected sourcing event`() {
+    fun `when attaching tool then returns expected sourcing event`() = runTest {
         // given
         val pin = 3
         val toolId = ToolIdFixture.arbitrary()
@@ -399,7 +402,7 @@ internal class DeviceTest {
 
     @Test
     @Suppress("MoveLambdaOutsideParentheses")
-    fun `given pin is already in use when attaching tool then returns error`() {
+    fun `given pin is already in use when attaching tool then returns error`() = runTest {
         // given
         val pin = 3
         val toolId = ToolIdFixture.arbitrary()
@@ -437,7 +440,7 @@ internal class DeviceTest {
 
     @Test
     @Suppress("MoveLambdaOutsideParentheses")
-    fun `given tool does not exist when attaching tool then returns error`() {
+    fun `given tool does not exist when attaching tool then returns error`() = runTest {
         // given
         val pin = 3
         val invalidToolId = ToolIdFixture.arbitrary()

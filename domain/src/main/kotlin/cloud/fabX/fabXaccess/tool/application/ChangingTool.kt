@@ -13,7 +13,6 @@ import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 /**
@@ -27,7 +26,7 @@ class ChangingTool(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun changeToolDetails(
+    suspend fun changeToolDetails(
         actor: Admin,
         correlationId: CorrelationId,
         toolId: ToolId,
@@ -41,7 +40,7 @@ class ChangingTool(
     ): Option<Error> {
         log.debug("changeToolDetails...")
 
-        return runBlocking { toolRepository.getById(toolId) }
+        return toolRepository.getById(toolId)
             .flatMap {
                 it.changeDetails(
                     actor,
@@ -58,7 +57,7 @@ class ChangingTool(
                 )
             }
             .flatMap {
-                runBlocking { toolRepository.store(it) }
+                toolRepository.store(it)
                     .toEither { }
                     .swap()
             }

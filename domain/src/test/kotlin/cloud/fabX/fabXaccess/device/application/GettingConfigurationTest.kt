@@ -26,6 +26,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingConfigurationTest {
 
@@ -96,7 +97,7 @@ internal class GettingConfigurationTest {
         }
 
         @Test
-        fun `when getting configuration then returns configuration`() {
+        fun `when getting configuration then returns configuration`() = runTest {
             // given
             val deviceActor = DeviceActor(deviceId, "aabbccddee42")
 
@@ -125,7 +126,7 @@ internal class GettingConfigurationTest {
     }
 
     @Test
-    fun `given device cannot be found when getting configuration then returns error`() {
+    fun `given device cannot be found when getting configuration then returns error`() = runTest {
         // given
         val unknownDeviceId = DeviceIdFixture.arbitrary()
         val unknownDeviceActor = DeviceActor(unknownDeviceId, "aabbccddeeff")

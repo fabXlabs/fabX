@@ -10,7 +10,6 @@ import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.Tool
-import kotlinx.coroutines.runBlocking
 
 /**
  * Service for a device to get its configuration.
@@ -22,7 +21,7 @@ class GettingConfiguration(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun getConfiguration(
+    suspend fun getConfiguration(
         actor: DeviceActor
     ): Either<Error, Result> {
         log.debug("getConfiguration...")
@@ -32,7 +31,7 @@ class GettingConfiguration(
             .flatMap {
                 it.attachedTools.entries
                     .map { e ->
-                        runBlocking { gettingToolById.getToolById(e.value) }
+                        gettingToolById.getToolById(e.value)
                             .map { tool -> e.key to tool }
                     }
                     .sequenceEither()

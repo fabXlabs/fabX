@@ -59,7 +59,7 @@ internal class ToolControllerGetTest {
             .thenReturn(UserPrincipal(actingUser))
     }
 
-    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { gettingTool }
         bindInstance(overrides = true) { authenticationService }
     }, block)

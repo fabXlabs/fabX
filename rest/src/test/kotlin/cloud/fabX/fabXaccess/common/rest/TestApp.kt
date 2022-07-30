@@ -46,7 +46,7 @@ import org.mockito.Mockito
 @OptIn(ExperimentalCoroutinesApi::class)
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
-    block: TestApplicationEngine.() -> Unit
+    block: suspend TestApplicationEngine.() -> Unit
 ) {
     val testApp = DI {
         import(restModule)
@@ -93,8 +93,8 @@ internal fun withTestApp(
 
     val restApp: RestApp by testApp.instance()
 
-    runTest {
-        withTestApplication(restApp.moduleConfiguration) {
+    withTestApplication(restApp.moduleConfiguration) {
+        runTest {
             block()
         }
     }

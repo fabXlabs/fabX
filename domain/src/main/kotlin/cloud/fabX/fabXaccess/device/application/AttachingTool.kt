@@ -23,7 +23,7 @@ class AttachingTool(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun attachTool(
+    suspend fun attachTool(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId,

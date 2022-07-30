@@ -25,7 +25,7 @@ class DeletingQualification(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun deleteQualification(
+    suspend fun deleteQualification(
         actor: Admin,
         correlationId: CorrelationId,
         qualificationId: QualificationId

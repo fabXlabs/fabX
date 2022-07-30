@@ -22,7 +22,6 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 data class Device internal constructor(
@@ -101,7 +100,7 @@ data class Device internal constructor(
         )
     }
 
-    fun attachTool(
+    suspend fun attachTool(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,
@@ -130,7 +129,7 @@ data class Device internal constructor(
             .swap()
             .flatMap { event ->
                 // assert tool exists
-                runBlocking { gettingToolById.getToolById(toolId) }
+                gettingToolById.getToolById(toolId)
                     .map { event }
             }
             .mapLeft {

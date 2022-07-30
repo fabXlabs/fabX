@@ -114,7 +114,7 @@ internal class DeletingQualificationTest {
         }
 
     @Test
-    fun `given qualification cannot be found when deleting qualification then returns error`() {
+    fun `given qualification cannot be found when deleting qualification then returns error`() = runTest {
         // given
         val error = Error.QualificationNotFound("message", qualificationId)
 

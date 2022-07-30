@@ -15,7 +15,6 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 data class Qualification internal constructor(
@@ -94,7 +93,7 @@ data class Qualification internal constructor(
         )
     }
 
-    fun delete(
+    suspend fun delete(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,
@@ -112,11 +111,11 @@ data class Qualification internal constructor(
             }
     }
 
-    private fun requireQualificationNotInUseByTools(
+    private suspend fun requireQualificationNotInUseByTools(
         gettingToolsByQualificationId: GettingToolsByQualificationId,
         correlationId: CorrelationId
     ): Either<Error, Unit> {
-        val tools = runBlocking { gettingToolsByQualificationId.getToolsByQualificationId(id) }
+        val tools = gettingToolsByQualificationId.getToolsByQualificationId(id)
 
         return Either.conditionally(
             tools.isEmpty(),

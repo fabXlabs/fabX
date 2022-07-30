@@ -13,10 +13,13 @@ import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isRight
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class QualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()
@@ -288,7 +291,7 @@ internal class QualificationTest {
     }
 
     @Test
-    fun `when deleting then expected sourcing event is returned`() {
+    fun `when deleting then expected sourcing event is returned`() = runTest {
         // given
         val qualification =
             QualificationFixture.arbitrary(qualificationId, aggregateVersion = aggregateVersion)
