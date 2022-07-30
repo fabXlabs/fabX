@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
 
     testImplementation(testFixtures(project(":domain")))

@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.common.model.UserId
 interface UserRepository {
     suspend fun getAll(): Set<User>
     suspend fun getById(id: UserId): Either<Error, User>
+    suspend fun getSourcingEvents(): List<UserSourcingEvent>
     suspend fun store(event: UserSourcingEvent): Option<Error>
 }
 

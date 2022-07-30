@@ -125,7 +125,7 @@ class UserDatabaseRepository(private val db: Database) :
         }
     }
 
-    suspend fun getSourcingEvents(): List<UserSourcingEvent> {
+    override suspend fun getSourcingEvents(): List<UserSourcingEvent> {
         return transaction {
             UserSourcingEventDAO.selectAll()
                 .orderBy(UserSourcingEventDAO.timestamp, SortOrder.ASC)

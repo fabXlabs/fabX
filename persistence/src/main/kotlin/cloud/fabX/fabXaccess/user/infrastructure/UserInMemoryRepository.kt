@@ -62,6 +62,8 @@ class UserInMemoryRepository :
         }
     }
 
+    override suspend fun getSourcingEvents(): List<UserSourcingEvent> = events
+
     override suspend fun store(event: UserSourcingEvent): Option<Error> {
         val previousVersion = getVersionById(event.aggregateRootId)
 
