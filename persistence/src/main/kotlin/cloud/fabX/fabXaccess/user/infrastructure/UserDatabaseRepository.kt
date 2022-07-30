@@ -126,8 +126,8 @@ class UserDatabaseRepository(private val db: Database) :
     fun getSourcingEvents(): List<UserSourcingEvent> {
         return transaction {
             UserSourcingEventDAO.selectAll()
-                // TODO order by something different (timestamp is informative, nothing to depend on)
                 .orderBy(UserSourcingEventDAO.timestamp, SortOrder.ASC)
+                .orderBy(UserSourcingEventDAO.aggregateVersion, SortOrder.ASC)
                 .map {
                     it[UserSourcingEventDAO.data]
                 }

@@ -110,8 +110,8 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
     fun getSourcingEvents(): List<QualificationSourcingEvent> {
         return transaction {
             QualificationSourcingEventDAO.selectAll()
-                // TODO order by something different (timestamp is informative, nothing to depend on)
                 .orderBy(QualificationSourcingEventDAO.timestamp, SortOrder.ASC)
+                .orderBy(QualificationSourcingEventDAO.aggregateVersion, SortOrder.ASC)
                 .map {
                     it[QualificationSourcingEventDAO.data]
                 }

@@ -117,8 +117,8 @@ class DeviceDatabaseRepository(
     fun getSourcingEvents(): List<DeviceSourcingEvent> {
         return transaction {
             DeviceSourcingEventDAO.selectAll()
-                // TODO order by something different (timestamp is informative, nothing to depend on)
                 .orderBy(DeviceSourcingEventDAO.timestamp, SortOrder.ASC)
+                .orderBy(DeviceSourcingEventDAO.aggregateVersion, SortOrder.ASC)
                 .map {
                     it[DeviceSourcingEventDAO.data]
                 }

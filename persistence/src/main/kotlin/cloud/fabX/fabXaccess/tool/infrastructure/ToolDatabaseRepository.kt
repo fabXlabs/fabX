@@ -112,8 +112,8 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
     fun getSourcingEvents(): List<ToolSourcingEvent> {
         return transaction {
             ToolSourcingEventDAO.selectAll()
-                // TODO order by something different (timestamp is informative, nothing to depend on)
                 .orderBy(ToolSourcingEventDAO.timestamp, SortOrder.ASC)
+                .orderBy(ToolSourcingEventDAO.aggregateVersion, SortOrder.ASC)
                 .map {
                     it[ToolSourcingEventDAO.data]
                 }
