@@ -57,7 +57,7 @@ internal class UserControllerAddInstructorQualificationTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { addingInstructorQualification }
         bindInstance(overrides = true) { authenticationService }
     }, block)

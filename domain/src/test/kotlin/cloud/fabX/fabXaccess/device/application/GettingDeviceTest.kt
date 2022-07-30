@@ -14,12 +14,15 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingDeviceTest {
 
@@ -44,7 +47,7 @@ internal class GettingDeviceTest {
     }
 
     @Test
-    fun `when getting all then returns all from repository`() {
+    fun `when getting all then returns all from repository`() = runTest {
         // given
         val device1 = DeviceFixture.arbitrary()
         val device2 = DeviceFixture.arbitrary()
@@ -64,7 +67,7 @@ internal class GettingDeviceTest {
     }
 
     @Test
-    fun `given device exists when getting by id then returns from repository`() {
+    fun `given device exists when getting by id then returns from repository`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId)
 
@@ -81,7 +84,7 @@ internal class GettingDeviceTest {
     }
 
     @Test
-    fun `given repository error when getting by id then returns error`() {
+    fun `given repository error when getting by id then returns error`() = runTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 

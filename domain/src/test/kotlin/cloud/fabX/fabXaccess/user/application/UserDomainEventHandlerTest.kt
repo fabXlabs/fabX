@@ -10,6 +10,8 @@ import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
 import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,6 +22,7 @@ import org.mockito.kotlin.same
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class UserDomainEventHandlerTest {
 
@@ -60,7 +63,7 @@ internal class UserDomainEventHandlerTest {
 
 
     @Test
-    fun `when handling QualificationDeleted then removes member and instructor qualifications`() {
+    fun `when handling QualificationDeleted then removes member and instructor qualifications`() = runTest {
         // given
         val domainEvent = QualificationDeleted(
             actorId,

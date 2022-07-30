@@ -20,6 +20,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingInstructorQualificationTest {
 
@@ -60,50 +63,51 @@ internal class AddingInstructorQualificationTest {
     }
 
     @Test
-    fun `given user and qualification can be found when adding instructor qualification then sourcing event is created and stored`() {
-        // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+    fun `given user and qualification can be found when adding instructor qualification then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
-        val qualification = QualificationFixture.arbitrary(qualificationId)
+            val qualification = QualificationFixture.arbitrary(qualificationId)
 
-        val expectedSourcingEvent = InstructorQualificationAdded(
-            userId,
-            2,
-            adminActor.id,
-            fixedInstant,
-            correlationId,
-            qualificationId
-        )
+            val expectedSourcingEvent = InstructorQualificationAdded(
+                userId,
+                2,
+                adminActor.id,
+                fixedInstant,
+                correlationId,
+                qualificationId
+            )
 
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
 
-        whenever(qualificationRepository.getQualificationById(qualificationId))
-            .thenReturn(qualification.right())
+            whenever(qualificationRepository.getQualificationById(qualificationId))
+                .thenReturn(qualification.right())
 
-        whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            whenever(userRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
 
-        // when
-        val result = testee.addInstructorQualification(
-            adminActor,
-            correlationId,
-            userId,
-            qualificationId
-        )
+            // when
+            val result = testee.addInstructorQualification(
+                adminActor,
+                correlationId,
+                userId,
+                qualificationId
+            )
 
-        // then
-        assertThat(result).isNone()
+            // then
+            assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository, qualificationRepository)
-        inOrder.verify(userRepository).getById(userId)
-        inOrder.verify(qualificationRepository).getQualificationById(qualificationId)
-        inOrder.verify(userRepository).store(expectedSourcingEvent)
-        inOrder.verifyNoMoreInteractions()
-    }
+            val inOrder = inOrder(userRepository, qualificationRepository)
+            inOrder.verify(userRepository).getById(userId)
+            inOrder.verify(qualificationRepository).getQualificationById(qualificationId)
+            inOrder.verify(userRepository).store(expectedSourcingEvent)
+            inOrder.verifyNoMoreInteractions()
+        }
 
     @Test
-    fun `given user cannot be found when adding instructor qualification then returns error`() {
+    fun `given user cannot be found when adding instructor qualification then returns error`() = runTest {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -123,7 +127,7 @@ internal class AddingInstructorQualificationTest {
     }
 
     @Test
-    fun `given qualification cannot be found when adding instructor qualification then returns error`() {
+    fun `given qualification cannot be found when adding instructor qualification then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -148,7 +152,7 @@ internal class AddingInstructorQualificationTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding instructor qualification then returns error`() {
+    fun `given sourcing event cannot be stored when adding instructor qualification then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 

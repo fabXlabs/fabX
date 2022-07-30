@@ -79,7 +79,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDeviceStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val event1 = DeviceCreated(
@@ -200,7 +200,7 @@ internal class DeviceDatabaseRepositoryTest {
         private val deviceId2 = DeviceIdFixture.static(4343)
         private val deviceId3 = DeviceIdFixture.static(4444)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val device1event1 = DeviceCreated(
@@ -344,7 +344,7 @@ internal class DeviceDatabaseRepositoryTest {
 
         private val deviceId2 = DeviceIdFixture.static(4242)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val device1Created = DeviceCreated(
@@ -414,7 +414,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDevicesWithAttachedToolsStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val device1Created = DeviceCreated(

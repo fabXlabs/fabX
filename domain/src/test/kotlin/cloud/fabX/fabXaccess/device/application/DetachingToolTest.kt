@@ -21,6 +21,8 @@ import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DetachingToolTest {
 
@@ -56,7 +59,7 @@ internal class DetachingToolTest {
     }
 
     @Test
-    fun `given device can be found when detaching tool then sourcing event is created and stored`() {
+    fun `given device can be found when detaching tool then sourcing event is created and stored`() = runTest {
         // given
         val toolId = ToolIdFixture.arbitrary()
 
@@ -95,7 +98,7 @@ internal class DetachingToolTest {
     }
 
     @Test
-    fun `given triggered by domain event when detaching tool then sourcing event is created and stored`() {
+    fun `given triggered by domain event when detaching tool then sourcing event is created and stored`() = runTest {
         val toolId = ToolIdFixture.arbitrary()
 
         val pin = 3
@@ -141,7 +144,7 @@ internal class DetachingToolTest {
     }
 
     @Test
-    fun `given domain error when detaching tool then returns domain error`() {
+    fun `given domain error when detaching tool then returns domain error`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(
             deviceId,
@@ -171,7 +174,7 @@ internal class DetachingToolTest {
     }
 
     @Test
-    fun `given tool cannot be found when detaching tool then returns error`() {
+    fun `given tool cannot be found when detaching tool then returns error`() = runTest {
         // given
         val error = Error.DeviceNotFound("", deviceId)
 
@@ -193,7 +196,7 @@ internal class DetachingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when attaching tool then returns error`() {
+    fun `given sourcing event cannot be stored when attaching tool then returns error`() = runTest {
         // given
         val toolId = ToolIdFixture.arbitrary()
 

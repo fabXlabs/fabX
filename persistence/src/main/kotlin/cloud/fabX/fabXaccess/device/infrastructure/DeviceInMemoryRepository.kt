@@ -20,7 +20,7 @@ import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 class DeviceInMemoryRepository : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
     private val events = mutableListOf<DeviceSourcingEvent>()
 
-    override fun getAll(): Set<Device> {
+    override suspend fun getAll(): Set<Device> {
         return events
             .sortedBy { it.aggregateVersion }
             .groupBy { it.aggregateRootId }
@@ -30,7 +30,7 @@ class DeviceInMemoryRepository : DeviceRepository, GettingDeviceByIdentity, Gett
             .toSet()
     }
 
-    override fun getById(id: DeviceId): Either<Error, Device> {
+    override suspend fun getById(id: DeviceId): Either<Error, Device> {
         val e = events
             .filter { it.aggregateRootId == id }
             .sortedBy { it.aggregateVersion }
@@ -51,7 +51,7 @@ class DeviceInMemoryRepository : DeviceRepository, GettingDeviceByIdentity, Gett
         }
     }
 
-    override fun store(event: DeviceSourcingEvent): Option<Error> {
+    override suspend fun store(event: DeviceSourcingEvent): Option<Error> {
         val previousVersion = getVersionById(event.aggregateRootId)
 
         return if (previousVersion != null
@@ -75,13 +75,13 @@ class DeviceInMemoryRepository : DeviceRepository, GettingDeviceByIdentity, Gett
             .maxOfOrNull { it.aggregateVersion }
     }
 
-    override fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
+    override suspend fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
         getAll()
             .firstOrNull { it.hasIdentity(identity) }
             .toOption()
             .toEither { Error.DeviceNotFoundByIdentity("Not able to find device for given identity.") }
 
-    override fun getByAttachedTool(toolId: ToolId): Set<Device> {
+    override suspend fun getByAttachedTool(toolId: ToolId): Set<Device> {
         return getAll()
             .filter { it.hasAttachedTool(toolId) }
             .toSet()

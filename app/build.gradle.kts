@@ -1,5 +1,6 @@
 val ktorVersion: String by rootProject
 val kotlinxDateTimeVersion: String by project
+val kotlinxCoroutinesVersion: String by project
 val testcontainersVersion: String by project
 
 val exposedVersion: String by project
@@ -23,6 +24,7 @@ dependencies {
     testImplementation(testFixtures(project(":domain")))
     testImplementation("io.ktor:ktor-serialization:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("org.jetbrains.exposed:exposed-core:$exposedVersion")

@@ -14,6 +14,8 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import io.ktor.auth.UserPasswordCredential
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -21,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AuthenticationServiceTest {
 
@@ -38,7 +41,7 @@ internal class AuthenticationServiceTest {
     }
 
     @Test
-    fun `when basic then returns UserPrincipal`() {
+    fun `when basic then returns UserPrincipal`() = runTest {
         // given
         val username = "some.one"
         val password = "supersecret42"
@@ -69,7 +72,7 @@ internal class AuthenticationServiceTest {
     }
 
     @Test
-    fun `given invalid username when basic then returns ErrorPrincipal`() {
+    fun `given invalid username when basic then returns ErrorPrincipal`() = runTest {
         // given
         val invalidUsername = "---"
 
@@ -84,7 +87,7 @@ internal class AuthenticationServiceTest {
     }
 
     @Test
-    fun `given user not exists when basic then returns null`() {
+    fun `given user not exists when basic then returns null`() = runTest {
         // given
         val username = "some.one"
         val password = "supersecret42"

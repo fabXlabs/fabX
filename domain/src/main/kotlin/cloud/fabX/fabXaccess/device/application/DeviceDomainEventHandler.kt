@@ -13,11 +13,11 @@ class DeviceDomainEventHandler(
 ) : DomainEventHandler {
     private val log = loggerFactory.invoke(this::class.java)
 
-    override fun handle(domainEvent: DomainEvent) {
+    override suspend fun handle(domainEvent: DomainEvent) {
         log.debug("ignoring event $domainEvent")
     }
 
-    override fun handle(domainEvent: ToolDeleted) {
+    override suspend fun handle(domainEvent: ToolDeleted) {
         log.debug("handle ToolDeleted event...")
         gettingDevicesByAttachedTool.getByAttachedTool(domainEvent.toolId)
             .flatMap { device ->

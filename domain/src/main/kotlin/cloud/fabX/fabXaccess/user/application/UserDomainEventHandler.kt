@@ -18,11 +18,11 @@ class UserDomainEventHandler(
 
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    override fun handle(domainEvent: DomainEvent) {
+    override suspend fun handle(domainEvent: DomainEvent) {
         log.debug("ignoring event $domainEvent")
     }
 
-    override fun handle(domainEvent: QualificationDeleted) {
+    override suspend fun handle(domainEvent: QualificationDeleted) {
         gettingUsersByMemberQualification.getByMemberQualification(domainEvent.qualificationId)
             .map {
                 removingMemberQualification.removeMemberQualification(

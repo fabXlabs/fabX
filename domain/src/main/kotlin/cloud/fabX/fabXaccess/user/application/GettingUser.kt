@@ -19,7 +19,7 @@ class GettingUser(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun getAll(
+    suspend fun getAll(
         actor: Admin,
         correlationId: CorrelationId
     ): Set<User> {
@@ -28,7 +28,7 @@ class GettingUser(
         return userRepository.getAll()
     }
 
-    fun getById(
+    suspend fun getById(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId

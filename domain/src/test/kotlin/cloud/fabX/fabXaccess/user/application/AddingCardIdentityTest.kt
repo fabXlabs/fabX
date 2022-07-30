@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingCardIdentityTest {
 
@@ -58,7 +61,7 @@ internal class AddingCardIdentityTest {
     }
 
     @Test
-    fun `given user can be found when adding identity then sourcing event is created and stored`() {
+    fun `given user can be found when adding identity then sourcing event is created and stored`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -102,7 +105,7 @@ internal class AddingCardIdentityTest {
     }
 
     @Test
-    fun `given user cannot be found when adding identity then returns error`() {
+    fun `given user cannot be found when adding identity then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -125,7 +128,7 @@ internal class AddingCardIdentityTest {
     }
 
     @Test
-    fun `given domain error when adding identity then returns domain error`() {
+    fun `given domain error when adding identity then returns domain error`() = runTest {
         // given
         val cardId = "11223344556677"
         val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
@@ -158,7 +161,7 @@ internal class AddingCardIdentityTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding identity then returns error`() {
+    fun `given sourcing event cannot be stored when adding identity then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 

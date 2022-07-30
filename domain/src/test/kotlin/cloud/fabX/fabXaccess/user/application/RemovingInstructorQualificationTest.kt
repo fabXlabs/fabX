@@ -20,6 +20,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class RemovingInstructorQualificationTest {
 
@@ -57,95 +60,97 @@ internal class RemovingInstructorQualificationTest {
     }
 
     @Test
-    fun `given user can be found and has qualification when removing instructor qualification then sourcing event is created and stored`() {
-        // given
-        val user = UserFixture.arbitrary(
-            userId,
-            aggregateVersion = 1,
-            instructorQualifications = setOf(qualificationId)
-        )
+    fun `given user can be found and has qualification when removing instructor qualification then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary(
+                userId,
+                aggregateVersion = 1,
+                instructorQualifications = setOf(qualificationId)
+            )
 
-        val expectedSourcingEvent = InstructorQualificationRemoved(
-            userId,
-            2,
-            adminActor.id,
-            fixedInstant,
-            correlationId,
-            qualificationId
-        )
+            val expectedSourcingEvent = InstructorQualificationRemoved(
+                userId,
+                2,
+                adminActor.id,
+                fixedInstant,
+                correlationId,
+                qualificationId
+            )
 
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
 
-        whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            whenever(userRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
 
-        // when
-        val result = testee.removeInstructorQualification(
-            adminActor,
-            correlationId,
-            userId,
-            qualificationId
-        )
+            // when
+            val result = testee.removeInstructorQualification(
+                adminActor,
+                correlationId,
+                userId,
+                qualificationId
+            )
 
-        // then
-        assertThat(result).isNone()
-        val inOrder = inOrder(userRepository)
-        inOrder.verify(userRepository).getById(userId)
-        inOrder.verify(userRepository).store(expectedSourcingEvent)
-        inOrder.verifyNoMoreInteractions()
-    }
-
-    @Test
-    fun `given triggered by domain event when removing instructor qualification then sourcing event is created and stored`() {
-        // given
-        val user = UserFixture.arbitrary(
-            userId,
-            aggregateVersion = 1,
-            instructorQualifications = setOf(qualificationId)
-        )
-
-        val actorId = UserIdFixture.arbitrary()
-
-        val domainEvent = QualificationDeleted(
-            actorId,
-            Clock.System.now(),
-            correlationId,
-            qualificationId
-        )
-
-        val expectedSourcingEvent = InstructorQualificationRemoved(
-            userId,
-            2,
-            actorId,
-            fixedInstant,
-            correlationId,
-            qualificationId
-        )
-
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
-
-        whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
-
-        // when
-        val result = testee.removeInstructorQualification(
-            domainEvent,
-            userId,
-            qualificationId
-        )
-
-        // then
-        assertThat(result).isNone()
-        val inOrder = inOrder(userRepository)
-        inOrder.verify(userRepository).getById(userId)
-        inOrder.verify(userRepository).store(expectedSourcingEvent)
-        inOrder.verifyNoMoreInteractions()
-    }
+            // then
+            assertThat(result).isNone()
+            val inOrder = inOrder(userRepository)
+            inOrder.verify(userRepository).getById(userId)
+            inOrder.verify(userRepository).store(expectedSourcingEvent)
+            inOrder.verifyNoMoreInteractions()
+        }
 
     @Test
-    fun `given user cannot be found when removing instructor qualification then returns error`() {
+    fun `given triggered by domain event when removing instructor qualification then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary(
+                userId,
+                aggregateVersion = 1,
+                instructorQualifications = setOf(qualificationId)
+            )
+
+            val actorId = UserIdFixture.arbitrary()
+
+            val domainEvent = QualificationDeleted(
+                actorId,
+                Clock.System.now(),
+                correlationId,
+                qualificationId
+            )
+
+            val expectedSourcingEvent = InstructorQualificationRemoved(
+                userId,
+                2,
+                actorId,
+                fixedInstant,
+                correlationId,
+                qualificationId
+            )
+
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
+
+            whenever(userRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
+
+            // when
+            val result = testee.removeInstructorQualification(
+                domainEvent,
+                userId,
+                qualificationId
+            )
+
+            // then
+            assertThat(result).isNone()
+            val inOrder = inOrder(userRepository)
+            inOrder.verify(userRepository).getById(userId)
+            inOrder.verify(userRepository).store(expectedSourcingEvent)
+            inOrder.verifyNoMoreInteractions()
+        }
+
+    @Test
+    fun `given user cannot be found when removing instructor qualification then returns error`() = runTest {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -165,39 +170,40 @@ internal class RemovingInstructorQualificationTest {
     }
 
     @Test
-    fun `given user can be found but not has qualification when removing instructor qualification then returns error`() {
-        // given
-        val user = UserFixture.arbitrary(
-            userId,
-            aggregateVersion = 1,
-            instructorQualifications = null
-        )
-
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
-
-        // when
-        val result = testee.removeInstructorQualification(
-            adminActor,
-            correlationId,
-            userId,
-            qualificationId
-        )
-
-        // then
-        assertThat(result)
-            .isSome()
-            .isEqualTo(
-                Error.InstructorQualificationNotFound(
-                    "Not able to find instructor qualification with id $qualificationId.",
-                    qualificationId,
-                    correlationId
-                )
+    fun `given user can be found but not has qualification when removing instructor qualification then returns error`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary(
+                userId,
+                aggregateVersion = 1,
+                instructorQualifications = null
             )
-    }
+
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
+
+            // when
+            val result = testee.removeInstructorQualification(
+                adminActor,
+                correlationId,
+                userId,
+                qualificationId
+            )
+
+            // then
+            assertThat(result)
+                .isSome()
+                .isEqualTo(
+                    Error.InstructorQualificationNotFound(
+                        "Not able to find instructor qualification with id $qualificationId.",
+                        qualificationId,
+                        correlationId
+                    )
+                )
+        }
 
     @Test
-    fun `given sourcing event cannot be stored when removing instructor qualification then returns error`() {
+    fun `given sourcing event cannot be stored when removing instructor qualification then returns error`() = runTest {
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,

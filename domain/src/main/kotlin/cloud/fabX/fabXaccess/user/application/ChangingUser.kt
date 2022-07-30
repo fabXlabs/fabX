@@ -24,7 +24,7 @@ class ChangingUser(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun changePersonalInformation(
+    suspend fun changePersonalInformation(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,
@@ -57,7 +57,7 @@ class ChangingUser(
             .tap { log.error("...changePersonalInformation error: $it") }
     }
 
-    fun changeLockState(
+    suspend fun changeLockState(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

@@ -19,7 +19,7 @@ class GettingUserByIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun getUserByIdentity(
+    suspend fun getUserByIdentity(
         actor: SystemActor,
         correlationId: CorrelationId,
         identity: UserIdentity
@@ -29,7 +29,7 @@ class GettingUserByIdentity(
         return gettingUserByIdentity.getByIdentity(identity)
     }
 
-    fun getUserByIdentity(
+    suspend fun getUserByIdentity(
         actor: SystemActor,
         identity: UserIdentity
     ): Either<Error, User> {

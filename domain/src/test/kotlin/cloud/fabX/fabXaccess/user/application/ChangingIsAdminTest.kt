@@ -18,6 +18,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class ChangingIsAdminTest {
 
@@ -59,7 +62,7 @@ internal class ChangingIsAdminTest {
     @ValueSource(booleans = [true, false])
     fun `given user can be found when changing is admin then sourcing is created and stored`(
         newIsAdmin: Boolean
-    ) {
+    ) = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, isAdmin = !newIsAdmin)
 
@@ -95,7 +98,7 @@ internal class ChangingIsAdminTest {
     }
 
     @Test
-    fun `given user cannot be found when changing is admin then returns error`() {
+    fun `given user cannot be found when changing is admin then returns error`() = runTest {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -117,7 +120,7 @@ internal class ChangingIsAdminTest {
     }
 
     @Test
-    fun `given domain error when changing is admin then returns domain error`() {
+    fun `given domain error when changing is admin then returns domain error`() = runTest {
         // given
         val newIsAdmin = true
 
@@ -143,7 +146,7 @@ internal class ChangingIsAdminTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing is admin then returns error`() {
+    fun `given sourcing event cannot be stored when changing is admin then returns error`() = runTest {
         // given
         val newIsAdmin = true
 

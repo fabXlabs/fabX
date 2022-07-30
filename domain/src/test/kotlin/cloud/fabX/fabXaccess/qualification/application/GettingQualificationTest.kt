@@ -14,12 +14,15 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.InstructorFixture
 import isLeft
 import isRight
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingQualificationTest {
 
@@ -44,7 +47,7 @@ internal class GettingQualificationTest {
     }
 
     @Test
-    fun `when getting all then returns all from repository`() {
+    fun `when getting all then returns all from repository`() = runTest {
         // given
         val qualification1 = QualificationFixture.arbitrary()
         val qualification2 = QualificationFixture.arbitrary()
@@ -63,7 +66,7 @@ internal class GettingQualificationTest {
     }
 
     @Test
-    fun `given qualification exists when getting by id then returns from repository`() {
+    fun `given qualification exists when getting by id then returns from repository`() = runTest {
         // given
         val qualification = QualificationFixture.arbitrary(qualificationId)
 
@@ -80,7 +83,7 @@ internal class GettingQualificationTest {
     }
 
     @Test
-    fun `given repository error when getting by id then returns error`() {
+    fun `given repository error when getting by id then returns error`() = runTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 

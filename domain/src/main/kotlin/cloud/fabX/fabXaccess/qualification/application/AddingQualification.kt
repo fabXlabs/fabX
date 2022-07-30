@@ -22,7 +22,7 @@ class AddingQualification(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun addQualification(
+    suspend fun addQualification(
         actor: Admin,
         correlationId: CorrelationId,
         name: String,

@@ -22,7 +22,7 @@ class RemovingUsernamePasswordIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun removeUsernamePasswordIdentity(
+    suspend fun removeUsernamePasswordIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

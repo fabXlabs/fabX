@@ -27,7 +27,7 @@ class RemovingMemberQualification(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun removeMemberQualification(
+    suspend fun removeMemberQualification(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,
@@ -35,14 +35,14 @@ class RemovingMemberQualification(
     ): Option<Error> =
         removeMemberQualification(userId) { it.removeMemberQualification(actor, clock, correlationId, qualificationId) }
 
-    internal fun removeMemberQualification(
+    internal suspend fun removeMemberQualification(
         domainEvent: DomainEvent,
         userId: UserId,
         qualificationId: QualificationId
     ): Option<Error> =
         removeMemberQualification(userId) { it.removeMemberQualification(domainEvent, clock, qualificationId) }
 
-    private fun removeMemberQualification(
+    private suspend fun removeMemberQualification(
         userId: UserId,
         domainMethod: (User) -> Either<Error, UserSourcingEvent>
     ): Option<Error> {

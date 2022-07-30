@@ -18,7 +18,7 @@ class GettingDevice(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun getAll(
+    suspend fun getAll(
         actor: Admin,
         correlationId: CorrelationId
     ): Set<Device> {
@@ -27,7 +27,7 @@ class GettingDevice(
         return deviceRepository.getAll()
     }
 
-    fun getById(
+    suspend fun getById(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId

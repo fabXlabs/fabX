@@ -58,7 +58,7 @@ internal class UserControllerPutTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { changingUser }
         bindInstance(overrides = true) { authenticationService }
     }, block)

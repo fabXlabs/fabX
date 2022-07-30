@@ -12,6 +12,8 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import isLeft
 import isRight
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -19,6 +21,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingUserByIdentityTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
@@ -38,10 +41,11 @@ internal class GettingUserByIdentityTest {
         testee = GettingUserByIdentity({ logger }, gettingUserByIdentity)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Nested
     internal inner class GivenCorrelationId {
         @Test
-        fun `when getting by identity then returns user from repository`() {
+        fun `when getting by identity then returns user from repository`() = runTest {
             // given
             val identity = UsernamePasswordIdentity(
                 "some.one",
@@ -66,7 +70,7 @@ internal class GettingUserByIdentityTest {
         }
 
         @Test
-        fun `given user not exists when getting by identity then returns error`() {
+        fun `given user not exists when getting by identity then returns error`() = runTest {
             // given
             val identity = UsernamePasswordIdentity(
                 "some.one",
@@ -95,7 +99,7 @@ internal class GettingUserByIdentityTest {
     @Nested
     internal inner class GivenNoCorrelationId {
         @Test
-        fun `when getting by identity then returns user from repository`() {
+        fun `when getting by identity then returns user from repository`() = runTest {
             // given
             val identity = UsernamePasswordIdentity(
                 "some.one",
@@ -119,7 +123,7 @@ internal class GettingUserByIdentityTest {
         }
 
         @Test
-        fun `given user not exists when getting by identity then returns error`() {
+        fun `given user not exists when getting by identity then returns error`() = runTest {
             // given
             val identity = UsernamePasswordIdentity(
                 "some.one",

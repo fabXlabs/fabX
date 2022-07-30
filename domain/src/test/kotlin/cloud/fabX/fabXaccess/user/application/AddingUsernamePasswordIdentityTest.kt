@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingUsernamePasswordIdentityTest {
 
@@ -58,7 +61,7 @@ internal class AddingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given user can be found when adding identity then sourcing event is created and stored`() {
+    fun `given user can be found when adding identity then sourcing event is created and stored`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
 
@@ -102,7 +105,7 @@ internal class AddingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given user cannot be found when adding identity then returns error`() {
+    fun `given user cannot be found when adding identity then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -125,7 +128,7 @@ internal class AddingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding identity then returns error`() {
+    fun `given sourcing event cannot be stored when adding identity then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
 
@@ -169,7 +172,7 @@ internal class AddingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given domain error when adding identity then returns domain error`() {
+    fun `given domain error when adding identity then returns domain error`() = runTest {
         // given
         val existingUsernamePasswordIdentity = UserIdentityFixture.usernamePassword("name")
         val user = UserFixture.arbitrary(

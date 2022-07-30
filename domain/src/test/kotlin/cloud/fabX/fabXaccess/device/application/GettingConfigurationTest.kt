@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import isLeft
 import isRight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -69,8 +70,10 @@ internal class GettingConfigurationTest {
                 attachedTools = mapOf(pin1 to toolId1, pin2 to toolId2)
             )
 
-            whenever(deviceRepository.getById(deviceId))
-                .thenReturn(device.right())
+            runBlocking {
+                whenever(deviceRepository.getById(deviceId))
+                    .thenReturn(device.right())
+            }
         }
 
         @BeforeEach

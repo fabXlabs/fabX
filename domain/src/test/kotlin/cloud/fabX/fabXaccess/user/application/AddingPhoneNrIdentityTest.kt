@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingPhoneNrIdentityTest {
 
@@ -58,7 +61,7 @@ internal class AddingPhoneNrIdentityTest {
     }
 
     @Test
-    fun `given user can be found when adding identity then sourcing event is created and stored`() {
+    fun `given user can be found when adding identity then sourcing event is created and stored`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -99,7 +102,7 @@ internal class AddingPhoneNrIdentityTest {
     }
 
     @Test
-    fun `given user cannot be found when adding identity then returns error`() {
+    fun `given user cannot be found when adding identity then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -121,7 +124,7 @@ internal class AddingPhoneNrIdentityTest {
     }
 
     @Test
-    fun `given domain error when adding identity then returns domain error`() {
+    fun `given domain error when adding identity then returns domain error`() = runTest {
         // given
         val phoneNr = "+49123456789"
         val otherUser = UserFixture.withIdentity(UserIdentityFixture.phoneNr(phoneNr))
@@ -154,7 +157,7 @@ internal class AddingPhoneNrIdentityTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding identity then returns error`() {
+    fun `given sourcing event cannot be stored when adding identity then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 

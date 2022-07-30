@@ -17,6 +17,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -41,7 +43,7 @@ class DeviceDatabaseRepository(
     private val db: Database
 ) : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
 
-    override fun getAll(): Set<Device> {
+    override suspend fun getAll(): Set<Device> {
         return transaction {
             DeviceSourcingEventDAO
                 .selectAll()
@@ -58,7 +60,7 @@ class DeviceDatabaseRepository(
         }
     }
 
-    override fun getById(id: DeviceId): Either<Error, Device> {
+    override suspend fun getById(id: DeviceId): Either<Error, Device> {
         val events = transaction {
             DeviceSourcingEventDAO
                 .select {
@@ -86,7 +88,7 @@ class DeviceDatabaseRepository(
         }
     }
 
-    override fun store(event: DeviceSourcingEvent): Option<Error> {
+    override suspend fun store(event: DeviceSourcingEvent): Option<Error> {
         return transaction {
             val previousVersion = getVersionById(event.aggregateRootId)
 
@@ -114,7 +116,7 @@ class DeviceDatabaseRepository(
         }
     }
 
-    fun getSourcingEvents(): List<DeviceSourcingEvent> {
+    suspend fun getSourcingEvents(): List<DeviceSourcingEvent> {
         return transaction {
             DeviceSourcingEventDAO.selectAll()
                 .orderBy(DeviceSourcingEventDAO.timestamp, SortOrder.ASC)
@@ -138,18 +140,20 @@ class DeviceDatabaseRepository(
             .maxOfOrNull { it }
     }
 
-    override fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
+    override suspend fun getByIdentity(identity: DeviceIdentity): Either<Error, Device> =
         getAll()
             .firstOrNull { it.hasIdentity(identity) }
             .toOption()
             .toEither { Error.DeviceNotFoundByIdentity("Not able to find device for given identity.") }
 
-    override fun getByAttachedTool(toolId: ToolId): Set<Device> =
+    override suspend fun getByAttachedTool(toolId: ToolId): Set<Device> =
         getAll()
             .filter { it.hasAttachedTool(toolId) }
             .toSet()
 
-    private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
-        statement()
+    private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {
+        transaction(db) {
+            statement()
+        }
     }
 }

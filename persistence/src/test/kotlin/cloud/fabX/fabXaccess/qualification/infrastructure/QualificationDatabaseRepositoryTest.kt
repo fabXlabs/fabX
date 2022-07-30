@@ -59,7 +59,7 @@ internal class QualificationDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForQualificationStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: QualificationDatabaseRepository by di.instance()
 
             val event1 = QualificationCreated(
@@ -183,7 +183,7 @@ internal class QualificationDatabaseRepositoryTest {
         private val qualificationId2 = QualificationIdFixture.static(234)
         private val qualificationId3 = QualificationIdFixture.static(345)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: QualificationDatabaseRepository by di.instance()
 
             val qualification1event1 = QualificationCreated(

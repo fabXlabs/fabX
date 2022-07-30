@@ -21,7 +21,7 @@ class ChangingIsAdmin(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun changeIsAdmin(
+    suspend fun changeIsAdmin(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

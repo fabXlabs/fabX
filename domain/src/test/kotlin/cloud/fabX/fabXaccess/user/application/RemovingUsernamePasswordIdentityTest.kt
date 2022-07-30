@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityRemoved
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class RemovingUsernamePasswordIdentityTest {
 
@@ -55,51 +58,52 @@ internal class RemovingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given user and identity can be found when removing identity then sourcing event is created and stored`() {
-        // given
-        val username = "username"
+    fun `given user and identity can be found when removing identity then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val username = "username"
 
-        val user = UserFixture.arbitrary(
-            userId,
-            aggregateVersion = 1,
-            identities = setOf(
-                UserIdentityFixture.usernamePassword(username)
+            val user = UserFixture.arbitrary(
+                userId,
+                aggregateVersion = 1,
+                identities = setOf(
+                    UserIdentityFixture.usernamePassword(username)
+                )
             )
-        )
 
-        val expectedSourcingEvent = UsernamePasswordIdentityRemoved(
-            userId,
-            2,
-            adminActor.id,
-            fixedInstant,
-            correlationId,
-            username
-        )
+            val expectedSourcingEvent = UsernamePasswordIdentityRemoved(
+                userId,
+                2,
+                adminActor.id,
+                fixedInstant,
+                correlationId,
+                username
+            )
 
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
 
-        whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            whenever(userRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
 
-        // when
-        val result = testee.removeUsernamePasswordIdentity(
-            adminActor,
-            correlationId,
-            userId,
-            username
-        )
+            // when
+            val result = testee.removeUsernamePasswordIdentity(
+                adminActor,
+                correlationId,
+                userId,
+                username
+            )
 
-        // then
-        assertThat(result).isNone()
+            // then
+            assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository)
-        inOrder.verify(userRepository).getById(userId)
-        inOrder.verify(userRepository).store(expectedSourcingEvent)
-    }
+            val inOrder = inOrder(userRepository)
+            inOrder.verify(userRepository).getById(userId)
+            inOrder.verify(userRepository).store(expectedSourcingEvent)
+        }
 
     @Test
-    fun `given user cannot be found when removing identity then returns error`() {
+    fun `given user cannot be found when removing identity then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -121,7 +125,7 @@ internal class RemovingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding identity then returns error`() {
+    fun `given sourcing event cannot be stored when adding identity then returns error`() = runTest {
         // given
         val username = "username"
 
@@ -165,7 +169,7 @@ internal class RemovingUsernamePasswordIdentityTest {
     }
 
     @Test
-    fun `given domain error when removing identity then error is returned`() {
+    fun `given domain error when removing identity then error is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(
             userId,

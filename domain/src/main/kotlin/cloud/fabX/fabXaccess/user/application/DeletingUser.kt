@@ -21,7 +21,7 @@ class DeletingUser(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun deleteUser(
+    suspend fun deleteUser(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId

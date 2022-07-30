@@ -18,7 +18,7 @@ class GettingQualification(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun getAll(
+    suspend fun getAll(
         actor: Actor,
         correlationId: CorrelationId
     ): Set<Qualification> {
@@ -27,7 +27,7 @@ class GettingQualification(
         return qualificationRepository.getAll()
     }
 
-    fun getById(
+    suspend fun getById(
         actor: Actor,
         correlationId: CorrelationId,
         qualificationId: QualificationId

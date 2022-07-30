@@ -58,7 +58,7 @@ internal class QualificationControllerPutTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { changingQualification }
         bindInstance(overrides = true) { authenticationService }
     }, block)

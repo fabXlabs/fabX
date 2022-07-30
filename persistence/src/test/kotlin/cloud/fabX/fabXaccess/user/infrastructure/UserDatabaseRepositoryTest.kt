@@ -72,7 +72,7 @@ internal class UserDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val event1 = UserCreated(
@@ -191,7 +191,7 @@ internal class UserDatabaseRepositoryTest {
         private val userId2 = UserIdFixture.static(12345)
         private val userId3 = UserIdFixture.static(123456)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val user1event1 = UserCreated(
@@ -366,7 +366,7 @@ internal class UserDatabaseRepositoryTest {
 
         private val userId2 = UserIdFixture.static(12345)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val user1Created = UserCreated(
@@ -544,7 +544,7 @@ internal class UserDatabaseRepositoryTest {
         private val qualificationId = QualificationIdFixture.static(456)
         private val qualificationId2 = QualificationIdFixture.static(678)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val user1Created = UserCreated(

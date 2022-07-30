@@ -25,7 +25,7 @@ class AddingMemberQualification(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun addMemberQualification(
+    suspend fun addMemberQualification(
         actor: Instructor,
         correlationId: CorrelationId,
         userId: UserId,

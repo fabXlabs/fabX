@@ -25,6 +25,8 @@ import io.ktor.server.testing.withTestApplication
 import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
 import java.util.UUID
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.Database
@@ -44,6 +46,7 @@ val postgresContainer = PostgreSQLContainer(postgresImageName)
 
 var initialised = false
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal fun withTestApp(
     block: TestApplicationEngine.() -> Unit
 ) {
@@ -150,13 +153,15 @@ internal fun withTestApp(
         isAdmin = true
     )
 
-    listOf(
-        memberCreated,
-        memberUsernamePasswordIdentityAdded,
-        adminCreated,
-        adminUsernamePasswordIdentityAdded,
-        adminIsAdminChanged
-    ).forEach { userRepository.store(it) }
+    runTest {
+        listOf(
+            memberCreated,
+            memberUsernamePasswordIdentityAdded,
+            adminCreated,
+            adminUsernamePasswordIdentityAdded,
+            adminIsAdminChanged
+        ).forEach { userRepository.store(it) }
+    }
 
     withTestApplication(restApp.moduleConfiguration) {
         block()

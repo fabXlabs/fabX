@@ -21,7 +21,7 @@ class ChangingDevice(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun changeDeviceDetails(
+    suspend fun changeDeviceDetails(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId,

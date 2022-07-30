@@ -10,7 +10,7 @@ import io.ktor.auth.UserPasswordCredential
 class AuthenticationService(
     private val gettingUserByIdentity: GettingUserByIdentity
 ) {
-    fun basic(credentials: UserPasswordCredential): Principal {
+    suspend fun basic(credentials: UserPasswordCredential): Principal {
         return UsernamePasswordIdentity
             .fromUnvalidated(
                 credentials.name,

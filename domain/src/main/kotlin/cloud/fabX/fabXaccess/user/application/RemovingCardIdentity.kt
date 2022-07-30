@@ -22,7 +22,7 @@ class RemovingCardIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun removeCardIdentity(
+    suspend fun removeCardIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

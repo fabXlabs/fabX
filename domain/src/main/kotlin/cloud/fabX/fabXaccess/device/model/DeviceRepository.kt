@@ -7,15 +7,15 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 
 interface DeviceRepository {
-    fun getAll(): Set<Device>
-    fun getById(id: DeviceId): Either<Error, Device>
-    fun store(event: DeviceSourcingEvent): Option<Error>
+    suspend fun getAll(): Set<Device>
+    suspend fun getById(id: DeviceId): Either<Error, Device>
+    suspend fun store(event: DeviceSourcingEvent): Option<Error>
 }
 
 fun interface GettingDeviceByIdentity {
-    fun getByIdentity(identity: DeviceIdentity): Either<Error, Device>
+    suspend fun getByIdentity(identity: DeviceIdentity): Either<Error, Device>
 }
 
 fun interface GettingDevicesByAttachedTool {
-    fun getByAttachedTool(toolId: ToolId): Set<Device>
+    suspend fun getByAttachedTool(toolId: ToolId): Set<Device>
 }

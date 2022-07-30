@@ -20,6 +20,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingMemberQualificationTest {
 
@@ -60,50 +63,51 @@ internal class AddingMemberQualificationTest {
     }
 
     @Test
-    fun `given user and qualification can be found when adding member qualification then sourcing event is created and stored`() {
-        // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+    fun `given user and qualification can be found when adding member qualification then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
-        val qualification = QualificationFixture.arbitrary(qualificationId)
+            val qualification = QualificationFixture.arbitrary(qualificationId)
 
-        val expectedSourcingEvent = MemberQualificationAdded(
-            userId,
-            2,
-            instructorActor.id,
-            fixedInstant,
-            correlationId,
-            qualificationId
-        )
+            val expectedSourcingEvent = MemberQualificationAdded(
+                userId,
+                2,
+                instructorActor.id,
+                fixedInstant,
+                correlationId,
+                qualificationId
+            )
 
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
 
-        whenever(gettingQualificationById.getQualificationById(qualificationId))
-            .thenReturn(qualification.right())
+            whenever(gettingQualificationById.getQualificationById(qualificationId))
+                .thenReturn(qualification.right())
 
-        whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            whenever(userRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
 
-        // when
-        val result = testee.addMemberQualification(
-            instructorActor,
-            correlationId,
-            userId,
-            qualificationId
-        )
+            // when
+            val result = testee.addMemberQualification(
+                instructorActor,
+                correlationId,
+                userId,
+                qualificationId
+            )
 
-        // then
-        assertThat(result).isNone()
+            // then
+            assertThat(result).isNone()
 
-        val inOrder = inOrder(userRepository, gettingQualificationById)
-        inOrder.verify(userRepository).getById(userId)
-        inOrder.verify(gettingQualificationById).getQualificationById(qualificationId)
-        inOrder.verify(userRepository).store(expectedSourcingEvent)
-        inOrder.verifyNoMoreInteractions()
-    }
+            val inOrder = inOrder(userRepository, gettingQualificationById)
+            inOrder.verify(userRepository).getById(userId)
+            inOrder.verify(gettingQualificationById).getQualificationById(qualificationId)
+            inOrder.verify(userRepository).store(expectedSourcingEvent)
+            inOrder.verifyNoMoreInteractions()
+        }
 
     @Test
-    fun `given user cannot be found when adding member qualification then returns error`() {
+    fun `given user cannot be found when adding member qualification then returns error`() = runTest {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -123,7 +127,7 @@ internal class AddingMemberQualificationTest {
     }
 
     @Test
-    fun `given qualification cannot be found when adding member qualification then returns error`() {
+    fun `given qualification cannot be found when adding member qualification then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -148,7 +152,7 @@ internal class AddingMemberQualificationTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding member qualification then returns error`() {
+    fun `given sourcing event cannot be stored when adding member qualification then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 

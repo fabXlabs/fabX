@@ -61,7 +61,7 @@ fun <T> ChangeableValue<T>.asOption(): Option<T> = when (this) {
     ChangeableValue.LeaveAsIs -> None
 }
 
-fun <T, L, R> ChangeableValue<T>.bimap(
+inline fun <T, L, R> ChangeableValue<T>.bimap(
     mapLeaveAsIs: () -> L,
     mapChangeToValue: (T) -> R
 ): Either<L, R> = when (this) {
@@ -69,7 +69,7 @@ fun <T, L, R> ChangeableValue<T>.bimap(
     ChangeableValue.LeaveAsIs -> mapLeaveAsIs().left()
 }
 
-fun <T, L, R> ChangeableValue<T>.biFlatmap(
+inline fun <T, L, R> ChangeableValue<T>.biFlatmap(
     mapLeaveAsIs: () -> Either<L, R>,
     mapChangeToValue: (T) -> Either<L, R>
 ): Either<L, R> = when (this) {

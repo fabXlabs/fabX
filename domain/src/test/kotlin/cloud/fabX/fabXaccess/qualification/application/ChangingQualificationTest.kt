@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -28,6 +30,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class ChangingQualificationTest {
 
@@ -56,56 +59,57 @@ internal class ChangingQualificationTest {
     }
 
     @Test
-    fun `given qualification can be found when changing qualification details then sourcing event is created and stored`() {
-        // given
-        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 1)
+    fun `given qualification can be found when changing qualification details then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 1)
 
-        val newName = ChangeableValue.ChangeToValueString("newName")
-        val newDescription = ChangeableValue.ChangeToValueString("newDescription")
-        val newColour = ChangeableValue.ChangeToValueString("#424242")
-        val newOrderNr = ChangeableValue.LeaveAsIs
+            val newName = ChangeableValue.ChangeToValueString("newName")
+            val newDescription = ChangeableValue.ChangeToValueString("newDescription")
+            val newColour = ChangeableValue.ChangeToValueString("#424242")
+            val newOrderNr = ChangeableValue.LeaveAsIs
 
-        val expectedSourcingEvent = QualificationDetailsChanged(
-            qualificationId,
-            2,
-            adminActor.id,
-            fixedInstant,
-            correlationId,
-            newName,
-            newDescription,
-            newColour,
-            newOrderNr
-        )
+            val expectedSourcingEvent = QualificationDetailsChanged(
+                qualificationId,
+                2,
+                adminActor.id,
+                fixedInstant,
+                correlationId,
+                newName,
+                newDescription,
+                newColour,
+                newOrderNr
+            )
 
-        whenever(qualificationRepository.getById(qualificationId))
-            .thenReturn(qualification.right())
+            whenever(qualificationRepository.getById(qualificationId))
+                .thenReturn(qualification.right())
 
-        whenever(qualificationRepository.store(eq(expectedSourcingEvent)))
-            .thenReturn(None)
+            whenever(qualificationRepository.store(eq(expectedSourcingEvent)))
+                .thenReturn(None)
 
-        // when
-        val result = testee.changeQualificationDetails(
-            adminActor,
-            correlationId,
-            qualificationId,
-            newName,
-            newDescription,
-            newColour,
-            newOrderNr
-        )
+            // when
+            val result = testee.changeQualificationDetails(
+                adminActor,
+                correlationId,
+                qualificationId,
+                newName,
+                newDescription,
+                newColour,
+                newOrderNr
+            )
 
-        // then
-        assertThat(result).isNone()
+            // then
+            assertThat(result).isNone()
 
-        val inOrder = inOrder(logger, qualificationRepository)
-        inOrder.verify(logger).debug("changeQualificationDetails...")
-        inOrder.verify(qualificationRepository).getById(qualificationId)
-        inOrder.verify(qualificationRepository).store(expectedSourcingEvent)
-        inOrder.verify(logger).debug("...changeQualificationDetails done")
-    }
+            val inOrder = inOrder(logger, qualificationRepository)
+            inOrder.verify(logger).debug("changeQualificationDetails...")
+            inOrder.verify(qualificationRepository).getById(qualificationId)
+            inOrder.verify(qualificationRepository).store(expectedSourcingEvent)
+            inOrder.verify(logger).debug("...changeQualificationDetails done")
+        }
 
     @Test
-    fun `given qualification cannot be found when changing qualification details then returns error`() {
+    fun `given qualification cannot be found when changing qualification details then returns error`() = runTest {
         // given
         val error = Error.QualificationNotFound("message", qualificationId)
 
@@ -130,7 +134,7 @@ internal class ChangingQualificationTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing qualification details then returns error`() {
+    fun `given sourcing event cannot be stored when changing qualification details then returns error`() = runTest {
         // given
         val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 1)
 

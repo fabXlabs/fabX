@@ -24,7 +24,7 @@ class AddingUsernamePasswordIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun addUsernamePasswordIdentity(
+    suspend fun addUsernamePasswordIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

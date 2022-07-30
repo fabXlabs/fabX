@@ -24,7 +24,7 @@ class AddingCardIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun addCardIdentity(
+    suspend fun addCardIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

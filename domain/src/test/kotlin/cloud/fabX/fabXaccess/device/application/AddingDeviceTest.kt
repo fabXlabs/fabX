@@ -15,6 +15,8 @@ import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,6 +24,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingDeviceTest {
 
@@ -50,7 +53,7 @@ internal class AddingDeviceTest {
     }
 
     @Test
-    fun `given valid values when adding device then sourcing event is created and stored`() {
+    fun `given valid values when adding device then sourcing event is created and stored`() = runTest {
         // given
         val name = "name"
         val backgroundUrl = "https://example.com/bg.bmp"
@@ -90,7 +93,7 @@ internal class AddingDeviceTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding device then returns error`() {
+    fun `given sourcing event cannot be stored when adding device then returns error`() = runTest {
         // given
         val name = "name"
         val backgroundUrl = "https://example.com/bg.bmp"

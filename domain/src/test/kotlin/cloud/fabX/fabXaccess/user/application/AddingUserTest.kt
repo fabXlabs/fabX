@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isLeft
 import isRight
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,6 +28,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingUserTest {
 
@@ -57,7 +60,7 @@ internal class AddingUserTest {
     }
 
     @Test
-    fun `given valid values when adding user then sourcing event is created and stored`() {
+    fun `given valid values when adding user then sourcing event is created and stored`() = runTest {
         // given
         val firstName = "first"
         val lastName = "last"
@@ -95,7 +98,7 @@ internal class AddingUserTest {
     }
 
     @Test
-    fun `given domain error when adding user then returns domain error`() {
+    fun `given domain error when adding user then returns domain error`() = runTest {
         // given
         val wikiName = "wiki"
         val otherUser = UserFixture.arbitrary(wikiName = wikiName)
@@ -121,7 +124,7 @@ internal class AddingUserTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding user then returns error`() {
+    fun `given sourcing event cannot be stored when adding user then returns error`() = runTest {
         // given
         val firstName = "first"
         val lastName = "last"

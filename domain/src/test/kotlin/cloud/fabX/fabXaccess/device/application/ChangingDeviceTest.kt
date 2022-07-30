@@ -19,6 +19,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,6 +28,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class ChangingDeviceTest {
 
@@ -54,7 +57,7 @@ internal class ChangingDeviceTest {
     }
 
     @Test
-    fun `given device can be found when changing device details then sourcing event is created and stored`() {
+    fun `given device can be found when changing device details then sourcing event is created and stored`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
@@ -94,7 +97,7 @@ internal class ChangingDeviceTest {
     }
 
     @Test
-    fun `given device cannot be found when changing device details then returns error`() {
+    fun `given device cannot be found when changing device details then returns error`() = runTest {
         // given
         val error = Error.DeviceNotFound("message", deviceId)
 
@@ -118,7 +121,7 @@ internal class ChangingDeviceTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing device details then returns error`() {
+    fun `given sourcing event cannot be stored when changing device details then returns error`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 

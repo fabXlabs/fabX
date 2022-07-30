@@ -12,6 +12,8 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -34,7 +36,7 @@ object QualificationSourcingEventDAO : Table("QualificationSourcingEvent") {
 
 class QualificationDatabaseRepository(private val db: Database) : QualificationRepository {
 
-    override fun getAll(): Set<Qualification> {
+    override suspend fun getAll(): Set<Qualification> {
         return transaction {
             QualificationSourcingEventDAO
                 .selectAll()
@@ -51,7 +53,7 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
         }
     }
 
-    override fun getById(id: QualificationId): Either<Error, Qualification> {
+    override suspend fun getById(id: QualificationId): Either<Error, Qualification> {
         val events = transaction {
             QualificationSourcingEventDAO
                 .select {
@@ -79,7 +81,7 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
         }
     }
 
-    override fun store(event: QualificationSourcingEvent): Option<Error> {
+    override suspend fun store(event: QualificationSourcingEvent): Option<Error> {
         return transaction {
             val previousVersion = getVersionById(event.aggregateRootId)
 
@@ -107,7 +109,7 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
         }
     }
 
-    fun getSourcingEvents(): List<QualificationSourcingEvent> {
+    suspend fun getSourcingEvents(): List<QualificationSourcingEvent> {
         return transaction {
             QualificationSourcingEventDAO.selectAll()
                 .orderBy(QualificationSourcingEventDAO.timestamp, SortOrder.ASC)
@@ -131,7 +133,9 @@ class QualificationDatabaseRepository(private val db: Database) : QualificationR
             .maxOfOrNull { it }
     }
 
-    private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
-        statement()
+    private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {
+        transaction(db) {
+            statement()
+        }
     }
 }

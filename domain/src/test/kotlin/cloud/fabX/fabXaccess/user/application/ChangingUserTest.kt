@@ -21,6 +21,8 @@ import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,6 +32,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class ChangingUserTest {
 
@@ -61,56 +64,57 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given user can be found when changing personal information then sourcing event is created and stored`() {
-        // given
-        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+    fun `given user can be found when changing personal information then sourcing event is created and stored`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
-        val newFirstName = ChangeableValue.ChangeToValueString("aFirstName")
-        val newLastName = ChangeableValue.ChangeToValueString("aLastName")
-        val newWikiName = ChangeableValue.ChangeToValueString("aWikiName")
+            val newFirstName = ChangeableValue.ChangeToValueString("aFirstName")
+            val newLastName = ChangeableValue.ChangeToValueString("aLastName")
+            val newWikiName = ChangeableValue.ChangeToValueString("aWikiName")
 
-        val expectedSourcingEvent = UserPersonalInformationChanged(
-            userId,
-            2,
-            adminActor.id,
-            fixedInstant,
-            correlationId,
-            newFirstName,
-            newLastName,
-            newWikiName
-        )
+            val expectedSourcingEvent = UserPersonalInformationChanged(
+                userId,
+                2,
+                adminActor.id,
+                fixedInstant,
+                correlationId,
+                newFirstName,
+                newLastName,
+                newWikiName
+            )
 
-        whenever(userRepository.getById(userId))
-            .thenReturn(user.right())
+            whenever(userRepository.getById(userId))
+                .thenReturn(user.right())
 
-        whenever(gettingUserByWikiName.getByWikiName(newWikiName.value))
-            .thenReturn(Error.UserNotFoundByWikiName("").left())
+            whenever(gettingUserByWikiName.getByWikiName(newWikiName.value))
+                .thenReturn(Error.UserNotFoundByWikiName("").left())
 
-        whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            whenever(userRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
 
-        // when
-        val result = testee.changePersonalInformation(
-            adminActor,
-            correlationId,
-            userId,
-            newFirstName,
-            newLastName,
-            newWikiName
-        )
+            // when
+            val result = testee.changePersonalInformation(
+                adminActor,
+                correlationId,
+                userId,
+                newFirstName,
+                newLastName,
+                newWikiName
+            )
 
-        // then
-        assertThat(result).isNone()
+            // then
+            assertThat(result).isNone()
 
-        val inOrder = inOrder(logger, userRepository)
-        inOrder.verify(logger).debug("changePersonalInformation...")
-        inOrder.verify(userRepository).getById(userId)
-        inOrder.verify(userRepository).store(expectedSourcingEvent)
-        inOrder.verify(logger).debug("...changePersonalInformation done")
-    }
+            val inOrder = inOrder(logger, userRepository)
+            inOrder.verify(logger).debug("changePersonalInformation...")
+            inOrder.verify(userRepository).getById(userId)
+            inOrder.verify(userRepository).store(expectedSourcingEvent)
+            inOrder.verify(logger).debug("...changePersonalInformation done")
+        }
 
     @Test
-    fun `given user cannot be found when changing personal information then returns error`() {
+    fun `given user cannot be found when changing personal information then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -134,7 +138,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given domain error when changing personal information then returns domain error`() {
+    fun `given domain error when changing personal information then returns domain error`() = runTest {
         // given
         val newWikiName = ChangeableValue.ChangeToValueString("aWikiName")
 
@@ -167,7 +171,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing personal information then returns error`() {
+    fun `given sourcing event cannot be stored when changing personal information then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 
@@ -207,7 +211,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given user can be found when changing lock state then sourcing event is created and stored`() {
+    fun `given user can be found when changing lock state then sourcing event is created and stored`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 3)
 
@@ -250,7 +254,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given user cannot be found when changing lock state then returns error`() {
+    fun `given user cannot be found when changing lock state then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -273,7 +277,7 @@ internal class ChangingUserTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing lock state then returns error`() {
+    fun `given sourcing event cannot be stored when changing lock state then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
 

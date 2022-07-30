@@ -17,6 +17,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,6 +26,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DeletingUserTest {
 
@@ -52,7 +55,7 @@ internal class DeletingUserTest {
     }
 
     @Test
-    fun `given user can be found when deleting user then sourcing event is created and stored`() {
+    fun `given user can be found when deleting user then sourcing event is created and stored`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 987)
 
@@ -82,7 +85,7 @@ internal class DeletingUserTest {
     }
 
     @Test
-    fun `given user cannot be found when deleting user then returns error`() {
+    fun `given user cannot be found when deleting user then returns error`() = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
 
@@ -103,7 +106,7 @@ internal class DeletingUserTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when deleting user then returns error`() {
+    fun `given sourcing event cannot be stored when deleting user then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 987)
 

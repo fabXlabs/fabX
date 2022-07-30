@@ -20,7 +20,7 @@ class DeletingDevice(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun deleteDevice(
+    suspend fun deleteDevice(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId

@@ -24,7 +24,7 @@ class AddingPhoneNrIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun addPhoneNrIdentity(
+    suspend fun addPhoneNrIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

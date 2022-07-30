@@ -21,7 +21,7 @@ class ChangingQualification(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun changeQualificationDetails(
+    suspend fun changeQualificationDetails(
         actor: Admin,
         correlationId: CorrelationId,
         qualificationId: QualificationId,

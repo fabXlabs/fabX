@@ -10,6 +10,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -20,6 +22,7 @@ import org.mockito.kotlin.same
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DeviceDomainEventHandlerTest {
 
@@ -48,7 +51,7 @@ internal class DeviceDomainEventHandlerTest {
     }
 
     @Test
-    fun `when handling ToolDeleted then removes tool attachment`() {
+    fun `when handling ToolDeleted then removes tool attachment`() = runTest {
         // given
         val domainEvent = ToolDeleted(
             actorId,

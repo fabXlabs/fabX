@@ -31,7 +31,7 @@ class UserInMemoryRepository :
     GettingUsersByInstructorQualification {
     private var events = mutableListOf<UserSourcingEvent>()
 
-    override fun getAll(): Set<User> {
+    override suspend fun getAll(): Set<User> {
         return events
             .sortedBy { it.aggregateVersion }
             .groupBy { it.aggregateRootId }
@@ -41,7 +41,7 @@ class UserInMemoryRepository :
             .toSet()
     }
 
-    override fun getById(id: UserId): Either<Error, User> {
+    override suspend fun getById(id: UserId): Either<Error, User> {
         val e = events
             .filter { it.aggregateRootId == id }
             .sortedBy { it.aggregateVersion }
@@ -62,7 +62,7 @@ class UserInMemoryRepository :
         }
     }
 
-    override fun store(event: UserSourcingEvent): Option<Error> {
+    override suspend fun store(event: UserSourcingEvent): Option<Error> {
         val previousVersion = getVersionById(event.aggregateRootId)
 
         return if (previousVersion != null
@@ -86,36 +86,36 @@ class UserInMemoryRepository :
             .maxOfOrNull { it.aggregateVersion }
     }
 
-    override fun getByIdentity(identity: UserIdentity): Either<Error, User> =
+    override suspend fun getByIdentity(identity: UserIdentity): Either<Error, User> =
         getAll()
             .firstOrNull { it.hasIdentity(identity) }
             .toOption()
             .toEither { Error.UserNotFoundByIdentity("Not able to find user for given identity.") }
 
-    override fun getByUsername(username: String): Either<Error, User> =
+    override suspend fun getByUsername(username: String): Either<Error, User> =
         getAll()
             .firstOrNull { it.hasUsername(username) }
             .toOption()
             .toEither { Error.UserNotFoundByUsername("Not able to find user for given username.") }
 
-    override fun getByCardId(cardId: String): Either<Error, User> =
+    override suspend fun getByCardId(cardId: String): Either<Error, User> =
         getAll()
             .firstOrNull { it.hasCardId(cardId) }
             .toOption()
             .toEither { Error.UserNotFoundByCardId("Not able to find user for given card id.") }
 
-    override fun getByWikiName(wikiName: String): Either<Error, User> =
+    override suspend fun getByWikiName(wikiName: String): Either<Error, User> =
         getAll()
             .firstOrNull { it.wikiName == wikiName }
             .toOption()
             .toEither { Error.UserNotFoundByWikiName("Not able to find user for given wiki name.") }
 
-    override fun getByMemberQualification(qualificationId: QualificationId): Set<User> =
+    override suspend fun getByMemberQualification(qualificationId: QualificationId): Set<User> =
         getAll()
             .filter { it.asMember().hasQualification(qualificationId) }
             .toSet()
 
-    override fun getByInstructorQualification(qualificationId: QualificationId): Set<User> =
+    override suspend fun getByInstructorQualification(qualificationId: QualificationId): Set<User> =
         getAll()
             .filter {
                 it.asInstructor()

@@ -33,7 +33,7 @@ data class Tool internal constructor(
 ) : AggregateRootEntity<ToolId> {
 
     companion object {
-        fun addNew(
+        suspend fun addNew(
             toolIdFactory: ToolIdFactory,
             actor: Admin,
             clock: Clock,
@@ -81,13 +81,13 @@ data class Tool internal constructor(
             }
         }
 
-        private fun requireQualificationsExist(
+        private suspend fun requireQualificationsExist(
             qualifications: Set<QualificationId>,
             gettingQualificationById: GettingQualificationById,
             correlationId: CorrelationId
         ): Either<Error, Unit> {
             return qualifications
-                .map(gettingQualificationById::getQualificationById)
+                .map { gettingQualificationById.getQualificationById(it) }
                 .sequenceEither()
                 .map { }
                 .mapLeft {
@@ -107,7 +107,7 @@ data class Tool internal constructor(
     fun apply(sourcingEvent: ToolSourcingEvent): Option<Tool> =
         sourcingEvent.processBy(ToolEventHandler(), Some(this))
 
-    fun changeDetails(
+    suspend fun changeDetails(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,

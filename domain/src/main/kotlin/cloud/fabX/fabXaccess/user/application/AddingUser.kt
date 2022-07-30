@@ -26,7 +26,7 @@ class AddingUser(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun addUser(
+    suspend fun addUser(
         actor: Admin,
         correlationId: CorrelationId,
         firstName: String,

@@ -24,7 +24,7 @@ class DetachingTool(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun detachTool(
+    suspend fun detachTool(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId,
@@ -32,14 +32,14 @@ class DetachingTool(
     ): Option<Error> =
         detachTool(deviceId) { it.detachTool(actor, clock, correlationId, pin) }
 
-    internal fun detachTool(
+    internal suspend fun detachTool(
         domainEvent: DomainEvent,
         deviceId: DeviceId,
         pin: Int
     ): Option<Error> =
         detachTool(deviceId) { it.detachTool(domainEvent, clock, pin) }
 
-    private fun detachTool(
+    private suspend fun detachTool(
         deviceId: DeviceId,
         domainMethod: (Device) -> Either<Error, DeviceSourcingEvent>
     ): Option<Error> {

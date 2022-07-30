@@ -7,31 +7,31 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
 
 interface UserRepository {
-    fun getAll(): Set<User>
-    fun getById(id: UserId): Either<Error, User>
-    fun store(event: UserSourcingEvent): Option<Error>
+    suspend fun getAll(): Set<User>
+    suspend fun getById(id: UserId): Either<Error, User>
+    suspend fun store(event: UserSourcingEvent): Option<Error>
 }
 
 fun interface GettingUserByIdentity {
-    fun getByIdentity(identity: UserIdentity): Either<Error, User>
+    suspend fun getByIdentity(identity: UserIdentity): Either<Error, User>
 }
 
 fun interface GettingUserByUsername {
-    fun getByUsername(username: String): Either<Error, User>
+    suspend fun getByUsername(username: String): Either<Error, User>
 }
 
 fun interface GettingUserByCardId {
-    fun getByCardId(cardId: String): Either<Error, User>
+    suspend fun getByCardId(cardId: String): Either<Error, User>
 }
 
 fun interface GettingUserByWikiName {
-    fun getByWikiName(wikiName: String): Either<Error, User>
+    suspend fun getByWikiName(wikiName: String): Either<Error, User>
 }
 
 fun interface GettingUsersByMemberQualification {
-    fun getByMemberQualification(qualificationId: QualificationId): Set<User>
+    suspend fun getByMemberQualification(qualificationId: QualificationId): Set<User>
 }
 
 fun interface GettingUsersByInstructorQualification {
-    fun getByInstructorQualification(qualificationId: QualificationId): Set<User>
+    suspend fun getByInstructorQualification(qualificationId: QualificationId): Set<User>
 }

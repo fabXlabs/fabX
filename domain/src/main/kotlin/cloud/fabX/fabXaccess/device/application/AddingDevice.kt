@@ -23,7 +23,7 @@ class AddingDevice(
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    fun addDevice(
+    suspend fun addDevice(
         actor: Admin,
         correlationId: CorrelationId,
         name: String,

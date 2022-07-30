@@ -19,10 +19,13 @@ import isLeft
 import isNone
 import isRight
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class ToolTest {
 
     private val adminActor = AdminFixture.arbitrary()
@@ -59,7 +62,7 @@ internal class ToolTest {
     }
 
     @Test
-    fun `when adding new tool then returns expected sourcing event`() {
+    fun `when adding new tool then returns expected sourcing event`() = runTest {
         // given
         val qualificationId1 = QualificationIdFixture.arbitrary()
         val qualification1 = QualificationFixture.arbitrary(qualificationId1)
@@ -115,7 +118,7 @@ internal class ToolTest {
     }
 
     @Test
-    fun `given invalid qualification id when adding new tool then returns error`() {
+    fun `given invalid qualification id when adding new tool then returns error`() = runTest {
         // given
         val invalidQualificationId = QualificationIdFixture.arbitrary()
 
@@ -379,7 +382,7 @@ internal class ToolTest {
     }
 
     @Test
-    fun `when changing details then expected sourcing event is returned`() {
+    fun `when changing details then expected sourcing event is returned`() = runTest {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = aggregateVersion)
 
@@ -428,7 +431,7 @@ internal class ToolTest {
     }
 
     @Test
-    fun `given invalid qualification id when changing details then returns error`() {
+    fun `given invalid qualification id when changing details then returns error`() = runTest {
         // given
         val invalidQualificationId = QualificationIdFixture.arbitrary()
         val error = Error.QualificationNotFound("msg", invalidQualificationId)

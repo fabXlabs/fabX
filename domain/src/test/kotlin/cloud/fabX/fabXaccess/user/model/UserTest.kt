@@ -22,6 +22,8 @@ import isLeft
 import isNone
 import isRight
 import isSome
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -30,6 +32,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class UserTest {
 
     private val adminActor = AdminFixture.arbitrary()
@@ -67,7 +70,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `when adding new user then returns expected sourcing event`() {
+    fun `when adding new user then returns expected sourcing event`() = runTest {
         // given
         val firstName = "first"
         val lastName = "last"
@@ -107,7 +110,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given wiki name is already in use when adding new user then returns error`() {
+    fun `given wiki name is already in use when adding new user then returns error`() = runTest {
         // given
         val otherUser = UserFixture.arbitrary(wikiName = "someone")
 
@@ -589,7 +592,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `when changing personal information then expected sourcing event is returned`() {
+    fun `when changing personal information then expected sourcing event is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -627,7 +630,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given wiki name is already in use when changing personal information then returns error`() {
+    fun `given wiki name is already in use when changing personal information then returns error`() = runTest {
         // given
         val otherUser = UserFixture.arbitrary(wikiName = "wikiName")
 
@@ -682,7 +685,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `when adding username password identity then expected sourcing event is returned`() {
+    fun `when adding username password identity then expected sourcing event is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(
             userId,
@@ -725,39 +728,40 @@ internal class UserTest {
     }
 
     @Test
-    fun `given user already has username password identity when adding username password identity then returns error`() {
-        // given
-        val identity = UserIdentityFixture.usernamePassword("username")
-        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf(identity))
+    fun `given user already has username password identity when adding username password identity then returns error`() =
+        runTest {
+            // given
+            val identity = UserIdentityFixture.usernamePassword("username")
+            val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf(identity))
 
-        // when
-        val result = user.addUsernamePasswordIdentity(
-            adminActor,
-            fixedClock,
-            correlationId,
-            "name",
-            "hash"
-        ) {
-            if (it == "name") {
-                Error.UserNotFoundByUsername("").left()
-            } else {
-                throw IllegalArgumentException("unexpected username")
+            // when
+            val result = user.addUsernamePasswordIdentity(
+                adminActor,
+                fixedClock,
+                correlationId,
+                "name",
+                "hash"
+            ) {
+                if (it == "name") {
+                    Error.UserNotFoundByUsername("").left()
+                } else {
+                    throw IllegalArgumentException("unexpected username")
+                }
             }
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UsernamePasswordIdentityAlreadyFound(
+                        "User already has a username password identity.",
+                        correlationId
+                    )
+                )
         }
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(
-                Error.UsernamePasswordIdentityAlreadyFound(
-                    "User already has a username password identity.",
-                    correlationId
-                )
-            )
-    }
-
     @Test
-    fun `given username is already in use when adding username password identity then returns error`() {
+    fun `given username is already in use when adding username password identity then returns error`() = runTest {
         // given
         val otherUser = UserFixture.arbitrary(
             identities = setOf(UserIdentityFixture.usernamePassword("name"))
@@ -793,7 +797,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given username password identity when removing identity then expected sourcing event is returned`() {
+    fun `given username password identity when removing identity then expected sourcing event is returned`() = runTest {
         // given
         val username = "u1"
         val identity = UserIdentityFixture.usernamePassword(username)
@@ -818,7 +822,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given different username password identity when removing identity then error is returned`() {
+    fun `given different username password identity when removing identity then error is returned`() = runTest {
         // given
         val identity = UserIdentityFixture.usernamePassword("u1")
         val user = UserFixture.withIdentity(identity)
@@ -873,7 +877,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `when adding card identity then expected sourcing event is returned`() {
+    fun `when adding card identity then expected sourcing event is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -912,7 +916,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given card id is in use when adding card identity then returns error`() {
+    fun `given card id is in use when adding card identity then returns error`() = runTest {
         // given
         val cardId = "02E42232C45D80"
         val cardSecret = "3134b62eebc255fec1b78b542428335e1bf597de8a7be8aff46371b1cc1be91d"
@@ -1022,7 +1026,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `when adding phone number identity then expected sourcing event is returned`() {
+    fun `when adding phone number identity then expected sourcing event is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -1058,7 +1062,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given phone number is in use when adding phone number then returns error`() {
+    fun `given phone number is in use when adding phone number then returns error`() = runTest {
         // given
         val phoneNr = "+491720000123"
         val otherUser = UserFixture.withIdentity(UserIdentityFixture.phoneNr(phoneNr))
@@ -1175,7 +1179,7 @@ internal class UserTest {
         private val instructorActor: Instructor = InstructorFixture.arbitrary(qualifications = setOf(qualificationId))
 
         @Test
-        fun `when adding member qualification then returns sourcing event`() {
+        fun `when adding member qualification then returns sourcing event`() = runTest {
             // given
             val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -1204,7 +1208,7 @@ internal class UserTest {
         }
 
         @Test
-        fun `given already has qualification when adding member qualification then returns error`() {
+        fun `given already has qualification when adding member qualification then returns error`() = runTest {
             // given
             val user = UserFixture.arbitrary(
                 userId,
@@ -1230,7 +1234,7 @@ internal class UserTest {
         }
 
         @Test
-        fun `given unknown qualification when adding member qualification then returns error`() {
+        fun `given unknown qualification when adding member qualification then returns error`() = runTest {
             // given
             val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -1253,7 +1257,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given instructor not has qualification when adding member qualification then returns error`() {
+    fun `given instructor not has qualification when adding member qualification then returns error`() = runTest {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
         val instructorActor: Instructor = InstructorFixture.arbitrary(qualifications = setOf())
@@ -1278,7 +1282,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given has qualification when removing member qualification then returns sourcing event`() {
+    fun `given has qualification when removing member qualification then returns sourcing event`() = runTest {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
 
@@ -1371,7 +1375,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `when adding instructor qualification then returns sourcing event`() {
+    fun `when adding instructor qualification then returns sourcing event`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 
@@ -1403,7 +1407,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given already has qualification when adding instructor qualification then returns error`() {
+    fun `given already has qualification when adding instructor qualification then returns error`() = runTest {
         // given
         val qualificationId = QualificationIdFixture.arbitrary()
 
@@ -1431,7 +1435,7 @@ internal class UserTest {
     }
 
     @Test
-    fun `given unknown qualification when adding instructor qualification then returns error`() {
+    fun `given unknown qualification when adding instructor qualification then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
 

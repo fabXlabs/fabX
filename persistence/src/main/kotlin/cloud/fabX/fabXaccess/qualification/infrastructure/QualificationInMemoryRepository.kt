@@ -15,7 +15,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
 class QualificationInMemoryRepository : QualificationRepository {
     private val events = mutableListOf<QualificationSourcingEvent>()
 
-    override fun getAll(): Set<Qualification> {
+    override suspend fun getAll(): Set<Qualification> {
         return events
             .sortedBy { it.aggregateVersion }
             .groupBy { it.aggregateRootId }
@@ -25,7 +25,7 @@ class QualificationInMemoryRepository : QualificationRepository {
             .toSet()
     }
 
-    override fun getById(id: QualificationId): Either<Error, Qualification> {
+    override suspend fun getById(id: QualificationId): Either<Error, Qualification> {
         val e = events
             .filter { it.aggregateRootId == id }
             .sortedBy { it.aggregateVersion }
@@ -46,7 +46,7 @@ class QualificationInMemoryRepository : QualificationRepository {
         }
     }
 
-    override fun store(event: QualificationSourcingEvent): Option<Error> {
+    override suspend fun store(event: QualificationSourcingEvent): Option<Error> {
         val previousVersion = getVersionById(event.aggregateRootId)
 
         return if (previousVersion != null

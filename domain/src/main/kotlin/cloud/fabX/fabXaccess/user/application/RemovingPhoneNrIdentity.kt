@@ -22,7 +22,7 @@ class RemovingPhoneNrIdentity(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun removePhoneNrIdentity(
+    suspend fun removePhoneNrIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

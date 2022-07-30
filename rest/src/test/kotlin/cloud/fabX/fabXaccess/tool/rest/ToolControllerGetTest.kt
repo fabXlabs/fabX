@@ -25,6 +25,8 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.util.InternalAPI
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -35,6 +37,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @InternalAPI
 @ExperimentalSerializationApi
 @MockitoSettings
@@ -55,8 +58,10 @@ internal class ToolControllerGetTest {
         this.gettingTool = gettingTool
         this.authenticationService = authenticationService
 
-        whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-            .thenReturn(UserPrincipal(actingUser))
+        runTest {
+            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+                .thenReturn(UserPrincipal(actingUser))
+        }
     }
 
     private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({

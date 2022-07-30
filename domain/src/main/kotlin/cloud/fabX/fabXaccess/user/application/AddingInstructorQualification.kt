@@ -25,7 +25,7 @@ class AddingInstructorQualification(
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
-    fun addInstructorQualification(
+    suspend fun addInstructorQualification(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId,

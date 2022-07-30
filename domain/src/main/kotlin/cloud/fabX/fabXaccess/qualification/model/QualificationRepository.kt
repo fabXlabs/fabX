@@ -6,13 +6,13 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 
 interface QualificationRepository : GettingQualificationById {
-    fun getAll(): Set<Qualification>
-    fun getById(id: QualificationId): Either<Error, Qualification>
-    fun store(event: QualificationSourcingEvent): Option<Error>
+    suspend fun getAll(): Set<Qualification>
+    suspend fun getById(id: QualificationId): Either<Error, Qualification>
+    suspend fun store(event: QualificationSourcingEvent): Option<Error>
 
-    override fun getQualificationById(id: QualificationId): Either<Error, Qualification> = getById(id)
+    override suspend fun getQualificationById(id: QualificationId): Either<Error, Qualification> = getById(id)
 }
 
 fun interface GettingQualificationById {
-    fun getQualificationById(id: QualificationId): Either<Error, Qualification>
+    suspend fun getQualificationById(id: QualificationId): Either<Error, Qualification>
 }

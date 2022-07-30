@@ -42,7 +42,7 @@ data class User internal constructor(
         get() = "$firstName $lastName"
 
     companion object {
-        fun addNew(
+        suspend fun addNew(
             userIdFactory: UserIdFactory,
             actor: Admin,
             clock: Clock,
@@ -84,7 +84,7 @@ data class User internal constructor(
             }
         }
 
-        private fun requireUniqueWikiName(
+        private suspend fun requireUniqueWikiName(
             wikiName: String,
             gettingUserByWikiName: GettingUserByWikiName,
             correlationId: CorrelationId
@@ -109,7 +109,7 @@ data class User internal constructor(
 
     fun apply(sourcingEvent: UserSourcingEvent): Option<User> = sourcingEvent.processBy(UserEventHandler(), Some(this))
 
-    fun changePersonalInformation(
+    suspend fun changePersonalInformation(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,
@@ -161,7 +161,7 @@ data class User internal constructor(
      *
      * @return error or sourcing event
      */
-    fun addUsernamePasswordIdentity(
+    suspend fun addUsernamePasswordIdentity(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,
@@ -200,7 +200,7 @@ data class User internal constructor(
             .swap()
     }
 
-    private fun requireUniqueUsername(
+    private suspend fun requireUniqueUsername(
         username: String,
         gettingUserByUsername: GettingUserByUsername,
         correlationId: CorrelationId
@@ -254,7 +254,7 @@ data class User internal constructor(
             }
     }
 
-    fun addCardIdentity(
+    suspend fun addCardIdentity(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,
@@ -277,7 +277,7 @@ data class User internal constructor(
             }
     }
 
-    private fun requireUniqueCardId(
+    private suspend fun requireUniqueCardId(
         cardId: String,
         gettingUserByCardId: GettingUserByCardId,
         correlationId: CorrelationId
@@ -331,7 +331,7 @@ data class User internal constructor(
             }
     }
 
-    fun addPhoneNrIdentity(
+    suspend fun addPhoneNrIdentity(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,
@@ -352,7 +352,7 @@ data class User internal constructor(
             }
     }
 
-    private fun requireUniquePhoneNr(
+    private suspend fun requireUniquePhoneNr(
         phoneNr: String,
         gettingUserByIdentity: GettingUserByIdentity,
         correlationId: CorrelationId
@@ -411,7 +411,7 @@ data class User internal constructor(
      *
      * @return error if the qualification cannot be found, sourcing event otherwise
      */
-    fun addMemberQualification(
+    suspend fun addMemberQualification(
         actor: Instructor,
         clock: Clock,
         correlationId: CorrelationId,
@@ -518,7 +518,7 @@ data class User internal constructor(
      *
      * @return error if the qualification cannot be found, sourcing event otherwise
      */
-    fun addInstructorQualification(
+    suspend fun addInstructorQualification(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId,

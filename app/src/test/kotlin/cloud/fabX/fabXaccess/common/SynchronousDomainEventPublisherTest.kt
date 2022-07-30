@@ -5,6 +5,8 @@ import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -13,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.same
 import org.mockito.kotlin.verify
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class SynchronousDomainEventPublisherTest {
 
@@ -21,7 +24,7 @@ internal class SynchronousDomainEventPublisherTest {
         @Mock handler1: DomainEventHandler,
         @Mock handler2: DomainEventHandler,
         @Mock handler3: DomainEventHandler
-    ) {
+    ) = runTest {
         // given
         val testee = SynchronousDomainEventPublisher()
         testee.addHandler(handler1)
