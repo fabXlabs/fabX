@@ -1,5 +1,6 @@
 val ktorVersion: String by rootProject
 val kotlinxDateTimeVersion: String by project
+val testcontainersVersion: String by project
 
 val exposedVersion: String by project
 
@@ -22,6 +23,8 @@ dependencies {
     testImplementation(testFixtures(project(":domain")))
     testImplementation("io.ktor:ktor-serialization:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 
     // TODO remove with database migration tool
     testImplementation("org.jetbrains.exposed:exposed-core:$exposedVersion")

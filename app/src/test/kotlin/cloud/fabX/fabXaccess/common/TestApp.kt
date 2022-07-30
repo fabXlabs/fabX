@@ -39,10 +39,21 @@ import org.kodein.di.bindConstant
 import org.kodein.di.bindInstance
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.utility.DockerImageName
+
+val postgresImageName = DockerImageName.parse("postgres").withTag("13")
+val postgresContainer = PostgreSQLContainer(postgresImageName)
 
 internal fun withTestApp(
     block: TestApplicationEngine.() -> Unit
 ) {
+    if (!postgresContainer.isRunning) {
+        println("starting postgres container...")
+        postgresContainer.start()
+        println("...started postgres container")
+    }
+
     val testApp = DI {
         import(domainModule)
         import(restModule)
@@ -54,11 +65,10 @@ internal fun withTestApp(
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
 
-        // TODO dynamically start postgres instance via Testcontainers
-        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
+        bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
         bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
-        bindInstance(tag = "dbuser") { "postgres" }
-        bindInstance(tag = "dbpassword") { "postgrespassword" }
+        bindInstance(tag = "dbuser") { postgresContainer.username }
+        bindInstance(tag = "dbpassword") { postgresContainer.password }
     }
     val db: Database by testApp.instance()
 
