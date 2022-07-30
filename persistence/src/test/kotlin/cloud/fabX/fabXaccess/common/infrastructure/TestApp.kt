@@ -1,12 +1,13 @@
 package cloud.fabX.fabXaccess.common.infrastructure
 
+import cloud.fabX.fabXaccess.PersistenceApp
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceSourcingEventDAO
+import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
 import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteAll
@@ -31,22 +32,21 @@ internal fun withTestApp(
 
     val testApp = DI {
         import(persistenceModule)
+        import(loggingModule)
+
         bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
         bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
         bindInstance(tag = "dbuser") { postgresContainer.username }
         bindInstance(tag = "dbpassword") { postgresContainer.password }
     }
 
+    val persistenceApp: PersistenceApp by testApp.instance()
+    persistenceApp.initialise()
+
     val db: Database by testApp.instance()
 
     transaction(db) {
         addLogger(StdOutSqlLogger)
-
-        // TODO database migration tool
-        SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
-        SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
-        SchemaUtils.createMissingTablesAndColumns(ToolSourcingEventDAO)
-        SchemaUtils.createMissingTablesAndColumns(UserSourcingEventDAO)
 
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()

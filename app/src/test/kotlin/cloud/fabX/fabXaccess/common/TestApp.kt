@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.common
 
+import cloud.fabX.fabXaccess.PersistenceApp
 import cloud.fabX.fabXaccess.RestApp
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
@@ -28,7 +29,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteAll
@@ -70,16 +70,14 @@ internal fun withTestApp(
         bindInstance(tag = "dbuser") { postgresContainer.username }
         bindInstance(tag = "dbpassword") { postgresContainer.password }
     }
+
+    val persistenceApp: PersistenceApp by testApp.instance()
+    persistenceApp.initialise()
+
     val db: Database by testApp.instance()
 
     transaction(db) {
         addLogger(StdOutSqlLogger)
-
-        // TODO database migration tool
-        SchemaUtils.createMissingTablesAndColumns(QualificationSourcingEventDAO)
-        SchemaUtils.createMissingTablesAndColumns(DeviceSourcingEventDAO)
-        SchemaUtils.createMissingTablesAndColumns(ToolSourcingEventDAO)
-        SchemaUtils.createMissingTablesAndColumns(UserSourcingEventDAO)
 
         QualificationSourcingEventDAO.deleteAll()
         DeviceSourcingEventDAO.deleteAll()

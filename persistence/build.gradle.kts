@@ -9,6 +9,8 @@ plugins {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":logging"))
+
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")

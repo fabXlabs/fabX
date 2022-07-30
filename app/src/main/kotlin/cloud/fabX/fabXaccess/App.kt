@@ -43,6 +43,9 @@ fun main() {
         domainEventPublisher.addHandler(it)
     }
 
+    val persistenceApp: PersistenceApp by app.instance()
+    persistenceApp.initialise()
+
     val restApp: RestApp by app.instance()
     restApp.start()
 }

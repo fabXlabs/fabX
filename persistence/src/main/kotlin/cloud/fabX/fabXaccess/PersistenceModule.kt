@@ -16,6 +16,18 @@ val persistenceModule = DI.Module("persistence") {
     bindSingleton { QualificationDatabaseRepository(instance()) }
     bindSingleton { ToolDatabaseRepository(instance()) }
     bindSingleton { UserDatabaseRepository(instance()) }
+
+    bindSingleton {
+        PersistenceApp(
+            instance(),
+            instance(),
+            url = instance(tag = "dburl"),
+            driver = instance(tag = "dbdriver"),
+            user = instance(tag = "dbuser"),
+            password = instance(tag = "dbpassword")
+        )
+    }
+
     bindSingleton {
         Database.connect(
             instance(tag = "dburl"),
