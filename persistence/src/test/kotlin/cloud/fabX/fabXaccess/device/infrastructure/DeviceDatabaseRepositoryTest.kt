@@ -40,7 +40,6 @@ import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.kodein.di.DI
-import org.kodein.di.bindInstance
 import org.kodein.di.instance
 
 internal class DeviceDatabaseRepositoryTest {
@@ -57,17 +56,9 @@ internal class DeviceDatabaseRepositoryTest {
         private val fixedInstant = Clock.System.now()
     }
 
-    // TODO dynamically start postgres instance via Testcontainers
-    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
-        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
-        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
-        bindInstance(tag = "dbuser") { "postgres" }
-        bindInstance(tag = "dbpassword") { "postgrespassword" }
-    }, block)
-
     @Test
     fun `given empty repository when getting device by id then returns device not found error`() =
-        withConfiguredTestApp { di ->
+        withTestApp { di ->
             // given
             val repository: DeviceDatabaseRepository by di.instance()
 
@@ -88,7 +79,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDeviceStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val event1 = DeviceCreated(
@@ -209,7 +200,7 @@ internal class DeviceDatabaseRepositoryTest {
         private val deviceId2 = DeviceIdFixture.static(4343)
         private val deviceId3 = DeviceIdFixture.static(4444)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val device1event1 = DeviceCreated(
@@ -353,7 +344,7 @@ internal class DeviceDatabaseRepositoryTest {
 
         private val deviceId2 = DeviceIdFixture.static(4242)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val device1Created = DeviceCreated(
@@ -423,7 +414,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDevicesWithAttachedToolsStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: DeviceDatabaseRepository by di.instance()
 
             val device1Created = DeviceCreated(

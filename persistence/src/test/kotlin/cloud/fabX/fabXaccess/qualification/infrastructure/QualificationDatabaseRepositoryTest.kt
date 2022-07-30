@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.kodein.di.DI
-import org.kodein.di.bindInstance
 import org.kodein.di.instance
 
 internal class QualificationDatabaseRepositoryTest {
@@ -37,17 +36,9 @@ internal class QualificationDatabaseRepositoryTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
 
-    // TODO dynamically start postgres instance via Testcontainers
-    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
-        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
-        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
-        bindInstance(tag = "dbuser") { "postgres" }
-        bindInstance(tag = "dbpassword") { "postgrespassword" }
-    }, block)
-
     @Test
     fun `given empty repository when getting qualification by id then returns qualification not found error`() =
-        withConfiguredTestApp { di ->
+        withTestApp { di ->
             // given
             val repository: QualificationDatabaseRepository by di.instance()
 
@@ -68,7 +59,7 @@ internal class QualificationDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForQualificationStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: QualificationDatabaseRepository by di.instance()
 
             val event1 = QualificationCreated(
@@ -192,7 +183,7 @@ internal class QualificationDatabaseRepositoryTest {
         private val qualificationId2 = QualificationIdFixture.static(234)
         private val qualificationId3 = QualificationIdFixture.static(345)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: QualificationDatabaseRepository by di.instance()
 
             val qualification1event1 = QualificationCreated(

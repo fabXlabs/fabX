@@ -1,5 +1,6 @@
 val exposedVersion: String by project
 val postgresDriverVersion: String by project
+val testcontainersVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -13,4 +14,6 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresDriverVersion")
     testImplementation(testFixtures(project(":domain")))
+    testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
+    testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
 }

@@ -9,6 +9,8 @@ import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
+// TODO indices for some columns
+
 val persistenceModule = DI.Module("persistence") {
     bindSingleton { DeviceDatabaseRepository(instance()) }
     bindSingleton { QualificationDatabaseRepository(instance()) }

@@ -34,7 +34,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.kodein.di.DI
-import org.kodein.di.bindInstance
 import org.kodein.di.instance
 
 internal class ToolDatabaseRepositoryTest {
@@ -66,17 +65,9 @@ internal class ToolDatabaseRepositoryTest {
         }
     }
 
-    // TODO dynamically start postgres instance via Testcontainers
-    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
-        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
-        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
-        bindInstance(tag = "dbuser") { "postgres" }
-        bindInstance(tag = "dbpassword") { "postgrespassword" }
-    }, block)
-
     @Test
     fun `given empty repository when getting tool by id then returns tool not found error`() =
-        withConfiguredTestApp { di ->
+        withTestApp { di ->
             // given
             val repository: ToolDatabaseRepository by di.instance()
 
@@ -97,7 +88,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForToolStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: ToolDatabaseRepository by di.instance()
 
             val event1 = ToolCreated(
@@ -233,7 +224,7 @@ internal class ToolDatabaseRepositoryTest {
 
         private val qualificationId2 = QualificationIdFixture.static(345)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: ToolDatabaseRepository by di.instance()
 
             val tool1event1 = ToolCreated(
@@ -379,7 +370,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenToolsWithQualificationsStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: ToolDatabaseRepository by di.instance()
 
             val tool1created = ToolCreated(

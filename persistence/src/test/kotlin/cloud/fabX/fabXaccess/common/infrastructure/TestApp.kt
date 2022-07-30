@@ -12,15 +12,29 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
+import org.kodein.di.bindInstance
 import org.kodein.di.instance
+import org.testcontainers.containers.PostgreSQLContainer
+import org.testcontainers.utility.DockerImageName
+
+val postgresImageName = DockerImageName.parse("postgres").withTag("13")
+val postgresContainer = PostgreSQLContainer(postgresImageName)
 
 internal fun withTestApp(
-    diSetup: DI.MainBuilder.() -> Unit,
     block: (DI) -> Unit
 ) {
+    if (!postgresContainer.isRunning) {
+        println("starting postgres container...")
+        postgresContainer.start()
+        println("...started postgres container")
+    }
+
     val testApp = DI {
         import(persistenceModule)
-        diSetup()
+        bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
+        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
+        bindInstance(tag = "dbuser") { postgresContainer.username }
+        bindInstance(tag = "dbpassword") { postgresContainer.password }
     }
 
     val db: Database by testApp.instance()

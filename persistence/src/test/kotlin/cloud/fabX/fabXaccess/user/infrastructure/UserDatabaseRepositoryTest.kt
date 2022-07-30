@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.kodein.di.DI
-import org.kodein.di.bindInstance
 import org.kodein.di.instance
 
 internal class UserDatabaseRepositoryTest {
@@ -50,17 +49,9 @@ internal class UserDatabaseRepositoryTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
 
-    // TODO dynamically start postgres instance via Testcontainers
-    private fun withConfiguredTestApp(block: (DI) -> Unit) = withTestApp({
-        bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
-        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
-        bindInstance(tag = "dbuser") { "postgres" }
-        bindInstance(tag = "dbpassword") { "postgrespassword" }
-    }, block)
-
     @Test
     fun `given empty repository when getting user by id then returns user not found error`() =
-        withConfiguredTestApp { di ->
+        withTestApp { di ->
             // given
             val repository: UserDatabaseRepository by di.instance()
 
@@ -81,7 +72,7 @@ internal class UserDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val event1 = UserCreated(
@@ -200,7 +191,7 @@ internal class UserDatabaseRepositoryTest {
         private val userId2 = UserIdFixture.static(12345)
         private val userId3 = UserIdFixture.static(123456)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val user1event1 = UserCreated(
@@ -375,7 +366,7 @@ internal class UserDatabaseRepositoryTest {
 
         private val userId2 = UserIdFixture.static(12345)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val user1Created = UserCreated(
@@ -553,7 +544,7 @@ internal class UserDatabaseRepositoryTest {
         private val qualificationId = QualificationIdFixture.static(456)
         private val qualificationId2 = QualificationIdFixture.static(678)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withConfiguredTestApp { di ->
+        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
             val repository: UserDatabaseRepository by di.instance()
 
             val user1Created = UserCreated(
