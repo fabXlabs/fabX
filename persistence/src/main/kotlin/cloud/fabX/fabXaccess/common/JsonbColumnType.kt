@@ -1,13 +1,8 @@
 package cloud.fabX.fabXaccess.common
 
-import cloud.fabX.fabXaccess.common.model.ActorId
-import cloud.fabX.fabXaccess.common.model.SystemActorId
-import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.ColumnType
 import org.jetbrains.exposed.sql.Table
@@ -47,16 +42,8 @@ class JsonbColumnType<T : Any>(
 fun <T : Any> Table.jsonb(name: String, stringify: (T) -> String, parse: (String) -> T): Column<T> =
     registerColumn(name, JsonbColumnType(stringify, parse))
 
-// TODO refactor somewhere useful
-val module = SerializersModule {
-    polymorphic(ActorId::class) {
-        subclass(UserId::class)
-        subclass(SystemActorId::class)
-    }
-}
-
 fun <T : Any> Table.jsonb(
     name: String,
     serializer: KSerializer<T>,
-    json: Json = Json { serializersModule = module }
+    json: Json = Json { serializersModule = domainSerializersModule }
 ): Column<T> = jsonb(name, { json.encodeToString(serializer, it) }, { json.decodeFromString(serializer, it) })
