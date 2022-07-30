@@ -22,7 +22,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DeletingQualificationTest {
 
@@ -71,7 +73,7 @@ internal class DeletingQualificationTest {
 
     @Test
     fun `given qualification can be found when deleting qualification then sourcing event is created and stored and domain event is published`() =
-        runBlocking {
+        runTest {
             // given
             val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
@@ -133,7 +135,7 @@ internal class DeletingQualificationTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when deleting qualification then returns error`() = runBlocking {
+    fun `given sourcing event cannot be stored when deleting qualification then returns error`() = runTest {
         // given
         val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
@@ -170,7 +172,7 @@ internal class DeletingQualificationTest {
     }
 
     @Test
-    fun `given qualification is in use for tool when deleting qualification then returns error()`() = runBlocking {
+    fun `given qualification is in use for tool when deleting qualification then returns error()`() = runTest {
         val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
         val toolId = ToolIdFixture.arbitrary()

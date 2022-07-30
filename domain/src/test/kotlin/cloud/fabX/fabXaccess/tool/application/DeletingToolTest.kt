@@ -18,7 +18,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DeletingToolTest {
 
@@ -58,7 +60,7 @@ internal class DeletingToolTest {
 
     @Test
     fun `given tool can be found when deleting tool then sourcing event is created and stored and domain event is published`() =
-        runBlocking {
+        runTest {
             // given
             val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 234)
 
@@ -96,7 +98,7 @@ internal class DeletingToolTest {
         }
 
     @Test
-    fun `given tool cannot be found when deleting tool then returns error`() = runBlocking {
+    fun `given tool cannot be found when deleting tool then returns error`() = runTest {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -117,7 +119,7 @@ internal class DeletingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when deleting tool then returns error`() = runBlocking {
+    fun `given sourcing event cannot be stored when deleting tool then returns error`() = runTest {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 567)
 

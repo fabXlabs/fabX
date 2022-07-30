@@ -17,7 +17,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import isLeft
 import isRight
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -47,6 +48,7 @@ internal class GettingConfigurationTest {
         testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Nested
     internal inner class GivenDeviceAndTools {
 
@@ -72,7 +74,7 @@ internal class GettingConfigurationTest {
 
         @BeforeEach
         fun `mock tool repository`() {
-            runBlocking {
+            runTest {
                 val tool1 = ToolFixture.arbitrary(
                     toolId1,
                     name = "toolname1",
@@ -143,7 +145,7 @@ internal class GettingConfigurationTest {
     }
 
     @Test
-    fun `given tool cannot be found when getting configuration then returns error`() = runBlocking {
+    fun `given tool cannot be found when getting configuration then returns error`() = runTest {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
         val toolId = ToolIdFixture.arbitrary()

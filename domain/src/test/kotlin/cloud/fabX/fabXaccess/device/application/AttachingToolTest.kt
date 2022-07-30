@@ -21,7 +21,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,6 +30,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AttachingToolTest {
 
@@ -60,7 +62,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given device can be found when attaching tool then sourcing event is created and stored`() = runBlocking {
+    fun `given device can be found when attaching tool then sourcing event is created and stored`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
@@ -102,7 +104,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given domain error when attaching tool then returns domain error`() = runBlocking {
+    fun `given domain error when attaching tool then returns domain error`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
@@ -155,7 +157,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when attaching tool then returns error`() = runBlocking {
+    fun `given sourcing event cannot be stored when attaching tool then returns error`() = runTest {
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
         val toolId = ToolIdFixture.arbitrary()

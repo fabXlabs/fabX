@@ -25,7 +25,6 @@ import io.ktor.server.testing.withTestApplication
 import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
 import java.util.UUID
-import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.Database
@@ -159,10 +158,8 @@ internal fun withTestApp(
         adminIsAdminChanged
     ).forEach { userRepository.store(it) }
 
-    runBlocking {
-        withTestApplication(restApp.moduleConfiguration) {
-            block()
-        }
+    withTestApplication(restApp.moduleConfiguration) {
+        block()
     }
 }
 

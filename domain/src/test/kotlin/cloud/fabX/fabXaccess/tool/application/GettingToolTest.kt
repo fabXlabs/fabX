@@ -13,13 +13,15 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.InstructorFixture
 import isLeft
 import isRight
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingToolTest {
 
@@ -44,7 +46,7 @@ internal class GettingToolTest {
     }
 
     @Test
-    fun `when getting all then returns all from repository`() = runBlocking {
+    fun `when getting all then returns all from repository`() = runTest {
         // given
         val tool1 = ToolFixture.arbitrary()
         val tool2 = ToolFixture.arbitrary()
@@ -63,7 +65,7 @@ internal class GettingToolTest {
     }
 
     @Test
-    fun `given tool exists when getting by id then returns from repository`() = runBlocking {
+    fun `given tool exists when getting by id then returns from repository`() = runTest {
         // given
         val tool = ToolFixture.arbitrary()
 
@@ -80,7 +82,7 @@ internal class GettingToolTest {
     }
 
     @Test
-    fun `given repository error when getting by id then returns error`() = runBlocking {
+    fun `given repository error when getting by id then returns error`() = runTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
 

@@ -35,13 +35,15 @@ import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.withTestApplication
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
 import org.kodein.di.bindInstance
 import org.kodein.di.instance
 import org.mockito.Mockito
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
     block: TestApplicationEngine.() -> Unit
@@ -91,7 +93,7 @@ internal fun withTestApp(
 
     val restApp: RestApp by testApp.instance()
 
-    runBlocking {
+    runTest {
         withTestApplication(restApp.moduleConfiguration) {
             block()
         }

@@ -21,7 +21,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class ChangingToolTest {
 
@@ -61,7 +63,7 @@ internal class ChangingToolTest {
     }
 
     @Test
-    fun `given tool can be found when changing tool details then sourcing event is created and stored`() = runBlocking {
+    fun `given tool can be found when changing tool details then sourcing event is created and stored`() = runTest {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 1)
 
@@ -114,12 +116,10 @@ internal class ChangingToolTest {
         val inOrder = inOrder(toolRepository)
         inOrder.verify(toolRepository).getById(toolId)
         inOrder.verify(toolRepository).store(expectedSourcingEvent)
-
-        Unit
     }
 
     @Test
-    fun `given tool cannot be found when changing tool details then returns error`() = runBlocking {
+    fun `given tool cannot be found when changing tool details then returns error`() = runTest {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -147,7 +147,7 @@ internal class ChangingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing tool details then returns error`() = runBlocking {
+    fun `given sourcing event cannot be stored when changing tool details then returns error`() = runTest {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 1)
 

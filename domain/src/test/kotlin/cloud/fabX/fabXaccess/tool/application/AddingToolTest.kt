@@ -18,7 +18,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -26,6 +27,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AddingToolTest {
 
@@ -57,7 +59,7 @@ internal class AddingToolTest {
     }
 
     @Test
-    fun `given valid values when adding tool then sourcing event is created and stored`() = runBlocking {
+    fun `given valid values when adding tool then sourcing event is created and stored`() = runTest {
         // given
         val name = "Door Shop"
         val toolType = ToolType.UNLOCK
@@ -101,7 +103,7 @@ internal class AddingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding tool then returns error`() = runBlocking {
+    fun `given sourcing event cannot be stored when adding tool then returns error`() = runTest {
         // given
         val name = "Door Shop"
         val toolType = ToolType.UNLOCK
