@@ -6,8 +6,10 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
+import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.jsonb
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
@@ -36,11 +38,18 @@ object ToolSourcingEventDAO : Table("ToolSourcingEvent") {
     val data = jsonb("data", ToolSourcingEvent.serializer())
 }
 
-class ToolDatabaseRepository(private val db: Database) : ToolRepository, GettingToolsByQualificationId {
+class ToolDatabaseRepository(
+    loggerFactory: LoggerFactory,
+    private val db: Database
+) : ToolRepository, GettingToolsByQualificationId {
+
+    private val log: Logger = loggerFactory.invoke(this::class.java)
 
     override suspend fun getAll(): Set<Tool> {
         return transaction {
-            ToolSourcingEventDAO
+            log.debug("getting all tools from database...")
+
+            val result = ToolSourcingEventDAO
                 .selectAll()
                 .orderBy(ToolSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
                 .asSequence()
@@ -52,12 +61,18 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
                 .filter { it.isDefined() }
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
+
+            log.debug("... done getting all tools from database")
+
+            result
         }
     }
 
     override suspend fun getById(id: ToolId): Either<Error, Tool> {
         val events = transaction {
-            ToolSourcingEventDAO
+            log.debug("getting tools by id from database...")
+
+            val result = ToolSourcingEventDAO
                 .select {
                     ToolSourcingEventDAO.aggregateRootId.eq(id.value)
                 }
@@ -65,6 +80,10 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
                 .map {
                     it[ToolSourcingEventDAO.data]
                 }
+
+            log.debug("...done getting tools by id from database")
+
+            result
         }
 
         return if (events.isNotEmpty()) {
@@ -85,6 +104,8 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
 
     override suspend fun store(event: ToolSourcingEvent): Option<Error> {
         return transaction {
+            log.debug("storing event in database...")
+
             val previousVersion = getVersionById(event.aggregateRootId)
 
             if (previousVersion != null
@@ -106,6 +127,7 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
                     it[data] = event
                 }
 
+                log.debug("...done storing event in database")
                 None
             }
         }
@@ -113,12 +135,18 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
 
     suspend fun getSourcingEvents(): List<ToolSourcingEvent> {
         return transaction {
-            ToolSourcingEventDAO.selectAll()
+            log.debug("getting all sourcing events from database...")
+
+            val result = ToolSourcingEventDAO.selectAll()
                 .orderBy(ToolSourcingEventDAO.timestamp, SortOrder.ASC)
                 .orderBy(ToolSourcingEventDAO.aggregateVersion, SortOrder.ASC)
                 .map {
                     it[ToolSourcingEventDAO.data]
                 }
+
+            log.debug("...done getting all sourcing events from database")
+
+            result
         }
     }
 
