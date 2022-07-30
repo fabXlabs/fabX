@@ -43,6 +43,8 @@ import org.testcontainers.utility.DockerImageName
 val postgresImageName = DockerImageName.parse("postgres").withTag("13")
 val postgresContainer = PostgreSQLContainer(postgresImageName)
 
+var initialised = false
+
 internal fun withTestApp(
     block: TestApplicationEngine.() -> Unit
 ) {
@@ -69,8 +71,12 @@ internal fun withTestApp(
         bindInstance(tag = "dbpassword") { postgresContainer.password }
     }
 
-    val persistenceApp: PersistenceApp by testApp.instance()
-    persistenceApp.initialise()
+    // only initialise database once
+    if (!initialised) {
+        val persistenceApp: PersistenceApp by testApp.instance()
+        persistenceApp.initialise()
+        initialised = true
+    }
 
     val db: Database by testApp.instance()
 
