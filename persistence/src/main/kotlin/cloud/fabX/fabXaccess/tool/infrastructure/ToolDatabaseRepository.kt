@@ -14,6 +14,8 @@ import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -36,7 +38,7 @@ object ToolSourcingEventDAO : Table("ToolSourcingEvent") {
 
 class ToolDatabaseRepository(private val db: Database) : ToolRepository, GettingToolsByQualificationId {
 
-    override fun getAll(): Set<Tool> {
+    override suspend fun getAll(): Set<Tool> {
         return transaction {
             ToolSourcingEventDAO
                 .selectAll()
@@ -53,7 +55,7 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
         }
     }
 
-    override fun getById(id: ToolId): Either<Error, Tool> {
+    override suspend fun getById(id: ToolId): Either<Error, Tool> {
         val events = transaction {
             ToolSourcingEventDAO
                 .select {
@@ -81,7 +83,7 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
         }
     }
 
-    override fun store(event: ToolSourcingEvent): Option<Error> {
+    override suspend fun store(event: ToolSourcingEvent): Option<Error> {
         return transaction {
             val previousVersion = getVersionById(event.aggregateRootId)
 
@@ -109,7 +111,7 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
         }
     }
 
-    fun getSourcingEvents(): List<ToolSourcingEvent> {
+    suspend fun getSourcingEvents(): List<ToolSourcingEvent> {
         return transaction {
             ToolSourcingEventDAO.selectAll()
                 .orderBy(ToolSourcingEventDAO.timestamp, SortOrder.ASC)
@@ -133,11 +135,13 @@ class ToolDatabaseRepository(private val db: Database) : ToolRepository, Getting
             .maxOfOrNull { it }
     }
 
-    private fun <T> transaction(statement: Transaction.() -> T): T = transaction(db) {
-        statement()
+    private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {
+        transaction(db) {
+            statement()
+        }
     }
 
-    override fun getToolsByQualificationId(id: QualificationId): Set<Tool> =
+    override suspend fun getToolsByQualificationId(id: QualificationId): Set<Tool> =
         getAll()
             .filter { it.requiredQualifications.contains(id) }
             .toSet()

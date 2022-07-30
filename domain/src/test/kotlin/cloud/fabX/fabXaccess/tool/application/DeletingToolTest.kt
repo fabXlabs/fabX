@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,45 +57,46 @@ internal class DeletingToolTest {
     }
 
     @Test
-    fun `given tool can be found when deleting tool then sourcing event is created and stored and domain event is published`() {
-        // given
-        val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 234)
+    fun `given tool can be found when deleting tool then sourcing event is created and stored and domain event is published`() =
+        runBlocking {
+            // given
+            val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 234)
 
-        val expectedSourcingEvent = ToolDeleted(
-            toolId,
-            235,
-            adminActor.id,
-            fixedInstant,
-            correlationId
-        )
-
-        whenever(toolRepository.getById(toolId))
-            .thenReturn(tool.right())
-
-        whenever(toolRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
-
-        // when
-        val result = testee.deleteTool(
-            adminActor,
-            correlationId,
-            toolId
-        )
-
-        // then
-        assertThat(result).isNone()
-        verify(domainEventPublisher).publish(
-            cloud.fabX.fabXaccess.common.model.ToolDeleted(
+            val expectedSourcingEvent = ToolDeleted(
+                toolId,
+                235,
                 adminActor.id,
                 fixedInstant,
+                correlationId
+            )
+
+            whenever(toolRepository.getById(toolId))
+                .thenReturn(tool.right())
+
+            whenever(toolRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
+
+            // when
+            val result = testee.deleteTool(
+                adminActor,
                 correlationId,
                 toolId
             )
-        )
-    }
+
+            // then
+            assertThat(result).isNone()
+            verify(domainEventPublisher).publish(
+                cloud.fabX.fabXaccess.common.model.ToolDeleted(
+                    adminActor.id,
+                    fixedInstant,
+                    correlationId,
+                    toolId
+                )
+            )
+        }
 
     @Test
-    fun `given tool cannot be found when deleting tool then returns error`() {
+    fun `given tool cannot be found when deleting tool then returns error`() = runBlocking {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -115,7 +117,7 @@ internal class DeletingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when deleting tool then returns error`() {
+    fun `given sourcing event cannot be stored when deleting tool then returns error`() = runBlocking {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 567)
 

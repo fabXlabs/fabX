@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,7 +57,7 @@ internal class AddingToolTest {
     }
 
     @Test
-    fun `given valid values when adding tool then sourcing event is created and stored`() {
+    fun `given valid values when adding tool then sourcing event is created and stored`() = runBlocking {
         // given
         val name = "Door Shop"
         val toolType = ToolType.UNLOCK
@@ -100,7 +101,7 @@ internal class AddingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding tool then returns error`() {
+    fun `given sourcing event cannot be stored when adding tool then returns error`() = runBlocking {
         // given
         val name = "Door Shop"
         val toolType = ToolType.UNLOCK

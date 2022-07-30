@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 /**
@@ -55,7 +56,7 @@ class AddingTool(
                 gettingQualificationById
             )
             .flatMap {
-                toolRepository.store(it)
+                runBlocking { toolRepository.store(it) }
                     .toEither { it.aggregateRootId }
                     .swap()
             }

@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 /**
@@ -40,7 +41,7 @@ class ChangingTool(
     ): Option<Error> {
         log.debug("changeToolDetails...")
 
-        return toolRepository.getById(toolId)
+        return runBlocking { toolRepository.getById(toolId) }
             .flatMap {
                 it.changeDetails(
                     actor,
@@ -57,7 +58,7 @@ class ChangingTool(
                 )
             }
             .flatMap {
-                toolRepository.store(it)
+                runBlocking { toolRepository.store(it) }
                     .toEither { }
                     .swap()
             }

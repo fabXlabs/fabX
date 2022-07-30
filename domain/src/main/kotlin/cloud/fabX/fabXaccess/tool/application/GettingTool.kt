@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import kotlinx.coroutines.runBlocking
 
 /**
  * Service to get tools.
@@ -24,7 +25,7 @@ class GettingTool(
     ): Set<Tool> {
         log.debug("getAll (actor: $actor, correlationId: $correlationId)...")
 
-        return toolRepository.getAll()
+        return runBlocking { toolRepository.getAll() }
     }
 
     fun getById(
@@ -34,6 +35,6 @@ class GettingTool(
     ): Either<Error, Tool> {
         log.debug("getById (actor: $actor, correlationId: $correlationId)...")
 
-        return toolRepository.getById(toolId)
+        return runBlocking { toolRepository.getById(toolId) }
     }
 }

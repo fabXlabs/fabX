@@ -21,6 +21,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -60,7 +61,7 @@ internal class ChangingToolTest {
     }
 
     @Test
-    fun `given tool can be found when changing tool details then sourcing event is created and stored`() {
+    fun `given tool can be found when changing tool details then sourcing event is created and stored`() = runBlocking {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 1)
 
@@ -113,10 +114,12 @@ internal class ChangingToolTest {
         val inOrder = inOrder(toolRepository)
         inOrder.verify(toolRepository).getById(toolId)
         inOrder.verify(toolRepository).store(expectedSourcingEvent)
+
+        Unit
     }
 
     @Test
-    fun `given tool cannot be found when changing tool details then returns error`() {
+    fun `given tool cannot be found when changing tool details then returns error`() = runBlocking {
         // given
         val error = ErrorFixture.arbitrary()
 
@@ -144,7 +147,7 @@ internal class ChangingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when changing tool details then returns error`() {
+    fun `given sourcing event cannot be stored when changing tool details then returns error`() = runBlocking {
         // given
         val tool = ToolFixture.arbitrary(toolId, aggregateVersion = 1)
 

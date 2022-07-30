@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 /**
@@ -30,12 +31,12 @@ class DeletingTool(
     ): Option<Error> {
         log.debug("deleteTool...")
 
-        return toolRepository.getById(toolId)
+        return runBlocking { toolRepository.getById(toolId) }
             .map {
                 it.delete(actor, clock, correlationId)
             }
             .flatMap {
-                toolRepository.store(it)
+                runBlocking { toolRepository.store(it) }
                     .toEither { }
                     .swap()
             }

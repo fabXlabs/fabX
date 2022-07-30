@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.Tool
+import kotlinx.coroutines.runBlocking
 
 /**
  * Service for a device to get its configuration.
@@ -31,7 +32,7 @@ class GettingConfiguration(
             .flatMap {
                 it.attachedTools.entries
                     .map { e ->
-                        gettingToolById.getToolById(e.value)
+                        runBlocking { gettingToolById.getToolById(e.value) }
                             .map { tool -> e.key to tool }
                     }
                     .sequenceEither()

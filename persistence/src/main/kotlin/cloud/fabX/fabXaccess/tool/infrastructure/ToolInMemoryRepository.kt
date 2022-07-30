@@ -17,7 +17,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
 class ToolInMemoryRepository : ToolRepository, GettingToolsByQualificationId {
     private var events = mutableListOf<ToolSourcingEvent>()
 
-    override fun getAll(): Set<Tool> {
+    override suspend fun getAll(): Set<Tool> {
         return events
             .sortedBy { it.aggregateVersion }
             .groupBy { it.aggregateRootId }
@@ -27,7 +27,7 @@ class ToolInMemoryRepository : ToolRepository, GettingToolsByQualificationId {
             .toSet()
     }
 
-    override fun getById(id: ToolId): Either<Error, Tool> {
+    override suspend fun getById(id: ToolId): Either<Error, Tool> {
         val e = events
             .filter { it.aggregateRootId == id }
             .sortedBy { it.aggregateVersion }
@@ -48,7 +48,7 @@ class ToolInMemoryRepository : ToolRepository, GettingToolsByQualificationId {
         }
     }
 
-    override fun store(event: ToolSourcingEvent): Option<Error> {
+    override suspend fun store(event: ToolSourcingEvent): Option<Error> {
         val previousVersion = getVersionById(event.aggregateRootId)
 
         return if (previousVersion != null
@@ -72,7 +72,7 @@ class ToolInMemoryRepository : ToolRepository, GettingToolsByQualificationId {
             .maxOfOrNull { it.aggregateVersion }
     }
 
-    override fun getToolsByQualificationId(id: QualificationId): Set<Tool> =
+    override suspend fun getToolsByQualificationId(id: QualificationId): Set<Tool> =
         getAll()
             .filter { it.requiredQualifications.contains(id) }
             .toSet()

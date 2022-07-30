@@ -7,15 +7,15 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
 
 interface ToolRepository : GettingToolById {
-    fun getAll(): Set<Tool>
-    fun getById(id: ToolId): Either<Error, Tool>
-    fun store(event: ToolSourcingEvent): Option<Error>
+    suspend fun getAll(): Set<Tool>
+    suspend fun getById(id: ToolId): Either<Error, Tool>
+    suspend fun store(event: ToolSourcingEvent): Option<Error>
 
-    override fun getToolById(id: ToolId): Either<Error, Tool> = getById(id)
+    override suspend fun getToolById(id: ToolId): Either<Error, Tool> = getById(id)
 }
 
 fun interface GettingToolById {
-    fun getToolById(id: ToolId): Either<Error, Tool>
+    suspend fun getToolById(id: ToolId): Either<Error, Tool>
 }
 
 fun interface GettingToolsByQualificationId {
@@ -25,5 +25,5 @@ fun interface GettingToolsByQualificationId {
      *
      * @return (potentially empty) set of tools which require the qualification
      */
-    fun getToolsByQualificationId(id: QualificationId): Set<Tool>
+    suspend fun getToolsByQualificationId(id: QualificationId): Set<Tool>
 }

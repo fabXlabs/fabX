@@ -17,6 +17,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import isLeft
 import isRight
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -71,23 +72,25 @@ internal class GettingConfigurationTest {
 
         @BeforeEach
         fun `mock tool repository`() {
-            val tool1 = ToolFixture.arbitrary(
-                toolId1,
-                name = "toolname1",
-                time = 1
-            )
+            runBlocking {
+                val tool1 = ToolFixture.arbitrary(
+                    toolId1,
+                    name = "toolname1",
+                    time = 1
+                )
+                whenever(toolRepository.getToolById(toolId1))
+                    .thenReturn(tool1.right())
 
-            whenever(toolRepository.getToolById(toolId1))
-                .thenReturn(tool1.right())
 
-            val tool2 = ToolFixture.arbitrary(
-                toolId2,
-                name = "toolname2",
-                time = 2
-            )
+                val tool2 = ToolFixture.arbitrary(
+                    toolId2,
+                    name = "toolname2",
+                    time = 2
+                )
 
-            whenever(toolRepository.getToolById(toolId2))
-                .thenReturn(tool2.right())
+                whenever(toolRepository.getToolById(toolId2))
+                    .thenReturn(tool2.right())
+            }
         }
 
         @Test
@@ -140,7 +143,7 @@ internal class GettingConfigurationTest {
     }
 
     @Test
-    fun `given tool cannot be found when getting configuration then returns error`() {
+    fun `given tool cannot be found when getting configuration then returns error`() = runBlocking {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
         val toolId = ToolIdFixture.arbitrary()

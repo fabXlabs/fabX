@@ -22,6 +22,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -69,45 +70,46 @@ internal class DeletingQualificationTest {
     }
 
     @Test
-    fun `given qualification can be found when deleting qualification then sourcing event is created and stored and domain event is published`() {
-        // given
-        val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
+    fun `given qualification can be found when deleting qualification then sourcing event is created and stored and domain event is published`() =
+        runBlocking {
+            // given
+            val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
-        val expectedSourcingEvent = QualificationDeleted(
-            qualificationId,
-            124,
-            adminActor.id,
-            fixedInstant,
-            correlationId
-        )
-
-        whenever(qualificationRepository.getById(qualificationId))
-            .thenReturn(qualification.right())
-
-        whenever(gettingToolsByQualificationId.getToolsByQualificationId(qualificationId))
-            .thenReturn(setOf())
-
-        whenever(qualificationRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
-
-        // when
-        val result = testee.deleteQualification(
-            adminActor,
-            correlationId,
-            qualificationId
-        )
-
-        // then
-        assertThat(result).isNone()
-        verify(domainEventPublisher).publish(
-            cloud.fabX.fabXaccess.common.model.QualificationDeleted(
+            val expectedSourcingEvent = QualificationDeleted(
+                qualificationId,
+                124,
                 adminActor.id,
                 fixedInstant,
+                correlationId
+            )
+
+            whenever(qualificationRepository.getById(qualificationId))
+                .thenReturn(qualification.right())
+
+            whenever(gettingToolsByQualificationId.getToolsByQualificationId(qualificationId))
+                .thenReturn(setOf())
+
+            whenever(qualificationRepository.store(expectedSourcingEvent))
+                .thenReturn(None)
+
+            // when
+            val result = testee.deleteQualification(
+                adminActor,
                 correlationId,
                 qualificationId
             )
-        )
-    }
+
+            // then
+            assertThat(result).isNone()
+            verify(domainEventPublisher).publish(
+                cloud.fabX.fabXaccess.common.model.QualificationDeleted(
+                    adminActor.id,
+                    fixedInstant,
+                    correlationId,
+                    qualificationId
+                )
+            )
+        }
 
     @Test
     fun `given qualification cannot be found when deleting qualification then returns error`() {
@@ -131,7 +133,7 @@ internal class DeletingQualificationTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when deleting qualification then returns error`() {
+    fun `given sourcing event cannot be stored when deleting qualification then returns error`() = runBlocking {
         // given
         val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
@@ -168,7 +170,7 @@ internal class DeletingQualificationTest {
     }
 
     @Test
-    fun `given qualification is in use for tool when deleting qualification then returns error()`() {
+    fun `given qualification is in use for tool when deleting qualification then returns error()`() = runBlocking {
         val qualification = QualificationFixture.arbitrary(qualificationId, aggregateVersion = 123)
 
         val toolId = ToolIdFixture.arbitrary()

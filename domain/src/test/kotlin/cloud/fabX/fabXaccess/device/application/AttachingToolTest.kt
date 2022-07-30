@@ -21,6 +21,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isNone
 import isSome
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -59,7 +60,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given device can be found when attaching tool then sourcing event is created and stored`() {
+    fun `given device can be found when attaching tool then sourcing event is created and stored`() = runBlocking {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
@@ -101,7 +102,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given domain error when attaching tool then returns domain error`() {
+    fun `given domain error when attaching tool then returns domain error`() = runBlocking {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
@@ -154,7 +155,7 @@ internal class AttachingToolTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when attaching tool then returns error`() {
+    fun `given sourcing event cannot be stored when attaching tool then returns error`() = runBlocking {
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = 1)
 
         val toolId = ToolIdFixture.arbitrary()

@@ -88,7 +88,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForToolStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: ToolDatabaseRepository by di.instance()
 
             val event1 = ToolCreated(
@@ -224,7 +224,7 @@ internal class ToolDatabaseRepositoryTest {
 
         private val qualificationId2 = QualificationIdFixture.static(345)
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: ToolDatabaseRepository by di.instance()
 
             val tool1event1 = ToolCreated(
@@ -370,7 +370,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenToolsWithQualificationsStoredInRepository {
 
-        private fun withSetupTestApp(block: (DI) -> Unit) = withTestApp { di ->
+        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
             val repository: ToolDatabaseRepository by di.instance()
 
             val tool1created = ToolCreated(

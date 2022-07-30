@@ -22,6 +22,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 
 data class Device internal constructor(
@@ -129,7 +130,7 @@ data class Device internal constructor(
             .swap()
             .flatMap { event ->
                 // assert tool exists
-                gettingToolById.getToolById(toolId)
+                runBlocking { gettingToolById.getToolById(toolId) }
                     .map { event }
             }
             .mapLeft {

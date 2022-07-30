@@ -1,3 +1,4 @@
+val kotlinxCoroutinesVersion: String by project
 val arrowVersion: String by project
 val assertKVersion: String by project
 
@@ -8,6 +9,7 @@ plugins {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     testFixturesImplementation("io.arrow-kt:arrow-core:$arrowVersion")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
 }

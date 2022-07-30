@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
 import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,7 +23,7 @@ val postgresContainer = PostgreSQLContainer(postgresImageName)
 var initialised = false
 
 internal fun withTestApp(
-    block: (DI) -> Unit
+    block: suspend (DI) -> Unit
 ) {
     if (!postgresContainer.isRunning) {
         println("starting postgres container...")
@@ -56,5 +57,7 @@ internal fun withTestApp(
         UserSourcingEventDAO.deleteAll()
     }
 
-    block(testApp)
+    runBlocking {
+        block(testApp)
+    }
 }

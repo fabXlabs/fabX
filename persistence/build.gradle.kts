@@ -1,3 +1,4 @@
+val kotlinxCoroutinesVersion: String by project
 val exposedVersion: String by project
 val postgresDriverVersion: String by project
 val liquibaseVersion: String by project
@@ -12,6 +13,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":logging"))
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
