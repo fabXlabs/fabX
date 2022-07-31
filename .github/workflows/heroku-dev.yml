@@ -1,0 +1,23 @@
+name: HK-DEV
+
+# Controls when the workflow will run
+on:
+  #push:
+  #  branches: [ main ]
+
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: deploy to heroku
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "fabx-dev"
+          heroku_email: "simon.schaeffner@googlemail.com"
+          region: "eu"
