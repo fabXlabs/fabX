@@ -14,8 +14,11 @@ import io.ktor.application.install
 import io.ktor.auth.Authentication
 import io.ktor.auth.authenticate
 import io.ktor.auth.basic
+import io.ktor.features.CORS
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.route
@@ -39,6 +42,29 @@ class RestApp(
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
     val moduleConfiguration: Application.() -> Unit = {
+        install(CORS) {
+            method(HttpMethod.Options)
+            method(HttpMethod.Get)
+            method(HttpMethod.Post)
+            method(HttpMethod.Put)
+            method(HttpMethod.Delete)
+            method(HttpMethod.Patch)
+
+            header(HttpHeaders.Accept)
+            header(HttpHeaders.AccessControlRequestHeaders)
+            header(HttpHeaders.AccessControlRequestMethod)
+            header(HttpHeaders.ContentType)
+            header(HttpHeaders.XForwardedProto)
+            header(HttpHeaders.Origin)
+            header(HttpHeaders.Referrer)
+            header(HttpHeaders.UserAgent)
+            header(HttpHeaders.Authorization)
+
+            anyHost()
+
+            allowNonSimpleContentTypes = true
+        }
+
         install(ContentNegotiation) {
             json(Json {
                 prettyPrint = false
