@@ -11,11 +11,23 @@ them to use the tools they are qualified for.
 * each tool can have a number of qualifications required to be able to use the tool
 * each qualification can allow usage of one or more tools
 * different modes for tools
-	* unlock mode: short pulse on unlock, e.g. for door openers or drawers
-	* keep mode: output as long as card is nearby card reader, e.g. for laser cutters
+    * unlock mode: short pulse on unlock, e.g. for door openers or drawers
+    * keep mode: output as long as card is nearby card reader, e.g. for laser cutters
 * multiple tools can be attached to a single device, the device shows a selection screen for the tool to be used
 * multiple administrators
 * (RESTful) API allowing for extension
+
+## ❌ Limitations
+
+These are features which can be found in other systems for this use-case but we currently do not intend to implement. If
+you require these or other features and would like to extend fabX, you're welcome to open an issue for discussion.
+
+* no booking system
+* no time-tracking of machine-time
+* no payment
+* While the devices have a (limited) caching mechanism built-in, they work best with connection to the backend. The
+  backend can run on-site (i.e. in the LAN of the space), but e.g. multiple backend instances are currently not
+  supported.
 
 ## Requirements
 
