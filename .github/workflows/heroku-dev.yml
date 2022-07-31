@@ -2,7 +2,6 @@ name: HK-DEV
 
 concurrency: hk-dev
 
-# Controls when the workflow will run
 on:
   #push:
   #  branches: [ main ]
@@ -23,3 +22,6 @@ jobs:
           heroku_app_name: "fabx-dev"
           heroku_email: "simon.schaeffner@googlemail.com"
           region: "eu"
+
+      - name: create postgres
+        run: heroku addons:create heroku-postgresql:hobby-dev --as=DATABASE -a fabx-dev || true
