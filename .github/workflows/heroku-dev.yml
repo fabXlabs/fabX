@@ -11,10 +11,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: deploy to heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
