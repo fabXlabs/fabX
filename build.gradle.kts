@@ -18,7 +18,7 @@ plugins {
 
 allprojects {
     group = "cloud.fabX"
-    version = "2.0-SNAPSHOT"
+    version = "2.0.0-SNAPSHOT"
 
     apply(plugin = "kotlin")
     apply(plugin = "jacoco")
