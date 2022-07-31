@@ -1,0 +1,1 @@
+web: java -jar app/build/libs/app-2.0-SNAPSHOT-all.jar
