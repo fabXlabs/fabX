@@ -4,6 +4,19 @@ fabX is an access system for fab labs, maker spaces, hack spaces, etc. These spa
 members only use tools/machines that they have a qualification for. With fabX, each member gets an NFC card that enables
 them to use the tools they are qualified for.
 
+# ✅ Features
+
+* each user has their own access card which personally identifies them
+* each user can have a number of qualifications
+* each tool can have a number of qualifications required to be able to use the tool
+* each qualification can allow usage of one or more tools
+* different modes for tools
+	* unlock mode: short pulse on unlock, e.g. for door openers or drawers
+	* keep mode: output as long as card is nearby card reader, e.g. for laser cutters
+* multiple tools can be attached to a single device, the device shows a selection screen for the tool to be used
+* multiple administrators
+* (RESTful) API allowing for extension
+
 ## Requirements
 
 TODO
