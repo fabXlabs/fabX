@@ -68,7 +68,6 @@ internal fun withTestApp(
         bindSingleton { Clock.System }
 
         bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
-        bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
         bindInstance(tag = "dbuser") { postgresContainer.username }
         bindInstance(tag = "dbpassword") { postgresContainer.password }
     }

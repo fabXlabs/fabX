@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess
 
+import cloud.fabX.fabXaccess.common.Config
 import cloud.fabX.fabXaccess.common.SynchronousDomainEventPublisher
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
@@ -22,19 +23,18 @@ import org.kodein.di.instance
 
 object App // logger tag
 
+val config = Config.fromEnv()
+
 val app = DI {
     import(domainModule)
     import(restModule)
     import(persistenceModule)
     import(loggingModule)
 
-    // TODO make configurable (via environment variables?)
-    bindConstant(tag = "port") { 8080 }
-
-    bindInstance(tag = "dburl") { "jdbc:postgresql://localhost/postgres" }
-    bindInstance(tag = "dbdriver") { "org.postgresql.Driver" }
-    bindInstance(tag = "dbuser") { "postgres" }
-    bindInstance(tag = "dbpassword") { "postgrespassword" }
+    bindConstant(tag = "port") { config.port }
+    bindInstance(tag = "dburl") { config.dbUrl }
+    bindInstance(tag = "dbuser") { config.dbUser }
+    bindInstance(tag = "dbpassword") { config.dbPassword }
 
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }

@@ -34,9 +34,9 @@ val persistenceModule = DI.Module("persistence") {
     bindSingleton {
         Database.connect(
             instance(tag = "dburl"),
-            driver = instance(tag = "dbdriver"),
             user = instance(tag = "dbuser"),
-            password = instance(tag = "dbpassword")
+            password = instance(tag = "dbpassword"),
+            driver = "org.postgresql.Driver"
         )
     }
 }
