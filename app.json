@@ -1,5 +1,5 @@
 {
-  "name": "fabX",
-  "description": "fabX.cloud access management",
-  "addons": ["heroku-postgresql"]
+  "addons": [
+    "heroku-postgresql"
+  ]
 }
