@@ -10,6 +10,7 @@ import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -103,6 +104,30 @@ internal class DeletingUserTest {
         assertThat(result)
             .isSome()
             .isEqualTo(error)
+    }
+
+    @Test
+    fun `given domain error when deleting user then returns domain error`() = runTest {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = 1)
+        val actor = Admin(user.id, "actor")
+
+        whenever(userRepository.getById(userId))
+            .thenReturn(user.right())
+
+        val expectedDomainError = Error.UserIsActor("User is actor and cannot delete themselves.", correlationId)
+
+        // when
+        val result = testee.deleteUser(
+            actor,
+            correlationId,
+            userId
+        )
+
+        // then
+        assertThat(result)
+            .isSome()
+            .isEqualTo(expectedDomainError)
     }
 
     @Test

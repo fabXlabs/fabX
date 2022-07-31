@@ -1634,7 +1634,25 @@ internal class UserTest {
         val result = user.delete(adminActor, fixedClock, correlationId)
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given user is actor when deleting then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val actor = Admin(userId, user.wikiName)
+
+        // when
+        val result = user.delete(actor, fixedClock, correlationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserIsActor("User is actor and cannot delete themselves.", correlationId))
     }
 
     @ParameterizedTest

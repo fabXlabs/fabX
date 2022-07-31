@@ -29,7 +29,7 @@ class DeletingUser(
         log.debug("deleteUser...")
 
         return userRepository.getById(userId)
-            .map {
+            .flatMap {
                 it.delete(actor, clock, correlationId)
             }
             .flatMap {

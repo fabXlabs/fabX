@@ -632,8 +632,20 @@ data class User internal constructor(
         actor: Admin,
         clock: Clock,
         correlationId: CorrelationId
-    ): UserSourcingEvent {
-        return UserDeleted(id, aggregateVersion + 1, actor.id, clock.now(), correlationId)
+    ): Either<Error, UserSourcingEvent> {
+        return requireUserIsNotActor(actor, correlationId)
+            .map { UserDeleted(id, aggregateVersion + 1, actor.id, clock.now(), correlationId) }
+    }
+
+    private fun requireUserIsNotActor(
+        actor: Admin,
+        correlationId: CorrelationId
+    ): Either<Error, Unit> {
+        return Either.conditionally(
+            actor.userId != id,
+            { Error.UserIsActor("User is actor and cannot delete themselves.", correlationId) },
+            {}
+        )
     }
 
     fun hasIdentity(userIdentity: UserIdentity) = identities.contains(userIdentity)

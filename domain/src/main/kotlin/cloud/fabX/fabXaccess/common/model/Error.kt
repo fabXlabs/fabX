@@ -72,6 +72,11 @@ sealed class Error(
         override val correlationId: CorrelationId
     ) : Error(message, correlationId = correlationId)
 
+    data class UserIsActor(
+        override val message: String,
+        override val correlationId: CorrelationId
+    ) : Error(message, correlationId = correlationId)
+
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)
 
