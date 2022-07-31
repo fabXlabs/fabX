@@ -16,6 +16,10 @@ plugins {
     jacoco
 }
 
+tasks.register<GradleBuild>("stage") {
+    tasks = listOf("clean", "shadowJar")
+}
+
 allprojects {
     group = "cloud.fabX"
     version = "2.0.0-SNAPSHOT"
