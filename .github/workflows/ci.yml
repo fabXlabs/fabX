@@ -7,10 +7,15 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-backend:
+    name: Build Backend
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
+
+    defaults:
+      run:
+        working-directory: backend
 
     steps:
     - uses: actions/checkout@v2
