@@ -4,7 +4,7 @@ fabX is an access system for fab labs, maker spaces, hack spaces, etc. These spa
 members only use tools/machines that they have a qualification for. With fabX, each member gets an NFC card that enables
 them to use the tools they are qualified for.
 
-# ✅ Features
+## ✅ Features
 
 * each user has their own access card which personally identifies them
 * each user can have a number of qualifications
@@ -39,7 +39,7 @@ TODO
 
 ## Setup / Documentation
 
-Here is an overview for a minimal set up of a new fabX installation:
+Here is a general overview how to set up a new fabX installation:
 
 * Create a personal administrator account.
     * Login with username "admin" and password "password".
