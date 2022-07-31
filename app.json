@@ -1,13 +1,5 @@
 {
   "name": "fabX",
   "description": "fabX.cloud access management",
-  "image": "heroku/java",
-  "addons": [
-    {
-      "plan": "heroku-postgresql:hobby-dev",
-      "options": {
-        "version": "13"
-      }
-    }
-  ]
+  "addons": ["heroku-postgresql"]
 }
