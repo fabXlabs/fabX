@@ -25,6 +25,14 @@ jobs:
 
     - name: Build
       run: ./gradlew classes
-    
+
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
     - name: Test
       run: ./gradlew check
