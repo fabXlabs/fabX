@@ -8,10 +8,19 @@ val exposedVersion: String by project
 plugins {
     kotlin("jvm")
     application
+    id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
 application {
     mainClass.set("cloud.fabX.fabXaccess.AppKt")
+}
+
+tasks{
+    shadowJar {
+        manifest {
+            attributes(Pair("Main-Class", "cloud.fabX.fabXaccess.AppKt"))
+        }
+    }
 }
 
 dependencies {
