@@ -7,7 +7,11 @@ import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.common.model.newDeviceId
 import cloud.fabX.fabXaccess.common.model.newUserId
+import cloud.fabX.fabXaccess.device.model.DeviceCreated
+import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -58,6 +62,26 @@ fun main() {
     val userRepository: UserRepository by app.instance()
     createInitialAdminAccountIfUserRepoIsEmpty(userRepository, logger)
 
+    // TODO REMOVE
+    val deviceRepository: DeviceRepository by app.instance()
+    runBlocking {
+        if (deviceRepository.getAll().isEmpty()) {
+            deviceRepository.store(
+                DeviceCreated(
+                    newDeviceId(),
+                    SystemActorId,
+                    Clock.System.now(),
+                    newCorrelationId(),
+                    "Demo Device",
+                    "https://example.com/bg.bmp",
+                    "https://example.com",
+                    "AABBCCDDEEFF",
+                    "abcdef0123456789abcdef0123456789"
+                )
+            )
+        }
+    }
+
     val restApp: RestApp by app.instance()
     restApp.start()
 }
@@ -95,7 +119,19 @@ fun createInitialAdminAccountIfUserRepoIsEmpty(userRepository: UserRepository, l
                 Clock.System.now(),
                 correlationId,
                 isAdmin = true
+            ),
+
+            // TODO remove
+            CardIdentityAdded(
+                adminUserId,
+                4,
+                SystemActorId,
+                Clock.System.now(),
+                correlationId,
+                "AABBCCDDEEFF11",
+                "F4B726CC27C2413227382ABF095D09B1A13B00FC6AD1B1B5D75C4A954628C807"
             )
+
         ).forEach { userRepository.store(it) }
 
         logger.warn("...done creating new admin account")
