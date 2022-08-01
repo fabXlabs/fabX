@@ -32,7 +32,7 @@ class DeviceWebsocketController(
     private val logger = loggerFactory.invoke(this::class.java)
 
     private val connections: MutableMap<DeviceId, DefaultWebSocketSession> =
-        Collections.synchronizedMap(LinkedHashMap())
+        Collections.synchronizedMap(HashMap())
 
     val routes: Route.() -> Unit = {
         route("/device") {
@@ -42,6 +42,7 @@ class DeviceWebsocketController(
                         close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "invalid authentication: $it"))
                     }, { device ->
                         logger.debug("new connection $this for device $device")
+                        closeExistingConnectionIfExists(device.id)
                         connections[device.id] = this
 
                         send("connected to fabX ${Json.encodeToString<DeviceCommand>(GetConfiguration(123))}")
@@ -63,7 +64,7 @@ class DeviceWebsocketController(
                         } catch (e: Exception) {
                             logger.warn("Exception during device websocket handling", e)
                         } finally {
-                            logger.debug("removed connection $this of ${device.name}")
+                            logger.debug("Closed connection $this of ${device.name}")
                             connections.remove(device.id)
                         }
                     })
@@ -92,5 +93,12 @@ class DeviceWebsocketController(
             error.parameters,
             error.correlationId
         )
+    }
+
+    private suspend fun closeExistingConnectionIfExists(deviceId: DeviceId) {
+        connections.remove(deviceId)?.let {
+            it.close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "New connection of same device established"))
+            logger.warn("Closed websocket to device $deviceId as new connection of same device was established.")
+        }
     }
 }
