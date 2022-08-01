@@ -29,6 +29,7 @@ import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
+import cloud.fabX.fabXaccess.user.application.GettingAuthorizedTools
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
@@ -76,6 +77,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { DeletingUser(instance(), instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
+    bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
     bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingMemberQualification(instance(), instance(), instance()) }

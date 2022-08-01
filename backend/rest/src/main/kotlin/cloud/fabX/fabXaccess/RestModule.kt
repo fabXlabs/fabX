@@ -14,7 +14,7 @@ import org.kodein.di.instance
 val restModule = DI.Module("rest") {
     bindSingleton { AuthenticationService(instance(), instance()) }
 
-    bindSingleton { DeviceCommandHandlerImpl(instance()) }
+    bindSingleton { DeviceCommandHandlerImpl(instance(), instance(), instance()) }
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
     bindSingleton { ToolController(instance(), instance(), instance(), instance()) }

@@ -13,9 +13,7 @@ import kotlinx.serialization.Serializable
 
 // TODO - commands device -> server (and corresponding responses)
 //          - done: get configuration
-//          - get which tools user (with authentication xyz) is allowed to use
-//            -> user must have all qualifications required for tool
-//            -> tool must not be disabled
+//          - done: get which tools user (with authentication xyz) is allowed to use
 //      - notification device -> server
 //          - tool x was just unlocked
 //      - commands server -> device (response?)
@@ -39,6 +37,7 @@ sealed class DeviceCommand {
 
 interface DeviceCommandHandler {
     suspend fun handle(actor: DeviceActor, command: GetConfiguration): Either<Error, DeviceResponse>
+    suspend fun handle(actor: DeviceActor, command: GetAuthorizedTools): Either<Error, DeviceResponse>
 }
 
 /**
@@ -98,3 +97,26 @@ data class ToolConfigurationResponse(
     val time: Int,
     val idleState: IdleState
 )
+
+/**
+ * Command from device -> server. In the response, the server returns which tools the authenticated user is authorized
+ * to use.
+ */
+@Serializable
+data class GetAuthorizedTools(
+    override val commandId: Long,
+    val phoneNrIdentity: PhoneNrIdentity?,
+    val cardIdentity: CardIdentity?
+) : DeviceCommand() {
+
+    override suspend fun handle(
+        actor: DeviceActor,
+        commandHandler: DeviceCommandHandler
+    ): Either<Error, DeviceResponse> = commandHandler.handle(actor, this)
+}
+
+@Serializable
+data class AuthorizedToolsResponse(
+    override val commandId: Long,
+    val toolIds: Set<String>
+) : DeviceResponse()
