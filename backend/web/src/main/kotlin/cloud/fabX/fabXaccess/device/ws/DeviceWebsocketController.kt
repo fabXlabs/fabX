@@ -24,7 +24,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-// TODO integration test
 class DeviceWebsocketController(
     loggerFactory: LoggerFactory,
     private val commandHandler: DeviceCommandHandler
@@ -45,6 +44,7 @@ class DeviceWebsocketController(
                         closeExistingConnectionIfExists(deviceActor.deviceId)
                         connections[deviceActor.deviceId] = this
 
+                        // TODO adapt welcome message (at least remove command)
                         send("connected to fabX ${Json.encodeToString<DeviceCommand>(GetConfiguration(123))}")
 
                         try {
