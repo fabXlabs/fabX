@@ -6,12 +6,16 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.tool.rest.IdleState
 import cloud.fabX.fabXaccess.tool.rest.ToolType
+import cloud.fabX.fabXaccess.user.rest.CardIdentity
+import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import kotlinx.serialization.Serializable
 
 
 // TODO - commands device -> server (and corresponding responses)
 //          - done: get configuration
 //          - get which tools user (with authentication xyz) is allowed to use
+//            -> user must have all qualifications required for tool
+//            -> tool must not be disabled
 //      - notification device -> server
 //          - tool x was just unlocked
 //      - commands server -> device (response?)

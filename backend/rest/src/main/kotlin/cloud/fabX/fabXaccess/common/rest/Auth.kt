@@ -5,7 +5,7 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.device.model.Device
+import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.ws.DevicePrincipal
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.Instructor
@@ -51,10 +51,10 @@ internal fun PipelineContext<*, ApplicationCall>.readMemberAuthentication(): Eit
     return Error.NotAuthenticated("Required authentication not found.").left()
 }
 
-internal fun WebSocketServerSession.readDeviceAuthentication(): Either<Error, Device> {
+internal fun WebSocketServerSession.readDeviceAuthentication(): Either<Error, DeviceActor> {
     call.principal<DevicePrincipal>()?.let { devicePrincipal ->
         return devicePrincipal.right()
-            .map { it.device }
+            .map { it.device.asActor() }
     }
     call.principal<ErrorPrincipal>()?.let { errorPrincipal ->
         return errorPrincipal.error.left()

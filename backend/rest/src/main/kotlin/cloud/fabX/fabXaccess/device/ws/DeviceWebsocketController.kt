@@ -40,10 +40,10 @@ class DeviceWebsocketController(
                 readDeviceAuthentication()
                     .fold({
                         close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "invalid authentication: $it"))
-                    }, { device ->
-                        logger.debug("new connection $this for device $device")
-                        closeExistingConnectionIfExists(device.id)
-                        connections[device.id] = this
+                    }, { deviceActor ->
+                        logger.debug("new connection $this for device $deviceActor")
+                        closeExistingConnectionIfExists(deviceActor.deviceId)
+                        connections[deviceActor.deviceId] = this
 
                         send("connected to fabX ${Json.encodeToString<DeviceCommand>(GetConfiguration(123))}")
 
@@ -51,11 +51,11 @@ class DeviceWebsocketController(
                             for (frame in incoming) {
                                 frame as? Frame.Text ?: continue
                                 val text = frame.readText()
-                                logger.debug("received \"$text\" from ${device.name}")
+                                logger.debug("received \"$text\" from ${deviceActor.name}")
 
                                 deserializeCommand(text)
                                     .map { command ->
-                                        command.handle(device.asActor(), commandHandler)
+                                        command.handle(deviceActor, commandHandler)
                                             .getOrHandle { errorHandler(command.commandId, it) }
                                     }
                                     .getOrHandle { errorHandler(-1, it) }
@@ -64,8 +64,8 @@ class DeviceWebsocketController(
                         } catch (e: Exception) {
                             logger.warn("Exception during device websocket handling", e)
                         } finally {
-                            logger.debug("Closed connection $this of ${device.name}")
-                            connections.remove(device.id)
+                            logger.debug("Closed connection $this of ${deviceActor.name}")
+                            connections.remove(deviceActor.deviceId)
                         }
                     })
             }
