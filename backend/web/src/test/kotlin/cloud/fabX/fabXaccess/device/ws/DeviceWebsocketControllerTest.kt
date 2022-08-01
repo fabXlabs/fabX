@@ -68,7 +68,7 @@ internal class DeviceWebsocketControllerTest {
             val greetingText = (incoming.receive() as Frame.Text).readText()
             assertThat(greetingText)
                 .isEqualTo(
-                    "connected to fabX {\"type\":\"cloud.fabX.fabXaccess.device.ws.GetConfiguration\",\"commandId\":123}"
+                    "connected to fabX"
                 )
         }
     }

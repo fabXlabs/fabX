@@ -44,8 +44,7 @@ class DeviceWebsocketController(
                         closeExistingConnectionIfExists(deviceActor.deviceId)
                         connections[deviceActor.deviceId] = this
 
-                        // TODO adapt welcome message (at least remove command)
-                        send("connected to fabX ${Json.encodeToString<DeviceCommand>(GetConfiguration(123))}")
+                        send("connected to fabX")
 
                         try {
                             for (frame in incoming) {
