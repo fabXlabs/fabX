@@ -13,6 +13,8 @@ import io.ktor.client.features.websocket.webSocket
 import io.ktor.http.HttpMethod
 import io.ktor.http.cio.websocket.DefaultWebSocketSession
 import io.ktor.http.cio.websocket.Frame
+import io.ktor.http.cio.websocket.readBytes
+import io.ktor.http.cio.websocket.readReason
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
 import kotlinx.coroutines.cancelAndJoin
@@ -33,8 +35,13 @@ val client = HttpClient(CIO) {
 suspend fun DefaultWebSocketSession.outputMessages() {
     try {
         for (frame in incoming) {
-            frame as? Frame.Text ?: continue
-            println(frame.readText())
+            when (frame) {
+                is Frame.Binary -> println("Binary: ${frame.readBytes()}")
+                is Frame.Text -> println("Text: ${frame.readText()}")
+                is Frame.Close -> println("Close: ${frame.readReason()}")
+                is Frame.Ping -> println("Ping: ${frame.readBytes()}")
+                is Frame.Pong -> println("Pong: ${frame.readBytes()}")
+            }
         }
     } catch (e: Exception) {
         println("error while receiving: " + e.localizedMessage)

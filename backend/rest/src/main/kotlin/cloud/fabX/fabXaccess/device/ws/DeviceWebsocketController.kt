@@ -24,7 +24,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-// TODO unit test, integration test
+// TODO integration test
 class DeviceWebsocketController(
     loggerFactory: LoggerFactory,
     private val commandHandler: DeviceCommandHandler
