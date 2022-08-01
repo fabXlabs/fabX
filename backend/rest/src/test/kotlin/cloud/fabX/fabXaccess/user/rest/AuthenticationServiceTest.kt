@@ -9,6 +9,11 @@ import assertk.assertions.isSameAs
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.SystemActor
+import cloud.fabX.fabXaccess.device.model.DeviceFixture
+import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
+import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
+import cloud.fabX.fabXaccess.device.ws.DevicePrincipal
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
@@ -28,16 +33,19 @@ import org.mockito.kotlin.whenever
 internal class AuthenticationServiceTest {
 
     private lateinit var gettingUserByIdentity: GettingUserByIdentity
+    private lateinit var gettingDeviceByIdentity: GettingDeviceByIdentity
 
     private lateinit var testee: AuthenticationService
 
     @BeforeEach
     fun setUp(
-        @Mock gettingUserByIdentity: GettingUserByIdentity
+        @Mock gettingUserByIdentity: GettingUserByIdentity,
+        @Mock gettingDeviceByIdentity: GettingDeviceByIdentity
     ) {
         this.gettingUserByIdentity = gettingUserByIdentity
+        this.gettingDeviceByIdentity = gettingDeviceByIdentity
 
-        testee = AuthenticationService(gettingUserByIdentity)
+        testee = AuthenticationService(gettingUserByIdentity, gettingDeviceByIdentity)
     }
 
     @Test
@@ -51,6 +59,9 @@ internal class AuthenticationServiceTest {
 
         val userId = UserIdFixture.arbitrary()
         val user = UserFixture.withIdentity(usernamePasswordIdentity, userId)
+
+        whenever(gettingDeviceByIdentity.getByIdentity(eq(MacSecretIdentity(username, password))))
+            .thenReturn(Error.DeviceNotFoundByIdentity("msg").left())
 
         whenever(
             gettingUserByIdentity.getUserByIdentity(
@@ -75,9 +86,13 @@ internal class AuthenticationServiceTest {
     fun `given invalid username when basic then returns ErrorPrincipal`() = runTest {
         // given
         val invalidUsername = "---"
+        val password = "bla"
+
+        whenever(gettingDeviceByIdentity.getByIdentity(eq(MacSecretIdentity(invalidUsername, password))))
+            .thenReturn(Error.DeviceNotFoundByIdentity("msg").left())
 
         // when
-        val result = testee.basic(UserPasswordCredential(invalidUsername, "bla"))
+        val result = testee.basic(UserPasswordCredential(invalidUsername, password))
 
         // then
         assertThat(result)
@@ -97,6 +112,9 @@ internal class AuthenticationServiceTest {
 
         val error = ErrorFixture.arbitrary()
 
+        whenever(gettingDeviceByIdentity.getByIdentity(eq(MacSecretIdentity(username, password))))
+            .thenReturn(Error.DeviceNotFoundByIdentity("msg").left())
+
         whenever(
             gettingUserByIdentity.getUserByIdentity(
                 eq(SystemActor),
@@ -113,5 +131,35 @@ internal class AuthenticationServiceTest {
             .isInstanceOf(ErrorPrincipal::class)
             .transform { it.error }
             .isSameAs(error)
+    }
+
+    @Test
+    fun `given device exists when basic then returns DevicePrincipal`() = runTest {
+        // given
+        val mac = "AABBCCDDEEFF"
+        val secret = "abcdef0123456789abcdef0123456789"
+
+        val deviceId = DeviceIdFixture.arbitrary()
+        val device = DeviceFixture.arbitrary(deviceId)
+
+        whenever(gettingDeviceByIdentity.getByIdentity(eq(MacSecretIdentity(mac, secret))))
+            .thenReturn(device.right())
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                eq(SystemActor),
+                eq(UsernamePasswordIdentity(mac, hash(secret)))
+            )
+        )
+            .thenReturn(Error.UserNotFoundByIdentity("msg").left())
+
+        // when
+        val result = testee.basic(UserPasswordCredential(mac, secret))
+
+        // then
+        assertThat(result)
+            .isInstanceOf(DevicePrincipal::class)
+            .transform { it.device }
+            .isEqualTo(device)
     }
 }

@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.device.rest.DeviceController
+import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -10,11 +11,12 @@ import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
 val restModule = DI.Module("rest") {
-    bindSingleton { AuthenticationService(instance()) }
+    bindSingleton { AuthenticationService(instance(), instance()) }
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
     bindSingleton { ToolController(instance(), instance(), instance(), instance()) }
     bindSingleton { DeviceController(instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { DeviceWebsocketController(instance(), instance()) }
     bindSingleton {
         UserController(
             instance(),
@@ -39,6 +41,7 @@ val restModule = DI.Module("rest") {
         RestApp(
             instance(),
             instance(tag = "port"),
+            instance(),
             instance(),
             instance(),
             instance(),

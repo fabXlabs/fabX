@@ -5,10 +5,6 @@ sealed class Error(
     open val parameters: Map<String, String> = emptyMap(),
     open val correlationId: CorrelationId? = null
 ) {
-    data class NotAuthenticated(
-        override val message: String
-    ) : Error(message)
-
     data class UserNotFound(
         override val message: String,
         val userId: UserId,
@@ -203,4 +199,12 @@ sealed class Error(
         val qualificationId: QualificationId,
         override val correlationId: CorrelationId
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
+
+    data class NotAuthenticated(
+        override val message: String
+    ) : Error(message)
+
+    data class SerializationError(
+        override val message: String
+    ) : Error(message)
 }

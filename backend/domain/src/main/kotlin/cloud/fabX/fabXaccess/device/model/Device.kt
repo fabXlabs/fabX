@@ -208,5 +208,7 @@ data class Device internal constructor(
 
     fun hasAttachedTool(toolId: ToolId): Boolean = attachedTools.any { it.value == toolId }
 
+    fun asActor(): DeviceActor = DeviceActor(id, identity.mac)
+
     class EventHistoryDoesNotStartWithDeviceCreated(message: String) : Exception(message)
 }
