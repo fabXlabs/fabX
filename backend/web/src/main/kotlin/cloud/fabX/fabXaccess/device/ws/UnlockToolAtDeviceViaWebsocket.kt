@@ -21,7 +21,7 @@ class UnlockToolAtDeviceViaWebsocket(
 
         return deviceWebsocketController.sendCommand(deviceId, UnlockTool(commandId, toolId.serialize()), correlationId)
             .flatMap {
-                deviceWebsocketController.getDeviceResponse(deviceId, commandId, correlationId)
+                deviceWebsocketController.receiveDeviceResponse(deviceId, commandId, correlationId)
             }
             .flatMap {
                 Either.conditionally(

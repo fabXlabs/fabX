@@ -244,7 +244,7 @@ internal class DeviceWebsocketControllerTest {
     }
 
     @Test
-    fun `when getting device response then returns device response`() = withConfiguredTestApp {
+    fun `when receiving device response then returns device response`() = withConfiguredTestApp {
         // given
         val commandId = 567L
         val response = ToolUnlockResponse(commandId)
@@ -261,7 +261,7 @@ internal class DeviceWebsocketControllerTest {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val jobGet = async {
-                testee.getDeviceResponse(actingDevice.id, commandId, correlationId)
+                testee.receiveDeviceResponse(actingDevice.id, commandId, correlationId)
             }
             launch {
                 outgoing.send(Frame.Text(Json.encodeToString<DeviceResponse>(response)))
@@ -276,14 +276,14 @@ internal class DeviceWebsocketControllerTest {
     }
 
     @Test
-    fun `given device is not connected when getting device response then returns error`() = withConfiguredTestApp {
+    fun `given device is not connected when receiving device response then returns error`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
         val commandId = 987L
         val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = testee.getDeviceResponse(deviceId, commandId, correlationId)
+        val result = testee.receiveDeviceResponse(deviceId, commandId, correlationId)
 
         // then
         assertThat(result)
@@ -299,7 +299,7 @@ internal class DeviceWebsocketControllerTest {
 
     // TODO with ktor 2 refactor test for virtual time
     @Test
-    fun `given device does not respond when getting device response then returns error after timeout`() =
+    fun `given device does not respond when receiving device response then returns error after timeout`() =
         withConfiguredTestApp {
             // given
             val commandId = 567L
@@ -317,7 +317,7 @@ internal class DeviceWebsocketControllerTest {
                 (incoming.receive() as Frame.Text).readText() // greeting text
 
                 val timeBefore = System.currentTimeMillis()
-                val result = testee.getDeviceResponse(deviceId, commandId, correlationId)
+                val result = testee.receiveDeviceResponse(deviceId, commandId, correlationId)
                 val deltaTime = System.currentTimeMillis() - timeBefore
 
                 assertThat(result)

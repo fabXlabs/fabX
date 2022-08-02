@@ -152,8 +152,7 @@ class DeviceWebsocketController(
             }
     }
 
-    // TODO rename receiveDeviceResponse
-    internal suspend fun getDeviceResponse(
+    internal suspend fun receiveDeviceResponse(
         deviceId: DeviceId,
         commandId: Long,
         correlationId: CorrelationId
