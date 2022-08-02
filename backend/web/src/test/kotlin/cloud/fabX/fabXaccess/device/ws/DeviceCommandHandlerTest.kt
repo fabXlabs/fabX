@@ -14,8 +14,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.application.GettingAuthorizedTools
-import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
+import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import isLeft
@@ -28,29 +28,32 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.isNull
 import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DeviceCommandHandlerTest {
-    private lateinit var commandHandler: DeviceCommandHandler
     private lateinit var gettingConfiguration: GettingConfiguration
-    private lateinit var gettingUserByIdentity: GettingUserByIdentity
     private lateinit var gettingAuthorizedTools: GettingAuthorizedTools
+    private lateinit var authenticationService: AuthenticationService
+
+    private lateinit var commandHandler: DeviceCommandHandler
 
     @BeforeEach
     fun `configure WebModule`(
         @Mock gettingConfiguration: GettingConfiguration,
-        @Mock gettingUserByIdentity: GettingUserByIdentity,
-        @Mock gettingAuthorizedTools: GettingAuthorizedTools
+        @Mock gettingAuthorizedTools: GettingAuthorizedTools,
+        @Mock authenticationService: AuthenticationService
     ) {
         this.gettingConfiguration = gettingConfiguration
-        this.gettingUserByIdentity = gettingUserByIdentity
         this.gettingAuthorizedTools = gettingAuthorizedTools
+        this.authenticationService = authenticationService
+
         this.commandHandler = DeviceCommandHandlerImpl(
             gettingConfiguration,
-            gettingUserByIdentity,
-            gettingAuthorizedTools
+            gettingAuthorizedTools,
+            authenticationService
         )
     }
 
@@ -175,8 +178,8 @@ internal class DeviceCommandHandlerTest {
         val authorizedTool2 = ToolFixture.arbitrary(authorizedTool2Id)
         val authorizedTools = setOf(authorizedTool1, authorizedTool2)
 
-        whenever(gettingUserByIdentity.getByIdentity(cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)))
-            .thenReturn(user.right())
+        whenever(authenticationService.augmentDeviceActorOnBehalfOfUser(eq(actor), eq(cardIdentity), isNull(), any()))
+            .thenReturn(actorOnBehalfOfUser.right())
 
         whenever(gettingAuthorizedTools.getAuthorizedTools(eq(actorOnBehalfOfUser), any()))
             .thenReturn(authorizedTools.right())
@@ -215,8 +218,15 @@ internal class DeviceCommandHandlerTest {
         val authorizedTool1 = ToolFixture.arbitrary(authorizedTool1Id)
         val authorizedTools = setOf(authorizedTool1)
 
-        whenever(gettingUserByIdentity.getByIdentity(cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)))
-            .thenReturn(user.right())
+        whenever(
+            authenticationService.augmentDeviceActorOnBehalfOfUser(
+                eq(actor),
+                isNull(),
+                eq(phoneNrIdentity),
+                any()
+            )
+        )
+            .thenReturn(actorOnBehalfOfUser.right())
 
         whenever(gettingAuthorizedTools.getAuthorizedTools(eq(actorOnBehalfOfUser), any()))
             .thenReturn(authorizedTools.right())
@@ -262,18 +272,14 @@ internal class DeviceCommandHandlerTest {
             val authorizedTool2 = ToolFixture.arbitrary(authorizedTool2Id)
             val authorizedTools = setOf(authorizedTool1, authorizedTool2)
 
-            whenever(gettingUserByIdentity.getByIdentity(cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)))
-                .thenReturn(user.right())
-
             whenever(
-                gettingUserByIdentity.getByIdentity(
-                    cloud.fabX.fabXaccess.user.model.CardIdentity(
-                        cardId,
-                        cardSecret
-                    )
+                authenticationService.augmentDeviceActorOnBehalfOfUser(
+                    eq(actor),
+                    eq(cardIdentity),
+                    eq(phoneNrIdentity),
+                    any()
                 )
-            )
-                .thenReturn(user.right())
+            ).thenReturn(actorOnBehalfOfUser.right())
 
             whenever(gettingAuthorizedTools.getAuthorizedTools(eq(actorOnBehalfOfUser), any()))
                 .thenReturn(authorizedTools.right())
@@ -293,7 +299,7 @@ internal class DeviceCommandHandlerTest {
         }
 
     @Test
-    fun `given non-matching card and phone nr identity when handling GetAuthorizedTools then returns error`() =
+    fun `given error when augmenting device actor on behalf of user when handling GetAuthorizedTools then returns error`() =
         runTest {
             // given
             val user = UserFixture.arbitrary()
@@ -313,18 +319,16 @@ internal class DeviceCommandHandlerTest {
 
             val command = GetAuthorizedTools(commandId, phoneNrIdentity, cardIdentity)
 
-            whenever(gettingUserByIdentity.getByIdentity(cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)))
-                .thenReturn(user.right())
+            val error = Error.NotAuthenticated("Required authentication not found.")
 
             whenever(
-                gettingUserByIdentity.getByIdentity(
-                    cloud.fabX.fabXaccess.user.model.CardIdentity(
-                        cardId,
-                        cardSecret
-                    )
+                authenticationService.augmentDeviceActorOnBehalfOfUser(
+                    eq(actor),
+                    eq(cardIdentity),
+                    eq(phoneNrIdentity),
+                    any()
                 )
-            )
-                .thenReturn(otherUser.right())
+            ).thenReturn(error.left())
 
             // when
             val result = commandHandler.handle(actor, command)
@@ -332,7 +336,7 @@ internal class DeviceCommandHandlerTest {
             // then
             assertThat(result)
                 .isLeft()
-                .isEqualTo(Error.NotAuthenticated("Required authentication not found."))
+                .isEqualTo(error)
         }
 
     @Test
@@ -345,61 +349,16 @@ internal class DeviceCommandHandlerTest {
 
         val error = ErrorFixture.arbitrary()
 
+        whenever(
+            authenticationService.augmentDeviceActorOnBehalfOfUser(
+                eq(actor),
+                isNull(),
+                isNull(),
+                any()
+            )
+        ).thenReturn(actor.right())
+
         whenever(gettingAuthorizedTools.getAuthorizedTools(eq(actor), any()))
-            .thenReturn(error.left())
-
-        // when
-        val result = commandHandler.handle(actor, command)
-
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(error)
-    }
-
-    @Test
-    fun `given invalid card identity when handling GetAuthorizedTools then returns error`() = runTest {
-        // given
-        val actor = DeviceFixture.arbitrary().asActor()
-
-        val commandId = 768L
-
-        val cardId = "11223344556677"
-        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
-        val cardIdentity = CardIdentity(cardId, cardSecret)
-
-        val command = GetAuthorizedTools(commandId, null, cardIdentity)
-
-        val error = ErrorFixture.arbitrary()
-
-        whenever(gettingUserByIdentity.getByIdentity(cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)))
-            .thenReturn(error.left())
-
-        // when
-        val result = commandHandler.handle(actor, command)
-
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(error)
-    }
-
-    @Test
-    fun `given invalid phone nr identity when handling GetAuthorizedTools then returns error`() = runTest {
-        // given
-        val actor = DeviceFixture.arbitrary().asActor()
-
-        val commandId = 768L
-
-        val phoneNr = "+49123456789"
-        val phoneNrIdentity = PhoneNrIdentity(phoneNr)
-
-
-        val command = GetAuthorizedTools(commandId, phoneNrIdentity, null)
-
-        val error = ErrorFixture.arbitrary()
-
-        whenever(gettingUserByIdentity.getByIdentity(cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)))
             .thenReturn(error.left())
 
         // when

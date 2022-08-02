@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.device.ws
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.getOrHandle
 import arrow.core.left
 import arrow.core.right
@@ -38,6 +39,7 @@ import kotlinx.serialization.json.Json
 class DeviceWebsocketController(
     loggerFactory: LoggerFactory,
     private val commandHandler: DeviceCommandHandler,
+    private val notificationHandler: DeviceNotificationHandler,
     private val deviceReceiveTimeoutMillis: Long
 ) {
     private val logger = loggerFactory.invoke(this::class.java)
@@ -67,20 +69,32 @@ class DeviceWebsocketController(
                                 val text = frame.readText()
                                 logger.debug("received \"$text\" from ${deviceActor.name}")
 
-                                deserializeResponse(text)
-                                    .map {
-                                        responseChannels.remove(it.commandId)?.send(it)
-                                            ?: logger.warn("Received response for unknown command (id ${it.commandId})")
+                                Unit.right()
+                                    .flatMap {
+                                        deserializeResponse(text)
+                                            .map {
+                                                responseChannels.remove(it.commandId)?.send(it)
+                                                    ?: logger.warn("Received response for unknown command (id ${it.commandId})")
+                                            }
+                                            .swap()
                                     }
-                                    .fold({
+                                    .flatMap {
+                                        deserializeDeviceToServerNotification(text)
+                                            .map { it.handle(deviceActor, notificationHandler) }
+                                            .swap()
+                                    }
+                                    .flatMap {
                                         deserializeDeviceToServerCommand(text)
                                             .map { command ->
                                                 command.handle(deviceActor, commandHandler)
-                                                    .getOrHandle { errorHandler(command.commandId, it) }
+                                                    .getOrHandle { errorHandler(-1, it) }
+                                                    .let { send(serializeResponse(it)) }
                                             }
-                                            .getOrHandle { errorHandler(-1, it) }
-                                            .let { send(serializeResponse(it)) }
-                                    }, {})
+                                            .swap()
+                                    }
+                                    .tap {
+                                        logger.warn("Not able to deserialize incoming message from $deviceActor: $text")
+                                    }
                             }
                         } catch (e: Exception) {
                             logger.warn("Exception during device websocket handling", e)
@@ -93,6 +107,22 @@ class DeviceWebsocketController(
         }
     }
 
+    private fun deserializeResponse(serialized: String): Either<Error, DeviceResponse> {
+        return try {
+            Json.decodeFromString<DeviceResponse>(serialized).right()
+        } catch (e: SerializationException) {
+            DeviceCommunicationSerializationError(e.localizedMessage).left()
+        }
+    }
+
+    private fun deserializeDeviceToServerNotification(serialized: String): Either<Error, DeviceToServerNotification> {
+        return try {
+            Json.decodeFromString<DeviceToServerNotification>(serialized).right()
+        } catch (e: SerializationException) {
+            DeviceCommunicationSerializationError(e.localizedMessage).left()
+        }
+    }
+
     private fun deserializeDeviceToServerCommand(serialized: String): Either<Error, DeviceToServerCommand> {
         return try {
             Json.decodeFromString<DeviceToServerCommand>(serialized).right()
@@ -101,14 +131,6 @@ class DeviceWebsocketController(
                 "SerializationException during device websocket handling (message: \"$serialized\")",
                 e
             )
-            DeviceCommunicationSerializationError(e.localizedMessage).left()
-        }
-    }
-
-    private fun deserializeResponse(serialized: String): Either<Error, DeviceResponse> {
-        return try {
-            Json.decodeFromString<DeviceResponse>(serialized).right()
-        } catch (e: SerializationException) {
             DeviceCommunicationSerializationError(e.localizedMessage).left()
         }
     }

@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandlerImpl
+import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.device.ws.UnlockToolAtDeviceViaWebsocket
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
@@ -16,6 +17,7 @@ val webModule = DI.Module("web") {
     bindSingleton { AuthenticationService(instance(), instance()) }
 
     bindSingleton { DeviceCommandHandlerImpl(instance(), instance(), instance()) }
+    bindSingleton { DeviceNotificationHandlerImpl(instance(), instance()) }
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
     bindSingleton { ToolController(instance(), instance(), instance(), instance()) }
@@ -30,7 +32,14 @@ val webModule = DI.Module("web") {
             instance()
         )
     }
-    bindSingleton { DeviceWebsocketController(instance(), instance(), instance(tag = "deviceReceiveTimeoutMillis")) }
+    bindSingleton {
+        DeviceWebsocketController(
+            instance(),
+            instance(),
+            instance(),
+            instance(tag = "deviceReceiveTimeoutMillis")
+        )
+    }
     bindSingleton {
         UserController(
             instance(),

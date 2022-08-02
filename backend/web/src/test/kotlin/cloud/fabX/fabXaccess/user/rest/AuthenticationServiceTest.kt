@@ -5,7 +5,10 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isNotEqualTo
+import assertk.assertions.isNull
 import assertk.assertions.isSameAs
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.SystemActor
@@ -19,6 +22,8 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import io.ktor.auth.UserPasswordCredential
+import isLeft
+import isRight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -31,6 +36,8 @@ import org.mockito.kotlin.whenever
 @OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class AuthenticationServiceTest {
+
+    private val correlationId = CorrelationIdFixture.arbitrary()
 
     private lateinit var gettingUserByIdentity: GettingUserByIdentity
     private lateinit var gettingDeviceByIdentity: GettingDeviceByIdentity
@@ -150,8 +157,7 @@ internal class AuthenticationServiceTest {
                 eq(SystemActor),
                 eq(UsernamePasswordIdentity(mac, hash(secret)))
             )
-        )
-            .thenReturn(Error.UserNotFoundByIdentity("msg").left())
+        ).thenReturn(Error.UserNotFoundByIdentity("msg").left())
 
         // when
         val result = testee.basic(UserPasswordCredential(mac, secret))
@@ -161,5 +167,225 @@ internal class AuthenticationServiceTest {
             .isInstanceOf(DevicePrincipal::class)
             .transform { it.device }
             .isEqualTo(device)
+    }
+
+    @Test
+    fun `given card identity when augmenting on behalf of user then returns actor on behalf of user`() = runTest {
+        // given
+        val deviceActor = DeviceFixture.arbitrary().asActor()
+
+        val user = UserFixture.arbitrary()
+
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val cardIdentity = CardIdentity(cardId, cardSecret)
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                SystemActor, correlationId,
+                cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)
+            )
+        ).thenReturn(user.right())
+
+        // when
+        val result = testee.augmentDeviceActorOnBehalfOfUser(
+            deviceActor,
+            cardIdentity,
+            null,
+            correlationId
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .transform { it.onBehalfOf }
+            .isEqualTo(user.asMember())
+    }
+
+    @Test
+    fun `given phone nr identity when augmenting on behalf of user then returns actor on behalf of user`() = runTest {
+        // given
+        val deviceActor = DeviceFixture.arbitrary().asActor()
+
+        val user = UserFixture.arbitrary()
+
+        val phoneNr = "+49123456789"
+        val phoneNrIdentity = PhoneNrIdentity(phoneNr)
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                SystemActor,
+                correlationId,
+                cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)
+            )
+        ).thenReturn(user.right())
+
+        // when
+        val result = testee.augmentDeviceActorOnBehalfOfUser(deviceActor, null, phoneNrIdentity, correlationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .transform { it.onBehalfOf }
+            .isEqualTo(user.asMember())
+    }
+
+    @Test
+    fun `given matching card and phone nr identity when augmenting on behalf of user then returns actor on behalf of user`() =
+        runTest {
+            // given
+            val deviceActor = DeviceFixture.arbitrary().asActor()
+
+            val user = UserFixture.arbitrary()
+
+            val cardId = "11223344556677"
+            val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+            val cardIdentity = CardIdentity(cardId, cardSecret)
+
+            val phoneNr = "+49123456789"
+            val phoneNrIdentity = PhoneNrIdentity(phoneNr)
+
+            whenever(
+                gettingUserByIdentity.getUserByIdentity(
+                    SystemActor, correlationId,
+                    cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)
+                )
+            ).thenReturn(user.right())
+
+            whenever(
+                gettingUserByIdentity.getUserByIdentity(
+                    SystemActor,
+                    correlationId,
+                    cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)
+                )
+            ).thenReturn(user.right())
+
+            // when
+            val result =
+                testee.augmentDeviceActorOnBehalfOfUser(deviceActor, cardIdentity, phoneNrIdentity, correlationId)
+
+            // then
+            assertThat(result)
+                .isRight()
+                .transform { it.onBehalfOf }
+                .isEqualTo(user.asMember())
+        }
+
+    @Test
+    fun `given non-matching card and phone nr identity when augmenting on behalf of user then returns error`() =
+        runTest {
+            // given
+            val deviceActor = DeviceFixture.arbitrary().asActor()
+
+            val user = UserFixture.arbitrary()
+            val otherUser = UserFixture.arbitrary()
+            assertThat(user.id).isNotEqualTo(otherUser.id)
+
+            val cardId = "11223344556677"
+            val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+            val cardIdentity = CardIdentity(cardId, cardSecret)
+
+            val phoneNr = "+49123456789"
+            val phoneNrIdentity = PhoneNrIdentity(phoneNr)
+
+            whenever(
+                gettingUserByIdentity.getUserByIdentity(
+                    SystemActor, correlationId,
+                    cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)
+                )
+            ).thenReturn(user.right())
+
+            whenever(
+                gettingUserByIdentity.getUserByIdentity(
+                    SystemActor,
+                    correlationId,
+                    cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)
+                )
+            ).thenReturn(otherUser.right())
+
+            // when
+            val result =
+                testee.augmentDeviceActorOnBehalfOfUser(deviceActor, cardIdentity, phoneNrIdentity, correlationId)
+
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(Error.NotAuthenticated("Required authentication not found."))
+        }
+
+    @Test
+    fun `given no user identity when augmenting on behalf of user then returns actor not acting on behalf of user`() =
+        runTest {
+            // given
+            val deviceActor = DeviceFixture.arbitrary().asActor()
+
+            // when
+            val result =
+                testee.augmentDeviceActorOnBehalfOfUser(deviceActor, null, null, correlationId)
+
+            // then
+            assertThat(result)
+                .isRight()
+                .transform { it.onBehalfOf }
+                .isNull()
+        }
+
+    @Test
+    fun `given invalid card identity when augmenting on behalf of user then returns error`() = runTest {
+        // given
+        val deviceActor = DeviceFixture.arbitrary().asActor()
+
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val cardIdentity = CardIdentity(cardId, cardSecret)
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                SystemActor, correlationId,
+                cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)
+            )
+        ).thenReturn(error.left())
+
+        // when
+        val result = testee.augmentDeviceActorOnBehalfOfUser(
+            deviceActor,
+            cardIdentity,
+            null,
+            correlationId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given invalid phone nr identity when augmenting on behalf of user then returns error`() = runTest {
+        // given
+        val deviceActor = DeviceFixture.arbitrary().asActor()
+
+        val phoneNr = "+49123456789"
+        val phoneNrIdentity = PhoneNrIdentity(phoneNr)
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                SystemActor,
+                correlationId,
+                cloud.fabX.fabXaccess.user.model.PhoneNrIdentity(phoneNr)
+            )
+        ).thenReturn(error.left())
+
+        // when
+        val result = testee.augmentDeviceActorOnBehalfOfUser(deviceActor, null, phoneNrIdentity, correlationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
     }
 }

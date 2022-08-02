@@ -240,6 +240,7 @@ sealed class Error(
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class NotAuthenticated(
-        override val message: String
-    ) : Error(message)
+        override val message: String,
+        override val correlationId: CorrelationId? = null
+    ) : Error(message, correlationId = correlationId)
 }

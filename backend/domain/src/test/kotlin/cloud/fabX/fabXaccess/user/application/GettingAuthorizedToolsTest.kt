@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.user.application
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -188,6 +189,8 @@ internal class GettingAuthorizedToolsTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.NotAuthenticated("Required authentication not found."))
+            .isInstanceOf(Error.NotAuthenticated::class)
+            .transform { it.message }
+            .isEqualTo("Required authentication not found.")
     }
 }

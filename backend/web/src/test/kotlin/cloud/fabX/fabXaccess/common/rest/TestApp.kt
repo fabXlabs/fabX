@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.device.application.GettingConfiguration
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandler
+import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandler
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
@@ -30,6 +31,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.application.LoggingUnlockedTool
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
@@ -84,6 +86,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(RemovingCardIdentity::class.java) }
         bindInstance { Mockito.mock(AddingPhoneNrIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingPhoneNrIdentity::class.java) }
+        bindInstance { Mockito.mock(LoggingUnlockedTool::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }
@@ -104,6 +107,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingConfiguration::class.java) }
         bindInstance { Mockito.mock(UnlockingTool::class.java) }
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
+        bindInstance { Mockito.mock(DeviceNotificationHandler::class.java) }
 
         diSetup()
     }

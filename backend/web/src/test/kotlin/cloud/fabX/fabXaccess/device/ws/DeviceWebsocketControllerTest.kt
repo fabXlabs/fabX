@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
+import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -27,7 +28,9 @@ import io.ktor.util.InternalAPI
 import isLeft
 import isRight
 import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -38,12 +41,14 @@ import org.kodein.di.instance
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.any
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @OptIn(InternalAPI::class)
 @MockitoSettings
 internal class DeviceWebsocketControllerTest {
     private lateinit var commandHandler: DeviceCommandHandler
+    private lateinit var notificationHandler: DeviceNotificationHandler
     private lateinit var authenticationService: AuthenticationService
 
     private val mac = "AABBCCDDEEFF"
@@ -55,9 +60,11 @@ internal class DeviceWebsocketControllerTest {
     @BeforeEach
     fun `configure WebModule`(
         @Mock commandHandler: DeviceCommandHandler,
+        @Mock notificationHandler: DeviceNotificationHandler,
         @Mock authenticationService: AuthenticationService,
     ) {
         this.commandHandler = commandHandler
+        this.notificationHandler = notificationHandler
         this.authenticationService = authenticationService
     }
 
@@ -65,6 +72,7 @@ internal class DeviceWebsocketControllerTest {
         withTestApp(
             {
                 bindInstance(overrides = true) { commandHandler }
+                bindInstance(overrides = true) { notificationHandler }
                 bindInstance(overrides = true) { authenticationService }
             }, {
                 val controller: DeviceWebsocketController by it.instance()
@@ -90,6 +98,40 @@ internal class DeviceWebsocketControllerTest {
                 )
         }
     }
+
+    @Test
+    fun `given invalid authentication when connecting then connection is closed`() = withConfiguredTestApp {
+        // given
+        whenever(authenticationService.basic(any()))
+            .thenReturn(ErrorPrincipal(Error.NotAuthenticated("msg")))
+
+        // when & then
+        handleWebSocketConversation("/api/v1/device/ws", {
+            addBasicAuth("abc", "invalid")
+        }) { incoming, _ ->
+            val closeReason = (incoming.receive() as Frame.Close).readReason()
+            assertThat(closeReason).isEqualTo(
+                CloseReason(
+                    CloseReason.Codes.VIOLATED_POLICY,
+                    "invalid authentication: NotAuthenticated(message=msg, correlationId=null)"
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `given no authentication when connecting then connection is closed`() = withConfiguredTestApp {
+        // given
+
+        // when
+        val result = handleRequest(HttpMethod.Get, "/api/v1/device/ws") {
+            // no authentication
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+    }
+
 
     @Test
     fun `when receiving command then calls command handler and returns response`() = withConfiguredTestApp {
@@ -159,36 +201,40 @@ internal class DeviceWebsocketControllerTest {
     }
 
     @Test
-    fun `given invalid authentication when connecting then connection is closed`() = withConfiguredTestApp {
+    fun `when receiving device to server notification then calls notification handler`() = withConfiguredTestApp {
         // given
-        whenever(authenticationService.basic(any()))
-            .thenReturn(ErrorPrincipal(Error.NotAuthenticated("msg")))
+        val toolId = ToolIdFixture.arbitrary()
+        val phoneNrIdentity = PhoneNrIdentity("+49123456789")
 
-        // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth("abc", "invalid")
-        }) { incoming, _ ->
-            val closeReason = (incoming.receive() as Frame.Close).readReason()
-            assertThat(closeReason).isEqualTo(
-                CloseReason(
-                    CloseReason.Codes.VIOLATED_POLICY,
-                    "invalid authentication: NotAuthenticated(message=msg)"
-                )
-            )
-        }
-    }
+        val notification = ToolUnlockedNotification(
+            toolId.serialize(),
+            phoneNrIdentity,
+            null
+        )
 
-    @Test
-    fun `given no authentication when connecting then connection is closed`() = withConfiguredTestApp {
-        // given
+        // have to keep test alive until notificationHandler was called
+        val channel = Channel<Unit>()
+
+        whenever(authenticationService.basic(UserPasswordCredential(mac, secret)))
+            .thenReturn(DevicePrincipal(actingDevice))
+
+        whenever(notificationHandler.handle(actingDevice.asActor(), notification))
+            .then {
+                runBlocking { channel.send(Unit) }
+                Unit.right()
+            }
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device/ws") {
-            // no authentication
+        handleWebSocketConversation("/api/v1/device/ws", {
+            addBasicAuth(mac, secret)
+        }) { incoming, outgoing ->
+            (incoming.receive() as Frame.Text).readText() // greeting text
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerNotification>(notification)))
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+        channel.receive()
+        verify(notificationHandler).handle(actingDevice.asActor(), notification)
     }
 
     @Test

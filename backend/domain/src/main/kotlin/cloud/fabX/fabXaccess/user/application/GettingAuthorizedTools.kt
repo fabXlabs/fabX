@@ -29,7 +29,8 @@ class GettingAuthorizedTools(
     ): Either<Error, Set<Tool>> {
         log.debug("getAuthorizedTools (actor: $actor, correlationId: $correlationId)...")
 
-        return actor.onBehalfOf.toOption().toEither { Error.NotAuthenticated("Required authentication not found.") }
+        return actor.onBehalfOf.toOption()
+            .toEither { Error.NotAuthenticated("Required authentication not found.", correlationId) }
             .map { it.qualifications }
             .flatMap { memberQualifications ->
                 deviceRepository.getById(actor.deviceId)

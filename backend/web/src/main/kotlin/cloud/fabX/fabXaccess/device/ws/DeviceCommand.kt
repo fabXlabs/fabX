@@ -10,12 +10,6 @@ import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import kotlinx.serialization.Serializable
 
-// TODO - notification device -> server
-//          - tool x was just unlocked
-//      - commands server -> device (response?)
-//          - restart now
-//          - (restart now for firmware update)
-
 /**
  * A command requiring a response. Can be sent from device to server or the other way around.
  */
@@ -32,6 +26,18 @@ sealed class DeviceToServerCommand {
 interface DeviceCommandHandler {
     suspend fun handle(actor: DeviceActor, command: GetConfiguration): Either<Error, DeviceResponse>
     suspend fun handle(actor: DeviceActor, command: GetAuthorizedTools): Either<Error, DeviceResponse>
+}
+
+@Serializable
+sealed class DeviceToServerNotification {
+    abstract suspend fun handle(
+        actor: DeviceActor,
+        deviceNotificationHandler: DeviceNotificationHandler
+    ): Either<Error, Unit>
+}
+
+interface DeviceNotificationHandler {
+    suspend fun handle(actor: DeviceActor, notification: ToolUnlockedNotification): Either<Error, Unit>
 }
 
 @Serializable
@@ -96,6 +102,22 @@ data class ToolConfigurationResponse(
     val time: Int,
     val idleState: IdleState
 )
+
+/**
+ * Notification from device -> server sent when a user has selected a tool at a device and the tool was thus unlocked.
+ */
+@Serializable
+data class ToolUnlockedNotification(
+    val toolId: String,
+    val phoneNrIdentity: PhoneNrIdentity?,
+    val cardIdentity: CardIdentity?
+) : DeviceToServerNotification() {
+    override suspend fun handle(
+        actor: DeviceActor,
+        deviceNotificationHandler: DeviceNotificationHandler
+    ): Either<Error, Unit> =
+        deviceNotificationHandler.handle(actor, this)
+}
 
 /**
  * Command from device -> server. In the response, the server returns which tools the authenticated user is authorized
