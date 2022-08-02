@@ -1,8 +1,10 @@
 package cloud.fabX.fabXaccess.device
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
+import assertk.assertions.isNullOrEmpty
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.isError
@@ -72,7 +74,11 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
                 .transform { it.toolId }
                 .isEqualTo(toolId)
 
-            assertThat(httpResult.response.status()).isEqualTo(HttpStatusCode.NoContent)
+            assertThat(httpResult.response)
+                .all {
+                    transform { it.status() }.isEqualTo(HttpStatusCode.NoContent)
+                    transform { it.content }.isNullOrEmpty()
+                }
         }
     }
 
