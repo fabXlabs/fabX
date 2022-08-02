@@ -15,7 +15,6 @@ import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
-import cloud.fabX.fabXaccess.webModule
 import cloud.fabX.fabXaccess.tool.application.AddingTool
 import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.DeletingTool
@@ -36,6 +35,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.webModule
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.withTestApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -66,6 +66,7 @@ internal fun withTestApp(
         import(loggingModule)
 
         bindConstant(tag = "port") { -1 }
+        bindConstant(tag = "deviceReceiveTimeoutMillis") { 1000L }
 
         bindInstance { Mockito.mock(GettingUserByIdentity::class.java) }
         bindInstance { Mockito.mock(GettingUser::class.java) }

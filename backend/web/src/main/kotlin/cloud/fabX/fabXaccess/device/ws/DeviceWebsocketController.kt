@@ -37,7 +37,8 @@ import kotlinx.serialization.json.Json
 
 class DeviceWebsocketController(
     loggerFactory: LoggerFactory,
-    private val commandHandler: DeviceCommandHandler
+    private val commandHandler: DeviceCommandHandler,
+    private val deviceReceiveTimeoutMillis: Long
 ) {
     private val logger = loggerFactory.invoke(this::class.java)
 
@@ -180,8 +181,7 @@ class DeviceWebsocketController(
 
             // parallel job to cancel waiting job after timeout
             val timeoutJob = launch {
-                // TODO make timeout configurable
-                delay(5000)
+                delay(deviceReceiveTimeoutMillis)
                 if (!result.isCompleted) {
                     result.cancel()
                 }

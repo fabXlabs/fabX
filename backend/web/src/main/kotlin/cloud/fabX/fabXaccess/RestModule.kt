@@ -30,7 +30,7 @@ val webModule = DI.Module("web") {
             instance()
         )
     }
-    bindSingleton { DeviceWebsocketController(instance(), instance()) }
+    bindSingleton { DeviceWebsocketController(instance(), instance(), instance(tag = "deviceReceiveTimeoutMillis")) }
     bindSingleton {
         UserController(
             instance(),

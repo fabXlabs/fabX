@@ -11,13 +11,13 @@ import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
-import cloud.fabX.fabXaccess.webModule
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
 import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
+import cloud.fabX.fabXaccess.webModule
 import io.ktor.http.HttpHeaders
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.TestApplicationRequest
@@ -63,6 +63,7 @@ internal fun withTestApp(
         import(loggingModule)
 
         bindConstant(tag = "port") { -1 }
+        bindConstant(tag = "deviceReceiveTimeoutMillis") { 1000L }
 
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }

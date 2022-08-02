@@ -330,7 +330,7 @@ internal class DeviceWebsocketControllerTest {
                         )
                     )
                 assertThat(deltaTime)
-                    .isGreaterThanOrEqualTo(5000)
+                    .isGreaterThanOrEqualTo(1000)
             }
         }
 }

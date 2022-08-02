@@ -35,6 +35,7 @@ val app = DI {
     bindInstance(tag = "dburl") { config.dbUrl }
     bindInstance(tag = "dbuser") { config.dbUser }
     bindInstance(tag = "dbpassword") { config.dbPassword }
+    bindInstance(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
 
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }
