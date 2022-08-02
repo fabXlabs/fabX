@@ -8,7 +8,6 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.UnlockToolAtDevice
 
-// TODO integration test
 class UnlockToolAtDeviceViaWebsocket(
     private val deviceWebsocketController: DeviceWebsocketController
 ) : UnlockToolAtDevice {
