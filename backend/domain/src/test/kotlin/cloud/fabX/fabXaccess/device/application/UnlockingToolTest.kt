@@ -123,7 +123,12 @@ internal class UnlockingToolTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(
-                Error.ReferencedToolNotFound("Tool with id $toolId not found.", toolId, correlationId)
+                Error.ToolNotAttachedToDevice(
+                    "Tool $toolId not attached to device $deviceId.",
+                    deviceId,
+                    toolId,
+                    correlationId
+                )
             )
     }
 

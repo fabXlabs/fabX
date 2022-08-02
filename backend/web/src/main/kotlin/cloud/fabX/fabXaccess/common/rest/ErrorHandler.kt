@@ -32,10 +32,20 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.ToolNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedToolNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.PinNotInUse -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.ToolTypeNotUnlock -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // domain device
         is Error.DeviceNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.DeviceNotFoundByIdentity -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.PinInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.ToolNotAttachedToDevice -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        // web device
+        is Error.DeviceNotConnected -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
+        is Error.DeviceTimeout -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
+        is Error.DeviceCommunicationSerializationError -> respond(
+            HttpStatusCode.ServiceUnavailable,
+            error.toRestModel()
+        )
+        is Error.UnexpectedDeviceResponse -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
         // domain user
         is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
@@ -63,6 +73,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.PhoneNrAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.PhoneNrInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserIdentityNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.UserIsActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // persistence
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
     }
