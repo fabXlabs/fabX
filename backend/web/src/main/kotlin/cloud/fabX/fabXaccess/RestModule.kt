@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
+import cloud.fabX.fabXaccess.device.ws.UnlockToolAtDeviceViaWebsocket
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -11,6 +12,7 @@ import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
+// TODO rename webModule
 val restModule = DI.Module("rest") {
     bindSingleton { AuthenticationService(instance(), instance()) }
 
@@ -49,6 +51,8 @@ val restModule = DI.Module("rest") {
             instance()
         )
     }
+
+    bindSingleton { UnlockToolAtDeviceViaWebsocket(instance()) }
 
     bindSingleton {
         RestApp(

@@ -35,6 +35,7 @@ import io.ktor.websocket.WebSockets
 import java.time.Duration
 import kotlinx.serialization.json.Json
 
+// TODO rename WebApp
 class RestApp(
     loggerFactory: LoggerFactory,
     private val publicPort: Int,

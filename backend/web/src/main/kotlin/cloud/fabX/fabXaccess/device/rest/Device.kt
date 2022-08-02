@@ -42,3 +42,8 @@ data class DeviceDetails(
 data class ToolAttachmentDetails(
     val toolId: String
 )
+
+@Serializable
+data class ToolUnlockDetails(
+    val toolId: String
+)

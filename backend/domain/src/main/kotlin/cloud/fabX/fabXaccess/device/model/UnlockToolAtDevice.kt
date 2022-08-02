@@ -6,6 +6,6 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 
-fun interface UnlockingToolAtDevice {
+fun interface UnlockToolAtDevice {
     suspend fun unlockTool(deviceId: DeviceId, toolId: ToolId, correlationId: CorrelationId): Either<Error, Unit>
 }

@@ -10,17 +10,11 @@ import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import kotlinx.serialization.Serializable
 
-
-// TODO - commands device -> server (and corresponding responses)
-//          - done: get configuration
-//          - done: get which tools user (with authentication xyz) is allowed to use
-//      - notification device -> server
+// TODO - notification device -> server
 //          - tool x was just unlocked
 //      - commands server -> device (response?)
-//          - unlock tool
 //          - restart now
 //          - (restart now for firmware update)
-
 
 /**
  * A command requiring a response. Can be sent from device to server or the other way around.
@@ -125,3 +119,15 @@ data class AuthorizedToolsResponse(
     override val commandId: Long,
     val toolIds: Set<String>
 ) : DeviceResponse()
+
+/**
+ * Command from server -> device to unlock a tool given by the tool id.
+ */
+@Serializable
+data class UnlockTool(
+    override val commandId: Long,
+    val toolId: String
+) : ServerToDeviceCommand()
+
+@Serializable
+data class ToolUnlockResponse(override val commandId: Long) : DeviceResponse()

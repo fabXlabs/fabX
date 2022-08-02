@@ -11,7 +11,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
-import cloud.fabX.fabXaccess.device.model.UnlockingToolAtDevice
+import cloud.fabX.fabXaccess.device.model.UnlockToolAtDevice
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
@@ -39,7 +39,7 @@ internal class UnlockingToolTest {
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
     private lateinit var toolRepository: GettingToolById
-    private lateinit var unlockingToolAtDevice: UnlockingToolAtDevice
+    private lateinit var unlockingToolAtDevice: UnlockToolAtDevice
 
     private lateinit var testee: UnlockingTool
 
@@ -48,14 +48,14 @@ internal class UnlockingToolTest {
         @Mock logger: Logger,
         @Mock deviceRepository: DeviceRepository,
         @Mock toolRepository: GettingToolById,
-        @Mock unlockingToolAtDevice: UnlockingToolAtDevice
+        @Mock unlockToolAtDevice: UnlockToolAtDevice
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
         this.toolRepository = toolRepository
-        this.unlockingToolAtDevice = unlockingToolAtDevice
+        this.unlockingToolAtDevice = unlockToolAtDevice
 
-        testee = UnlockingTool({ logger }, deviceRepository, toolRepository, unlockingToolAtDevice)
+        testee = UnlockingTool({ logger }, deviceRepository, toolRepository, unlockToolAtDevice)
     }
 
     @Test

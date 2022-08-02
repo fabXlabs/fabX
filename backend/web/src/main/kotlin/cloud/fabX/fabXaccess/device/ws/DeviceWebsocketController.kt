@@ -11,7 +11,6 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.SerializationError
 import cloud.fabX.fabXaccess.common.rest.readDeviceAuthentication
-import cloud.fabX.fabXaccess.device.model.UnlockingToolAtDevice
 import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.DefaultWebSocketSession
 import io.ktor.http.cio.websocket.Frame
@@ -22,6 +21,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.route
 import io.ktor.websocket.webSocket
 import java.util.Collections
+import kotlin.random.Random
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -132,7 +132,8 @@ class DeviceWebsocketController(
         }
     }
 
-    // visible for testing
+    internal fun newCommandId(): Long = Random.nextLong()
+
     internal suspend fun sendCommand(
         deviceId: DeviceId,
         command: ServerToDeviceCommand,
@@ -151,7 +152,7 @@ class DeviceWebsocketController(
             }
     }
 
-    // visible for testing
+    // TODO rename receiveDeviceResponse
     internal suspend fun getDeviceResponse(
         deviceId: DeviceId,
         commandId: Long,
@@ -180,6 +181,7 @@ class DeviceWebsocketController(
 
             // parallel job to cancel waiting job after timeout
             val timeoutJob = launch {
+                // TODO make timeout configurable
                 delay(5000)
                 if (!result.isCompleted) {
                     result.cancel()

@@ -9,7 +9,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
-import cloud.fabX.fabXaccess.device.model.UnlockingToolAtDevice
+import cloud.fabX.fabXaccess.device.model.UnlockToolAtDevice
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolType
@@ -22,7 +22,7 @@ class UnlockingTool(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
     private val toolRepository: GettingToolById,
-    private val unlockingToolAtDevice: UnlockingToolAtDevice
+    private val unlockingToolAtDevice: UnlockToolAtDevice
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 

@@ -148,6 +148,13 @@ sealed class Error(
         override val correlationId: CorrelationId
     ) : Error(message, mapOf("deviceId" to deviceId.serialize()), correlationId)
 
+    data class UnexpectedDeviceResponse(
+        override val message: String,
+        val deviceId: DeviceId,
+        val response: String,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize(), "response" to response), correlationId)
+
     data class ToolNotFound(
         override val message: String,
         val toolId: ToolId
