@@ -26,7 +26,7 @@ import kotlinx.serialization.Serializable
  * A command requiring a response. Can be sent from device to server or the other way around.
  */
 @Serializable
-sealed class DeviceCommand {
+sealed class DeviceToServerCommand {
     abstract val commandId: Long
 
     abstract suspend fun handle(
@@ -38,6 +38,11 @@ sealed class DeviceCommand {
 interface DeviceCommandHandler {
     suspend fun handle(actor: DeviceActor, command: GetConfiguration): Either<Error, DeviceResponse>
     suspend fun handle(actor: DeviceActor, command: GetAuthorizedTools): Either<Error, DeviceResponse>
+}
+
+@Serializable
+sealed class ServerToDeviceCommand {
+    abstract val commandId: Long
 }
 
 /**
@@ -67,7 +72,7 @@ data class ErrorResponse(
  * Command from device -> server. In the response, the server returns the device's configuration.
  */
 @Serializable
-data class GetConfiguration(override val commandId: Long) : DeviceCommand() {
+data class GetConfiguration(override val commandId: Long) : DeviceToServerCommand() {
     override suspend fun handle(
         actor: DeviceActor,
         commandHandler: DeviceCommandHandler
@@ -107,7 +112,7 @@ data class GetAuthorizedTools(
     override val commandId: Long,
     val phoneNrIdentity: PhoneNrIdentity?,
     val cardIdentity: CardIdentity?
-) : DeviceCommand() {
+) : DeviceToServerCommand() {
 
     override suspend fun handle(
         actor: DeviceActor,

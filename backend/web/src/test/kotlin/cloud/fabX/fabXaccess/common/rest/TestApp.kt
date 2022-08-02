@@ -46,8 +46,18 @@ import org.kodein.di.instance
 import org.mockito.Mockito
 
 @OptIn(ExperimentalCoroutinesApi::class)
+
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
+    block: suspend TestApplicationEngine.() -> Unit
+) {
+    withTestApp(diSetup, {}, block)
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal fun withTestApp(
+    diSetup: DI.MainBuilder.() -> Unit,
+    diGetter: (DI) -> Unit = {},
     block: suspend TestApplicationEngine.() -> Unit
 ) {
     val testApp = DI {
@@ -97,7 +107,12 @@ internal fun withTestApp(
 
     val restApp: RestApp by testApp.instance()
 
+    diGetter(testApp)
+
     withTestApplication(restApp.moduleConfiguration) {
+        // TODO with ktor 2: refactor testing according design described here
+        //      https://youtrack.jetbrains.com/issue/KTOR-971
+        //      -> should enable virtual time for coroutines of test application
         runTest {
             block()
         }

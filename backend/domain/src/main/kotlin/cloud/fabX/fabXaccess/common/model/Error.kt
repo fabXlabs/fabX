@@ -134,6 +134,18 @@ sealed class Error(
         override val message: String
     ) : Error(message)
 
+    data class DeviceNotConnected(
+        override val message: String,
+        val deviceId: DeviceId,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize()), correlationId)
+
+    data class DeviceTimeout(
+        override val message: String,
+        val deviceId: DeviceId,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize()), correlationId)
+
     data class ToolNotFound(
         override val message: String,
         val toolId: ToolId

@@ -7,7 +7,7 @@ import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.ws.AuthorizedToolsResponse
 import cloud.fabX.fabXaccess.device.ws.ConfigurationResponse
-import cloud.fabX.fabXaccess.device.ws.DeviceCommand
+import cloud.fabX.fabXaccess.device.ws.DeviceToServerCommand
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
 import cloud.fabX.fabXaccess.device.ws.GetAuthorizedTools
 import cloud.fabX.fabXaccess.device.ws.GetConfiguration
@@ -114,7 +114,7 @@ class DeviceWebsocketIntegrationTest {
         }) { incoming, outgoing ->
             (incoming.receive() as Frame.Text).readText() // greeting text
 
-            outgoing.send(Frame.Text(Json.encodeToString<DeviceCommand>(command)))
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
             val responseText = (incoming.receive() as Frame.Text).readText()
             val response = Json.decodeFromString<DeviceResponse>(responseText)
 
@@ -176,7 +176,7 @@ class DeviceWebsocketIntegrationTest {
         }) { incoming, outgoing ->
             (incoming.receive() as Frame.Text).readText() // greeting text
 
-            outgoing.send(Frame.Text(Json.encodeToString<DeviceCommand>(command)))
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
             val responseText = (incoming.receive() as Frame.Text).readText()
             val response = Json.decodeFromString<DeviceResponse>(responseText)
 
