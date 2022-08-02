@@ -45,7 +45,7 @@ internal class DeviceControllerDeleteTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock deletingDevice: DeletingDevice,
         @Mock authenticationService: AuthenticationService
     ) {

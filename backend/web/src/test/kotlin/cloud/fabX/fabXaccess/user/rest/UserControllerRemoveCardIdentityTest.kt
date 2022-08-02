@@ -44,7 +44,7 @@ internal class UserControllerRemoveCardIdentityTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock removingCardIdentity: RemovingCardIdentity,
         @Mock authenticationService: AuthenticationService
     ) {

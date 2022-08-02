@@ -35,8 +35,7 @@ import io.ktor.websocket.WebSockets
 import java.time.Duration
 import kotlinx.serialization.json.Json
 
-// TODO rename WebApp
-class RestApp(
+class WebApp(
     loggerFactory: LoggerFactory,
     private val publicPort: Int,
     private val authenticationService: AuthenticationService,
@@ -119,7 +118,7 @@ class RestApp(
     }
 
     fun start() {
-        log.debug("starting RestApp...")
+        log.debug("starting WebApp...")
         embeddedServer(Netty, environment = applicationEngineEnvironment {
 
             module {

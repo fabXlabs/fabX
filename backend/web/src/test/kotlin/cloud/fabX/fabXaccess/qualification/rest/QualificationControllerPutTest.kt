@@ -50,7 +50,7 @@ internal class QualificationControllerPutTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock changingQualification: ChangingQualification,
         @Mock authenticationService: AuthenticationService
     ) {

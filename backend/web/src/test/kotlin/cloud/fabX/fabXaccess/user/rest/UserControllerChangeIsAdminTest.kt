@@ -49,7 +49,7 @@ internal class UserControllerChangeIsAdminTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock changingIsAdmin: ChangingIsAdmin,
         @Mock authenticationService: AuthenticationService
     ) {

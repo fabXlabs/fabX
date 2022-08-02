@@ -45,7 +45,7 @@ internal class UserControllerRemoveMemberQualificationTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock removingMemberQualification: RemovingMemberQualification,
         @Mock authenticationService: AuthenticationService
     ) {

@@ -53,7 +53,7 @@ internal class DeviceWebsocketControllerTest {
     private lateinit var testee: DeviceWebsocketController
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock commandHandler: DeviceCommandHandler,
         @Mock authenticationService: AuthenticationService,
     ) {

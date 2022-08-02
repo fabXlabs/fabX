@@ -12,8 +12,7 @@ import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
-// TODO rename webModule
-val restModule = DI.Module("rest") {
+val webModule = DI.Module("web") {
     bindSingleton { AuthenticationService(instance(), instance()) }
 
     bindSingleton { DeviceCommandHandlerImpl(instance(), instance(), instance()) }
@@ -55,7 +54,7 @@ val restModule = DI.Module("rest") {
     bindSingleton { UnlockToolAtDeviceViaWebsocket(instance()) }
 
     bindSingleton {
-        RestApp(
+        WebApp(
             instance(),
             instance(tag = "port"),
             instance(),

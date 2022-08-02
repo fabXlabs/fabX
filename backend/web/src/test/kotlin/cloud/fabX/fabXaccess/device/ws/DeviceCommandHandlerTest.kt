@@ -39,7 +39,7 @@ internal class DeviceCommandHandlerTest {
     private lateinit var gettingAuthorizedTools: GettingAuthorizedTools
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock gettingConfiguration: GettingConfiguration,
         @Mock gettingUserByIdentity: GettingUserByIdentity,
         @Mock gettingAuthorizedTools: GettingAuthorizedTools

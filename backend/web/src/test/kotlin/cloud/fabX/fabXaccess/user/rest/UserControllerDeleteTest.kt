@@ -44,7 +44,7 @@ internal class UserControllerDeleteTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock deletingUser: DeletingUser,
         @Mock authenticationService: AuthenticationService
     ) {

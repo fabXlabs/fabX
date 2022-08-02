@@ -44,7 +44,7 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
         @Mock authenticationService: AuthenticationService
     ) {

@@ -47,7 +47,7 @@ internal class DeviceControllerDetachToolTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock detachingTool: DetachingTool,
         @Mock authenticationService: AuthenticationService
     ) {

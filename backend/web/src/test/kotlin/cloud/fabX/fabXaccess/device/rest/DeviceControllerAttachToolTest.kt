@@ -53,7 +53,7 @@ internal class DeviceControllerAttachToolTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock attachingTool: AttachingTool,
         @Mock authenticationService: AuthenticationService
     ) {

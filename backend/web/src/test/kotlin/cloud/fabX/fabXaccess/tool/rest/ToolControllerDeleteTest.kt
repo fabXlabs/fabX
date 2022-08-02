@@ -46,7 +46,7 @@ internal class ToolControllerDeleteTest {
 
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock deletingTool: DeletingTool,
         @Mock authenticationService: AuthenticationService
     ) {

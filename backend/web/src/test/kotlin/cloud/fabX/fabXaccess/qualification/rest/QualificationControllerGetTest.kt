@@ -49,7 +49,7 @@ internal class QualificationControllerGetTest {
     private val actingUser = UserFixture.arbitrary()
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock gettingQualification: GettingQualification,
         @Mock authenticationService: AuthenticationService
     ) {

@@ -51,7 +51,7 @@ internal class ToolControllerPutTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock changingTool: ChangingTool,
         @Mock authenticationService: AuthenticationService
     ) {

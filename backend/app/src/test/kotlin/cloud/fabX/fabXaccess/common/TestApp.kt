@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.common
 
 import cloud.fabX.fabXaccess.PersistenceApp
-import cloud.fabX.fabXaccess.RestApp
+import cloud.fabX.fabXaccess.WebApp
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
@@ -11,7 +11,7 @@ import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
-import cloud.fabX.fabXaccess.restModule
+import cloud.fabX.fabXaccess.webModule
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
 import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
@@ -58,7 +58,7 @@ internal fun withTestApp(
 
     val testApp = DI {
         import(domainModule)
-        import(restModule)
+        import(webModule)
         import(persistenceModule)
         import(loggingModule)
 
@@ -95,7 +95,7 @@ internal fun withTestApp(
         domainEventPublisher.addHandler(it)
     }
 
-    val restApp: RestApp by testApp.instance()
+    val webApp: WebApp by testApp.instance()
     val userRepository: UserRepository by testApp.instance()
 
     val setupCorrelationId = newCorrelationId()
@@ -162,7 +162,7 @@ internal fun withTestApp(
         ).forEach { userRepository.store(it) }
     }
 
-    withTestApplication(restApp.moduleConfiguration) {
+    withTestApplication(webApp.moduleConfiguration) {
         block()
     }
 }

@@ -42,7 +42,7 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
     private lateinit var responseCommandIdCaptor: ArgumentCaptor<Long>
 
     @BeforeEach
-    fun `setup RestModule`(
+    fun `configure WebModule`(
         @Mock deviceWebsocketController: DeviceWebsocketController
     ) {
         this.deviceWebsocketController = deviceWebsocketController

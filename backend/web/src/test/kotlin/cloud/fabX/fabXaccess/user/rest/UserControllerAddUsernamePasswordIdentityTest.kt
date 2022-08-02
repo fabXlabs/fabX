@@ -49,7 +49,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
         @Mock authenticationService: AuthenticationService
     ) {

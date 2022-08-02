@@ -52,7 +52,7 @@ internal class UserControllerAddMemberQualificationTest {
     private val actingUser = UserFixture.arbitrary(instructorQualifications = setOf(qualificationId))
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock addingMemberQualification: AddingMemberQualification,
         @Mock authenticationService: AuthenticationService
     ) {

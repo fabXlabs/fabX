@@ -50,7 +50,7 @@ class DeviceControllerAddTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock addingDevice: AddingDevice,
         @Mock authenticationService: AuthenticationService
     ) {

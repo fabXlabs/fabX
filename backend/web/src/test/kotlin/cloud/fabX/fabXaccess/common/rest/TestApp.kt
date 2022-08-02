@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.common.rest
 
-import cloud.fabX.fabXaccess.RestApp
+import cloud.fabX.fabXaccess.WebApp
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
@@ -15,7 +15,7 @@ import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
-import cloud.fabX.fabXaccess.restModule
+import cloud.fabX.fabXaccess.webModule
 import cloud.fabX.fabXaccess.tool.application.AddingTool
 import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.DeletingTool
@@ -62,7 +62,7 @@ internal fun withTestApp(
     block: suspend TestApplicationEngine.() -> Unit
 ) {
     val testApp = DI {
-        import(restModule)
+        import(webModule)
         import(loggingModule)
 
         bindConstant(tag = "port") { -1 }
@@ -107,11 +107,11 @@ internal fun withTestApp(
         diSetup()
     }
 
-    val restApp: RestApp by testApp.instance()
+    val webApp: WebApp by testApp.instance()
 
     diGetter(testApp)
 
-    withTestApplication(restApp.moduleConfiguration) {
+    withTestApplication(webApp.moduleConfiguration) {
         // TODO with ktor 2: refactor testing according design described here
         //      https://youtrack.jetbrains.com/issue/KTOR-971
         //      -> should enable virtual time for coroutines of test application

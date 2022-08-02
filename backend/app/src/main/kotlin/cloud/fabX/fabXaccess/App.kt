@@ -27,7 +27,7 @@ val config = Config.fromEnv()
 
 val app = DI {
     import(domainModule)
-    import(restModule)
+    import(webModule)
     import(persistenceModule)
     import(loggingModule)
 
@@ -58,8 +58,8 @@ fun main() {
     val userRepository: UserRepository by app.instance()
     createInitialAdminAccountIfUserRepoIsEmpty(userRepository, logger)
 
-    val restApp: RestApp by app.instance()
-    restApp.start()
+    val webApp: WebApp by app.instance()
+    webApp.start()
 }
 
 fun createInitialAdminAccountIfUserRepoIsEmpty(userRepository: UserRepository, logger: Logger) = runBlocking {

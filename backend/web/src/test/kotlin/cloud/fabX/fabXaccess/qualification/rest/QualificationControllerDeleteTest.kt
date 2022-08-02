@@ -45,7 +45,7 @@ internal class QualificationControllerDeleteTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock deletingQualification: DeletingQualification,
         @Mock authenticationService: AuthenticationService
     ) {

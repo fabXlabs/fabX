@@ -53,7 +53,7 @@ class DeviceControllerUnlockToolTest {
     private val actingUser = UserFixture.arbitrary(isAdmin = true)
 
     @BeforeEach
-    fun `configure RestModule`(
+    fun `configure WebModule`(
         @Mock unlockingTool: UnlockingTool,
         @Mock authenticationService: AuthenticationService
     ) {
