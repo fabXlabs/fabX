@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingConfiguration
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandler
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
@@ -100,6 +101,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AttachingTool::class.java) }
         bindInstance { Mockito.mock(DetachingTool::class.java) }
         bindInstance { Mockito.mock(GettingConfiguration::class.java) }
+        bindInstance { Mockito.mock(UnlockingTool::class.java) }
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
 
         diSetup()

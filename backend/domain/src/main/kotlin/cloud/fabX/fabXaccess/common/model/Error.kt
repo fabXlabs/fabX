@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess.common.model
 
+import cloud.fabX.fabXaccess.tool.model.ToolType
+
 sealed class Error(
     open val message: String,
     open val parameters: Map<String, String> = emptyMap(),
@@ -156,6 +158,13 @@ sealed class Error(
         val toolId: ToolId,
         override val correlationId: CorrelationId
     ) : Error(message, mapOf("toolId" to toolId.serialize()), correlationId)
+
+    data class ToolTypeNotUnlock(
+        override val message: String,
+        val toolId: ToolId,
+        val toolType: ToolType,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("toolId" to toolId.serialize(), "toolType" to toolType.name), correlationId)
 
     data class PinInUse(
         override val message: String,

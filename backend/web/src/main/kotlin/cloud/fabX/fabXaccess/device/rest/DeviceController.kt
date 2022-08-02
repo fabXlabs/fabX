@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import io.ktor.application.call
 import io.ktor.routing.Route
@@ -31,7 +32,8 @@ class DeviceController(
     private val changingDevice: ChangingDevice,
     private val deletingDevice: DeletingDevice,
     private val attachingTool: AttachingTool,
-    private val detachingTool: DetachingTool
+    private val detachingTool: DetachingTool,
+    private val unlockingTool: UnlockingTool
 ) {
 
     val routes: Route.() -> Unit = {
@@ -181,6 +183,27 @@ class DeviceController(
                                 }
                         }
                 }
+            }
+
+            post("/{id}/unlock-tool") {
+                readBody<ToolUnlockDetails>()
+                    ?.let {
+                        readUUIDParameter("id")
+                            ?.let { DeviceId(it) }
+                            ?.let { id ->
+                                call.respondWithErrorHandler(
+                                    readAdminAuthentication()
+                                        .flatMap { admin ->
+                                            unlockingTool.unlockTool(
+                                                admin,
+                                                newCorrelationId(),
+                                                id,
+                                                ToolId.fromString(it.toolId)
+                                            )
+                                        }
+                                )
+                            }
+                    }
             }
         }
     }
