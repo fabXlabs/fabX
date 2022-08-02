@@ -19,7 +19,8 @@ internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHa
 }
 
 internal suspend fun ApplicationCall.handleError(error: Error) {
-    when (error) {
+    @Suppress("UNUSED_VARIABLE")
+    val forceExhaustiveWhen = when (error) {
         // authentication, authorization
         is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
         is Error.UserNotInstructor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
