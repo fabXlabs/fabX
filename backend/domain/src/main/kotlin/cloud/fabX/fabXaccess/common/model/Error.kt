@@ -155,6 +155,17 @@ sealed class Error(
         override val correlationId: CorrelationId
     ) : Error(message, mapOf("deviceId" to deviceId.serialize(), "response" to response), correlationId)
 
+    data class DeviceCommunicationSerializationError(
+        override val message: String
+    ) : Error(message)
+
+    data class ToolNotAttachedToDevice(
+        override val message: String,
+        val deviceId: DeviceId,
+        val toolId: ToolId,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize(), "toolId" to toolId.serialize()), correlationId)
+
     data class ToolNotFound(
         override val message: String,
         val toolId: ToolId
@@ -229,10 +240,6 @@ sealed class Error(
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class NotAuthenticated(
-        override val message: String
-    ) : Error(message)
-
-    data class SerializationError(
         override val message: String
     ) : Error(message)
 }

@@ -216,7 +216,7 @@ internal class DeviceWebsocketControllerTest {
             val incomingCommand = (incoming.receive() as Frame.Text).readText()
 
             assertThat(incomingCommand)
-                .transform { Json.decodeFromString<ServerToDeviceCommand>(incomingCommand) }
+                .transform { Json.decodeFromString<ServerToDeviceCommand>(it) }
                 .isEqualTo(command)
         }
     }

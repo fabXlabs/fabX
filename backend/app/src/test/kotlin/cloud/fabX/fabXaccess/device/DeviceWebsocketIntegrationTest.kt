@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test
 
 @InternalAPI
 @ExperimentalSerializationApi
-class DeviceWebsocketIntegrationTest {
+internal class DeviceWebsocketIntegrationTest {
 
     @Test
     fun `given no authentication when connecting to websocket then returns http unauthorized`() = withTestApp {

@@ -50,7 +50,12 @@ class UnlockingTool(
     ): Either<Error, Unit> =
         Either.conditionally(device.hasAttachedTool(toolId),
             {
-                Error.ReferencedToolNotFound("Tool with id $toolId not found.", toolId, correlationId)
+                Error.ToolNotAttachedToDevice(
+                    "Tool $toolId not attached to device ${device.id}.",
+                    device.id,
+                    toolId,
+                    correlationId
+                )
             },
             {}
         )

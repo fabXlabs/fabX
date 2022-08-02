@@ -9,7 +9,7 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.Error.SerializationError
+import cloud.fabX.fabXaccess.common.model.Error.DeviceCommunicationSerializationError
 import cloud.fabX.fabXaccess.common.rest.readDeviceAuthentication
 import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.DefaultWebSocketSession
@@ -100,7 +100,7 @@ class DeviceWebsocketController(
                 "SerializationException during device websocket handling (message: \"$serialized\")",
                 e
             )
-            SerializationError(e.localizedMessage).left()
+            DeviceCommunicationSerializationError(e.localizedMessage).left()
         }
     }
 
@@ -108,7 +108,7 @@ class DeviceWebsocketController(
         return try {
             Json.decodeFromString<DeviceResponse>(serialized).right()
         } catch (e: SerializationException) {
-            SerializationError(e.localizedMessage).left()
+            DeviceCommunicationSerializationError(e.localizedMessage).left()
         }
     }
 
