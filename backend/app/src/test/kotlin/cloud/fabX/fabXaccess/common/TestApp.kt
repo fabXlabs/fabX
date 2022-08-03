@@ -22,7 +22,6 @@ import io.ktor.http.HttpHeaders
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.TestApplicationRequest
 import io.ktor.server.testing.withTestApplication
-import io.ktor.util.InternalAPI
 import io.ktor.util.encodeBase64
 import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -168,13 +167,10 @@ internal fun withTestApp(
     }
 }
 
-@InternalAPI
 internal fun TestApplicationRequest.addMemberAuth() = addBasicAuth("member", "s3cr3t")
 
-@InternalAPI
 internal fun TestApplicationRequest.addAdminAuth() = addBasicAuth("admin", "super\$ecr3t")
 
-@InternalAPI
 internal fun TestApplicationRequest.addBasicAuth(user: String, password: String) {
     val encoded = "$user:$password".toByteArray(Charsets.UTF_8).encodeBase64()
     addHeader(HttpHeaders.Authorization, "Basic $encoded")

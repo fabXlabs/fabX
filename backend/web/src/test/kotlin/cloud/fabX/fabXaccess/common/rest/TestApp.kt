@@ -116,6 +116,7 @@ internal fun withTestApp(
 
     diGetter(testApp)
 
+    // TODO `withTestApplication` is deprecated. Please use new `testApplication` API
     withTestApplication(webApp.moduleConfiguration) {
         // TODO with ktor 2: refactor testing according design described here
         //      https://youtrack.jetbrains.com/issue/KTOR-971

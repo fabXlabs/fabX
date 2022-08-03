@@ -16,13 +16,11 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
-import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -32,8 +30,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
-@InternalAPI
-@ExperimentalSerializationApi
 @MockitoSettings
 internal class QualificationControllerDeleteTest {
     private lateinit var deletingQualification: DeletingQualification

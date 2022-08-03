@@ -12,13 +12,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenDevice(
     name: String = "device",
     background: String = "https://example.com/bg.bmp",
@@ -44,8 +40,6 @@ internal fun TestApplicationEngine.givenDevice(
     return result.response.content!!
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenToolAttachedToDevice(
     deviceId: String,
     pin: Int,

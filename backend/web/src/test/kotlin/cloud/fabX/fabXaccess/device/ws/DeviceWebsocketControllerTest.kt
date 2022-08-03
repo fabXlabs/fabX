@@ -15,16 +15,16 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
-import io.ktor.auth.UserPasswordCredential
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.cio.websocket.CloseReason
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readReason
-import io.ktor.http.cio.websocket.readText
+import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
-import io.ktor.util.InternalAPI
+import io.ktor.server.testing.handleWebSocketConversation
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readReason
+import io.ktor.websocket.readText
 import isLeft
 import isRight
 import kotlinx.coroutines.async
@@ -44,7 +44,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(InternalAPI::class)
 @MockitoSettings
 internal class DeviceWebsocketControllerTest {
     private lateinit var commandHandler: DeviceCommandHandler

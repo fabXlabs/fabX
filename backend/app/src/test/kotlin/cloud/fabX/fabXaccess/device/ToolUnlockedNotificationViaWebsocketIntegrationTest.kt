@@ -8,17 +8,14 @@ import cloud.fabX.fabXaccess.tool.givenTool
 import cloud.fabX.fabXaccess.user.givenCardIdentity
 import cloud.fabX.fabXaccess.user.givenUser
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readText
-import io.ktor.util.InternalAPI
+import io.ktor.server.testing.handleWebSocketConversation
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readText
 import kotlinx.coroutines.delay
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class ToolUnlockedNotificationViaWebsocketIntegrationTest {
 
     @Test

@@ -13,8 +13,8 @@ import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.device.ws.DevicePrincipal
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import io.ktor.auth.Principal
-import io.ktor.auth.UserPasswordCredential
+import io.ktor.server.auth.Principal
+import io.ktor.server.auth.UserPasswordCredential
 
 class AuthenticationService(
     private val gettingUserByIdentity: GettingUserByIdentity,

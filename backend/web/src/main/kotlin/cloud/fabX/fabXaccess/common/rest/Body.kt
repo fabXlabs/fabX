@@ -1,11 +1,11 @@
 package cloud.fabX.fabXaccess.common.rest
 
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.ContentTransformationException
-import io.ktor.request.receive
-import io.ktor.response.respond
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.request.ContentTransformationException
+import io.ktor.server.request.receive
+import io.ktor.server.response.respond
 import io.ktor.util.pipeline.PipelineContext
 
 internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.readBody(): T? {

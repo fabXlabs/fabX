@@ -11,13 +11,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenQualification(
     name: String = "qualification",
     description: String = "some qualification",
@@ -36,8 +32,6 @@ internal fun TestApplicationEngine.givenQualification(
     return result.response.content!!
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenQualifications(count: Int): List<String> {
     return (0..count).map { givenQualification(name = "qualification $it", description = "some qualification $it") }
 }

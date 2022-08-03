@@ -7,8 +7,8 @@ import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.ws.AuthorizedToolsResponse
 import cloud.fabX.fabXaccess.device.ws.ConfigurationResponse
-import cloud.fabX.fabXaccess.device.ws.DeviceToServerCommand
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
+import cloud.fabX.fabXaccess.device.ws.DeviceToServerCommand
 import cloud.fabX.fabXaccess.device.ws.GetAuthorizedTools
 import cloud.fabX.fabXaccess.device.ws.GetConfiguration
 import cloud.fabX.fabXaccess.device.ws.ToolConfigurationResponse
@@ -22,20 +22,17 @@ import cloud.fabX.fabXaccess.user.givenUserHasQualificationFor
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.cio.websocket.CloseReason
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readReason
-import io.ktor.http.cio.websocket.readText
 import io.ktor.server.testing.handleRequest
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
+import io.ktor.server.testing.handleWebSocketConversation
+import io.ktor.websocket.CloseReason
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readReason
+import io.ktor.websocket.readText
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class DeviceWebsocketIntegrationTest {
 
     @Test

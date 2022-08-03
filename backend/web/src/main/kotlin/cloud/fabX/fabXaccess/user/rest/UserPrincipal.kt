@@ -6,7 +6,7 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.User
-import io.ktor.auth.Principal
+import io.ktor.server.auth.Principal
 
 data class UserPrincipal(
     private val user: User

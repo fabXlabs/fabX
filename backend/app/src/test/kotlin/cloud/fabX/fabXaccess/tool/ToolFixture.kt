@@ -13,13 +13,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenTool(
     name: String = "tool",
     type: ToolType = ToolType.UNLOCK,

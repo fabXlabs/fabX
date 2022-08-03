@@ -18,13 +18,9 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenUser(
     firstName: String = "first",
     lastName: String = "last",
@@ -46,8 +42,6 @@ internal fun TestApplicationEngine.givenUser(
     return result.response.content!!
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenUserIsAdmin(
     userId: String,
     isAdmin: Boolean
@@ -63,8 +57,6 @@ internal fun TestApplicationEngine.givenUserIsAdmin(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenUserIsInstructorFor(
     userId: String,
     qualificationId: String
@@ -80,8 +72,6 @@ internal fun TestApplicationEngine.givenUserIsInstructorFor(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenUserHasQualificationFor(
     userId: String,
     qualificationId: String
@@ -103,8 +93,6 @@ internal fun TestApplicationEngine.givenUserHasQualificationFor(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
     userId: String,
     username: String,
@@ -122,8 +110,6 @@ internal fun TestApplicationEngine.givenUsernamePasswordIdentity(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenCardIdentity(
     userId: String,
     cardId: String,
@@ -141,8 +127,6 @@ internal fun TestApplicationEngine.givenCardIdentity(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal fun TestApplicationEngine.givenPhoneNrIdentity(
     userId: String,
     phoneNr: String

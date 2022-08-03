@@ -12,11 +12,11 @@ import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
-import io.ktor.application.ApplicationCall
-import io.ktor.application.call
-import io.ktor.auth.principal
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
+import io.ktor.server.auth.principal
+import io.ktor.server.websocket.WebSocketServerSession
 import io.ktor.util.pipeline.PipelineContext
-import io.ktor.websocket.WebSocketServerSession
 
 internal fun PipelineContext<*, ApplicationCall>.readAdminAuthentication(): Either<Error, Admin> {
     call.principal<UserPrincipal>()?.let { userPrincipal ->

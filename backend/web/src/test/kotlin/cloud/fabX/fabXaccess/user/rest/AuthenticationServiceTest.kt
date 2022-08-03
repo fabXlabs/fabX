@@ -21,7 +21,7 @@ import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import io.ktor.auth.UserPasswordCredential
+import io.ktor.server.auth.UserPasswordCredential
 import isLeft
 import isRight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
