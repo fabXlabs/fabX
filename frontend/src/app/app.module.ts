@@ -19,6 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
+import { FabxState } from "./state/fabx-state";
 
 @NgModule({
     declarations: [
@@ -32,7 +33,7 @@ import { LoginComponent } from './login/login.component';
         HttpClientModule,
         ReactiveFormsModule,
 
-        NgxsModule.forRoot([], {
+        NgxsModule.forRoot([FabxState], {
             developmentMode: !environment.production
         }),
 

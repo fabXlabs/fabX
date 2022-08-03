@@ -1,6 +1,10 @@
 <h2>Users</h2>
 
-<p-table [value]="users" responsiveLayout="scroll" sortField="isAdmin" [sortOrder]=-1 [loading]="loading" [showLoader]="false">
+<p-table [value]="(users$ | async)!"
+         responsiveLayout="scroll"
+         [sortOrder]=-1
+         [loading]="(loading | async)! === 'LOADING'"
+         [showLoader]="false">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">

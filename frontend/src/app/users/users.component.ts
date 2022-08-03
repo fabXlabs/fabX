@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { Select, Store } from "@ngxs/store";
+import { Observable } from "rxjs";
 import { User } from "../models/user.model";
-import { UserService } from "../services/user.service";
+import { Users } from "../state/user.actions";
+import { FabxState } from "../state/fabx-state";
+import { LoadingStateTag } from "../state/loading-state.model";
 
 @Component({
     selector: 'fabx-users',
@@ -9,18 +13,12 @@ import { UserService } from "../services/user.service";
 })
 export class UsersComponent implements OnInit {
 
-    loading: boolean = true
-    users: User[] = []
+    @Select(FabxState.usersLoadingState) loading!: Observable<LoadingStateTag>;
+    @Select(FabxState.users) users$!: Observable<User[]>;
 
-    constructor(private userService: UserService) {}
+    constructor(private store: Store) {}
 
     ngOnInit(): void {
-        this.userService.getAllUsers().subscribe({
-            next: (val) => {
-                this.users = val;
-                this.loading = false
-            },
-            error: (err) => { console.error("error while getting all users: %o", err) }
-        })
+        this.store.dispatch(new Users.GetAll())
     }
 }
