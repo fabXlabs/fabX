@@ -27,6 +27,10 @@
             </column>
         </createTable>
 
+        <addPrimaryKey tableName="devicesourcingevent"
+                       columnNames="aggregate_root_id,aggregate_version"
+                       constraintName="devicesourcingevent_pk"/>
+
         <createTable tableName="qualificationsourcingevent">
             <column name="aggregate_root_id" type="uuid">
                 <constraints nullable="false"/>
@@ -47,6 +51,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addPrimaryKey tableName="qualificationsourcingevent"
+                       columnNames="aggregate_root_id,aggregate_version"
+                       constraintName="qualificationsourcingevent_pk"/>
 
         <createTable tableName="toolsourcingevent">
             <column name="aggregate_root_id" type="uuid">
@@ -69,6 +77,10 @@
             </column>
         </createTable>
 
+        <addPrimaryKey tableName="toolsourcingevent"
+                       columnNames="aggregate_root_id,aggregate_version"
+                       constraintName="toolsourcingevent_pk"/>
+
         <createTable tableName="usersourcingevent">
             <column name="aggregate_root_id" type="uuid">
                 <constraints nullable="false"/>
@@ -89,5 +101,9 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addPrimaryKey tableName="usersourcingevent"
+                       columnNames="aggregate_root_id,aggregate_version"
+                       constraintName="usersourcingevent_pk"/>
     </changeSet>
 </databaseChangeLog>

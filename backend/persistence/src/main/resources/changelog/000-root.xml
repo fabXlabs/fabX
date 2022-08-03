@@ -6,6 +6,5 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <include file="changelog/001-initial-setup.xml"/>
-    <include file="changelog/002-aggregate-root-id-indices.xml"/>
 
 </databaseChangeLog>
