@@ -5,7 +5,7 @@ import { User } from "../models/user.model";
 import { Users } from "../state/user.actions";
 import { FabxState } from "../state/fabx-state";
 import { LoadingStateTag } from "../state/loading-state.model";
-import { SortEvent } from "primeng/api";
+import { LazyLoadEvent } from "primeng/api";
 
 @Component({
     selector: 'fabx-users',
@@ -14,20 +14,20 @@ import { SortEvent } from "primeng/api";
 })
 export class UsersComponent implements OnInit {
 
-    @Select(FabxState.usersLoadingState) loading!: Observable<LoadingStateTag>;
+    @Select(FabxState.usersLoadingState) loading$!: Observable<LoadingStateTag>;
     @Select(FabxState.users) users$!: Observable<User[]>;
 
     constructor(private store: Store) {}
 
     ngOnInit(): void {
-        this.store.dispatch(new Users.GetAll())
+        this.store.dispatch(new Users.GetAll());
     }
 
-    customSort(event: SortEvent) {
-        const order = event.order == 1 ? "ascending" : "descending";
+    lazyLoad(event: LazyLoadEvent) {
+        const order = event.sortOrder == 1 ? "ascending" : "descending";
 
         let fieldAccessor: keyof User = "id";
-        switch (event.field) {
+        switch (event.sortField) {
             case "id":
                 fieldAccessor = "id";
                 break;
