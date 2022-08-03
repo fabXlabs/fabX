@@ -17,7 +17,7 @@ plugins {
 }
 
 tasks.register<GradleBuild>("stage") {
-    tasks = listOf("clean", "shadowJar")
+    tasks = listOf("clean", "copyFrontend", "shadowJar")
 }
 
 allprojects {
