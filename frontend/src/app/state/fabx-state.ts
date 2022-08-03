@@ -14,9 +14,15 @@ export interface AuthModel {
     password: string,
 }
 
+export interface UserSortModel {
+    by: keyof User,
+    order: "ascending" | "descending",
+}
+
 export interface FabxStateModel {
     auth: AuthModel | null,
-    users: LoadingState<User[]>
+    users: LoadingState<User[]>,
+    usersSort: UserSortModel,
 }
 
 @State<FabxStateModel>({
@@ -24,6 +30,10 @@ export interface FabxStateModel {
     defaults: {
         auth: null,
         users: { tag: "LOADING" },
+        usersSort: {
+            by: "isAdmin",
+            order: "descending",
+        }
     }
 })
 @Injectable()
@@ -66,7 +76,27 @@ export class FabxState {
 
     @Selector()
     static users(state: FabxStateModel): User[] {
-        return getFinishedValueOrDefault(state.users, []);
+        let users: User[] = [...getFinishedValueOrDefault(state.users, [])];
+
+        let orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
+
+        users.sort((a: User, b: User) => {
+            let aVal = a[state.usersSort.by] || false;
+            let bVal = b[state.usersSort.by] || false;
+
+            let ret: number = 0;
+
+            if (aVal < bVal) {
+                ret = -1;
+            }
+            if (aVal > bVal) {
+                ret = 1;
+            }
+
+            return ret * orderMultiplier;
+        });
+
+        return users;
     }
 
     @Selector()
@@ -95,5 +125,12 @@ export class FabxState {
                 }
             })
         );
+    }
+
+    @Action(Users.SetSort)
+    setUserSort(ctx: StateContext<FabxStateModel>, action: Users.SetSort) {
+        ctx.patchState({
+            usersSort: action.sort
+        });
     }
 }

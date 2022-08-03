@@ -1,10 +1,12 @@
 <h2>Users</h2>
 
 <p-table [value]="(users$ | async)!"
-         responsiveLayout="scroll"
-         [sortOrder]=-1
          [loading]="(loading | async)! === 'LOADING'"
-         [showLoader]="false">
+         [showLoader]="false"
+         [customSort]="true"
+         (sortFunction)="customSort($event)"
+         responsiveLayout="scroll"
+>
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">
@@ -50,15 +52,33 @@
 
     <ng-template pTemplate="loadingbody">
         <tr *ngFor="let _ of [].constructor(5)">
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
-            <td><p-skeleton></p-skeleton></td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
         </tr>
     </ng-template>
 </p-table>
