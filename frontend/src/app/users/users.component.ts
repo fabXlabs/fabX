@@ -9,13 +9,17 @@ import { UserService } from "../services/user.service";
 })
 export class UsersComponent implements OnInit {
 
+    loading: boolean = true
     users: User[] = []
 
     constructor(private userService: UserService) {}
 
     ngOnInit(): void {
         this.userService.getAllUsers().subscribe({
-            next: (val) => { this.users = val },
+            next: (val) => {
+                this.users = val;
+                this.loading = false
+            },
             error: (err) => { console.error("error while getting all users: %o", err) }
         })
     }

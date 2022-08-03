@@ -1,6 +1,6 @@
 <h2>Users</h2>
 
-<p-table [value]="users" sortField="isAdmin" [sortOrder]=-1>
+<p-table [value]="users" responsiveLayout="scroll" sortField="isAdmin" [sortOrder]=-1 [loading]="loading" [showLoader]="false">
     <ng-template pTemplate="header">
         <tr>
             <th pSortableColumn="id">
@@ -29,6 +29,7 @@
             </th>
         </tr>
     </ng-template>
+
     <ng-template pTemplate="body" let-user>
         <tr>
             <td>{{user.id}}</td>
@@ -40,6 +41,20 @@
             <td>{{user.memberQualifications}}</td>
             <td>{{user.instructorQualifications}}</td>
             <td>{{user.isAdmin}}</td>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let _ of [].constructor(5)">
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
+            <td><p-skeleton></p-skeleton></td>
         </tr>
     </ng-template>
 </p-table>
