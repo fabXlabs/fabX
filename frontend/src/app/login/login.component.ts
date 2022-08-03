@@ -37,7 +37,10 @@ export class LoginComponent {
                 },
                 error: (err: HttpErrorResponse) => {
                     console.log("error during login: %o", err);
-                    this.error = `Error: ${err.status} ${err.statusText} ${JSON.stringify(err.error)}`
+                    this.error = `Error: ${err.statusText} (${err.status})`
+                    if (err.error) {
+                        this.error += ` ${JSON.stringify(err.error)}`
+                    }
                 }
             });
     }

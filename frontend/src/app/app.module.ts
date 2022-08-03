@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from "@angular/forms";
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from "primeng/inputtext";
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from "primeng/messages";
 import { PasswordModule } from "primeng/password";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
@@ -30,6 +32,8 @@ import { LoginComponent } from './login/login.component';
 
         ButtonModule,
         InputTextModule,
+        MessageModule,
+        MessagesModule,
         PasswordModule,
         SkeletonModule,
         TableModule,
