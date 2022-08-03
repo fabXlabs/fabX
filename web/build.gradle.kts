@@ -5,8 +5,6 @@ val logbackVersion: String by rootProject
 plugins {
     kotlin("jvm")
     kotlin("plugin.serialization") version "1.6.10"
-
-    id("com.github.node-gradle.node") version "3.2.1"
 }
 
 dependencies {
@@ -28,28 +26,4 @@ dependencies {
     testImplementation(testFixtures(project(":domain")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
-}
-
-node {
-    download.set(false)
-    npmInstallCommand.set("ci")
-    nodeProjectDir.set(file("${project.rootDir}/../frontend/"))
-}
-
-tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuild") {
-    dependsOn(tasks.npmInstall)
-    npmCommand.set(listOf("run", "build"))
-    outputs.upToDateWhen {
-        false
-    }
-}
-
-tasks.register<Copy>("copyFrontend") {
-    dependsOn("npmBuild")
-    from(file("${project.rootDir}/../frontend/dist/fabx-dashboard/"))
-    into(file("${project.sourceSets.main.get().output.resourcesDir}/frontend/"))
-}
-
-tasks.withType<Jar>().configureEach {
-    dependsOn("copyFrontend")
 }

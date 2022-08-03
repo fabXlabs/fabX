@@ -16,14 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: deploy backend to heroku
+      - name: deploy to heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "fabx-dev"
           heroku_email: "simon.schaeffner@googlemail.com"
           region: "eu"
-          appdir: "backend"
 
       - name: create postgres
         run: (heroku addons:create heroku-postgresql:hobby-dev --as=DATABASE -a fabx-dev && heroku ps:restart -a fabx-dev) || true

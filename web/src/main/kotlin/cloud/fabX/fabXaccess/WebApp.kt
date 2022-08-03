@@ -107,7 +107,7 @@ class WebApp(
 
         // TODO wait for fix: https://youtrack.jetbrains.com/issue/KTOR-515
         install(SinglePageApplication) {
-            angular("frontend")
+            angular("fabx-dashboard")
             useResources = true
         }
 
