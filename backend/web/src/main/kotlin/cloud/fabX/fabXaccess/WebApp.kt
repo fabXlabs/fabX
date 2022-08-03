@@ -12,6 +12,8 @@ import cloud.fabX.fabXaccess.user.rest.UserController
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.plugins.spa.SinglePageApplication
+import io.ktor.plugins.spa.angular
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -22,15 +24,15 @@ import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.CORS
-import io.ktor.server.plugins.ContentNegotiation
-import io.ktor.server.plugins.StatusPages
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.CORS
+import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
-import io.ktor.websocket.pingPeriod
-import io.ktor.websocket.timeout
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
 import java.time.Duration
 import kotlinx.serialization.json.Json
 
@@ -101,6 +103,12 @@ class WebApp(
             timeout = Duration.ofSeconds(15)
             maxFrameSize = Long.MAX_VALUE
             masking = false
+        }
+
+        // TODO wait for fix: https://youtrack.jetbrains.com/issue/KTOR-515
+        install(SinglePageApplication) {
+            angular("frontend")
+            useResources = true
         }
 
         routing {
