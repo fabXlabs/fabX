@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from "@angular/forms";
 import { NgxsModule } from "@ngxs/store";
+import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from "primeng/inputtext";
@@ -36,6 +37,7 @@ import { FabxState } from "./state/fabx-state";
         NgxsModule.forRoot([FabxState], {
             developmentMode: !environment.production
         }),
+        NgxsReduxDevtoolsPluginModule.forRoot(),
 
         ButtonModule,
         InputTextModule,
