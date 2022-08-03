@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from "@angular/forms";
 import { NgxsModule } from "@ngxs/store";
+import { NgxsStoragePluginModule } from "@ngxs/storage-plugin";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 
 import { ButtonModule } from 'primeng/button';
@@ -21,6 +22,7 @@ import { AppComponent } from './app.component';
 import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
 import { FabxState } from "./state/fabx-state";
+import { AuthGuard } from "./state/auth-guard";
 
 @NgModule({
     declarations: [
@@ -37,6 +39,9 @@ import { FabxState } from "./state/fabx-state";
         NgxsModule.forRoot([FabxState], {
             developmentMode: !environment.production
         }),
+        NgxsStoragePluginModule.forRoot({
+            key: "fabx.auth"
+        }),
         NgxsReduxDevtoolsPluginModule.forRoot(),
 
         ButtonModule,
@@ -50,7 +55,7 @@ import { FabxState } from "./state/fabx-state";
 
         AppRoutingModule
     ],
-    providers: [],
+    providers: [AuthGuard],
     bootstrap: [AppComponent]
 })
 export class AppModule {

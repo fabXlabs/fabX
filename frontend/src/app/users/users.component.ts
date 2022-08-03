@@ -6,6 +6,7 @@ import { Users } from "../state/user.actions";
 import { FabxState } from "../state/fabx-state";
 import { LoadingStateTag } from "../state/loading-state.model";
 
+// TODO fix sorting (tries to sort list in place which is incompatible with Observable)
 @Component({
     selector: 'fabx-users',
     templateUrl: './users.component.html',

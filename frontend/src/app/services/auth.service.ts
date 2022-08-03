@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
 import { catchError, Observable, throwError } from "rxjs";
 import { environment } from "../../environments/environment";
+import { Store } from "@ngxs/store";
+import { FabxState } from "../state/fabx-state";
 
 @Injectable({
     providedIn: 'root'
@@ -10,18 +12,15 @@ export class AuthService {
 
     private baseUrl = environment.baseUrl;
 
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private store: Store) {}
 
-    doLogin(username: string, password: string): Observable<Object> {
-        localStorage.setItem("username", username);
-        localStorage.setItem("password", password);
-
-        return this.checkLogin();
-    }
-
-    checkLogin(): Observable<Object> {
+    login(username: string, password: string): Observable<Object> {
         // TODO only get to-be-logged-in user
-        return this.http.get(`${this.baseUrl}/user`, this.getOptions()).pipe(
+        return this.http.get(`${this.baseUrl}/user`, {
+            headers: new HttpHeaders({
+                "Authorization": "Basic " + btoa(`${username}:${password}`)
+            })
+        }).pipe(
             catchError((err: HttpErrorResponse, _) => {
                 console.error("checkLogin error: %o", err)
                 return throwError(() => err)
@@ -30,14 +29,17 @@ export class AuthService {
     }
 
     getOptions() {
-        let username = localStorage.getItem("username");
-        let password = localStorage.getItem("password");
+        let auth = this.store.selectSnapshot(FabxState.auth);
 
-        return {
-            headers: new HttpHeaders({
-                "Authorization": "Basic " + btoa(`${username}:${password}`)
-            })
-        };
+        if (auth) {
+            return {
+                headers: new HttpHeaders({
+                    "Authorization": "Basic " + btoa(`${auth.username}:${auth.password}`)
+                })
+            };
+        } else {
+            return {};
+        }
     }
 
     doLogout(): void {
