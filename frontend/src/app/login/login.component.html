@@ -1,16 +1,16 @@
 <h2>Login</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <label>
-        Username:<br>
-        <input type="text" formControlName="username">
-    </label>
+    <span class="p-float-label">
+        <input id="username-input" type="text" formControlName="username" pInputText>
+        <label for="username-input">Username</label>
+    </span>
     <br>
-    <label>
-        Password:<br>
-        <input type="password" formControlName="password">
-    </label>
+    <span class="p-float-label">
+        <input id="password-input" type="password" formControlName="password" [feedback]="false" pPassword>
+        <label for="password-input">Password</label>
+    </span>
     <br>
-    <button type="submit" [disabled]="!form.valid">Login</button>
+    <button pButton type="submit" [disabled]="!form.valid">Login</button>
 </form>
 <div id="errors">{{error}}</div>
