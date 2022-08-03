@@ -9,6 +9,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { PasswordModule } from "primeng/password";
 import { SkeletonModule } from "primeng/skeleton";
 import { TableModule } from "primeng/table";
+import { StyleClassModule } from "primeng/styleclass";
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -32,6 +33,7 @@ import { LoginComponent } from './login/login.component';
         PasswordModule,
         SkeletonModule,
         TableModule,
+        StyleClassModule,
 
         AppRoutingModule
     ],
