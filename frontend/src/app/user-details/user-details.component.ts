@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { Select, Store } from "@ngxs/store";
+import { FabxState } from "../state/fabx-state";
+import { Observable } from "rxjs";
+import { User } from "../models/user.model";
 
 @Component({
     selector: 'fabx-user-details',
     templateUrl: './user-details.component.html',
     styleUrls: ['./user-details.component.scss']
 })
-export class UserDetailsComponent implements OnInit {
+export class UserDetailsComponent {
 
-    constructor() { }
+    @Select(FabxState.selectedUser) user$!: Observable<User>;
 
-    ngOnInit(): void {
-    }
-
+    constructor(private store: Store) { }
 }

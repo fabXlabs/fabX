@@ -8,6 +8,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { getFinishedValueOrDefault, LoadingState, LoadingStateTag } from "./loading-state.model";
 import { AuthService } from "../services/auth.service";
 import { Auth } from "./auth.actions";
+import { RouterState, RouterStateModel } from "@ngxs/router-plugin";
 
 export interface AuthModel {
     username: string,
@@ -107,6 +108,19 @@ export class FabxState {
         });
 
         return users;
+    }
+
+    @Selector([RouterState])
+    static selectedUser(state: FabxStateModel, router: RouterStateModel): User | null {
+        let id = router.state?.root.firstChild?.params['id'];
+
+        if (state.users.tag == "FINISHED" && id) {
+            return state.users.value.find(user => {
+                return user.id == id;
+            }) || null;
+        } else {
+            return null;
+        }
     }
 
     @Selector()
