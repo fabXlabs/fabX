@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
         const darkModeOn = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
         if (darkModeOn) {
-            themeLink.href = 'dark-theme.css';
+            themeLink.href = 'theme-dark.css';
         }
 
         window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", e => {
