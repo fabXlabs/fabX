@@ -19,10 +19,6 @@
                 Last
                 <p-sortIcon field="lastName"></p-sortIcon>
             </th>
-            <th pSortableColumn="wikiName">
-                Wiki
-                <p-sortIcon field="wikiName"></p-sortIcon>
-            </th>
             <th>Qualifications</th>
             <th>Instructor</th>
         </tr>
@@ -36,7 +32,6 @@
             </td>
             <td>{{user.firstName}}</td>
             <td>{{user.lastName}}</td>
-            <td>{{user.wikiName}}</td>
             <td>{{user.memberQualifications}}</td>
             <td>{{user.instructorQualifications}}</td>
         </tr>
@@ -44,9 +39,6 @@
 
     <ng-template pTemplate="loadingbody">
         <tr *ngFor="let _ of [].constructor(5)">
-            <td>
-                <p-skeleton></p-skeleton>
-            </td>
             <td>
                 <p-skeleton></p-skeleton>
             </td>
