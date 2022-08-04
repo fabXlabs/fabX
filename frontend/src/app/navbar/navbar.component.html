@@ -1,5 +1,5 @@
 <div class="flex w-full justify-content-between flex-wrap surface-card shadow-2">
-    <h1 class="flex align-items-center justify-content-start line-height-1 text-2xl px-3">fabX</h1>
+    <h1 class="flex align-items-center justify-content-start line-height-1 text-2xl px-3 cursor-pointer outline-none" routerLink="">fabX</h1>
 
     <ng-container *ngIf="loggedInUser$ | async as loggedInUser">
         <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:border-600 transition-duration-150" [routerLink]="['/user']" routerLinkActive="border-primary">Users</a>
