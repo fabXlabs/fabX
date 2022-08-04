@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:1234"
+    environment:
+      PORT: 1234
+      FABX_DB_URL: jdbc:postgresql://postgres/postgres
+      FABX_DB_USER: postgres
+      FABX_DB_PASSWORD: postgrespassword
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
