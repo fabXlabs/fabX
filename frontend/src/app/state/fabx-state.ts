@@ -21,6 +21,7 @@ export interface UserSortModel {
 
 export interface FabxStateModel {
     auth: AuthModel | null,
+    loggedInUserId: string | null,
     users: LoadingState<User[]>,
     usersSort: UserSortModel,
 }
@@ -29,6 +30,7 @@ export interface FabxStateModel {
     name: 'fabx',
     defaults: {
         auth: null,
+        loggedInUserId: null,
         users: { tag: "LOADING" },
         usersSort: {
             by: "isAdmin",
@@ -56,9 +58,10 @@ export class FabxState {
     login(ctx: StateContext<FabxStateModel>, action: Auth.Login) {
         return this.authService.login(action.payload.username, action.payload.password).pipe(
             tap({
-                next: _ => {
+                next: loggedInUser => {
                     ctx.patchState({
-                        auth: { username: action.payload.username, password: action.payload.password }
+                        auth: { username: action.payload.username, password: action.payload.password },
+                        loggedInUserId: loggedInUser.id
                     });
                 }
             })
@@ -68,7 +71,8 @@ export class FabxState {
     @Action(Auth.Logout)
     logout(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
-            auth: null
+            auth: null,
+            loggedInUserId: null
         });
     }
 

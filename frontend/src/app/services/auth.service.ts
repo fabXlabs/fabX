@@ -4,6 +4,7 @@ import { catchError, Observable, throwError } from "rxjs";
 import { environment } from "../../environments/environment";
 import { Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
+import { User } from "../models/user.model";
 
 @Injectable({
     providedIn: 'root'
@@ -14,9 +15,8 @@ export class AuthService {
 
     constructor(private http: HttpClient, private store: Store) {}
 
-    login(username: string, password: string): Observable<Object> {
-        // TODO only get to-be-logged-in user
-        return this.http.get(`${this.baseUrl}/user`, {
+    login(username: string, password: string): Observable<User> {
+        return this.http.get<User>(`${this.baseUrl}/user/me`, {
             headers: new HttpHeaders({
                 "Authorization": "Basic " + btoa(`${username}:${password}`)
             })
