@@ -9,11 +9,7 @@
 >
     <ng-template pTemplate="header">
         <tr>
-            <th pSortableColumn="id">
-                ID
-                <p-sortIcon field="id"></p-sortIcon>
-            </th>
-            <th>Version</th>
+            <th></th>
             <th pSortableColumn="firstName">
                 First
                 <p-sortIcon field="firstName"></p-sortIcon>
@@ -26,27 +22,22 @@
                 Wiki
                 <p-sortIcon field="wikiName"></p-sortIcon>
             </th>
-            <th>Locked</th>
             <th>Qualifications</th>
             <th>Instructor</th>
-            <th pSortableColumn="isAdmin">
-                Admin
-                <p-sortIcon field="isAdmin"></p-sortIcon>
-            </th>
         </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-user>
         <tr>
-            <td>{{user.id}}</td>
-            <td>{{user.aggregateVersion}}</td>
+            <td class="text-center">
+                <i *ngIf="user.isAdmin" class="pi pi-shield mx-1"></i>
+                <i *ngIf="user.locked" class="pi pi-key mx-1"></i>
+            </td>
             <td>{{user.firstName}}</td>
             <td>{{user.lastName}}</td>
             <td>{{user.wikiName}}</td>
-            <td>{{user.locked}}</td>
             <td>{{user.memberQualifications}}</td>
             <td>{{user.instructorQualifications}}</td>
-            <td>{{user.isAdmin}}</td>
         </tr>
     </ng-template>
 
