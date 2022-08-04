@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readInstructorAuthentication
+import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
@@ -85,6 +86,16 @@ class UserController(
                                 }
                         )
                     }
+            }
+
+            get("/me") {
+                call.respondWithErrorHandler(
+                    readMemberAuthentication()
+                        .flatMap { member ->
+                            gettingUser.getMe(member, newCorrelationId())
+                                .map { it.toRestModel() }
+                        }
+                )
             }
 
             post("") {

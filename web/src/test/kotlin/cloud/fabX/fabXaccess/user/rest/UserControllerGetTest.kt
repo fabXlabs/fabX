@@ -8,6 +8,7 @@ import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.rest.addBasicAuth
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.isJson
@@ -248,6 +249,83 @@ class UserControllerGetTest {
                 "UserNotFound",
                 "msg",
                 mapOf("userId" to userId.serialize())
+            )
+    }
+
+    @Test
+    fun `when get me then returns mapped user`() = withConfiguredTestApp {
+        // given
+        val user = UserFixture.arbitrary(
+            actingUser.id,
+            123,
+            "some",
+            "one",
+            "some.one",
+            false,
+            null,
+            setOf(UsernamePasswordIdentity("username1", "hash1")),
+            setOf(),
+            null,
+            false
+        )
+
+        val mappedUser = User(
+            actingUser.id.serialize(),
+            123,
+            "some",
+            "one",
+            "some.one",
+            false,
+            null,
+            setOf(),
+            null,
+            false
+        )
+
+        whenever(
+            gettingUser.getMe(
+                eq(actingUser.asMember()),
+                any(),
+            )
+        ).thenReturn(user.right())
+
+        // when
+        val result = handleRequest(HttpMethod.Get, "/api/v1/user/me") {
+            addBasicAuth(username, password)
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
+        assertThat(result.response.content)
+            .isNotNull()
+            .isJson<User>()
+            .isEqualTo(mappedUser)
+    }
+
+    @Test
+    fun `given error when get me then returns mapped error`() = withConfiguredTestApp {
+        // given
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            gettingUser.getMe(
+                eq(actingUser.asMember()),
+                any()
+            )
+        ).thenReturn(error.left())
+
+        // when
+        val result = handleRequest(HttpMethod.Get, "/api/v1/user/me") {
+            addBasicAuth(username, password)
+        }
+
+        // then
+        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(result.response.content)
+            .isError(
+                "VersionConflict",
+                "some message",
+                mapOf()
             )
     }
 }

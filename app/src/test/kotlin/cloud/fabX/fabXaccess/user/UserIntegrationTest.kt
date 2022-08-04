@@ -8,10 +8,12 @@ import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.addAdminAuth
 import cloud.fabX.fabXaccess.common.addBasicAuth
 import cloud.fabX.fabXaccess.common.addMemberAuth
+import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
@@ -24,6 +26,9 @@ import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
 import cloud.fabX.fabXaccess.user.rest.UserLockDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.get
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
@@ -159,6 +164,44 @@ internal class UserIntegrationTest {
                 User(
                     userId,
                     1,
+                    "Alan",
+                    "Turing",
+                    "turing",
+                    false,
+                    null,
+                    setOf(),
+                    null,
+                    false
+                )
+            )
+    }
+
+    @Test
+    fun `when get me then returns user`() = withTestAppB {
+        // given
+        val userId = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+        givenUsernamePasswordIdentity(
+            userId,
+            "alan.turing",
+            "enigma"
+        )
+
+        // when
+        val response = c().get("/api/v1/user/me") {
+            basicAuth("alan.turing", "enigma")
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<User>())
+            .isEqualTo(
+                User(
+                    userId,
+                    2,
                     "Alan",
                     "Turing",
                     "turing",
