@@ -24,13 +24,15 @@ import { LoginComponent } from './login/login.component';
 import { FabxState } from "./state/fabx-state";
 import { AuthGuard } from "./state/auth-guard";
 import { NavbarComponent } from './navbar/navbar.component';
+import { UserDetailsComponent } from './user-details/user-details.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         UsersComponent,
         LoginComponent,
-        NavbarComponent
+        NavbarComponent,
+        UserDetailsComponent
     ],
     imports: [
         BrowserAnimationsModule,

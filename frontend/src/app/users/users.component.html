@@ -6,6 +6,7 @@
          [lazy]="true"
          (onLazyLoad)="lazyLoad($event)"
          responsiveLayout="scroll"
+         selectionMode="single"
 >
     <ng-template pTemplate="header">
         <tr>
@@ -28,7 +29,7 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-user>
-        <tr>
+        <tr routerLink="/user/{{user.id}}" class="cursor-pointer">
             <td class="text-center">
                 <i *ngIf="user.isAdmin" class="pi pi-shield mx-1"></i>
                 <i *ngIf="user.locked" class="pi pi-lock mx-1"></i>
