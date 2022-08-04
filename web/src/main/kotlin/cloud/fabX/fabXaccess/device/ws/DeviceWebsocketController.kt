@@ -221,6 +221,8 @@ class DeviceWebsocketController(
                     deviceId,
                     correlationId
                 ).left()
+            } finally {
+                responseChannels.remove(commandId)
             }
         }
     }
