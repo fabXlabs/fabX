@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserRepository
 
@@ -36,5 +37,14 @@ class GettingUser(
         log.debug("getById (actor: $actor, correlationId: $correlationId)...")
 
         return userRepository.getById(userId)
+    }
+
+    suspend fun getMe(
+        actor: Member,
+        correlationId: CorrelationId
+    ): Either<Error, User> {
+        log.debug("getMe (actor: $actor, correlationId: $correlationId)...")
+
+        return userRepository.getById(actor.userId)
     }
 }

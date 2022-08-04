@@ -99,4 +99,39 @@ internal class GettingUserTest {
             .isLeft()
             .isEqualTo(expectedError)
     }
+
+    @Test
+    fun `when getting me then returns user given by actor`() = runTest {
+        // given
+        val user = UserFixture.arbitrary(userId)
+
+        whenever(userRepository.getById(userId))
+            .thenReturn(user.right())
+
+        // when
+        val result = testee.getMe(user.asMember(), correlationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isSameAs(user)
+    }
+
+    @Test
+    fun `given repository error when getting me then returns error`() = runTest {
+        // given
+        val user = UserFixture.arbitrary(userId)
+
+        val expectedError = ErrorFixture.arbitrary()
+        whenever(userRepository.getById(userId))
+            .thenReturn(expectedError.left())
+
+        // when
+        val result = testee.getMe(user.asMember(), correlationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(expectedError)
+    }
 }
