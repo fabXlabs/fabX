@@ -23,12 +23,14 @@ import { UsersComponent } from './users/users.component';
 import { LoginComponent } from './login/login.component';
 import { FabxState } from "./state/fabx-state";
 import { AuthGuard } from "./state/auth-guard";
+import { NavbarComponent } from './navbar/navbar.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         UsersComponent,
-        LoginComponent
+        LoginComponent,
+        NavbarComponent
     ],
     imports: [
         BrowserAnimationsModule,
@@ -40,7 +42,7 @@ import { AuthGuard } from "./state/auth-guard";
             developmentMode: !environment.production
         }),
         NgxsStoragePluginModule.forRoot({
-            key: "fabx.auth"
+            key: ["fabx.auth", "fabx.loggedInUserId"]
         }),
         NgxsReduxDevtoolsPluginModule.forRoot(),
 

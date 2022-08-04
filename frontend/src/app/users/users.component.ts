@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { Observable } from "rxjs";
 import { User } from "../models/user.model";
@@ -12,16 +12,12 @@ import { LazyLoadEvent } from "primeng/api";
     templateUrl: './users.component.html',
     styleUrls: ['./users.component.scss']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent {
 
     @Select(FabxState.usersLoadingState) loading$!: Observable<LoadingStateTag>;
     @Select(FabxState.users) users$!: Observable<User[]>;
 
     constructor(private store: Store) {}
-
-    ngOnInit(): void {
-        this.store.dispatch(new Users.GetAll());
-    }
 
     lazyLoad(event: LazyLoadEvent) {
         const order = event.sortOrder == 1 ? "ascending" : "descending";

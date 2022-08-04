@@ -79,6 +79,12 @@ export class FabxState {
     // USERS
 
     @Selector()
+    static usersLoadingState(state: FabxStateModel): LoadingStateTag {
+        return state.users.tag;
+    }
+
+
+    @Selector()
     static users(state: FabxStateModel): User[] {
         let users: User[] = [...getFinishedValueOrDefault(state.users, [])];
 
@@ -104,8 +110,14 @@ export class FabxState {
     }
 
     @Selector()
-    static usersLoadingState(state: FabxStateModel): LoadingStateTag {
-        return state.users.tag;
+    static loggedInUser(state: FabxStateModel): User | null {
+        if (state.users.tag == "FINISHED" && state.loggedInUserId) {
+            return state.users.value.find(user => {
+                return user.id == state.loggedInUserId
+            }) || null;
+        } else {
+            return null;
+        }
     }
 
     @Action(Users.GetAll)
