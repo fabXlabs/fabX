@@ -21,10 +21,13 @@ jobs:
       - name: Log in to Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Pull Image from Registry
+      - name: Determine Image ID
         run: |
           IMAGE_ID=ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:$VERSION
-          docker pull $IMAGE_ID
+          echo "image_id=$IMAGE_ID" >> $GITHUB_ENV
+
+      - name: Pull Image from Registry
+        run: docker pull ${{ env.image_id }}
 
       - name: Log in to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
@@ -43,7 +46,7 @@ jobs:
 
       - name: Push to Heroku Registry
         run: |
-          docker tag $IMAGE_ID registry.heroku.com/$HK_NAME/web
+          docker tag ${{ env.image_id }} registry.heroku.com/$HK_NAME/web
           docker push registry.heroku.com/$HK_NAME/web
 
       - name: Release
