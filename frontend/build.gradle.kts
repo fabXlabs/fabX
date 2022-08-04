@@ -8,6 +8,10 @@ node {
     npmInstallCommand.set("ci")
 }
 
+tasks.npmInstall.configure {
+    onlyIf { !file("${project.projectDir}/node_modules").exists() }
+}
+
 val buildTask = tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuild") {
     dependsOn(tasks.npmInstall)
     npmCommand.set(listOf("run", "build"))
