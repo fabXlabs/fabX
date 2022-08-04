@@ -9,6 +9,7 @@ env:
   IMAGE_NAME: fabx
   VERSION: latest
   HK_NAME: fabx-dev
+  HK_REGION: eu
 
 jobs:
   deploy:
@@ -34,10 +35,7 @@ jobs:
         run: heroku container:login
 
       - name: Create Heroku App
-        run: heroku create $HK_NAME || true
-
-      - name: Create Postgres Addon
-        run: (heroku addons:create heroku-postgresql:hobby-dev --as=DATABASE -a $HK_NAME && heroku ps:restart -a $HK_NAME) || true
+        run: heroku create --addons=heroku-postgresql:hobby-dev --region=$HK_REGION --no-remote $HK_NAME || true
 
       - name: Determine Image ID
         run: |
