@@ -24,3 +24,14 @@ internal fun Assert<String?>.isError(
         transform { it.message }.isEqualTo(message)
         transform { it.parameters }.isEqualTo(parameters)
     }
+
+// TODO rename -> isError
+internal fun Assert<Error>.isErrorB(
+    type: String,
+    message: String,
+    parameters: Map<String, String> = mapOf()
+) = all {
+    transform { it.type }.isEqualTo(type)
+    transform { it.message }.isEqualTo(message)
+    transform { it.parameters }.isEqualTo(parameters)
+}

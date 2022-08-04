@@ -3,31 +3,34 @@ package cloud.fabX.fabXaccess.qualification
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import assertk.assertions.isNull
-import cloud.fabX.fabXaccess.common.addAdminAuth
-import cloud.fabX.fabXaccess.common.addBasicAuth
-import cloud.fabX.fabXaccess.common.addMemberAuth
-import cloud.fabX.fabXaccess.common.isError
+import cloud.fabX.fabXaccess.common.adminAuth
+import cloud.fabX.fabXaccess.common.c
+import cloud.fabX.fabXaccess.common.isErrorB
 import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.rest.Error
+import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.rest.Qualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails
 import cloud.fabX.fabXaccess.qualification.rest.QualificationDetails
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
+import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
 import java.util.UUID
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
 @InternalAPI
@@ -35,90 +38,84 @@ import org.junit.jupiter.api.Test
 internal class QualificationIntegrationTest {
 
     @Test
-    fun `given no authentication when get qualification then returns http unauthorized`() = withTestApp {
+    fun `given no authentication when get qualification then returns http unauthorized`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification")
+        val response = c().get("/api/v1/qualification")
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
     }
 
     @Test
-    fun `given invalid authentication when get qualification then returns http unauthorized`() = withTestApp {
+    fun `given invalid authentication when get qualification then returns http unauthorized`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addBasicAuth("no.body", "secret")
+        val response = c().get("/api/v1/qualification") {
+            basicAuth("no.body", "secret")
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
     }
 
     @Test
-    fun `given qualification when get qualifications then returns qualifications`() = withTestApp {
+    fun `given qualification when get qualifications then returns qualifications`() = withTestAppB {
         // given
         givenQualification()
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addMemberAuth()
+        val response = c().get("/api/v1/qualification") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Qualification>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Qualification>>())
             .transform { it.map { q -> q.name } }
             .containsExactlyInAnyOrder("qualification")
     }
 
     @Test
-    fun `given multiple qualifications when get qualifications then returns qualifications`() = withTestApp {
+    fun `given multiple qualifications when get qualifications then returns qualifications`() = withTestAppB {
         // given
         givenQualifications(10)
 
         val expectedQualificationNames = (0..10).map { "qualification $it" }.toSet()
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addMemberAuth()
+        val response = c().get("/api/v1/qualification") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Qualification>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Qualification>>())
             .transform { it.map { q -> q.name }.toSet() }
             .isEqualTo(expectedQualificationNames)
     }
 
     @Test
-    fun `given qualification when get qualification by id then returns qualification`() = withTestApp {
+    fun `given qualification when get qualification by id then returns qualification`() = withTestAppB {
         // given
         val qualificationId = givenQualification()
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/$qualificationId") {
-            addMemberAuth()
+        val response = c().get("/api/v1/qualification/$qualificationId") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Qualification>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Qualification>())
             .transform { it.name }
             .isEqualTo("qualification")
     }
 
     @Test
-    fun `given incomplete body when adding qualification then returns http unprocessable entity`() = withTestApp {
+    fun `given incomplete body when adding qualification then returns http unprocessable entity`() = withTestAppB {
         // given
         val incompleteRequestBody = "{" +
                 "\"name\": \"qualification\"," +
@@ -128,16 +125,17 @@ internal class QualificationIntegrationTest {
                 "}"
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
-            addAdminAuth()
+        val response = client.post("/api/v1/qualification") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
             setBody(incompleteRequestBody)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.bodyAsText())
+            .isJson<Error>()
+            .isErrorB(
                 "kotlinx.serialization.MissingFieldException",
                 "Field 'orderNr' is required for type with serial name " +
                         "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
@@ -146,7 +144,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding qualification then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when adding qualification then returns http forbidden`() = withTestAppB {
         // given
         val requestBody = QualificationCreationDetails(
             "qualification",
@@ -156,18 +154,18 @@ internal class QualificationIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/qualification") {
-            addMemberAuth()
-            setBody(Json.encodeToString(requestBody))
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        val response = c().post("/api/v1/qualification") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `given qualification when changing qualification then returns http no content`() = withTestApp {
+    fun `given qualification when changing qualification then returns http no content`() = withTestAppB {
         // given
         val qualificationId = givenQualification()
 
@@ -179,22 +177,20 @@ internal class QualificationIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/qualification/${qualificationId}") {
-            addAdminAuth()
-            setBody(Json.encodeToString(requestBody))
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        val response = c().put("/api/v1/qualification/${qualificationId}") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/qualification/$qualificationId") {
-            addMemberAuth()
+        val responseGet = c().get("/api/v1/qualification/$qualificationId") {
+            memberAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<Qualification>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Qualification>())
             .all {
                 transform { it.name }.isEqualTo("newName")
                 transform { it.description }.isEqualTo("some qualification")
@@ -204,7 +200,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given invalid qualification when changing qualification then returns http not found`() = withTestApp {
+    fun `given invalid qualification when changing qualification then returns http not found`() = withTestAppB {
         // given
         val qualificationId = QualificationIdFixture.arbitrary().serialize()
 
@@ -216,17 +212,17 @@ internal class QualificationIntegrationTest {
         )
 
         // when
-        val result =
-            handleRequest(HttpMethod.Put, "/api/v1/qualification/$qualificationId") {
-                addAdminAuth()
-                setBody(Json.encodeToString(requestBody))
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        val response =
+            c().put("/api/v1/qualification/$qualificationId") {
+                adminAuth()
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
             }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "QualificationNotFound",
                 "Qualification with id QualificationId(value=$qualificationId) not found.",
                 mapOf("qualificationId" to qualificationId)
@@ -234,34 +230,34 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when deleting qualification then returns http no content`() = withTestApp {
+    fun `given qualification when deleting qualification then returns http no content`() = withTestAppB {
         // given
         val qualificationId = givenQualification()
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/qualification/$qualificationId") {
-            addAdminAuth()
+        val response = c().delete("/api/v1/qualification/$qualificationId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
-    fun `given unknown qualification when deleting qualification then returns http not found`() = withTestApp {
+    fun `given unknown qualification when deleting qualification then returns http not found`() = withTestAppB {
         // given
         val qualificationId = UUID.fromString("7f635917-048c-41e2-8946-35070a20e539")
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/qualification/$qualificationId") {
-            addAdminAuth()
+        val response = c().delete("/api/v1/qualification/$qualificationId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "QualificationNotFound",
                 "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
                 mapOf("qualificationId" to qualificationId.toString())
@@ -269,19 +265,19 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting qualification then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when deleting qualification then returns http forbidden`() = withTestAppB {
         // given
         val qualificationId = givenQualification()
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/qualification/$qualificationId") {
-            addMemberAuth()
+        val response = c().delete("/api/v1/qualification/$qualificationId") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )

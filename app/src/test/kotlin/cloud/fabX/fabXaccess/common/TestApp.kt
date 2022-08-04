@@ -18,10 +18,18 @@ import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import cloud.fabX.fabXaccess.webModule
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.basicAuth
 import io.ktor.http.HttpHeaders
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.TestApplicationEngine
 import io.ktor.server.testing.TestApplicationRequest
-import io.ktor.server.testing.withTestApplication
+import io.ktor.server.testing.createTestEnvironment
+import io.ktor.server.testing.testApplication
+import io.ktor.server.testing.withApplication
 import io.ktor.util.encodeBase64
 import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,9 +54,7 @@ val postgresContainer = PostgreSQLContainer(postgresImageName)
 var initialised = false
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal fun withTestApp(
-    block: TestApplicationEngine.() -> Unit
-) {
+private fun testSetup(): WebApp {
     if (!postgresContainer.isRunning) {
         println("starting postgres container...")
         postgresContainer.start()
@@ -162,10 +168,50 @@ internal fun withTestApp(
         ).forEach { userRepository.store(it) }
     }
 
-    withTestApplication(webApp.moduleConfiguration) {
+    return webApp
+}
+
+internal fun withTestAppB(
+    block: suspend ApplicationTestBuilder.() -> Unit
+) {
+    val webApp = testSetup()
+
+    testApplication {
+        environment {
+            developmentMode = false
+        }
+        application {
+            webApp.moduleConfiguration(this)
+        }
         block()
     }
 }
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal fun withTestApp(
+    block: TestApplicationEngine.() -> Unit
+) {
+    val webApp = testSetup()
+
+    withApplication(createTestEnvironment {
+        developmentMode = false
+        modules += webApp.moduleConfiguration
+    }) {
+        block()
+    }
+}
+
+internal fun ApplicationTestBuilder.c(): HttpClient {
+    return createClient {
+        install(ContentNegotiation) {
+            json()
+        }
+    }
+}
+
+internal fun HttpRequestBuilder.memberAuth() = basicAuth("member", "s3cr3t")
+
+internal fun HttpRequestBuilder.adminAuth() = basicAuth("admin", "super\$ecr3t")
 
 internal fun TestApplicationRequest.addMemberAuth() = addBasicAuth("member", "s3cr3t")
 

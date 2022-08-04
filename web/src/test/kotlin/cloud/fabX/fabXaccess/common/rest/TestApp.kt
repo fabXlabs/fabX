@@ -39,7 +39,8 @@ import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.webModule
 import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.withTestApplication
+import io.ktor.server.testing.createTestEnvironment
+import io.ktor.server.testing.withApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.kodein.di.DI
@@ -116,8 +117,11 @@ internal fun withTestApp(
 
     diGetter(testApp)
 
-    // TODO `withTestApplication` is deprecated. Please use new `testApplication` API
-    withTestApplication(webApp.moduleConfiguration) {
+    // TODO `withApplication` is deprecated. Please use new `testApplication` API
+    withApplication(createTestEnvironment {
+        developmentMode = false
+        modules += webApp.moduleConfiguration
+    }) {
         // TODO with ktor 2: refactor testing according design described here
         //      https://youtrack.jetbrains.com/issue/KTOR-971
         //      -> should enable virtual time for coroutines of test application

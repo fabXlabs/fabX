@@ -35,6 +35,8 @@ dependencies {
     testImplementation(testFixtures(project(":domain")))
     testImplementation("io.ktor:ktor-serialization:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    testImplementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
