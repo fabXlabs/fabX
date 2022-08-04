@@ -1,1 +1,65 @@
-<pre>{{user$ | async | json}}</pre>
+<ng-container *ngIf="user$ | async let user">
+    <div class="surface-card shadow-2 w-full md:w-9 mt-5 mx-auto p-4 border-round">
+        <h2 class="mb-0 text-xl">{{user.firstName}} {{user.lastName}}</h2>
+        <div class="mt-1 mb-3 text-sm text-500">
+            <pre class="mt-0">{{user.id}}</pre>
+        </div>
+
+        <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">Personal Information</div>
+        <ul class="list-none p-0 m-0">
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-3 font-medium">first name</div>
+                <div class="text-900 w-9">{{user.firstName}}</div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap">
+                <div class="text-500 w-3 font-medium">last name</div>
+                <div class="text-900 w-9">{{user.lastName}}</div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-3 font-medium">wiki name</div>
+                <div class="text-900 w-9">{{user.wikiName}}</div>
+            </li>
+        </ul>
+        <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">Locked</div>
+        <ul class="list-none p-0 m-0">
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-3 font-medium">locked</div>
+                <div class="text-900 w-9">
+                    <i class="pi pi-lock mr-2" *ngIf="user.locked"></i>
+                    <i class="pi pi-lock-open mr-2" *ngIf="!user.locked"></i>
+                    {{user.locked}}
+                </div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap">
+                <div class="text-500 w-3 font-medium">notes</div>
+                <div class="text-900 w-9">{{user.notes}}</div>
+            </li>
+        </ul>
+        <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">Access</div>
+        <ul class="list-none p-0 m-0">
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-3 font-medium">member qualifications</div>
+                <div class="text-900 w-9">
+                    {{user.memberQualifications}}
+                    <p-tag class="mr-2" styleClass="bg-pink-500" [rounded]="true">Demo 1</p-tag>
+                    <p-tag class="mr-2" [rounded]="true">Demo 2</p-tag>
+                </div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap">
+                <div class="text-500 w-3 font-medium">instructor qualifications</div>
+                <div class="text-900 w-9">
+                    {{user.instructorQualifications}}
+                    <p-tag class="mr-2" [rounded]="true">Demo 3</p-tag>
+                    <p-tag class="mr-2" [rounded]="true">Demo 4</p-tag>
+                </div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-3 font-medium">admin</div>
+                <div class="text-900 w-9">
+                    <i *ngIf="user.isAdmin" class="pi pi-shield mr-2"></i>
+                    {{user.isAdmin}}
+                </div>
+            </li>
+        </ul>
+    </div>
+</ng-container>

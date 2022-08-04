@@ -8,13 +8,16 @@ import { NgxsStoragePluginModule } from "@ngxs/storage-plugin";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from "primeng/card";
+import { CheckboxModule } from "primeng/checkbox";
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from "primeng/messages";
 import { PasswordModule } from "primeng/password";
 import { SkeletonModule } from "primeng/skeleton";
-import { TableModule } from "primeng/table";
 import { StyleClassModule } from "primeng/styleclass";
+import { TableModule } from "primeng/table";
+import { TagModule } from "primeng/tag";
 
 import { environment } from "../environments/environment";
 import { AppRoutingModule } from './app-routing.module';
@@ -59,7 +62,10 @@ import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
         TableModule,
         StyleClassModule,
 
-        AppRoutingModule
+        AppRoutingModule,
+        CardModule,
+        TagModule,
+        CheckboxModule
     ],
     providers: [AuthGuard],
     bootstrap: [AppComponent]

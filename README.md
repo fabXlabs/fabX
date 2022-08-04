@@ -60,7 +60,7 @@ Here is a general overview how to set up a new fabX installation:
 * Setup instructors: each user can be an instructor for a set of qualifications. Being an instructor for a qualification
   enables giving the qualification to other users.
 * Add devices: devices are the small interfaces that read members' access cards and turn tools on and off
-    * devices are register themselves when first turned on
+    * devices register themselves when first turned on
     * configure connection of tools to devices
 
 Now each space member is able to use the tools they are qualified for with their personal access card.
