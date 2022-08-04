@@ -4,7 +4,7 @@ import { Actions, ofActionCompleted, ofActionDispatched, Store } from "@ngxs/sto
 import { Users } from "./state/user.actions";
 import { FabxState } from "./state/fabx-state";
 import { Auth } from "./state/auth.actions";
-import { Router } from "@angular/router";
+import { Navigate } from "@ngxs/router-plugin";
 
 @Component({
     selector: 'fabx-root',
@@ -17,7 +17,6 @@ export class AppComponent implements OnInit {
     constructor(
         private store: Store,
         private actions: Actions,
-        private router: Router,
         @Inject(DOCUMENT) private document: Document
     ) {}
 
@@ -29,7 +28,7 @@ export class AppComponent implements OnInit {
         });
 
         this.actions.pipe(ofActionDispatched(Auth.Logout)).subscribe(() => {
-            this.router.navigate(['/login']);
+            this.store.dispatch(new Navigate(['/login']));
         });
 
         // TODO refactor ThemeService

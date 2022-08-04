@@ -25,6 +25,7 @@ import { FabxState } from "./state/fabx-state";
 import { AuthGuard } from "./state/auth-guard";
 import { NavbarComponent } from './navbar/navbar.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
+import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 
 @NgModule({
     declarations: [
@@ -46,6 +47,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
         NgxsStoragePluginModule.forRoot({
             key: ["fabx.auth", "fabx.loggedInUserId"]
         }),
+        NgxsRouterPluginModule.forRoot(),
         NgxsReduxDevtoolsPluginModule.forRoot(),
 
         ButtonModule,

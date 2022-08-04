@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { Router } from "@angular/router";
 import { HttpErrorResponse } from "@angular/common/http";
 import { Store } from "@ngxs/store";
 import { Auth } from "../state/auth.actions";
+import { Navigate } from "@ngxs/router-plugin";
 
 @Component({
     selector: 'fabx-login',
@@ -20,8 +20,7 @@ export class LoginComponent {
     });
 
     constructor(
-        private store: Store,
-        private router: Router
+        private store: Store
     ) { }
 
     onSubmit() {
@@ -31,7 +30,7 @@ export class LoginComponent {
         this.store.dispatch(new Auth.Login({ username: username, password: password }))
             .subscribe({
                 next: _ => {
-                    this.router.navigateByUrl(`/user`);
+                    this.store.dispatch(new Navigate(['/user']));
                 },
                 error: (err: HttpErrorResponse) => {
                     console.log("error during login: %o", err);
