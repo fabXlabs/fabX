@@ -1,5 +1,5 @@
 <div class="flex w-full justify-content-between flex-wrap surface-card shadow-2">
-    <h1 class="flex flex-grow-1 flex-shrink-1 align-items-center justify-content-start line-height-1 text-2xl px-3">fabX</h1>
+    <h1 class="flex align-items-center justify-content-start line-height-1 text-2xl px-3">fabX</h1>
 
     <ng-container *ngIf="loggedInUser$ | async as loggedInUser">
         <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:border-600 transition-duration-150" [routerLink]="['/user']" routerLinkActive="border-primary">Users</a>
@@ -7,8 +7,9 @@
 <!--        <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:border-600 transition-duration-150" [routerLink]="['/tool']" routerLinkActive="border-primary">Tools</a>-->
 <!--        <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:border-600 transition-duration-150" [routerLink]="['/qualification']" routerLinkActive="border-primary">Qualifications</a>-->
 
+        <div class="flex-grow-1"></div>
         <div>
-            <span class="flex align-items-center block h-full cursor-pointer px-3 hover:surface-200 transition-duration-150"
+            <span class="flex flex-grow-1 align-items-center block h-full cursor-pointer px-3 hover:surface-200 transition-duration-150"
                   pStyleClass="@next" enterClass="hidden" leaveToClass="hidden" [hideOnOutsideClick]="true">
                 <i class="pi pi-user text-2xl mr-2 py-3"></i>
                 <span>{{loggedInUser.firstName}}</span>
