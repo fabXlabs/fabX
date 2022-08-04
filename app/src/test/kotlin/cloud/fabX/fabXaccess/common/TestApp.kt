@@ -62,7 +62,7 @@ internal fun withTestApp(
         import(loggingModule)
 
         bindConstant(tag = "port") { -1 }
-        bindConstant(tag = "deviceReceiveTimeoutMillis") { 1000L }
+        bindConstant(tag = "deviceReceiveTimeoutMillis") { 2000L }
 
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
