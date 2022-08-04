@@ -1,0 +1,12 @@
+.github
+.gradle
+.idea
+build
+docs
+domain
+frontend
+gradle
+logging
+persistence
+tooling
+web

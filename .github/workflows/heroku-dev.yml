@@ -16,6 +16,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # TODO Get Docker image from GitHub Packages (heroku java buildpack does not come with npm, thus cannot build frontend)
+
       - name: deploy to heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
@@ -23,6 +25,9 @@ jobs:
           heroku_app_name: "fabx-dev"
           heroku_email: "simon.schaeffner@googlemail.com"
           region: "eu"
+          # TODO just login?
+          # TODO push Docker image to heroku registry
+          # TODO release Docker image
 
       - name: create postgres
         run: (heroku addons:create heroku-postgresql:hobby-dev --as=DATABASE -a fabx-dev && heroku ps:restart -a fabx-dev) || true
