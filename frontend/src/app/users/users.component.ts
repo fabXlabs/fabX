@@ -22,28 +22,30 @@ export class UsersComponent {
     lazyLoad(event: LazyLoadEvent) {
         const order = event.sortOrder == 1 ? "ascending" : "descending";
 
-        let fieldAccessor: keyof User = "id";
-        switch (event.sortField) {
-            case "id":
-                fieldAccessor = "id";
-                break;
-            case "firstName":
-                fieldAccessor = "firstName";
-                break;
-            case "lastName":
-                fieldAccessor = "lastName";
-                break;
-            case "wikiName":
-                fieldAccessor = "wikiName";
-                break;
-            case "isAdmin":
-                fieldAccessor = "isAdmin";
-                break;
-        }
+        if (event.sortField) {
+            let fieldAccessor: keyof User = "id";
+            switch (event.sortField) {
+                case "id":
+                    fieldAccessor = "id";
+                    break;
+                case "firstName":
+                    fieldAccessor = "firstName";
+                    break;
+                case "lastName":
+                    fieldAccessor = "lastName";
+                    break;
+                case "wikiName":
+                    fieldAccessor = "wikiName";
+                    break;
+                case "isAdmin":
+                    fieldAccessor = "isAdmin";
+                    break;
+            }
 
-        this.store.dispatch(new Users.SetSort({
-            by: fieldAccessor,
-            order: order
-        }));
+            this.store.dispatch(new Users.SetSort({
+                by: fieldAccessor,
+                order: order
+            }));
+        }
     }
 }
