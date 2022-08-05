@@ -6,6 +6,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import isLeft
@@ -56,6 +57,14 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
         val deviceResponse = ToolUnlockResponse(123L)
 
         whenever(
+            deviceWebsocketController.setupReceivingDeviceResponse(
+                eq(deviceId),
+                any(),
+                eq(correlationId)
+            )
+        ).thenReturn(Unit.right())
+
+        whenever(
             deviceWebsocketController.sendCommand(
                 eq(deviceId),
                 any(),
@@ -87,11 +96,41 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
     }
 
     @Test
+    fun `given error while setting up receiving response when unlocking tool then returns error`() = runTest {
+        // given
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            deviceWebsocketController.setupReceivingDeviceResponse(
+                eq(deviceId),
+                any(),
+                eq(correlationId)
+            )
+        ).thenReturn(error.left())
+
+        // when
+        val result = testee.unlockTool(deviceId, toolId, correlationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
     fun `given error while sending command when unlocking tool then returns error`() = runTest {
         // given
         val tId = toolId
 
         val error = Error.DeviceNotConnected("msg", deviceId, correlationId)
+
+        whenever(
+            deviceWebsocketController.setupReceivingDeviceResponse(
+                eq(deviceId),
+                any(),
+                eq(correlationId)
+            )
+        ).thenReturn(Unit.right())
 
         whenever(
             deviceWebsocketController.sendCommand(
@@ -118,6 +157,14 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
         val tId = toolId
 
         val error = Error.DeviceTimeout("msg", deviceId, correlationId)
+
+        whenever(
+            deviceWebsocketController.setupReceivingDeviceResponse(
+                eq(deviceId),
+                any(),
+                eq(correlationId)
+            )
+        ).thenReturn(Unit.right())
 
         whenever(
             deviceWebsocketController.sendCommand(
@@ -152,6 +199,14 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
         val tId = toolId
 
         val deviceResponse = ErrorResponse(123L, "msg", mapOf(), null)
+
+        whenever(
+            deviceWebsocketController.setupReceivingDeviceResponse(
+                eq(deviceId),
+                any(),
+                eq(correlationId)
+            )
+        ).thenReturn(Unit.right())
 
         whenever(
             deviceWebsocketController.sendCommand(

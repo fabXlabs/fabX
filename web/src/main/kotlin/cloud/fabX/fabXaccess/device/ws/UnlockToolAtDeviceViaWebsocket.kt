@@ -19,7 +19,14 @@ class UnlockToolAtDeviceViaWebsocket(
     ): Either<Error, Unit> {
         val commandId = deviceWebsocketController.newCommandId()
 
-        return deviceWebsocketController.sendCommand(deviceId, UnlockTool(commandId, toolId.serialize()), correlationId)
+        return deviceWebsocketController.setupReceivingDeviceResponse(deviceId, commandId, correlationId)
+            .flatMap {
+                deviceWebsocketController.sendCommand(
+                    deviceId,
+                    UnlockTool(commandId, toolId.serialize()),
+                    correlationId
+                )
+            }
             .flatMap {
                 deviceWebsocketController.receiveDeviceResponse(deviceId, commandId, correlationId)
             }

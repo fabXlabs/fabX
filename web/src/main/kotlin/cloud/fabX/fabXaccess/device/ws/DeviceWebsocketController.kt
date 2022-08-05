@@ -27,7 +27,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,7 +46,7 @@ class DeviceWebsocketController(
     private val connections: MutableMap<DeviceId, DefaultWebSocketSession> =
         Collections.synchronizedMap(HashMap())
 
-    private val responseChannels: MutableMap<Long, SendChannel<DeviceResponse>> =
+    private val responseChannels: MutableMap<Long, Channel<DeviceResponse>> =
         Collections.synchronizedMap(HashMap())
 
     val routes: Route.() -> Unit = {
@@ -175,11 +174,11 @@ class DeviceWebsocketController(
             }
     }
 
-    internal suspend fun receiveDeviceResponse(
+    internal fun setupReceivingDeviceResponse(
         deviceId: DeviceId,
         commandId: Long,
         correlationId: CorrelationId
-    ): Either<Error, DeviceResponse> {
+    ): Either<Error, Unit> {
         // directly return error if device is not even connected
         // - should not happen if sendCommand was called before (which already checks if device is connected)
         if (!connections.containsKey(deviceId)) {
@@ -192,6 +191,17 @@ class DeviceWebsocketController(
 
         val channel = Channel<DeviceResponse>()
         responseChannels[commandId] = channel
+
+        return Unit.right()
+    }
+
+    internal suspend fun receiveDeviceResponse(
+        deviceId: DeviceId,
+        commandId: Long,
+        correlationId: CorrelationId
+    ): Either<Error, DeviceResponse> {
+        val channel = responseChannels[commandId]
+            ?: throw IllegalStateException("Channel for receiving not found. Was setup called?")
 
         return withContext(Dispatchers.Default) {
             val result = async {

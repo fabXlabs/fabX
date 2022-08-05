@@ -305,6 +305,8 @@ internal class DeviceWebsocketControllerTest {
         }) { incoming, outgoing ->
             (incoming.receive() as Frame.Text).readText() // greeting text
 
+            testee.setupReceivingDeviceResponse(actingDevice.id, commandId, correlationId)
+
             val jobGet = async {
                 testee.receiveDeviceResponse(actingDevice.id, commandId, correlationId)
             }
@@ -328,7 +330,7 @@ internal class DeviceWebsocketControllerTest {
         val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
-        val result = testee.receiveDeviceResponse(deviceId, commandId, correlationId)
+        val result = testee.setupReceivingDeviceResponse(deviceId, commandId, correlationId)
 
         // then
         assertThat(result)
@@ -360,6 +362,8 @@ internal class DeviceWebsocketControllerTest {
                 addBasicAuth(mac, secret)
             }) { incoming, _ ->
                 (incoming.receive() as Frame.Text).readText() // greeting text
+
+                testee.setupReceivingDeviceResponse(deviceId, commandId, correlationId)
 
                 val timeBefore = System.currentTimeMillis()
                 val result = testee.receiveDeviceResponse(deviceId, commandId, correlationId)
