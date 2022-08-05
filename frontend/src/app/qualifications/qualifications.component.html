@@ -20,7 +20,7 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-qualification>
-        <tr>
+        <tr routerLink="/qualification/{{qualification.id}}" class="cursor-pointer">
             <td>
                 <div class="inline-block p-1 m-1 border-round text-300 text-m"
                      [style.background-color]="qualification.colour">

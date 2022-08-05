@@ -29,22 +29,24 @@ import { FabxState } from "./state/fabx-state";
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
+import { QualificationAddComponent } from './qualification-add/qualification-add.component';
+import { QualificationDetailsComponent } from './qualification-details/qualification-details.component';
+import { QualificationsComponent } from './qualifications/qualifications.component';
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
-import { QualificationsComponent } from './qualifications/qualifications.component';
-import { QualificationAddComponent } from './qualification-add/qualification-add.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         LoginComponent,
         NavbarComponent,
+        QualificationAddComponent,
+        QualificationDetailsComponent,
+        QualificationsComponent,
         UserAddComponent,
         UserDetailsComponent,
         UsersComponent,
-        QualificationsComponent,
-        QualificationAddComponent,
     ],
     imports: [
         BrowserAnimationsModule,

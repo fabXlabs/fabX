@@ -248,6 +248,17 @@ export class FabxState {
         });
     }
 
+    @Selector([RouterState])
+    static selectedQualification(state: FabxStateModel, router: RouterStateModel): Qualification | null {
+        const id = router.state?.root.firstChild?.params['id'];
+
+        if (state.qualifications.tag == "FINISHED" && id) {
+            const qualification = state.qualifications.value.find(qualification => qualification.id == id);
+            return qualification || null;
+        }
+        return null;
+    }
+
     @Action(Qualifications.GetAll)
     getAllQualifications(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
