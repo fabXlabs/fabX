@@ -37,12 +37,15 @@ val client = HttpClient(CIO) {
 }
 
 val adminUserId = runBlocking {
-    val response = client.get("http://localhost:8080/api/v1/user")
-    Json.parseToJsonElement(response.bodyAsText()).jsonArray[0].jsonObject["id"]!!.jsonPrimitive.content
+    val response = client.get("http://localhost:8080/api/v1/user/me")
+    Json.parseToJsonElement(response.bodyAsText()).jsonObject["id"]!!.jsonPrimitive.content
 }
 
 // qualifications
 val qualifications = listOf("AM Laser", "Door Shop", "OHWL", "Screw", "Saw&Sand", "Router", "Shaper", "Lathe")
+val qualificationColours =
+    listOf("#ff2600", "#ff40ff", "#ff007f", "#C49A8E", "#A15F53", "#7F2424", "#333333", "#000000")
+val qualificationOrderNrs = listOf(42, 50, 51, 100, 101, 102, 106, 107)
 val qualificationIds = mutableListOf<String>()
 
 // devices
@@ -131,12 +134,12 @@ val users = listOf(
 )
 val userIds = mutableListOf<String>()
 
-qualifications.forEach { qualificationName ->
+qualifications.forEachIndexed { i, qualificationName ->
     val body = "{" +
-            "\"name\": \"${qualificationName}\", " +
-            "\"description\": \"${qualificationName} description\", " +
-            "\"colour\": \"#000000\", " +
-            "\"orderNr\": 100 " +
+            "\"name\": \"$qualificationName\", " +
+            "\"description\": \"$qualificationName description\", " +
+            "\"colour\": \"${qualificationColours[i]}\", " +
+            "\"orderNr\": ${qualificationOrderNrs[i]} " +
             "}"
 
     runBlocking {
@@ -161,7 +164,7 @@ qualificationIds.forEach { qualificationId ->
 
 devices.forEachIndexed { i, deviceName ->
     val body = "{" +
-            "\"name\": \"${deviceName}\", " +
+            "\"name\": \"$deviceName\", " +
             "\"background\": \"https://example.com/bg1.bmp\", " +
             "\"backupBackendUrl\": \"https://backup.example.com\", " +
             "\"mac\": \"aabbcc${i.toString(16).padStart(6, '0')}\" " +
@@ -181,7 +184,7 @@ tools.forEachIndexed { i, toolName ->
     val qualificationId = qualificationIds[qualifications.indexOf(toolQualification[i])]
 
     val body = "{" +
-            "\"name\": \"${toolName}\", " +
+            "\"name\": \"$toolName\", " +
             "\"type\": \"UNLOCK\", " +
             "\"time\": 300, " +
             "\"idleState\": \"IDLE_LOW\" " +
