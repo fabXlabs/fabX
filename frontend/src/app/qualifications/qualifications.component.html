@@ -2,7 +2,7 @@
          [loading]="(loading$ | async)! === 'LOADING'"
          [showLoader]="false"
          [lazy]="false"
-         styleClass="p-datatable-m"
+         styleClass="p-datatable-sm"
          responsiveLayout="scroll"
          selectionMode="single"
 >
@@ -21,7 +21,12 @@
 
     <ng-template pTemplate="body" let-qualification>
         <tr>
-            <td>{{qualification.name}}</td>
+            <td>
+                <div class="inline-block p-1 m-1 border-round text-300 text-m"
+                     [style.background-color]="qualification.colour">
+                    {{qualification.name}}
+                </div>
+            </td>
             <td>{{qualification.description}}</td>
         </tr>
     </ng-template>
