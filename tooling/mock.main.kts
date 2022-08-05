@@ -26,6 +26,8 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+val baseUrl = "http://localhost:8080/api/v1"
+
 val client = HttpClient(CIO) {
     install(Auth) {
         basic {
@@ -37,7 +39,7 @@ val client = HttpClient(CIO) {
 }
 
 val adminUserId = runBlocking {
-    val response = client.get("http://localhost:8080/api/v1/user/me")
+    val response = client.get("$baseUrl/user/me")
     Json.parseToJsonElement(response.bodyAsText()).jsonObject["id"]!!.jsonPrimitive.content
 }
 
@@ -143,7 +145,7 @@ qualifications.forEachIndexed { i, qualificationName ->
             "}"
 
     runBlocking {
-        val response = client.post("http://localhost:8080/api/v1/qualification") {
+        val response = client.post("$baseUrl/qualification") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -155,7 +157,7 @@ qualificationIds.forEach { qualificationId ->
     val body = "{\"qualificationId\": \"$qualificationId\"}"
 
     runBlocking {
-        client.post("http://localhost:8080/api/v1/user/$adminUserId/instructor-qualification") {
+        client.post("$baseUrl/user/$adminUserId/instructor-qualification") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -172,7 +174,7 @@ devices.forEachIndexed { i, deviceName ->
             "}"
 
     runBlocking {
-        val response = client.post("http://localhost:8080/api/v1/device") {
+        val response = client.post("$baseUrl/device") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -193,7 +195,7 @@ tools.forEachIndexed { i, toolName ->
             "}"
 
     runBlocking {
-        val response = client.post("http://localhost:8080/api/v1/tool") {
+        val response = client.post("$baseUrl/tool") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -209,7 +211,7 @@ toolDevices.forEachIndexed { i, device ->
     val body = "{ \"toolId\": \"$toolId\"}"
 
     runBlocking {
-        client.put("http://localhost:8080/api/v1/device/$deviceId/attached-tool/$pin") {
+        client.put("$baseUrl/device/$deviceId/attached-tool/$pin") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -228,7 +230,7 @@ users.forEach { userName ->
             " }"
 
     runBlocking {
-        val response = client.post("http://localhost:8080/api/v1/user") {
+        val response = client.post("$baseUrl/user") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
@@ -242,7 +244,7 @@ userIds.forEach { userId ->
             val body = "{\"qualificationId\": \"$qualificationId\"}"
 
             runBlocking {
-                client.post("http://localhost:8080/api/v1/user/$userId/member-qualification") {
+                client.post("$baseUrl/user/$userId/member-qualification") {
                     contentType(ContentType.Application.Json)
                     setBody(body)
                 }
@@ -252,7 +254,7 @@ userIds.forEach { userId ->
             val body = "{\"qualificationId\": \"$qualificationId\"}"
 
             runBlocking {
-                client.post("http://localhost:8080/api/v1/user/$userId/instructor-qualification") {
+                client.post("$baseUrl/user/$userId/instructor-qualification") {
                     contentType(ContentType.Application.Json)
                     setBody(body)
                 }
