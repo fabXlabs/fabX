@@ -6,6 +6,7 @@ import { LoginComponent } from "./login/login.component";
 import { AuthGuard } from "./state/auth-guard";
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UserAddComponent } from "./user-add/user-add.component";
+import { QualificationsComponent } from "./qualifications/qualifications.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -13,6 +14,7 @@ const routes: Routes = [
     { path: 'user', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'user/add', component: UserAddComponent, canActivate: [AuthGuard] },
     { path: 'user/:id', component: UserDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'qualification', component: QualificationsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

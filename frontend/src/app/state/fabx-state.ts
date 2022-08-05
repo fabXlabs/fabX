@@ -238,6 +238,18 @@ export class FabxState {
     }
 
     // QUALIFICATIONS
+    @Selector()
+    static qualificationsLoadingState(state: FabxStateModel): LoadingStateTag {
+        return state.qualifications.tag;
+    }
+
+    @Selector()
+    static qualifications(state: FabxStateModel): Qualification[] {
+        return [...getFinishedValueOrDefault(state.qualifications, [])].sort((a: Qualification, b: Qualification) => {
+            return a.orderNr - b.orderNr;
+        });
+    }
+
     @Action(Qualifications.GetAll)
     getAllQualifications(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
@@ -252,7 +264,6 @@ export class FabxState {
                     });
                 },
                 error: (err: HttpErrorResponse) => {
-                    console.error("error while getting all qualifications: ", err);
                     ctx.patchState({
                         qualifications: { tag: "ERROR", err: err }
                     });

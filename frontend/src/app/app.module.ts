@@ -30,6 +30,7 @@ import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
+import { QualificationsComponent } from './qualifications/qualifications.component';
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import { UsersComponent } from './users/users.component';
         UserAddComponent,
         UserDetailsComponent,
         UsersComponent,
+        QualificationsComponent,
     ],
     imports: [
         BrowserAnimationsModule,

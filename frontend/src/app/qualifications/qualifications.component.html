@@ -1,0 +1,28 @@
+<p-table [value]="(qualifications$ | async)!"
+         [loading]="(loading$ | async)! === 'LOADING'"
+         [showLoader]="false"
+         [lazy]="false"
+         styleClass="p-datatable-m"
+         responsiveLayout="scroll"
+         selectionMode="single"
+>
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center">
+<!--            <button pButton label="Add Qualification" routerLink="/qualification/add"></button>-->
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-qualification>
+        <tr>
+            <td>{{qualification.name}}</td>
+            <td>{{qualification.description}}</td>
+        </tr>
+    </ng-template>
+</p-table>
