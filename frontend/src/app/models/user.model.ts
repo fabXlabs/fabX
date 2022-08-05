@@ -31,3 +31,7 @@ export interface UserCreationDetails {
     lastName: string,
     wikiName: string
 }
+
+export interface QualificationAdditionDetails {
+    qualificationId: string
+}

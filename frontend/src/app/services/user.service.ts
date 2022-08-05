@@ -3,7 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
-import { User, UserCreationDetails } from '../models/user.model';
+import { QualificationAdditionDetails, User, UserCreationDetails } from '../models/user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -30,6 +30,21 @@ export class UserService {
     public addUser(details: UserCreationDetails): Observable<string> {
         return this.http.post(
             `${this.baseUrl}/user`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public addMemberQualification(userId: string, qualificationId: string): Observable<string> {
+        const details: QualificationAdditionDetails = {
+            qualificationId: qualificationId
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/member-qualification`,
             details,
             {
                 ...this.authService.getOptions(),

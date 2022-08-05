@@ -17,6 +17,7 @@ import { MessageModule } from 'primeng/message';
 import { MessagesModule } from "primeng/messages";
 import { PasswordModule } from "primeng/password";
 import { SkeletonModule } from "primeng/skeleton";
+import { SplitButtonModule } from "primeng/splitbutton";
 import { StyleClassModule } from "primeng/styleclass";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
@@ -74,6 +75,7 @@ import { UsersComponent } from './users/users.component';
         MessagesModule,
         PasswordModule,
         SkeletonModule,
+        SplitButtonModule,
         StyleClassModule,
         TableModule,
         TagModule,

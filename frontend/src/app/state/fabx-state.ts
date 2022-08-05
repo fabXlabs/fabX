@@ -160,6 +160,28 @@ export class FabxState {
         };
     }
 
+    @Selector([RouterState])
+    static availableMemberQualificationsForSelectedUser(state: FabxStateModel, router: RouterStateModel): Qualification[] {
+        const userId = router.state?.root.firstChild?.params['id'];
+
+        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+
+        const instructorQualificationsOfLoggedInUser = this.loggedInUser(state)?.instructorQualifications;
+
+        if (state.users.tag == "FINISHED" && userId && instructorQualificationsOfLoggedInUser) {
+            const user = state.users.value.find(user => user.id == userId);
+            if (user) {
+                return qualifications
+                    .filter(qualification => instructorQualificationsOfLoggedInUser
+                        .some(qualificationId => qualification.id === qualificationId))
+                    .filter(qualification => !user.memberQualifications
+                        .some(qualificationId => qualification.id === qualificationId)
+                    );
+            }
+        }
+        return [];
+    }
+
     @Selector()
     static loggedInUser(state: FabxStateModel): User | null {
         if (state.users.tag == "FINISHED" && state.loggedInUserId) {
@@ -231,6 +253,15 @@ export class FabxState {
                         }
                     });
                 }
+            })
+        );
+    }
+
+    @Action(Users.AddMemberQualification)
+    addMemberQualification(ctx: StateContext<FabxStateModel>, action: Users.AddMemberQualification) {
+        return this.userService.addMemberQualification(action.userId, action.qualificationId).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
             })
         );
     }
