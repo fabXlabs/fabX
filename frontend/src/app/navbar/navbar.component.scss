@@ -2,7 +2,9 @@ a {
     color: inherit;
     text-decoration: inherit;
 }
-.hover-border-bottom-2:hover {
-    border-bottom-width: 2px;
-    border-bottom-style: solid;
+.border-500 {
+    border-color: var(--surface-500) !important;
+}
+.hover\:border-primary:hover {
+    border-color: var(--primary-color) !important;
 }
