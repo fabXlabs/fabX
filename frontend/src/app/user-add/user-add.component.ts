@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngxs/store";
+import { Users } from "../state/user.actions";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
     selector: 'fabx-user-add',
@@ -20,6 +22,22 @@ export class UserAddComponent {
     constructor(private store: Store) { }
 
     onSubmit() {
-        console.log("submit!");
+        let firstName = this.form.get('firstName')!.value;
+        let lastName = this.form.get('lastName')!.value;
+        let wikiName = this.form.get('wikiName')!.value;
+
+        this.store.dispatch(new Users.Add({
+            'firstName': firstName,
+            'lastName': lastName,
+            'wikiName': wikiName
+        })).subscribe({
+            error: (err: HttpErrorResponse) => {
+                console.log("error while adding user: ", err);
+                this.error = `Error: ${err.statusText} (${err.status})`;
+                if (err.error) {
+                    this.error += ` ${JSON.stringify(err.error)}`;
+                }
+            }
+        });
     }
 }

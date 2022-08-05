@@ -8,7 +8,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { getFinishedValueOrDefault, LoadingState, LoadingStateTag } from "./loading-state.model";
 import { AuthService } from "../services/auth.service";
 import { Auth } from "./auth.actions";
-import { RouterState, RouterStateModel } from "@ngxs/router-plugin";
+import { Navigate, RouterState, RouterStateModel } from "@ngxs/router-plugin";
 
 export interface AuthModel {
     username: string,
@@ -162,5 +162,39 @@ export class FabxState {
         ctx.patchState({
             usersSort: action.sort
         });
+    }
+
+    @Action(Users.GetById)
+    getUser(ctx: StateContext<FabxStateModel>, action: Users.GetById) {
+        return this.userService.getById(action.id).pipe(
+            tap({
+                next: value => {
+                    const state = ctx.getState();
+                    if (state.users.tag == "FINISHED") {
+                        ctx.patchState({
+                            users: {
+                                tag: "FINISHED",
+                                value: state.users.value.filter((u) => u.id != action.id).concat([value])
+                            }
+                        });
+                    }
+                }
+            })
+        );
+    }
+
+    @Action(Users.Add)
+    addUser(ctx: StateContext<FabxStateModel>, action: Users.Add) {
+        return this.userService.addUser(action.details).pipe(
+            tap({
+                next: value => {
+                    ctx.dispatch(new Users.GetById(value)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['user', value]));
+                        }
+                    });
+                }
+            })
+        );
     }
 }

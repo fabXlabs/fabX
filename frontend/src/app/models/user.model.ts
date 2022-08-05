@@ -10,3 +10,9 @@ export interface User {
     instructorQualifications: Set<string> | null,
     isAdmin: boolean
 }
+
+export interface UserCreationDetails {
+    firstName: string,
+    lastName: string,
+    wikiName: string
+}

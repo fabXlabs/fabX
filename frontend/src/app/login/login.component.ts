@@ -30,7 +30,7 @@ export class LoginComponent {
         this.store.dispatch(new Auth.Login({ username: username, password: password }))
             .subscribe({
                 next: _ => {
-                    this.store.dispatch(new Navigate(['/user']));
+                    this.store.dispatch(new Navigate(['user']));
                 },
                 error: (err: HttpErrorResponse) => {
                     console.log("error during login: %o", err);

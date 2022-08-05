@@ -3,7 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
-import { User } from '../models/user.model';
+import { User, UserCreationDetails } from '../models/user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +20,21 @@ export class UserService {
     public getAllUsers(): Observable<User[]> {
         return this.http.get<User[]>(`${this.baseUrl}/user`, this.loginService.getOptions()).pipe(
             retry(3)
+        );
+    }
+
+    public getById(id: string): Observable<User> {
+        return this.http.get<User>(`${this.baseUrl}/user/${id}`, this.loginService.getOptions());
+    }
+
+    public addUser(details: UserCreationDetails): Observable<string> {
+        return this.http.post(
+            `${this.baseUrl}/user`,
+            details,
+            {
+                ...this.loginService.getOptions(),
+                responseType: 'text'
+            }
         );
     }
 }
