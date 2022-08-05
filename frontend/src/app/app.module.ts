@@ -20,23 +20,25 @@ import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 
 import { environment } from "../environments/environment";
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { UsersComponent } from './users/users.component';
-import { LoginComponent } from './login/login.component';
-import { FabxState } from "./state/fabx-state";
+import { AppRoutingModule } from './app-routing.module';
 import { AuthGuard } from "./state/auth-guard";
+import { FabxState } from "./state/fabx-state";
+import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
-import { UserDetailsComponent } from './user-details/user-details.component';
 import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
+import { UserAddComponent } from './user-add/user-add.component';
+import { UserDetailsComponent } from './user-details/user-details.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
     declarations: [
         AppComponent,
-        UsersComponent,
         LoginComponent,
         NavbarComponent,
-        UserDetailsComponent
+        UserAddComponent,
+        UserDetailsComponent,
+        UsersComponent,
     ],
     imports: [
         BrowserAnimationsModule,

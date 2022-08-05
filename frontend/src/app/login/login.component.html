@@ -7,7 +7,8 @@
         <div>
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <label for="username-input" class="block text-900 font-medium mb-2">Email</label>
-                <input id="username-input" type="text" formControlName="username" pInputText class="w-full mb-3" autocapitalize="none">
+                <input id="username-input" type="text" formControlName="username" pInputText class="w-full mb-3"
+                       autocapitalize="none">
 
                 <label for="password-input" class="block text-900 font-medium mb-2">Password</label>
                 <input id="password-input" type="password" formControlName="password" pInputText class="w-full mb-3">
@@ -18,7 +19,8 @@
                     </ng-template>
                 </p-messages>
 
-                <button pButton label="Login" icon="pi pi-user" class="w-full" [disabled]="!form.valid"></button>
+                <button type="submit" pButton label="Login" icon="pi pi-user" class="w-full"
+                        [disabled]="!form.valid"></button>
             </form>
         </div>
     </div>

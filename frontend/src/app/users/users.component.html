@@ -1,5 +1,3 @@
-<h2 class="m-3">Users</h2>
-
 <p-table [value]="(users$ | async)!"
          [loading]="(loading$ | async)! === 'LOADING'"
          [showLoader]="false"
@@ -8,6 +6,12 @@
          responsiveLayout="scroll"
          selectionMode="single"
 >
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center">
+            <button pButton label="Add User" routerLink="/user/add"></button>
+        </div>
+    </ng-template>
+
     <ng-template pTemplate="header">
         <tr>
             <th></th>
