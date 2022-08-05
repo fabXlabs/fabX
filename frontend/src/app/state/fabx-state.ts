@@ -95,6 +95,13 @@ export class FabxState {
             let aVal = a[state.usersSort.by] || false;
             let bVal = b[state.usersSort.by] || false;
 
+            if (typeof aVal === "string") {
+                aVal = aVal.toLowerCase();
+            }
+            if (typeof bVal === "string") {
+                aVal = bVal.toLowerCase();
+            }
+
             let ret: number = 0;
 
             if (aVal < bVal) {
