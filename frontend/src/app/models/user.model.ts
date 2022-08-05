@@ -1,3 +1,5 @@
+import { Qualification } from "./qualification.model";
+
 export interface User {
     id: string,
     aggregateVersion: number,
@@ -6,8 +8,21 @@ export interface User {
     wikiName: string,
     locked: boolean,
     notes: string | null,
-    memberQualifications: Set<string>,
-    instructorQualifications: Set<string> | null,
+    memberQualifications: string[],
+    instructorQualifications: string[] | null,
+    isAdmin: boolean
+}
+
+export interface UserVM {
+    id: string,
+    aggregateVersion: number,
+    firstName: string,
+    lastName: string,
+    wikiName: string,
+    locked: boolean,
+    notes: string | null,
+    memberQualifications: Qualification[],
+    instructorQualifications: Qualification[] | null,
     isAdmin: boolean
 }
 

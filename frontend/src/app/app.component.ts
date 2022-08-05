@@ -5,6 +5,7 @@ import { Users } from "./state/user.actions";
 import { FabxState } from "./state/fabx-state";
 import { Auth } from "./state/auth.actions";
 import { Navigate } from "@ngxs/router-plugin";
+import { Qualifications } from "./state/qualification.action";
 
 @Component({
     selector: 'fabx-root',
@@ -54,6 +55,7 @@ export class AppComponent implements OnInit {
     loadAll() {
         if (this.store.selectSnapshot(FabxState.isAuthenticated)) {
             this.store.dispatch(Users.GetAll);
+            this.store.dispatch(Qualifications.GetAll);
         }
     }
 }

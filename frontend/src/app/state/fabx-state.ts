@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext } from "@ngxs/store";
 import { UserService } from "../services/user.service";
-import { User } from "../models/user.model";
+import { User, UserVM } from "../models/user.model";
 import { Users } from "./user.actions";
 import { tap } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -9,6 +9,9 @@ import { getFinishedValueOrDefault, LoadingState, LoadingStateTag } from "./load
 import { AuthService } from "../services/auth.service";
 import { Auth } from "./auth.actions";
 import { Navigate, RouterState, RouterStateModel } from "@ngxs/router-plugin";
+import { Qualification } from "../models/qualification.model";
+import { Qualifications } from "./qualification.action";
+import { QualificationService } from "../services/qualification.service";
 
 export interface AuthModel {
     username: string,
@@ -25,6 +28,7 @@ export interface FabxStateModel {
     loggedInUserId: string | null,
     users: LoadingState<User[]>,
     usersSort: UserSortModel,
+    qualifications: LoadingState<Qualification[]>
 }
 
 @State<FabxStateModel>({
@@ -36,12 +40,17 @@ export interface FabxStateModel {
         usersSort: {
             by: "isAdmin",
             order: "descending",
-        }
+        },
+        qualifications: { tag: "LOADING" }
     }
 })
 @Injectable()
 export class FabxState {
-    constructor(private authService: AuthService, private userService: UserService) {}
+    constructor(
+        private authService: AuthService,
+        private userService: UserService,
+        private qualificationService: QualificationService
+    ) {}
 
     // AUTH
 
@@ -86,12 +95,14 @@ export class FabxState {
 
 
     @Selector()
-    static users(state: FabxStateModel): User[] {
-        let users: User[] = [...getFinishedValueOrDefault(state.users, [])];
+    static users(state: FabxStateModel): UserVM[] {
+        let qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+        let users: UserVM[] = [...getFinishedValueOrDefault(state.users, [])]
+            .map(user => this.augmentUserWithQualifications(user, qualifications));
 
         let orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
 
-        users.sort((a: User, b: User) => {
+        users.sort((a: UserVM, b: UserVM) => {
             let aVal = a[state.usersSort.by] || false;
             let bVal = b[state.usersSort.by] || false;
 
@@ -118,16 +129,37 @@ export class FabxState {
     }
 
     @Selector([RouterState])
-    static selectedUser(state: FabxStateModel, router: RouterStateModel): User | null {
-        let id = router.state?.root.firstChild?.params['id'];
+    static selectedUser(state: FabxStateModel, router: RouterStateModel): UserVM | null {
+        const id = router.state?.root.firstChild?.params['id'];
+
+        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
 
         if (state.users.tag == "FINISHED" && id) {
-            return state.users.value.find(user => {
-                return user.id == id;
-            }) || null;
-        } else {
-            return null;
+            const user = state.users.value.find(user => user.id == id);
+            if (user) {
+                return this.augmentUserWithQualifications(user, qualifications);
+            }
         }
+        return null;
+    }
+
+    private static augmentUserWithQualifications(user: User, qualifications: Qualification[]): UserVM {
+        const memberQualifications = user.memberQualifications
+            .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
+            .filter((q): q is Qualification => !!q)
+
+        let instructorQualifications: Qualification[] = [];
+        if (user.instructorQualifications) {
+            instructorQualifications = user.instructorQualifications
+                .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
+                .filter((q): q is Qualification => !!q);
+        }
+
+        return {
+            ...user,
+            memberQualifications: memberQualifications,
+            instructorQualifications: instructorQualifications
+        };
     }
 
     @Selector()
@@ -155,7 +187,7 @@ export class FabxState {
                     });
                 },
                 error: (err: HttpErrorResponse) => {
-                    console.error("error while getting all users: {}", err);
+                    console.error("error while getting all users: ", err);
                     ctx.patchState({
                         users: { tag: "ERROR", err: err }
                     });
@@ -199,6 +231,30 @@ export class FabxState {
                         next: () => {
                             ctx.dispatch(new Navigate(['user', value]));
                         }
+                    });
+                }
+            })
+        );
+    }
+
+    // QUALIFICATIONS
+    @Action(Qualifications.GetAll)
+    getAllQualifications(ctx: StateContext<FabxStateModel>) {
+        ctx.patchState({
+            qualifications: { tag: "LOADING" }
+        });
+
+        return this.qualificationService.getAllQualifications().pipe(
+            tap({
+                next: value => {
+                    ctx.patchState({
+                        qualifications: { tag: "FINISHED", value: value }
+                    });
+                },
+                error: (err: HttpErrorResponse) => {
+                    console.error("error while getting all qualifications: ", err);
+                    ctx.patchState({
+                        qualifications: { tag: "ERROR", err: err }
                     });
                 }
             })

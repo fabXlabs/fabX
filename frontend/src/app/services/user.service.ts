@@ -14,17 +14,17 @@ export class UserService {
 
     constructor(
         private http: HttpClient,
-        private loginService: AuthService
+        private authService: AuthService
     ) { }
 
     public getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>(`${this.baseUrl}/user`, this.loginService.getOptions()).pipe(
+        return this.http.get<User[]>(`${this.baseUrl}/user`, this.authService.getOptions()).pipe(
             retry(3)
         );
     }
 
     public getById(id: string): Observable<User> {
-        return this.http.get<User>(`${this.baseUrl}/user/${id}`, this.loginService.getOptions());
+        return this.http.get<User>(`${this.baseUrl}/user/${id}`, this.authService.getOptions());
     }
 
     public addUser(details: UserCreationDetails): Observable<string> {
@@ -32,7 +32,7 @@ export class UserService {
             `${this.baseUrl}/user`,
             details,
             {
-                ...this.loginService.getOptions(),
+                ...this.authService.getOptions(),
                 responseType: 'text'
             }
         );

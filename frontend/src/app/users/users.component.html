@@ -3,6 +3,7 @@
          [showLoader]="false"
          [lazy]="true"
          (onLazyLoad)="lazyLoad($event)"
+         styleClass="p-datatable-sm"
          responsiveLayout="scroll"
          selectionMode="single"
 >
@@ -36,8 +37,20 @@
             </td>
             <td>{{user.firstName}}</td>
             <td>{{user.lastName}}</td>
-            <td>{{user.memberQualifications}}</td>
-            <td>{{user.instructorQualifications}}</td>
+            <td>
+                <div *ngFor="let q of user.memberQualifications"
+                     class="inline-block p-2 m-1 border-round text-300 text-hidden md:text-sm md:p-1"
+                     [style.background-color]="q.colour">
+                    {{q.name}}
+                </div>
+            </td>
+            <td>
+                <div *ngFor="let q of user.instructorQualifications"
+                     class="inline-block p-2 m-1 border-round text-300 text-hidden md:text-sm md:p-1"
+                     [style.background-color]="q.colour">
+                    {{q.name}}
+                </div>
+            </td>
         </tr>
     </ng-template>
 

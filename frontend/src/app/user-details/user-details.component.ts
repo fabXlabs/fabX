@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable } from "rxjs";
-import { User } from "../models/user.model";
+import { UserVM } from "../models/user.model";
 
 @Component({
     selector: 'fabx-user-details',
@@ -11,7 +11,7 @@ import { User } from "../models/user.model";
 })
 export class UserDetailsComponent {
 
-    @Select(FabxState.selectedUser) user$!: Observable<User>;
+    @Select(FabxState.selectedUser) user$!: Observable<UserVM>;
 
     constructor(private store: Store) { }
 }

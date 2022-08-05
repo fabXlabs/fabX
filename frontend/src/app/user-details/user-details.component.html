@@ -42,17 +42,21 @@
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
                 <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">member qualifications</div>
                 <div class="text-900 w-8">
-                    {{user.memberQualifications}}
-                    <p-tag class="mr-2" styleClass="bg-pink-500" [rounded]="true">Demo 1</p-tag>
-                    <p-tag class="mr-2" [rounded]="true">Demo 2</p-tag>
+                    <div *ngFor="let q of user.memberQualifications"
+                         class="inline-block p-1 m-1 border-round text-300 text-sm"
+                         [style.background-color]="q.colour">
+                        {{q.name}}
+                    </div>
                 </div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">instructor qualifications</div>
                 <div class="text-900 w-8">
-                    {{user.instructorQualifications}}
-                    <p-tag class="mr-2" [rounded]="true">Demo 3</p-tag>
-                    <p-tag class="mr-2" [rounded]="true">Demo 4</p-tag>
+                    <div *ngFor="let q of user.instructorQualifications"
+                         class="inline-block p-1 m-1 border-round text-300 text-sm"
+                         [style.background-color]="q.colour">
+                        {{q.name}}
+                    </div>
                 </div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
