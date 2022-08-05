@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { UsersComponent } from "./users/users.component";
-import { LoginComponent } from "./login/login.component";
 import { AuthGuard } from "./state/auth-guard";
-import { UserDetailsComponent } from "./user-details/user-details.component";
-import { UserAddComponent } from "./user-add/user-add.component";
+import { LoginComponent } from "./login/login.component";
+import { QualificationAddComponent } from "./qualification-add/qualification-add.component";
 import { QualificationsComponent } from "./qualifications/qualifications.component";
+import { UserAddComponent } from "./user-add/user-add.component";
+import { UserDetailsComponent } from "./user-details/user-details.component";
+import { UsersComponent } from "./users/users.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -15,6 +16,7 @@ const routes: Routes = [
     { path: 'user/add', component: UserAddComponent, canActivate: [AuthGuard] },
     { path: 'user/:id', component: UserDetailsComponent, canActivate: [AuthGuard] },
     { path: 'qualification', component: QualificationsComponent, canActivate: [AuthGuard] },
+    { path: 'qualification/add', component: QualificationAddComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

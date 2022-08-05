@@ -31,6 +31,7 @@ import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { QualificationsComponent } from './qualifications/qualifications.component';
+import { QualificationAddComponent } from './qualification-add/qualification-add.component';
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import { QualificationsComponent } from './qualifications/qualifications.compone
         UserDetailsComponent,
         UsersComponent,
         QualificationsComponent,
+        QualificationAddComponent,
     ],
     imports: [
         BrowserAnimationsModule,
