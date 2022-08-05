@@ -6,3 +6,10 @@ export interface Qualification {
     colour: string,
     orderNr: number
 }
+
+export interface QualificationCreationDetails {
+    name: string,
+    description: string,
+    colour: string,
+    orderNr: number,
+}

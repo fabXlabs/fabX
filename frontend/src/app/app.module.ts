@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { ReactiveFormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgxsModule } from "@ngxs/store";
 import { NgxsStoragePluginModule } from "@ngxs/storage-plugin";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
@@ -10,6 +10,8 @@ import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
+import { ColorPickerModule } from "primeng/colorpicker";
+import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from "primeng/messages";
@@ -49,6 +51,7 @@ import { QualificationAddComponent } from './qualification-add/qualification-add
         BrowserModule,
         HttpClientModule,
         ReactiveFormsModule,
+        FormsModule,
 
         NgxsModule.forRoot([FabxState], {
             developmentMode: !environment.production
@@ -60,18 +63,20 @@ import { QualificationAddComponent } from './qualification-add/qualification-add
         NgxsReduxDevtoolsPluginModule.forRoot(),
 
         ButtonModule,
+        CardModule,
+        CheckboxModule,
+        ColorPickerModule,
+        InputNumberModule,
         InputTextModule,
         MessageModule,
         MessagesModule,
         PasswordModule,
         SkeletonModule,
-        TableModule,
         StyleClassModule,
+        TableModule,
+        TagModule,
 
         AppRoutingModule,
-        CardModule,
-        TagModule,
-        CheckboxModule
     ],
     providers: [AuthGuard],
     bootstrap: [AppComponent]

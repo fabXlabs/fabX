@@ -269,4 +269,38 @@ export class FabxState {
             })
         );
     }
+
+    @Action(Qualifications.GetById)
+    getQualification(ctx: StateContext<FabxStateModel>, action: Qualifications.GetById) {
+        return this.qualificationService.getById(action.id).pipe(
+            tap({
+                next: value => {
+                    const state = ctx.getState();
+                    if (state.qualifications.tag == "FINISHED") {
+                        ctx.patchState({
+                            qualifications: {
+                                tag: "FINISHED",
+                                value: state.qualifications.value.filter((q) => q.id != action.id).concat([value])
+                            }
+                        });
+                    }
+                }
+            })
+        );
+    }
+
+    @Action(Qualifications.Add)
+    addQualification(ctx: StateContext<FabxStateModel>, action: Qualifications.Add) {
+        return this.qualificationService.addQualification(action.details).pipe(
+            tap({
+                next: value => {
+                    ctx.dispatch(new Qualifications.GetById(value)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['qualification', value]));
+                        }
+                    });
+                }
+            })
+        );
+    }
 }
