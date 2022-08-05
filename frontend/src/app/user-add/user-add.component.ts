@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngxs/store";
 import { Users } from "../state/user.actions";
 import { HttpErrorResponse } from "@angular/common/http";
+import { Error } from "../models/error.model";
 
 @Component({
     selector: 'fabx-user-add',
@@ -32,10 +33,16 @@ export class UserAddComponent {
             'wikiName': wikiName
         })).subscribe({
             error: (err: HttpErrorResponse) => {
-                console.log("error while adding user: ", err);
-                this.error = `Error: ${err.statusText} (${err.status})`;
                 if (err.error) {
-                    this.error += ` ${JSON.stringify(err.error)}`;
+                    try {
+                        const e: Error = JSON.parse(err.error);
+                        this.error = `Error: ${e.message} (${e.type}, ${JSON.stringify(e.parameters)})  (${err.statusText} ${err.status} ${e.correlationId})`;
+                    } catch (e) {
+                        this.error = `Error: ${err.statusText} (${err.status})`;
+                        if (err.error) {
+                            this.error += ` ${JSON.stringify(err.error)}`;
+                        }
+                    }
                 }
             }
         });
