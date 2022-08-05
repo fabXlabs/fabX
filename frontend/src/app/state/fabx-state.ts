@@ -102,7 +102,7 @@ export class FabxState {
 
         let orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
 
-        users.sort((a: UserVM, b: UserVM) => {
+        return users.sort((a: UserVM, b: UserVM) => {
             let aVal = a[state.usersSort.by] || false;
             let bVal = b[state.usersSort.by] || false;
 
@@ -110,7 +110,7 @@ export class FabxState {
                 aVal = aVal.toLowerCase();
             }
             if (typeof bVal === "string") {
-                aVal = bVal.toLowerCase();
+                bVal = bVal.toLowerCase();
             }
 
             let ret: number = 0;
@@ -124,8 +124,6 @@ export class FabxState {
 
             return ret * orderMultiplier;
         });
-
-        return users;
     }
 
     @Selector([RouterState])
