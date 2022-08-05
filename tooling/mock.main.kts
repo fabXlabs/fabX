@@ -233,7 +233,7 @@ users.forEach { userName ->
     }
 }
 
-(userIds + adminUserId).forEach { userId ->
+userIds.forEach { userId ->
     qualificationIds.forEach { qualificationId ->
         if (Random.nextBoolean()) {
             val body = "{\"qualificationId\": \"$qualificationId\"}"
