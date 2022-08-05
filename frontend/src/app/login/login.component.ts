@@ -4,6 +4,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Store } from "@ngxs/store";
 import { Auth } from "../state/auth.actions";
 import { Navigate } from "@ngxs/router-plugin";
+import { ErrorService } from "../services/error.service";
 
 @Component({
     selector: 'fabx-login',
@@ -20,7 +21,8 @@ export class LoginComponent {
     });
 
     constructor(
-        private store: Store
+        private store: Store,
+        private errorHandler: ErrorService
     ) { }
 
     onSubmit() {
@@ -33,11 +35,7 @@ export class LoginComponent {
                     this.store.dispatch(new Navigate(['user']));
                 },
                 error: (err: HttpErrorResponse) => {
-                    console.log("error during login: %o", err);
-                    this.error = `Error: ${err.statusText} (${err.status})`
-                    if (err.error) {
-                        this.error += ` ${JSON.stringify(err.error)}`
-                    }
+                    this.error = this.errorHandler.format(err);
                 }
             });
     }

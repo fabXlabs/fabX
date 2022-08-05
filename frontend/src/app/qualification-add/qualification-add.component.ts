@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngxs/store";
 import { Qualifications } from "../state/qualification.action";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Error } from "../models/error.model";
+import { ErrorService } from "../services/error.service";
 
 @Component({
     selector: 'fabx-qualification-add',
@@ -21,7 +21,7 @@ export class QualificationAddComponent {
         orderNr: new FormControl('100', Validators.required),
     });
 
-    constructor(private store: Store) { }
+    constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
         const name = this.form.get('name')!.value;
@@ -35,19 +35,8 @@ export class QualificationAddComponent {
             description: description,
             orderNr: orderNr
         })).subscribe({
-            // TODO refactor duplicate error handler
             error: (err: HttpErrorResponse) => {
-                if (err.error) {
-                    try {
-                        const e: Error = JSON.parse(err.error);
-                        this.error = `Error: ${e.message} (${e.type}, ${JSON.stringify(e.parameters)})  (${err.statusText} ${err.status} ${e.correlationId})`;
-                    } catch (e) {
-                        this.error = `Error: ${err.statusText} (${err.status})`;
-                        if (err.error) {
-                            this.error += ` ${JSON.stringify(err.error)}`;
-                        }
-                    }
-                }
+                this.error = this.errorHandler.format(err);
             }
         });
     }

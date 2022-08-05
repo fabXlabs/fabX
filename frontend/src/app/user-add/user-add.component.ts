@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Store } from "@ngxs/store";
 import { Users } from "../state/user.actions";
 import { HttpErrorResponse } from "@angular/common/http";
-import { Error } from "../models/error.model";
+import { ErrorService } from "../services/error.service";
 
 @Component({
     selector: 'fabx-user-add',
@@ -20,7 +20,7 @@ export class UserAddComponent {
         wikiName: new FormControl('', Validators.required),
     });
 
-    constructor(private store: Store) { }
+    constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
         const firstName = this.form.get('firstName')!.value;
@@ -33,17 +33,7 @@ export class UserAddComponent {
             wikiName: wikiName
         })).subscribe({
             error: (err: HttpErrorResponse) => {
-                if (err.error) {
-                    try {
-                        const e: Error = JSON.parse(err.error);
-                        this.error = `Error: ${e.message} (${e.type}, ${JSON.stringify(e.parameters)})  (${err.statusText} ${err.status} ${e.correlationId})`;
-                    } catch (e) {
-                        this.error = `Error: ${err.statusText} (${err.status})`;
-                        if (err.error) {
-                            this.error += ` ${JSON.stringify(err.error)}`;
-                        }
-                    }
-                }
+                this.error = this.errorHandler.format(err);
             }
         });
     }
