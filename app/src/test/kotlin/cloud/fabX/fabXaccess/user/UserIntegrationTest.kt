@@ -6,11 +6,11 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test
 internal class UserIntegrationTest {
 
     @Test
-    fun `given no authentication when get users then returns http unauthorized`() = withTestAppB {
+    fun `given no authentication when get users then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -54,7 +54,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given invalid authentication when get users then returns http unauthorized`() = withTestAppB {
+    fun `given invalid authentication when get users then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -67,7 +67,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when get users then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when get users then returns http forbidden`() = withTestApp {
         // given
 
         // when
@@ -80,7 +80,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given admin authentication when get users then returns users`() = withTestAppB {
+    fun `given admin authentication when get users then returns users`() = withTestApp {
         // given
         val userId1 = givenUser(
             "Alan",
@@ -137,7 +137,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given user when get user by id then returns user`() = withTestAppB {
+    fun `given user when get user by id then returns user`() = withTestApp {
         // given
         val userId = givenUser(
             "Alan",
@@ -170,7 +170,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when get me then returns user`() = withTestAppB {
+    fun `when get me then returns user`() = withTestApp {
         // given
         val userId = givenUser(
             "Alan",
@@ -208,7 +208,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding user then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when adding user then returns http forbidden`() = withTestApp {
         // given
         val requestBody = UserCreationDetails(
             "Alan",
@@ -228,7 +228,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when changing user details then returns http no content`() = withTestAppB {
+    fun `when changing user details then returns http no content`() = withTestApp {
         // given
         val userId = givenUser(firstName = "first", lastName = "last")
 
@@ -270,7 +270,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when changing user details then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when changing user details then returns http forbidden`() = withTestApp {
         // given
         val requestBody = UserDetails(
             null,
@@ -290,7 +290,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when changing user lock state then returns http no content`() = withTestAppB {
+    fun `when changing user lock state then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -331,7 +331,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when changing user lock state then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when changing user lock state then returns http forbidden`() = withTestApp {
         // given
         val requestBody = UserLockDetails(
             null,
@@ -350,7 +350,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when deleting user then returns http no content`() = withTestAppB {
+    fun `when deleting user then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -368,7 +368,7 @@ internal class UserIntegrationTest {
         }
         assertThat(responseGet.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(responseGet.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotFound",
                 "User with id UserId(value=$userId) not found.",
                 mapOf("userId" to userId)
@@ -376,7 +376,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting user then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when deleting user then returns http forbidden`() = withTestApp {
         // given
 
         // when
@@ -389,7 +389,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin when changing is admin then returns http no content`() = withTestAppB {
+    fun `given non-admin when changing is admin then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -427,7 +427,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given admin when changing is admin then returns http no content`() = withTestAppB {
+    fun `given admin when changing is admin then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         givenUserIsAdmin(userId, true)
@@ -466,7 +466,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when changing is admin then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when changing is admin then returns http forbidden`() = withTestApp {
         // given
         val userId = givenUser()
         val requestBody = IsAdminDetails(false)
@@ -483,7 +483,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when adding instructor qualification then returns http no content`() = withTestAppB {
+    fun `when adding instructor qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
         val userId = givenUser()
@@ -523,7 +523,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when adding instructor qualification then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
             val requestBody = QualificationAdditionDetails(QualificationIdFixture.arbitrary().serialize())
 
@@ -539,7 +539,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing instructor qualification then returns http no content`() = withTestAppB {
+    fun `when removing instructor qualification then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         val qualificationId = givenQualification()
@@ -576,7 +576,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when removing instructor qualification then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
 
             // when
@@ -593,7 +593,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when adding member qualification then returns http no content`() = withTestAppB {
+    fun `when adding member qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -641,7 +641,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-instructor authentication when adding member qualification then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
             val qualificationId = QualificationIdFixture.arbitrary().serialize()
             val requestBody = QualificationAdditionDetails(qualificationId)
@@ -658,7 +658,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing member qualification then returns http no content`() = withTestAppB {
+    fun `when removing member qualification then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         val qualificationId = givenQualification()
@@ -697,7 +697,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when removing member qualification then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
             val qualificationId = givenQualification()
 
@@ -719,7 +719,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when adding username password identity then returns http no content`() = withTestAppB {
+    fun `when adding username password identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
         val requestBody = UsernamePasswordIdentity(
@@ -740,7 +740,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when adding username password identity then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
             val requestBody = UsernamePasswordIdentity(
                 "some.one",
@@ -760,7 +760,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing username password identity then returns http no content`() = withTestAppB {
+    fun `when removing username password identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -778,7 +778,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when removing username password identity then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
 
             // when
@@ -795,7 +795,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when adding card identity then returns http no content`() = withTestAppB {
+    fun `when adding card identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -815,7 +815,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding card identity then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when adding card identity then returns http forbidden`() = withTestApp {
         // given
         val requestBody = CardIdentity(
             "11223344556677",
@@ -834,7 +834,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when removing card identity then returns http no content`() = withTestAppB {
+    fun `when removing card identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -855,7 +855,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when removing card identity then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when removing card identity then returns http forbidden`() = withTestApp {
         // given
 
         // when
@@ -870,7 +870,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `when adding phone number identity then returns http no content`() = withTestAppB {
+    fun `when adding phone number identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -890,7 +890,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when adding phone number identity then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
             val requestBody = PhoneNrIdentity("+49123456789")
 
@@ -906,7 +906,7 @@ internal class UserIntegrationTest {
         }
 
     @Test
-    fun `when removing phone number identity then returns http no content`() = withTestAppB {
+    fun `when removing phone number identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
 
@@ -924,7 +924,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when removing phone number identity then returns http forbidden`() =
-        withTestAppB {
+        withTestApp {
             // given
 
             // when

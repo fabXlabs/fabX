@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.ws.AuthorizedToolsResponse
 import cloud.fabX.fabXaccess.device.ws.ConfigurationResponse
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test
 internal class DeviceWebsocketIntegrationTest {
 
     @Test
-    fun `given no authentication when connecting to websocket then returns http unauthorized`() = withTestAppB {
+    fun `given no authentication when connecting to websocket then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -52,7 +52,7 @@ internal class DeviceWebsocketIntegrationTest {
     // TODO rewrite test to work with new test api
     @Disabled
     @Test
-    fun `given invalid authentication when connecting to websocket then returns http unauthorized`() = withTestAppB {
+    fun `given invalid authentication when connecting to websocket then returns http unauthorized`() = withTestApp {
         // given
 
         // when & then
@@ -73,7 +73,7 @@ internal class DeviceWebsocketIntegrationTest {
     }
 
     @Test
-    fun `given valid authentication when connecting then connects`() = withTestAppB {
+    fun `given valid authentication when connecting then connects`() = withTestApp {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"
@@ -92,7 +92,7 @@ internal class DeviceWebsocketIntegrationTest {
     }
 
     @Test
-    fun `when getting configuration then returns configuration`() = withTestAppB {
+    fun `when getting configuration then returns configuration`() = withTestApp {
         // given
         val name = "a device"
         val background = "https://example.com/bg123.bmp"
@@ -146,7 +146,7 @@ internal class DeviceWebsocketIntegrationTest {
     }
 
     @Test
-    fun `when getting authorized tools then returns authorized tools`() = withTestAppB {
+    fun `when getting authorized tools then returns authorized tools`() = withTestApp {
         // given
         val qualificationId1 = givenQualification()
         val qualificationId2 = givenQualification()

@@ -7,11 +7,11 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isNotEmpty
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test
 internal class ToolIntegrationTest {
 
     @Test
-    fun `given no authentication when get tools then returns http unauthorized`() = withTestAppB {
+    fun `given no authentication when get tools then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -51,7 +51,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given invalid authentication when get tools then returns http unauthorized`() = withTestAppB {
+    fun `given invalid authentication when get tools then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -64,7 +64,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given tools when get tools then returns tools`() = withTestAppB {
+    fun `given tools when get tools then returns tools`() = withTestApp {
         // given
         givenTool("tool1")
         givenTool("tool2")
@@ -83,7 +83,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given tool when get tool by id then returns tool`() = withTestAppB {
+    fun `given tool when get tool by id then returns tool`() = withTestApp {
         // given
         val toolId = givenTool()
 
@@ -100,7 +100,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given qualification does not exist when adding tool then returns error`() = withTestAppB {
+    fun `given qualification does not exist when adding tool then returns error`() = withTestApp {
         // given
         val invalidQualificationId = QualificationIdFixture.arbitrary().serialize()
 
@@ -123,7 +123,7 @@ internal class ToolIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "ReferencedQualificationNotFound",
                 "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
                 mapOf("qualificationId" to invalidQualificationId)
@@ -131,7 +131,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given qualification exists when adding tool then adds tool`() = withTestAppB {
+    fun `given qualification exists when adding tool then adds tool`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -166,7 +166,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding tool then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when adding tool then returns http forbidden`() = withTestApp {
         // given
         val requestBody = ToolCreationDetails(
             "tool",
@@ -189,7 +189,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given tool when changing tool then returns http no content`() = withTestAppB {
+    fun `given tool when changing tool then returns http no content`() = withTestApp {
         // given
         val toolId = givenTool()
 
@@ -237,7 +237,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given invalid tool when changing tool then returns http not found`() = withTestAppB {
+    fun `given invalid tool when changing tool then returns http not found`() = withTestApp {
         // given
         val invalidToolId = ToolIdFixture.arbitrary().serialize()
 
@@ -261,7 +261,7 @@ internal class ToolIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "ToolNotFound",
                 "Tool with id ToolId(value=$invalidToolId) not found.",
                 mapOf("toolId" to invalidToolId)
@@ -270,7 +270,7 @@ internal class ToolIntegrationTest {
 
     @Test
     fun `given invalid required qualification when changing tool then returns http unprocessable entity`() =
-        withTestAppB {
+        withTestApp {
             // given
             val toolId = givenTool()
 
@@ -296,7 +296,7 @@ internal class ToolIntegrationTest {
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
             assertThat(response.body<Error>())
-                .isErrorB(
+                .isError(
                     "ReferencedQualificationNotFound",
                     "Qualification with id QualificationId(value=$invalidQualificationId) not found.",
                     mapOf("qualificationId" to invalidQualificationId)
@@ -304,7 +304,7 @@ internal class ToolIntegrationTest {
         }
 
     @Test
-    fun `given tool when deleting tool then returns http no content`() = withTestAppB {
+    fun `given tool when deleting tool then returns http no content`() = withTestApp {
         // given
         val toolId = givenTool()
 
@@ -319,7 +319,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given unknown tool when deleting tool then returns http not found`() = withTestAppB {
+    fun `given unknown tool when deleting tool then returns http not found`() = withTestApp {
         // given
         val invalidToolId = ToolIdFixture.arbitrary().serialize()
 
@@ -331,7 +331,7 @@ internal class ToolIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "ToolNotFound",
                 "Tool with id ToolId(value=$invalidToolId) not found.",
                 mapOf("toolId" to invalidToolId)
@@ -339,7 +339,7 @@ internal class ToolIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting tool then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when deleting tool then returns http forbidden`() = withTestApp {
         val toolId = givenTool()
 
         // when
@@ -350,7 +350,7 @@ internal class ToolIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )

@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.device
 
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.ws.DeviceToServerNotification
 import cloud.fabX.fabXaccess.device.ws.ToolUnlockedNotification
 import cloud.fabX.fabXaccess.tool.givenTool
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 internal class ToolUnlockedNotificationViaWebsocketIntegrationTest {
 
     @Test
-    fun `when receives ToolUnlockedNotification then logs tool unlocked`() = withTestAppB {
+    fun `when receives ToolUnlockedNotification then logs tool unlocked`() = withTestApp {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"

@@ -7,12 +7,12 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.rest.Qualification
 import cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test
 internal class QualificationIntegrationTest {
 
     @Test
-    fun `given no authentication when get qualification then returns http unauthorized`() = withTestAppB {
+    fun `given no authentication when get qualification then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -49,7 +49,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given invalid authentication when get qualification then returns http unauthorized`() = withTestAppB {
+    fun `given invalid authentication when get qualification then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -62,7 +62,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when get qualifications then returns qualifications`() = withTestAppB {
+    fun `given qualification when get qualifications then returns qualifications`() = withTestApp {
         // given
         givenQualification()
 
@@ -79,7 +79,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given multiple qualifications when get qualifications then returns qualifications`() = withTestAppB {
+    fun `given multiple qualifications when get qualifications then returns qualifications`() = withTestApp {
         // given
         givenQualifications(10)
 
@@ -98,7 +98,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when get qualification by id then returns qualification`() = withTestAppB {
+    fun `given qualification when get qualification by id then returns qualification`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -115,7 +115,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given incomplete body when adding qualification then returns http unprocessable entity`() = withTestAppB {
+    fun `given incomplete body when adding qualification then returns http unprocessable entity`() = withTestApp {
         // given
         val incompleteRequestBody = "{" +
                 "\"name\": \"qualification\"," +
@@ -135,7 +135,7 @@ internal class QualificationIntegrationTest {
         assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(response.bodyAsText())
             .isJson<Error>()
-            .isErrorB(
+            .isError(
                 "kotlinx.serialization.MissingFieldException",
                 "Field 'orderNr' is required for type with serial name " +
                         "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
@@ -144,7 +144,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding qualification then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when adding qualification then returns http forbidden`() = withTestApp {
         // given
         val requestBody = QualificationCreationDetails(
             "qualification",
@@ -165,7 +165,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when changing qualification then returns http no content`() = withTestAppB {
+    fun `given qualification when changing qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -200,7 +200,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given invalid qualification when changing qualification then returns http not found`() = withTestAppB {
+    fun `given invalid qualification when changing qualification then returns http not found`() = withTestApp {
         // given
         val qualificationId = QualificationIdFixture.arbitrary().serialize()
 
@@ -222,7 +222,7 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "QualificationNotFound",
                 "Qualification with id QualificationId(value=$qualificationId) not found.",
                 mapOf("qualificationId" to qualificationId)
@@ -230,7 +230,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given qualification when deleting qualification then returns http no content`() = withTestAppB {
+    fun `given qualification when deleting qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -245,7 +245,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given unknown qualification when deleting qualification then returns http not found`() = withTestAppB {
+    fun `given unknown qualification when deleting qualification then returns http not found`() = withTestApp {
         // given
         val qualificationId = UUID.fromString("7f635917-048c-41e2-8946-35070a20e539")
 
@@ -257,7 +257,7 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "QualificationNotFound",
                 "Qualification with id QualificationId(value=7f635917-048c-41e2-8946-35070a20e539) not found.",
                 mapOf("qualificationId" to qualificationId.toString())
@@ -265,7 +265,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting qualification then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when deleting qualification then returns http forbidden`() = withTestApp {
         // given
         val qualificationId = givenQualification()
 
@@ -277,7 +277,7 @@ internal class QualificationIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )

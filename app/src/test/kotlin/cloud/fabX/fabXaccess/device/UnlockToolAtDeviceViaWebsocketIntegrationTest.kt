@@ -6,9 +6,9 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.rest.Error
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.rest.ToolUnlockDetails
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
 import cloud.fabX.fabXaccess.device.ws.ServerToDeviceCommand
@@ -40,7 +40,7 @@ import org.junit.jupiter.api.Test
 internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
 
     @Test
-    fun `when unlocking tool then sends command, receives answer, returns http no content`() = withTestAppB {
+    fun `when unlocking tool then sends command, receives answer, returns http no content`() = withTestApp {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"
@@ -83,7 +83,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
     }
 
     @Test
-    fun `given device does not respond when unlocking tool then returns http service unavailable`() = withTestAppB {
+    fun `given device does not respond when unlocking tool then returns http service unavailable`() = withTestApp {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"
@@ -121,7 +121,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
 
             assertThat(httpResponse.status).isEqualTo(HttpStatusCode.ServiceUnavailable)
             assertThat(httpResponse.body<Error>())
-                .isErrorB(
+                .isError(
                     "DeviceTimeout",
                     "Timeout while waiting for response from device DeviceId(value=$deviceId).",
                     mapOf("deviceId" to deviceId)
@@ -131,7 +131,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
 
     @Test
     fun `given tool not attached to device when unlocking tool then returns http unprocessable entity`() =
-        withTestAppB {
+        withTestApp {
             // given
             val deviceId = givenDevice(mac = "aabbccddeeff")
             val toolId = ToolIdFixture.arbitrary().serialize()
@@ -146,7 +146,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
             assertThat(response.body<Error>())
-                .isErrorB(
+                .isError(
                     "ToolNotAttachedToDevice",
                     "Tool ToolId(value=$toolId) not attached to device DeviceId(value=$deviceId).",
                     mapOf(

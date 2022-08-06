@@ -23,15 +23,9 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.basicAuth
-import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.TestApplicationRequest
-import io.ktor.server.testing.createTestEnvironment
 import io.ktor.server.testing.testApplication
-import io.ktor.server.testing.withApplication
-import io.ktor.util.encodeBase64
 import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -172,7 +166,7 @@ private fun testSetup(): WebApp {
     return webApp
 }
 
-internal fun withTestAppB(
+internal fun withTestApp(
     block: suspend ApplicationTestBuilder.() -> Unit
 ) {
     val webApp = testSetup()
@@ -184,20 +178,6 @@ internal fun withTestAppB(
         application {
             webApp.moduleConfiguration(this)
         }
-        block()
-    }
-}
-
-@OptIn(ExperimentalCoroutinesApi::class)
-internal fun withTestApp(
-    block: TestApplicationEngine.() -> Unit
-) {
-    val webApp = testSetup()
-
-    withApplication(createTestEnvironment {
-        developmentMode = false
-        modules += webApp.moduleConfiguration
-    }) {
         block()
     }
 }
@@ -214,12 +194,3 @@ internal fun ApplicationTestBuilder.c(): HttpClient {
 internal fun HttpRequestBuilder.memberAuth() = basicAuth("member", "s3cr3t")
 
 internal fun HttpRequestBuilder.adminAuth() = basicAuth("admin", "super\$ecr3t")
-
-internal fun TestApplicationRequest.addMemberAuth() = addBasicAuth("member", "s3cr3t")
-
-internal fun TestApplicationRequest.addAdminAuth() = addBasicAuth("admin", "super\$ecr3t")
-
-internal fun TestApplicationRequest.addBasicAuth(user: String, password: String) {
-    val encoded = "$user:$password".toByteArray(Charsets.UTF_8).encodeBase64()
-    addHeader(HttpHeaders.Authorization, "Basic $encoded")
-}

@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
@@ -19,7 +19,7 @@ internal class UserIdentityIntegrationTest {
 
     @Test
     fun `given username password identity when http request then can authenticate via http basic auth`() =
-        withTestAppB {
+        withTestApp {
             // given
             val userId = givenUser()
             val username = "username123"
@@ -37,7 +37,7 @@ internal class UserIdentityIntegrationTest {
 
     @Test
     fun `given removed username password identity when http request then no longer can authenticate via http basic auth`() =
-        withTestAppB {
+        withTestApp {
             // given
             val userId = givenUser()
             val username = "username123"

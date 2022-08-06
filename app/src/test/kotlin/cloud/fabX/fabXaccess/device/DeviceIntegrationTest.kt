@@ -6,11 +6,11 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test
 internal class DeviceIntegrationTest {
 
     @Test
-    fun `given no authentication when get devices then returns http unauthorized`() = withTestAppB {
+    fun `given no authentication when get devices then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -50,7 +50,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given invalid authentication when get devices then returns http unauthorized`() = withTestAppB {
+    fun `given invalid authentication when get devices then returns http unauthorized`() = withTestApp {
         // given
 
         // when
@@ -64,7 +64,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when get devices then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when get devices then returns http forbidden`() = withTestApp {
         // given
 
         // when
@@ -75,14 +75,14 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
     @Test
-    fun `given devices when get devices then returns devices`() = withTestAppB {
+    fun `given devices when get devices then returns devices`() = withTestApp {
         // given
         val deviceId1 = givenDevice("device1", mac = "aabbccaabb01")
         val deviceId2 = givenDevice("device2", mac = "aabbccaabb02")
@@ -101,7 +101,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device when get device by id then returns device`() = withTestAppB {
+    fun `given device when get device by id then returns device`() = withTestApp {
         // given
         val deviceId = givenDevice("newDevice", mac = "001122334455")
 
@@ -126,7 +126,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device does not exist when get device by id then returns http not found`() = withTestAppB {
+    fun `given device does not exist when get device by id then returns http not found`() = withTestApp {
         // given
         val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
 
@@ -138,7 +138,7 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "DeviceNotFound",
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
@@ -146,7 +146,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding device then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when adding device then returns http forbidden`() = withTestApp {
         // given
         val requestBody = DeviceCreationDetails(
             "device42",
@@ -169,7 +169,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device when changing device then returns http no content`() = withTestAppB {
+    fun `given device when changing device then returns http no content`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aa00bb11cc22")
 
@@ -208,7 +208,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given invalid device when changing device then returns http not found`() = withTestAppB {
+    fun `given invalid device when changing device then returns http not found`() = withTestApp {
         // given
         val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
 
@@ -228,7 +228,7 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "DeviceNotFound",
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
@@ -236,7 +236,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device when deleting device then returns http no content`() = withTestAppB {
+    fun `given device when deleting device then returns http no content`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aabbcc001122")
 
@@ -251,7 +251,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given unknown device when deleting device then returns http not found`() = withTestAppB {
+    fun `given unknown device when deleting device then returns http not found`() = withTestApp {
         // given
         val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
 
@@ -263,7 +263,7 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "DeviceNotFound",
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
@@ -271,7 +271,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting device then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when deleting device then returns http forbidden`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aabbcc001122")
 
@@ -283,14 +283,14 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
     @Test
-    fun `when attaching tool then returns http no content`() = withTestAppB {
+    fun `when attaching tool then returns http no content`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aabbccddeeff")
         val pin = 2
@@ -326,7 +326,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when attaching tool then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when attaching tool then returns http forbidden`() = withTestApp {
         val deviceId = DeviceIdFixture.arbitrary().serialize()
         val pin = 2
         val requestBody = ToolAttachmentDetails(ToolIdFixture.arbitrary().serialize())
@@ -341,14 +341,14 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
     @Test
-    fun `when detaching tool then returns http no content`() = withTestAppB {
+    fun `when detaching tool then returns http no content`() = withTestApp {
         // given
         val pin = 2
         val deviceId = givenDevice(mac = "001122334455aa")
@@ -367,7 +367,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when detaching tool then returns http forbidden`() = withTestAppB {
+    fun `given non-admin authentication when detaching tool then returns http forbidden`() = withTestApp {
         // given
         val pin = 2
         val deviceId = DeviceIdFixture.arbitrary().serialize()
@@ -381,7 +381,7 @@ internal class DeviceIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         assertThat(response.body<Error>())
-            .isErrorB(
+            .isError(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )

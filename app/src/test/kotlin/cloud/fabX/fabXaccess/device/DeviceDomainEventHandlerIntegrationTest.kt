@@ -4,7 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.withTestAppB
+import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.tool.givenTool
 import io.ktor.client.call.body
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test
 internal class DeviceDomainEventHandlerIntegrationTest {
 
     @Test
-    fun `when deleting tool then it is detached from device`() = withTestAppB {
+    fun `when deleting tool then it is detached from device`() = withTestApp {
         // given
         val deviceId = givenDevice(mac = "aabbccddeeff")
         val toolId = givenTool()
