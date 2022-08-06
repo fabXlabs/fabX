@@ -2,17 +2,14 @@ package cloud.fabX.fabXaccess.user
 
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import assertk.assertions.isNull
-import cloud.fabX.fabXaccess.common.addAdminAuth
-import cloud.fabX.fabXaccess.common.addBasicAuth
-import cloud.fabX.fabXaccess.common.addMemberAuth
+import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
-import cloud.fabX.fabXaccess.common.isError
-import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
@@ -28,17 +25,17 @@ import cloud.fabX.fabXaccess.user.rest.UserLockDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
+import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
 @InternalAPI
@@ -46,44 +43,44 @@ import org.junit.jupiter.api.Test
 internal class UserIntegrationTest {
 
     @Test
-    fun `given no authentication when get users then returns http unauthorized`() = withTestApp {
+    fun `given no authentication when get users then returns http unauthorized`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user")
+        val response = c().get("/api/v1/user")
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
     }
 
     @Test
-    fun `given invalid authentication when get users then returns http unauthorized`() = withTestApp {
+    fun `given invalid authentication when get users then returns http unauthorized`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user") {
-            addBasicAuth("no.body", "nobodyssecret")
+        val response = c().get("/api/v1/user") {
+            basicAuth("no.body", "nobodyssecret")
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
     }
 
     @Test
-    fun `given non-admin authentication when get users then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when get users then returns http forbidden`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user") {
-            addMemberAuth()
+        val response = c().get("/api/v1/user") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `given admin authentication when get users then returns users`() = withTestApp {
+    fun `given admin authentication when get users then returns users`() = withTestAppB {
         // given
         val userId1 = givenUser(
             "Alan",
@@ -92,15 +89,13 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user") {
-            addAdminAuth()
+        val response = c().get("/api/v1/user") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<User>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<User>>())
             .containsExactlyInAnyOrder(
                 User(
                     "c63b3a7d-bd18-4272-b4ed-4bcf9683c602",
@@ -142,7 +137,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given user when get user by id then returns user`() = withTestApp {
+    fun `given user when get user by id then returns user`() = withTestAppB {
         // given
         val userId = givenUser(
             "Alan",
@@ -151,15 +146,13 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val response = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -215,7 +208,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding user then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when adding user then returns http forbidden`() = withTestAppB {
         // given
         val requestBody = UserCreationDetails(
             "Alan",
@@ -224,18 +217,18 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `when changing user details then returns http no content`() = withTestApp {
+    fun `when changing user details then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser(firstName = "first", lastName = "last")
 
@@ -246,22 +239,20 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/$userId") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -279,7 +270,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when changing user details then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when changing user details then returns http forbidden`() = withTestAppB {
         // given
         val requestBody = UserDetails(
             null,
@@ -288,18 +279,18 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `when changing user lock state then returns http no content`() = withTestApp {
+    fun `when changing user lock state then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
@@ -309,22 +300,20 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/lock") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/$userId/lock") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -342,7 +331,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when changing user lock state then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when changing user lock state then returns http forbidden`() = withTestAppB {
         // given
         val requestBody = UserLockDetails(
             null,
@@ -350,36 +339,36 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/lock") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/lock") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `when deleting user then returns http no content`() = withTestApp {
+    fun `when deleting user then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val response = c().delete("/api/v1/user/$userId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(resultGet.response.content)
-            .isError(
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(responseGet.body<Error>())
+            .isErrorB(
                 "UserNotFound",
                 "User with id UserId(value=$userId) not found.",
                 mapOf("userId" to userId)
@@ -387,42 +376,40 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting user then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when deleting user then returns http forbidden`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
-            addMemberAuth()
+        val response = c().delete("/api/v1/user/${UserIdFixture.arbitrary().serialize()}") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `given non-admin when changing is admin then returns http no content`() = withTestApp {
+    fun `given non-admin when changing is admin then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
         val requestBody = IsAdminDetails(true)
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/$userId/is-admin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -440,7 +427,7 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given admin when changing is admin then returns http no content`() = withTestApp {
+    fun `given admin when changing is admin then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
         givenUserIsAdmin(userId, true)
@@ -448,22 +435,20 @@ internal class UserIntegrationTest {
         val requestBody = IsAdminDetails(false)
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/$userId/is-admin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -481,24 +466,24 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when changing is admin then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when changing is admin then returns http forbidden`() = withTestAppB {
         // given
         val userId = givenUser()
         val requestBody = IsAdminDetails(false)
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/user/$userId/is-admin") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/user/$userId/is-admin") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `when adding instructor qualification then returns http no content`() = withTestApp {
+    fun `when adding instructor qualification then returns http no content`() = withTestAppB {
         // given
         val qualificationId = givenQualification()
         val userId = givenUser()
@@ -506,22 +491,20 @@ internal class UserIntegrationTest {
         val requestBody = QualificationAdditionDetails(qualificationId)
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/instructor-qualification") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/$userId/instructor-qualification") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -540,49 +523,41 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when adding instructor qualification then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
             val requestBody = QualificationAdditionDetails(QualificationIdFixture.arbitrary().serialize())
 
             // when
-            val result = handleRequest(
-                HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/instructor-qualification"
-            ) {
-                addMemberAuth()
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(Json.encodeToString(requestBody))
+            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/instructor-qualification") {
+                memberAuth()
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
     @Test
-    fun `when removing instructor qualification then returns http no content`() = withTestApp {
+    fun `when removing instructor qualification then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
         val qualificationId = givenQualification()
         givenUserIsInstructorFor(userId, qualificationId)
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/user/$userId/instructor-qualification/$qualificationId"
-        ) {
-            addAdminAuth()
+        val response = c().delete("/api/v1/user/$userId/instructor-qualification/$qualificationId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -601,25 +576,24 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when removing instructor qualification then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
+            val response = c().delete(
                 "/api/v1/user/${
                     UserIdFixture.arbitrary().serialize()
                 }/instructor-qualification/${QualificationIdFixture.arbitrary().serialize()}"
             ) {
-                addMemberAuth()
+                memberAuth()
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
     @Test
-    fun `when adding member qualification then returns http no content`() = withTestApp {
+    fun `when adding member qualification then returns http no content`() = withTestAppB {
         // given
         val qualificationId = givenQualification()
 
@@ -634,23 +608,21 @@ internal class UserIntegrationTest {
         val requestBody = QualificationAdditionDetails(qualificationId)
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/member-qualification") {
-            addBasicAuth(instructorUsername, instructorPassword)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/$userId/member-qualification") {
+            basicAuth(instructorUsername, instructorPassword)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.content).isNull()
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -669,27 +641,24 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-instructor authentication when adding member qualification then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
             val qualificationId = QualificationIdFixture.arbitrary().serialize()
             val requestBody = QualificationAdditionDetails(qualificationId)
 
             // when
-            val result = handleRequest(
-                HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification"
-            ) {
-                addAdminAuth()
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(Json.encodeToString(requestBody))
+            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification") {
+                adminAuth()
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
     @Test
-    fun `when removing member qualification then returns http no content`() = withTestApp {
+    fun `when removing member qualification then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
         val qualificationId = givenQualification()
@@ -698,23 +667,18 @@ internal class UserIntegrationTest {
         givenUserHasQualificationFor(userId, qualificationId2)
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/user/$userId/member-qualification/$qualificationId"
-        ) {
-            addAdminAuth()
+        val response = c().delete("/api/v1/user/$userId/member-qualification/$qualificationId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/user/$userId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/user/$userId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<User>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
             .isEqualTo(
                 User(
                     userId,
@@ -733,7 +697,7 @@ internal class UserIntegrationTest {
 
     @Test
     fun `given non-admin authentication when removing member qualification then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
             val qualificationId = givenQualification()
 
@@ -744,21 +708,18 @@ internal class UserIntegrationTest {
             givenUserIsInstructorFor(instructorUserId, qualificationId)
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
-                "/api/v1/user/${
-                    UserIdFixture.arbitrary().serialize()
-                }/member-qualification/$qualificationId"
+            val response = c().delete(
+                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification/$qualificationId"
             ) {
-                addBasicAuth(instructorUsername, instructorPassword)
+                basicAuth(instructorUsername, instructorPassword)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
     @Test
-    fun `when adding username password identity then returns http no content`() = withTestApp {
+    fun `when adding username password identity then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
         val requestBody = UsernamePasswordIdentity(
@@ -767,19 +728,19 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/username-password") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/$userId/identity/username-password") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
     fun `given non-admin authentication when adding username password identity then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
             val requestBody = UsernamePasswordIdentity(
                 "some.one",
@@ -787,21 +748,19 @@ internal class UserIntegrationTest {
             )
 
             // when
-            val result = handleRequest(
-                HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/username-password"
-            ) {
-                addMemberAuth()
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(Json.encodeToString(requestBody))
-            }
+            val response =
+                c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/username-password") {
+                    memberAuth()
+                    contentType(ContentType.Application.Json)
+                    setBody(requestBody)
+                }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
     @Test
-    fun `when removing username password identity then returns http no content`() = withTestApp {
+    fun `when removing username password identity then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
@@ -809,36 +768,34 @@ internal class UserIntegrationTest {
         givenUsernamePasswordIdentity(userId, username, "password123")
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/user/$userId/identity/username-password/$username"
-        ) {
-            addAdminAuth()
+        val response = c().delete("/api/v1/user/$userId/identity/username-password/$username") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
     fun `given non-admin authentication when removing username password identity then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/username-password/username123"
+            val response = c().delete(
+                "/api/v1/user/${
+                    UserIdFixture.arbitrary().serialize()
+                }/identity/username-password/username123"
             ) {
-                addMemberAuth()
+                memberAuth()
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
     @Test
-    fun `when adding card identity then returns http no content`() = withTestApp {
+    fun `when adding card identity then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
@@ -847,18 +804,18 @@ internal class UserIntegrationTest {
         val requestBody = CardIdentity(cardId, cardSecret)
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/card") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/$userId/identity/card") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
-    fun `given non-admin authentication when adding card identity then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when adding card identity then returns http forbidden`() = withTestAppB {
         // given
         val requestBody = CardIdentity(
             "11223344556677",
@@ -866,21 +823,18 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(
-            HttpMethod.Post,
-            "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card"
-        ) {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `when removing card identity then returns http no content`() = withTestApp {
+    fun `when removing card identity then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
@@ -892,35 +846,31 @@ internal class UserIntegrationTest {
         )
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/user/$userId/identity/card/$cardId"
-        ) {
-            addAdminAuth()
+        val response = c().delete("/api/v1/user/$userId/identity/card/$cardId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
-    fun `given non-admin authentication when removing card identity then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when removing card identity then returns http forbidden`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
+        val response = c().delete(
             "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card/AA11BB22CC33DD"
         ) {
-            addMemberAuth()
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `when adding phone number identity then returns http no content`() = withTestApp {
+    fun `when adding phone number identity then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
@@ -928,37 +878,35 @@ internal class UserIntegrationTest {
         val requestBody = PhoneNrIdentity(phoneNr)
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/$userId/identity/phone") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/$userId/identity/phone") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
-    fun `given non-admin authentication when adding phone number identity then returns http forbidden`() = withTestApp {
-        // given
-        val requestBody = PhoneNrIdentity("+49123456789")
+    fun `given non-admin authentication when adding phone number identity then returns http forbidden`() =
+        withTestAppB {
+            // given
+            val requestBody = PhoneNrIdentity("+49123456789")
 
-        // when
-        val result = handleRequest(
-            HttpMethod.Post,
-            "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone"
-        ) {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+            // when
+            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone") {
+                memberAuth()
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
+            }
+
+            // then
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 
-        // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-    }
-
     @Test
-    fun `when removing phone number identity then returns http no content`() = withTestApp {
+    fun `when removing phone number identity then returns http no content`() = withTestAppB {
         // given
         val userId = givenUser()
 
@@ -966,31 +914,26 @@ internal class UserIntegrationTest {
         givenPhoneNrIdentity(userId, phoneNr)
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/user/$userId/identity/phone/$phoneNr"
-        ) {
-            addAdminAuth()
+        val response = c().delete("/api/v1/user/$userId/identity/phone/$phoneNr") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
     }
 
     @Test
     fun `given non-admin authentication when removing phone number identity then returns http forbidden`() =
-        withTestApp {
+        withTestAppB {
             // given
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone/+491123581321"
-            ) {
-                addMemberAuth()
-            }
+            val response =
+                c().delete("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone/+491123581321") {
+                    memberAuth()
+                }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
 }

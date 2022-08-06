@@ -2,16 +2,15 @@ package cloud.fabX.fabXaccess.device
 
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import assertk.assertions.isNull
-import cloud.fabX.fabXaccess.common.addAdminAuth
-import cloud.fabX.fabXaccess.common.addBasicAuth
-import cloud.fabX.fabXaccess.common.addMemberAuth
-import cloud.fabX.fabXaccess.common.isError
-import cloud.fabX.fabXaccess.common.isJson
+import cloud.fabX.fabXaccess.common.adminAuth
+import cloud.fabX.fabXaccess.common.c
+import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
-import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.rest.Error
+import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
@@ -19,16 +18,19 @@ import cloud.fabX.fabXaccess.device.rest.DeviceDetails
 import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
 import cloud.fabX.fabXaccess.tool.givenTool
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
+import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
 @InternalAPI
@@ -36,85 +38,81 @@ import org.junit.jupiter.api.Test
 internal class DeviceIntegrationTest {
 
     @Test
-    fun `given no authentication when get devices then returns http unauthorized`() = withTestApp {
+    fun `given no authentication when get devices then returns http unauthorized`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device")
+        val response = c().get("/api/v1/device")
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
-    fun `given invalid authentication when get devices then returns http unauthorized`() = withTestApp {
+    fun `given invalid authentication when get devices then returns http unauthorized`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device") {
-            addBasicAuth("no.body", "secret123")
+        val response = c().get("/api/v1/device") {
+            basicAuth("no.body", "secret123")
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
-    fun `given non-admin authentication when get devices then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when get devices then returns http forbidden`() = withTestAppB {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device") {
-            addMemberAuth()
+        val response = c().get("/api/v1/device") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
     @Test
-    fun `given devices when get devices then returns devices`() = withTestApp {
+    fun `given devices when get devices then returns devices`() = withTestAppB {
         // given
         val deviceId1 = givenDevice("device1", mac = "aabbccaabb01")
         val deviceId2 = givenDevice("device2", mac = "aabbccaabb02")
         val deviceId3 = givenDevice("device3", mac = "aabbccaabb03")
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device") {
-            addAdminAuth()
+        val response = c().get("/api/v1/device") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Device>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Device>>())
             .transform { devices -> devices.map { it.id } }
             .containsExactlyInAnyOrder(deviceId1, deviceId2, deviceId3)
     }
 
     @Test
-    fun `given device when get device by id then returns device`() = withTestApp {
+    fun `given device when get device by id then returns device`() = withTestAppB {
         // given
         val deviceId = givenDevice("newDevice", mac = "001122334455")
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
-            addAdminAuth()
+        val response = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Device>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Device>())
             .isEqualTo(
                 Device(
                     deviceId,
@@ -128,19 +126,19 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device does not exist when get device by id then returns http not found`() = withTestApp {
+    fun `given device does not exist when get device by id then returns http not found`() = withTestAppB {
         // given
         val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device/$invalidDeviceId") {
-            addAdminAuth()
+        val response = c().get("/api/v1/device/$invalidDeviceId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "DeviceNotFound",
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
@@ -148,7 +146,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when adding device then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when adding device then returns http forbidden`() = withTestAppB {
         // given
         val requestBody = DeviceCreationDetails(
             "device42",
@@ -160,18 +158,18 @@ internal class DeviceIntegrationTest {
 
         // when
 
-        val result = handleRequest(HttpMethod.Post, "/api/v1/device") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/device") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
-    fun `given device when changing device then returns http no content`() = withTestApp {
+    fun `given device when changing device then returns http no content`() = withTestAppB {
         // given
         val deviceId = givenDevice(mac = "aa00bb11cc22")
 
@@ -182,23 +180,21 @@ internal class DeviceIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/device/$deviceId") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/device/$deviceId") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<Device>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Device>())
             .isEqualTo(
                 Device(
                     deviceId,
@@ -212,7 +208,7 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given invalid device when changing device then returns http not found`() = withTestApp {
+    fun `given invalid device when changing device then returns http not found`() = withTestAppB {
         // given
         val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
 
@@ -223,16 +219,16 @@ internal class DeviceIntegrationTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/device/$invalidDeviceId") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/device/$invalidDeviceId") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "DeviceNotFound",
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
@@ -240,34 +236,34 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given device when deleting device then returns http no content`() = withTestApp {
+    fun `given device when deleting device then returns http no content`() = withTestAppB {
         // given
         val deviceId = givenDevice(mac = "aabbcc001122")
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId") {
-            addAdminAuth()
+        val response = c().delete("/api/v1/device/$deviceId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
-    fun `given unknown device when deleting device then returns http not found`() = withTestApp {
+    fun `given unknown device when deleting device then returns http not found`() = withTestAppB {
         // given
         val invalidDeviceId = DeviceIdFixture.arbitrary().serialize()
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$invalidDeviceId") {
-            addAdminAuth()
+        val response = c().delete("/api/v1/device/$invalidDeviceId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "DeviceNotFound",
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
@@ -275,26 +271,26 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when deleting device then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when deleting device then returns http forbidden`() = withTestAppB {
         // given
         val deviceId = givenDevice(mac = "aabbcc001122")
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId") {
-            addMemberAuth()
+        val response = c().delete("/api/v1/device/$deviceId") {
+            memberAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
     @Test
-    fun `when attaching tool then returns http no content`() = withTestApp {
+    fun `when attaching tool then returns http no content`() = withTestAppB {
         // given
         val deviceId = givenDevice(mac = "aabbccddeeff")
         val pin = 2
@@ -302,23 +298,21 @@ internal class DeviceIntegrationTest {
         val requestBody = ToolAttachmentDetails(toolId)
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/device/$deviceId/attached-tool/$pin") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/device/$deviceId/attached-tool/$pin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<Device>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Device>())
             .isEqualTo(
                 Device(
                     deviceId,
@@ -332,29 +326,29 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when attaching tool then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when attaching tool then returns http forbidden`() = withTestAppB {
         val deviceId = DeviceIdFixture.arbitrary().serialize()
         val pin = 2
         val requestBody = ToolAttachmentDetails(ToolIdFixture.arbitrary().serialize())
 
         // when
-        val result = handleRequest(HttpMethod.Put, "/api/v1/device/$deviceId/attached-tool/$pin") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().put("/api/v1/device/$deviceId/attached-tool/$pin") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )
     }
 
     @Test
-    fun `when detaching tool then returns http no content`() = withTestApp {
+    fun `when detaching tool then returns http no content`() = withTestAppB {
         // given
         val pin = 2
         val deviceId = givenDevice(mac = "001122334455aa")
@@ -362,32 +356,32 @@ internal class DeviceIntegrationTest {
         givenToolAttachedToDevice(deviceId, pin, toolId)
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId/attached-tool/$pin") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        val response = c().delete("/api/v1/device/$deviceId/attached-tool/$pin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
-    fun `given non-admin authentication when detaching tool then returns http forbidden`() = withTestApp {
+    fun `given non-admin authentication when detaching tool then returns http forbidden`() = withTestAppB {
         // given
         val pin = 2
         val deviceId = DeviceIdFixture.arbitrary().serialize()
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/device/$deviceId/attached-tool/$pin") {
-            addMemberAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+        val response = c().delete("/api/v1/device/$deviceId/attached-tool/$pin") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isError(
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isErrorB(
                 "UserNotAdmin",
                 "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
             )

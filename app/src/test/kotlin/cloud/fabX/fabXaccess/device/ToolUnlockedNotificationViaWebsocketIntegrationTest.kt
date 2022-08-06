@@ -1,14 +1,15 @@
 package cloud.fabX.fabXaccess.device
 
-import cloud.fabX.fabXaccess.common.addBasicAuth
-import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.c
+import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.device.ws.DeviceToServerNotification
 import cloud.fabX.fabXaccess.device.ws.ToolUnlockedNotification
 import cloud.fabX.fabXaccess.tool.givenTool
 import cloud.fabX.fabXaccess.user.givenCardIdentity
 import cloud.fabX.fabXaccess.user.givenUser
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
-import io.ktor.server.testing.handleWebSocketConversation
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.request.basicAuth
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.delay
@@ -19,7 +20,7 @@ import org.junit.jupiter.api.Test
 internal class ToolUnlockedNotificationViaWebsocketIntegrationTest {
 
     @Test
-    fun `when receives ToolUnlockedNotification then logs tool unlocked`() = withTestApp {
+    fun `when receives ToolUnlockedNotification then logs tool unlocked`() = withTestAppB {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"
@@ -34,9 +35,9 @@ internal class ToolUnlockedNotificationViaWebsocketIntegrationTest {
         givenCardIdentity(userId, cardId, cardSecret)
 
         // when
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, outgoing ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val notification = ToolUnlockedNotification(toolId, null, CardIdentity(cardId, cardSecret))

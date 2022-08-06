@@ -20,6 +20,7 @@ import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import cloud.fabX.fabXaccess.webModule
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.basicAuth
 import io.ktor.http.HttpHeaders
@@ -206,6 +207,7 @@ internal fun ApplicationTestBuilder.c(): HttpClient {
         install(ContentNegotiation) {
             json()
         }
+        install(WebSockets)
     }
 }
 

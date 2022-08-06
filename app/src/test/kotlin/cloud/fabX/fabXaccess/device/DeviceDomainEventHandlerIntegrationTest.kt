@@ -2,15 +2,15 @@ package cloud.fabX.fabXaccess.device
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import cloud.fabX.fabXaccess.common.addAdminAuth
-import cloud.fabX.fabXaccess.common.isJson
-import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.adminAuth
+import cloud.fabX.fabXaccess.common.c
+import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.tool.givenTool
-import io.ktor.http.HttpMethod
+import io.ktor.client.call.body
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.Test
@@ -20,27 +20,25 @@ import org.junit.jupiter.api.Test
 internal class DeviceDomainEventHandlerIntegrationTest {
 
     @Test
-    fun `when deleting tool then it is detached from device`() = withTestApp {
+    fun `when deleting tool then it is detached from device`() = withTestAppB {
         // given
         val deviceId = givenDevice(mac = "aabbccddeeff")
         val toolId = givenTool()
         givenToolAttachedToDevice(deviceId, 0, toolId)
 
         // when
-        val result = handleRequest(HttpMethod.Delete, "/api/v1/tool/$toolId") {
-            addAdminAuth()
+        val response = c().delete("/api/v1/tool/$toolId") {
+            adminAuth()
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 
-        val resultGet = handleRequest(HttpMethod.Get, "/api/v1/device/$deviceId") {
-            addAdminAuth()
+        val responseGet = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
         }
-        assertThat(resultGet.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(resultGet.response.content)
-            .isNotNull()
-            .isJson<Device>()
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Device>())
             .isEqualTo(
                 Device(
                     deviceId,

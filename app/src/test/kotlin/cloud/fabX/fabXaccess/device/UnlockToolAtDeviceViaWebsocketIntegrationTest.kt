@@ -1,14 +1,14 @@
 package cloud.fabX.fabXaccess.device
 
-import assertk.all
 import assertk.assertThat
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
-import assertk.assertions.isNullOrEmpty
-import cloud.fabX.fabXaccess.common.addAdminAuth
-import cloud.fabX.fabXaccess.common.addBasicAuth
-import cloud.fabX.fabXaccess.common.isError
-import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.common.adminAuth
+import cloud.fabX.fabXaccess.common.c
+import cloud.fabX.fabXaccess.common.isErrorB
+import cloud.fabX.fabXaccess.common.rest.Error
+import cloud.fabX.fabXaccess.common.withTestAppB
 import cloud.fabX.fabXaccess.device.rest.ToolUnlockDetails
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
 import cloud.fabX.fabXaccess.device.ws.ServerToDeviceCommand
@@ -16,13 +16,15 @@ import cloud.fabX.fabXaccess.device.ws.ToolUnlockResponse
 import cloud.fabX.fabXaccess.device.ws.UnlockTool
 import cloud.fabX.fabXaccess.tool.givenTool
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
+import io.ktor.client.call.body
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.handleWebSocketConversation
-import io.ktor.server.testing.setBody
+import io.ktor.http.contentType
 import io.ktor.util.InternalAPI
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
@@ -38,7 +40,7 @@ import org.junit.jupiter.api.Test
 internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
 
     @Test
-    fun `when unlocking tool then sends command, receives answer, returns http no content`() = withTestApp {
+    fun `when unlocking tool then sends command, receives answer, returns http no content`() = withTestAppB {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"
@@ -48,16 +50,16 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
         givenToolAttachedToDevice(deviceId, 1, toolId)
 
         // when
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, outgoing ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val httpResultDeferred = async {
-                handleRequest(HttpMethod.Post, "/api/v1/device/$deviceId/unlock-tool") {
-                    addAdminAuth()
-                    addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    setBody(Json.encodeToString(ToolUnlockDetails(toolId)))
+                c().post("/api/v1/device/$deviceId/unlock-tool") {
+                    adminAuth()
+                    contentType(ContentType.Application.Json)
+                    setBody(ToolUnlockDetails(toolId))
                 }
             }
 
@@ -67,7 +69,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
             val response = ToolUnlockResponse(command.commandId)
             outgoing.send(Frame.Text(Json.encodeToString<DeviceResponse>(response)))
 
-            val httpResult = httpResultDeferred.await()
+            val httpResponse = httpResultDeferred.await()
 
             // then
             assertThat(command)
@@ -75,16 +77,13 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
                 .transform { it.toolId }
                 .isEqualTo(toolId)
 
-            assertThat(httpResult.response)
-                .all {
-                    transform { it.status() }.isEqualTo(HttpStatusCode.NoContent)
-                    transform { it.content }.isNullOrEmpty()
-                }
+            assertThat(httpResponse.status).isEqualTo(HttpStatusCode.NoContent)
+            assertThat(httpResponse.bodyAsText()).isEmpty()
         }
     }
 
     @Test
-    fun `given device does not respond when unlocking tool then returns http service unavailable`() = withTestApp {
+    fun `given device does not respond when unlocking tool then returns http service unavailable`() = withTestAppB {
         // given
         val mac = "aabb11cc22dd"
         val secret = "supersecret123"
@@ -94,16 +93,16 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
         givenToolAttachedToDevice(deviceId, 1, toolId)
 
         // when
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, _ ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val httpResultDeferred = async {
-                handleRequest(HttpMethod.Post, "/api/v1/device/$deviceId/unlock-tool") {
-                    addAdminAuth()
-                    addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                    setBody(Json.encodeToString(ToolUnlockDetails(toolId)))
+                c().post("/api/v1/device/$deviceId/unlock-tool") {
+                    adminAuth()
+                    contentType(ContentType.Application.Json)
+                    setBody(ToolUnlockDetails(toolId))
                 }
             }
 
@@ -112,7 +111,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
 
             // no response sent
 
-            val httpResult = httpResultDeferred.await()
+            val httpResponse = httpResultDeferred.await()
 
             // then
             assertThat(command)
@@ -120,9 +119,9 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
                 .transform { it.toolId }
                 .isEqualTo(toolId)
 
-            assertThat(httpResult.response.status()).isEqualTo(HttpStatusCode.ServiceUnavailable)
-            assertThat(httpResult.response.content)
-                .isError(
+            assertThat(httpResponse.status).isEqualTo(HttpStatusCode.ServiceUnavailable)
+            assertThat(httpResponse.body<Error>())
+                .isErrorB(
                     "DeviceTimeout",
                     "Timeout while waiting for response from device DeviceId(value=$deviceId).",
                     mapOf("deviceId" to deviceId)
@@ -131,28 +130,29 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
     }
 
     @Test
-    fun `given tool not attached to device when unlocking tool then returns http unprocessable entity`() = withTestApp {
-        // given
-        val deviceId = givenDevice(mac = "aabbccddeeff")
-        val toolId = ToolIdFixture.arbitrary().serialize()
+    fun `given tool not attached to device when unlocking tool then returns http unprocessable entity`() =
+        withTestAppB {
+            // given
+            val deviceId = givenDevice(mac = "aabbccddeeff")
+            val toolId = ToolIdFixture.arbitrary().serialize()
 
-        // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/device/$deviceId/unlock-tool") {
-            addAdminAuth()
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(ToolUnlockDetails(toolId)))
-        }
+            // when
+            val response = c().post("/api/v1/device/$deviceId/unlock-tool") {
+                adminAuth()
+                contentType(ContentType.Application.Json)
+                setBody(ToolUnlockDetails(toolId))
+            }
 
-        // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
-        assertThat(result.response.content)
-            .isError(
-                "ToolNotAttachedToDevice",
-                "Tool ToolId(value=$toolId) not attached to device DeviceId(value=$deviceId).",
-                mapOf(
-                    "deviceId" to deviceId,
-                    "toolId" to toolId
+            // then
+            assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+            assertThat(response.body<Error>())
+                .isErrorB(
+                    "ToolNotAttachedToDevice",
+                    "Tool ToolId(value=$toolId) not attached to device DeviceId(value=$deviceId).",
+                    mapOf(
+                        "deviceId" to deviceId,
+                        "toolId" to toolId
+                    )
                 )
-            )
-    }
+        }
 }

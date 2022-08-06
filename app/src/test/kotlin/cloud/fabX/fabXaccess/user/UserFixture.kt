@@ -14,7 +14,9 @@ import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
+import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -71,6 +73,21 @@ internal suspend fun ApplicationTestBuilder.givenUser(
     return response.bodyAsText()
 }
 
+internal suspend fun ApplicationTestBuilder.givenUserIsAdmin(
+    userId: String,
+    isAdmin: Boolean
+) {
+    val requestBody = IsAdminDetails(isAdmin)
+
+    val response = c().put("/api/v1/user/$userId/is-admin") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+}
+
 internal fun TestApplicationEngine.givenUserIsAdmin(
     userId: String,
     isAdmin: Boolean
@@ -86,6 +103,21 @@ internal fun TestApplicationEngine.givenUserIsAdmin(
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
 }
 
+internal suspend fun ApplicationTestBuilder.givenUserIsInstructorFor(
+    userId: String,
+    qualificationId: String
+) {
+    val requestBody = QualificationAdditionDetails(qualificationId)
+
+    val response = c().post("/api/v1/user/$userId/instructor-qualification") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+}
+
 internal fun TestApplicationEngine.givenUserIsInstructorFor(
     userId: String,
     qualificationId: String
@@ -99,6 +131,27 @@ internal fun TestApplicationEngine.givenUserIsInstructorFor(
     }
 
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+}
+
+internal suspend fun ApplicationTestBuilder.givenUserHasQualificationFor(
+    userId: String,
+    qualificationId: String
+) {
+    val instructorUserId = givenUser(wikiName = "instructor-$qualificationId")
+    val instructorUsername = "instructor.$qualificationId".replace('-', '.')
+    val instructorPassword = "instructorPassword123"
+    givenUsernamePasswordIdentity(instructorUserId, instructorUsername, instructorPassword)
+    givenUserIsInstructorFor(instructorUserId, qualificationId)
+
+    val requestBody = QualificationAdditionDetails(qualificationId)
+
+    val response = c().post("/api/v1/user/$userId/member-qualification") {
+        basicAuth(instructorUsername, instructorPassword)
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 }
 
 internal fun TestApplicationEngine.givenUserHasQualificationFor(
@@ -156,6 +209,23 @@ internal suspend fun ApplicationTestBuilder.givenUsernamePasswordIdentity(
     assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 }
 
+internal suspend fun ApplicationTestBuilder.givenCardIdentity(
+    userId: String,
+    cardId: String,
+    cardSecret: String
+) {
+    val requestBody = CardIdentity(cardId, cardSecret)
+
+    val response = c().post("/api/v1/user/$userId/identity/card") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.bodyAsText()).isEmpty()
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+}
+
 
 internal fun TestApplicationEngine.givenCardIdentity(
     userId: String,
@@ -172,6 +242,22 @@ internal fun TestApplicationEngine.givenCardIdentity(
 
     assertThat(result.response.content).isNull()
     assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
+}
+
+internal suspend fun ApplicationTestBuilder.givenPhoneNrIdentity(
+    userId: String,
+    phoneNr: String
+) {
+    val requestBody = PhoneNrIdentity(phoneNr)
+
+    val response = c().post("/api/v1/user/$userId/identity/phone") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.bodyAsText()).isEmpty()
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 }
 
 internal fun TestApplicationEngine.givenPhoneNrIdentity(
