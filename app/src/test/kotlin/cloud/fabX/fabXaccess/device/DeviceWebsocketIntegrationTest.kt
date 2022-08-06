@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.device
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
+import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.ws.AuthorizedToolsResponse
@@ -25,16 +26,16 @@ import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
-import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
-import io.ktor.websocket.readReason
 import io.ktor.websocket.readText
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class DeviceWebsocketIntegrationTest {
 
     @Test
@@ -49,8 +50,6 @@ internal class DeviceWebsocketIntegrationTest {
         assertThat(response.bodyAsText()).isEmpty()
     }
 
-    // TODO rewrite test to work with new test api
-    @Disabled
     @Test
     fun `given invalid authentication when connecting to websocket then returns http unauthorized`() = withTestApp {
         // given
@@ -59,16 +58,11 @@ internal class DeviceWebsocketIntegrationTest {
         c().webSocket("/api/v1/device/ws", {
             basicAuth("no.body", "secret123")
         }) {
-            val closingFrame = (incoming.receive() as Frame.Close)
-
-            assertThat(closingFrame)
-                .transform { it.readReason() }
-                .isEqualTo(
-                    CloseReason(
-                        CloseReason.Codes.VIOLATED_POLICY,
-                        "invalid authentication: UserNotFoundByIdentity(message=Not able to find user for given identity.)"
-                    )
-                )
+            try {
+                incoming.receive()
+            } catch (_: ClosedReceiveChannelException) {
+            }
+            assertThat(incoming.isClosedForReceive).isTrue()
         }
     }
 

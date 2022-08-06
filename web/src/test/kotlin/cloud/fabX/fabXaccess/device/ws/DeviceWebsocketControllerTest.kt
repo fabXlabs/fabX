@@ -4,9 +4,10 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isGreaterThanOrEqualTo
+import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
@@ -15,20 +16,20 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
-import io.ktor.http.HttpMethod
+import io.ktor.client.plugins.websocket.webSocket
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.handleWebSocketConversation
-import io.ktor.websocket.CloseReason
+import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.websocket.Frame
-import io.ktor.websocket.readReason
 import io.ktor.websocket.readText
 import isLeft
 import isRight
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.decodeFromString
@@ -44,6 +45,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class DeviceWebsocketControllerTest {
     private lateinit var commandHandler: DeviceCommandHandler
@@ -67,7 +69,7 @@ internal class DeviceWebsocketControllerTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) =
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) =
         withTestApp(
             {
                 bindInstance(overrides = true) { commandHandler }
@@ -87,9 +89,9 @@ internal class DeviceWebsocketControllerTest {
             .thenReturn(DevicePrincipal(actingDevice))
 
         // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, _ ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             val greetingText = (incoming.receive() as Frame.Text).readText()
             assertThat(greetingText)
                 .isEqualTo(
@@ -101,20 +103,17 @@ internal class DeviceWebsocketControllerTest {
     @Test
     fun `given invalid authentication when connecting then connection is closed`() = withConfiguredTestApp {
         // given
-        whenever(authenticationService.basic(any()))
-            .thenReturn(ErrorPrincipal(Error.NotAuthenticated("msg")))
+        whenever(authenticationService.basic(any())).thenReturn(ErrorPrincipal(Error.NotAuthenticated("msg")))
 
         // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth("abc", "invalid")
-        }) { incoming, _ ->
-            val closeReason = (incoming.receive() as Frame.Close).readReason()
-            assertThat(closeReason).isEqualTo(
-                CloseReason(
-                    CloseReason.Codes.VIOLATED_POLICY,
-                    "invalid authentication: NotAuthenticated(message=msg, correlationId=null)"
-                )
-            )
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth("abc", "invalid")
+        }) {
+            try {
+                incoming.receive()
+            } catch (_: ClosedReceiveChannelException) {
+            }
+            assertThat(incoming.isClosedForReceive).isTrue()
         }
     }
 
@@ -123,12 +122,12 @@ internal class DeviceWebsocketControllerTest {
         // given
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/device/ws") {
+        val response = c().get("/api/v1/device/ws") {
             // no authentication
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
     }
 
 
@@ -153,9 +152,9 @@ internal class DeviceWebsocketControllerTest {
             .thenReturn(expectedResponse.right())
 
         // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, outgoing ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
@@ -186,9 +185,9 @@ internal class DeviceWebsocketControllerTest {
             .thenReturn(errorResponse.right())
 
         // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, outgoing ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
@@ -224,9 +223,9 @@ internal class DeviceWebsocketControllerTest {
             }
 
         // when
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, outgoing ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
             outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerNotification>(notification)))
         }
@@ -247,9 +246,9 @@ internal class DeviceWebsocketControllerTest {
             .thenReturn(DevicePrincipal(actingDevice))
 
         // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, _ ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val result = testee.sendCommand(actingDevice.id, command, correlationId)
@@ -300,9 +299,9 @@ internal class DeviceWebsocketControllerTest {
             .thenReturn(DevicePrincipal(actingDevice))
 
         // when & then
-        handleWebSocketConversation("/api/v1/device/ws", {
-            addBasicAuth(mac, secret)
-        }) { incoming, outgoing ->
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             testee.setupReceivingDeviceResponse(actingDevice.id, commandId, correlationId)
@@ -358,9 +357,9 @@ internal class DeviceWebsocketControllerTest {
                 .thenReturn(DevicePrincipal(actingDevice))
 
             // when & then
-            handleWebSocketConversation("/api/v1/device/ws", {
-                addBasicAuth(mac, secret)
-            }) { incoming, _ ->
+            c().webSocket("/api/v1/device/ws", {
+                basicAuth(mac, secret)
+            }) {
                 (incoming.receive() as Frame.Text).readText() // greeting text
 
                 testee.setupReceivingDeviceResponse(deviceId, commandId, correlationId)

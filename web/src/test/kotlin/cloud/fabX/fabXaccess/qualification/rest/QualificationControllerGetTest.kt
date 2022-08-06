@@ -5,11 +5,9 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
-import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
@@ -17,11 +15,12 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
-import io.ktor.http.HttpMethod
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -58,7 +57,7 @@ internal class QualificationControllerGetTest {
         }
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { gettingQualification }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -70,15 +69,13 @@ internal class QualificationControllerGetTest {
             .thenReturn(setOf())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/qualification") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Qualification>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Qualification>>())
             .isEqualTo(setOf())
     }
 
@@ -127,15 +124,13 @@ internal class QualificationControllerGetTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/qualification") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/qualification") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Qualification>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Qualification>>())
             .containsExactlyInAnyOrder(mappedQualification1, mappedQualification2)
     }
 
@@ -166,15 +161,13 @@ internal class QualificationControllerGetTest {
                 .thenReturn(qualification.right())
 
             // when
-            val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
-                addBasicAuth(username, password)
+            val response = c().get("/api/v1/qualification/${qualificationId.serialize()}") {
+                basicAuth(username, password)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-            assertThat(result.response.content)
-                .isNotNull()
-                .isJson<Qualification>()
+            assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+            assertThat(response.body<Qualification>())
                 .isEqualTo(mappedQualification)
         }
 
@@ -189,13 +182,13 @@ internal class QualificationControllerGetTest {
                 .thenReturn(error.left())
 
             // when
-            val result = handleRequest(HttpMethod.Get, "/api/v1/qualification/${qualificationId.serialize()}") {
-                addBasicAuth(username, password)
+            val response = c().get("/api/v1/qualification/${qualificationId.serialize()}") {
+                basicAuth(username, password)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-            assertThat(result.response.content)
+            assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+            assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
                 .isError(
                     "QualificationNotFound",
                     "msg",

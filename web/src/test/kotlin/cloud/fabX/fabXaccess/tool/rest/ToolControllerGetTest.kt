@@ -4,11 +4,9 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
-import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.tool.application.GettingTool
@@ -19,11 +17,12 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
-import io.ktor.http.HttpMethod
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -60,7 +59,7 @@ internal class ToolControllerGetTest {
         }
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { gettingTool }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -72,15 +71,13 @@ internal class ToolControllerGetTest {
             .thenReturn(setOf())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/tool") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/tool") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Tool>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Tool>>())
             .isEqualTo(setOf())
     }
 
@@ -144,15 +141,13 @@ internal class ToolControllerGetTest {
             .thenReturn(setOf(tool1, tool2))
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/tool") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/tool") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<Tool>>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<Tool>>())
             .isEqualTo(setOf(mappedTool1, mappedTool2))
     }
 
@@ -191,15 +186,13 @@ internal class ToolControllerGetTest {
             .thenReturn(tool.right())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/tool/${toolId.serialize()}") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/tool/${toolId.serialize()}") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Tool>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Tool>())
             .isEqualTo(mappedTool)
     }
 
@@ -213,13 +206,13 @@ internal class ToolControllerGetTest {
             .thenReturn(error.left())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/tool/${toolId.serialize()}") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/tool/${toolId.serialize()}") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
                 "ToolNotFound",
                 "msg",

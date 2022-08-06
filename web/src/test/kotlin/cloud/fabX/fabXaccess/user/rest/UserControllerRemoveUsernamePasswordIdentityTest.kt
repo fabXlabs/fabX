@@ -4,21 +4,25 @@ import arrow.core.None
 import arrow.core.getOrElse
 import arrow.core.some
 import assertk.assertThat
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.basicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
+import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.handleRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -48,7 +52,7 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { removingUsernamePasswordIdentity }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -72,16 +76,13 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
         ).thenReturn(None)
 
         // when
-        val result = handleRequest(
-            HttpMethod.Delete,
-            "/api/v1/user/${userId.serialize()}/identity/username-password/$name"
-        ) {
-            addBasicAuth(username, password)
+        val response = c().delete("/api/v1/user/${userId.serialize()}/identity/username-password/$name") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
@@ -95,16 +96,17 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
                 .thenReturn(ErrorPrincipal(error))
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/username-password/username123"
+            val response = c().delete(
+                "/api/v1/user/${
+                    UserIdFixture.arbitrary().serialize()
+                }/identity/username-password/username123"
             ) {
-                addBasicAuth(username, password)
+                basicAuth(username, password)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-            assertThat(result.response.content)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
                 .isError(
                     "UserNotAdmin",
                     message
@@ -121,18 +123,13 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
                 .thenReturn(UserPrincipal(actingUser))
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
-                "/api/v1/user/$invalidUserId/identity/username-password/username123"
-            ) {
-                addBasicAuth(username, password)
+            val response = c().delete("/api/v1/user/$invalidUserId/identity/username-password/username123") {
+                basicAuth(username, password)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
-            assertThat(result.response.content)
-                .isNotNull()
-                .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
+            assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+            assertThat(response.bodyAsText()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
         }
 
     @Test
@@ -158,16 +155,13 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
             ).thenReturn(error.some())
 
             // when
-            val result = handleRequest(
-                HttpMethod.Delete,
-                "/api/v1/user/${userId.serialize()}/identity/username-password/$name"
-            ) {
-                addBasicAuth(username, password)
+            val response = c().delete("/api/v1/user/${userId.serialize()}/identity/username-password/$name") {
+                basicAuth(username, password)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
-            assertThat(result.response.content)
+            assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+            assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
                 .isError(
                     "UserIdentityNotFound",
                     "msg",

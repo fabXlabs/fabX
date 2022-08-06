@@ -4,12 +4,11 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
-import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
@@ -19,16 +18,16 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import io.ktor.server.testing.ApplicationTestBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -57,7 +56,7 @@ class DeviceControllerUnlockToolTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { unlockingTool }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -83,18 +82,15 @@ class DeviceControllerUnlockToolTest {
         ).thenReturn(Unit.right())
 
         // when
-        val result = handleRequest(
-            HttpMethod.Post,
-            "/api/v1/device/${deviceId.serialize()}/unlock-tool"
-        ) {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/device/${deviceId.serialize()}/unlock-tool") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
@@ -109,18 +105,15 @@ class DeviceControllerUnlockToolTest {
             .thenReturn(ErrorPrincipal(error))
 
         // when
-        val result = handleRequest(
-            HttpMethod.Post,
-            "/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/unlock-tool"
-        ) {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/unlock-tool") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
                 "UserNotAdmin",
                 message
@@ -138,20 +131,15 @@ class DeviceControllerUnlockToolTest {
             .thenReturn(UserPrincipal(actingUser))
 
         // when
-        val result = handleRequest(
-            HttpMethod.Post,
-            "/api/v1/device/$invalidDeviceId/unlock-tool"
-        ) {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/device/$invalidDeviceId/unlock-tool") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
+        assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+        assertThat(response.bodyAsText()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
     }
 
     @Test
@@ -179,18 +167,15 @@ class DeviceControllerUnlockToolTest {
         ).thenReturn(error.left())
 
         // when
-        val result = handleRequest(
-            HttpMethod.Post,
-            "/api/v1/device/${deviceId.serialize()}/unlock-tool"
-        ) {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/device/${deviceId.serialize()}/unlock-tool") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
-        assertThat(result.response.content)
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
                 "ReferencedToolNotFound",
                 "some message",

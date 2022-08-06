@@ -4,28 +4,32 @@ import arrow.core.None
 import arrow.core.getOrElse
 import arrow.core.some
 import assertk.assertThat
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.basicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
+import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -55,7 +59,7 @@ internal class UserControllerAddMemberQualificationTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { addingMemberQualification }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -79,15 +83,15 @@ internal class UserControllerAddMemberQualificationTest {
         ).thenReturn(None)
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/${userId.serialize()}/member-qualification") {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/${userId.serialize()}/member-qualification") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NoContent)
-        assertThat(result.response.content).isNull()
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
@@ -103,18 +107,15 @@ internal class UserControllerAddMemberQualificationTest {
                 .thenReturn(ErrorPrincipal(error))
 
             // when
-            val result = handleRequest(
-                HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification"
-            ) {
-                addBasicAuth(username, password)
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(Json.encodeToString(requestBody))
+            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification") {
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-            assertThat(result.response.content)
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+            assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
                 .isError(
                     "UserNotAdmin",
                     message
@@ -129,17 +130,14 @@ internal class UserControllerAddMemberQualificationTest {
                 .thenReturn(UserPrincipal(actingUser))
 
             // when
-            val result = handleRequest(
-                HttpMethod.Post,
-                "/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification"
-            ) {
-                addBasicAuth(username, password)
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/member-qualification") {
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
                 // no body
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
+            assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
         }
 
     @Test
@@ -154,16 +152,15 @@ internal class UserControllerAddMemberQualificationTest {
                 .thenReturn(UserPrincipal(actingUser))
 
             // when
-            val result = handleRequest(HttpMethod.Post, "/api/v1/user/$invalidUserId/member-qualification") {
-                addBasicAuth(username, password)
-                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-                setBody(Json.encodeToString(requestBody))
+            val response = c().post("/api/v1/user/$invalidUserId/member-qualification") {
+                basicAuth(username, password)
+                contentType(ContentType.Application.Json)
+                setBody(requestBody)
             }
 
             // then
-            assertThat(result.response.status()).isEqualTo(HttpStatusCode.BadRequest)
-            assertThat(result.response.content)
-                .isNotNull()
+            assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+            assertThat(response.bodyAsText())
                 .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
         }
 
@@ -189,15 +186,15 @@ internal class UserControllerAddMemberQualificationTest {
         ).thenReturn(error.some())
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/user/${userId.serialize()}/member-qualification") {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/user/${userId.serialize()}/member-qualification") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
-        assertThat(result.response.content)
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
                 "MemberQualificationAlreadyFound",
                 "msg123",

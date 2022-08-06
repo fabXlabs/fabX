@@ -4,10 +4,8 @@ import arrow.core.getOrElse
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
-import cloud.fabX.fabXaccess.common.rest.isJson
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.tool.application.AddingTool
@@ -16,16 +14,16 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
-import io.ktor.server.testing.setBody
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import io.ktor.server.testing.ApplicationTestBuilder
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -54,7 +52,7 @@ internal class ToolControllerAddTest {
         this.authenticationService = authenticationService
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { addingTool }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -93,15 +91,15 @@ internal class ToolControllerAddTest {
         ).thenReturn(toolId.right())
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/tool") {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/tool") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content).isEqualTo(toolId.serialize())
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.bodyAsText()).isEqualTo(toolId.serialize())
     }
 
     @Test
@@ -123,17 +121,15 @@ internal class ToolControllerAddTest {
             .thenReturn(ErrorPrincipal(error))
 
         // when
-        val result = handleRequest(HttpMethod.Post, "/api/v1/tool") {
-            addBasicAuth(username, password)
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(Json.encodeToString(requestBody))
+        val response = c().post("/api/v1/tool") {
+            basicAuth(username, password)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.Forbidden)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<cloud.fabX.fabXaccess.common.rest.Error>()
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .transform { it.message }
             .isEqualTo(message)
     }

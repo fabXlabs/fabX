@@ -38,11 +38,13 @@ import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.webModule
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.createTestEnvironment
-import io.ktor.server.testing.withApplication
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.testing.ApplicationTestBuilder
+import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
 import org.kodein.di.bindInstance
@@ -53,7 +55,7 @@ import org.mockito.Mockito
 
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
-    block: suspend TestApplicationEngine.() -> Unit
+    block: suspend ApplicationTestBuilder.() -> Unit
 ) {
     withTestApp(diSetup, {}, block)
 }
@@ -62,7 +64,7 @@ internal fun withTestApp(
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
     diGetter: (DI) -> Unit = {},
-    block: suspend TestApplicationEngine.() -> Unit
+    block: suspend ApplicationTestBuilder.() -> Unit
 ) {
     val testApp = DI {
         import(webModule)
@@ -117,16 +119,22 @@ internal fun withTestApp(
 
     diGetter(testApp)
 
-    // TODO `withApplication` is deprecated. Please use new `testApplication` API
-    withApplication(createTestEnvironment {
-        developmentMode = false
-        modules += webApp.moduleConfiguration
-    }) {
-        // TODO with ktor 2: refactor testing according design described here
-        //      https://youtrack.jetbrains.com/issue/KTOR-971
-        //      -> should enable virtual time for coroutines of test application
-        runTest {
-            block()
+    testApplication {
+        environment {
+            developmentMode = false
         }
+        application {
+            webApp.moduleConfiguration(this)
+        }
+        block()
+    }
+}
+
+internal fun ApplicationTestBuilder.c(): HttpClient {
+    return createClient {
+        install(ContentNegotiation) {
+            json()
+        }
+        install(WebSockets)
     }
 }

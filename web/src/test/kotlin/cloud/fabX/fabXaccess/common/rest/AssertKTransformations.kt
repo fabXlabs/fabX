@@ -9,14 +9,12 @@ import kotlinx.serialization.json.Json
 
 inline fun <reified T> Assert<String>.isJson() = transform { Json.decodeFromString<T>(it) }
 
-internal fun Assert<String?>.isError(
+internal fun Assert<Error>.isError(
     type: String,
     message: String,
     parameters: Map<String, String> = mapOf(),
     correlationId: String? = null
-) = isNotNull()
-    .isJson<Error>()
-    .all {
+) = all {
         transform { it.type }.isEqualTo(type)
         transform { it.message }.isEqualTo(message)
         transform { it.parameters }.isEqualTo(parameters)

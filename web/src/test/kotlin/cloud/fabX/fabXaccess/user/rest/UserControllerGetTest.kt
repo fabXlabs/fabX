@@ -6,23 +6,22 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
-import cloud.fabX.fabXaccess.common.rest.addBasicAuth
+import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
-import cloud.fabX.fabXaccess.common.rest.isJson
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import io.ktor.http.HttpMethod
+import io.ktor.client.call.body
+import io.ktor.client.request.basicAuth
+import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
-import io.ktor.server.testing.TestApplicationEngine
-import io.ktor.server.testing.handleRequest
+import io.ktor.server.testing.ApplicationTestBuilder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -59,7 +58,7 @@ class UserControllerGetTest {
         }
     }
 
-    private fun withConfiguredTestApp(block: suspend TestApplicationEngine.() -> Unit) = withTestApp({
+    private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
         bindInstance(overrides = true) { gettingUser }
         bindInstance(overrides = true) { authenticationService }
     }, block)
@@ -75,16 +74,13 @@ class UserControllerGetTest {
         ).thenReturn(setOf())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/user") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<User>>()
-            .isEqualTo(setOf())
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<User>>()).isEqualTo(setOf())
     }
 
     @Test
@@ -158,16 +154,13 @@ class UserControllerGetTest {
         )
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/user") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<Set<User>>()
-            .containsExactlyInAnyOrder(mappedUser1, mappedUser2)
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<User>>()).containsExactlyInAnyOrder(mappedUser1, mappedUser2)
     }
 
     @Test
@@ -211,16 +204,13 @@ class UserControllerGetTest {
         ).thenReturn(user.right())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user/${userId.serialize()}") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/user/${userId.serialize()}") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<User>()
-            .isEqualTo(mappedUser)
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<User>()).isEqualTo(mappedUser)
     }
 
     @Test
@@ -238,13 +228,13 @@ class UserControllerGetTest {
         ).thenReturn(error.left())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user/${userId.serialize()}") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/user/${userId.serialize()}") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.NotFound)
-        assertThat(result.response.content)
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
                 "UserNotFound",
                 "msg",
@@ -290,16 +280,13 @@ class UserControllerGetTest {
         ).thenReturn(user.right())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user/me") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/user/me") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.OK)
-        assertThat(result.response.content)
-            .isNotNull()
-            .isJson<User>()
-            .isEqualTo(mappedUser)
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<User>()).isEqualTo(mappedUser)
     }
 
     @Test
@@ -315,13 +302,13 @@ class UserControllerGetTest {
         ).thenReturn(error.left())
 
         // when
-        val result = handleRequest(HttpMethod.Get, "/api/v1/user/me") {
-            addBasicAuth(username, password)
+        val response = c().get("/api/v1/user/me") {
+            basicAuth(username, password)
         }
 
         // then
-        assertThat(result.response.status()).isEqualTo(HttpStatusCode.UnprocessableEntity)
-        assertThat(result.response.content)
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
                 "VersionConflict",
                 "some message",
