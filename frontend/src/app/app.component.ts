@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { DOCUMENT } from "@angular/common";
 import { Actions, ofActionCompleted, ofActionDispatched, Store } from "@ngxs/store";
-import { Users } from "./state/user.actions";
-import { FabxState } from "./state/fabx-state";
-import { Auth } from "./state/auth.actions";
 import { Navigate } from "@ngxs/router-plugin";
+import { Auth } from "./state/auth.actions";
+import { Devices } from "./state/device.actions";
+import { FabxState } from "./state/fabx-state";
 import { Qualifications } from "./state/qualification.action";
+import { Users } from "./state/user.actions";
 
 @Component({
     selector: 'fabx-root',
@@ -54,8 +55,9 @@ export class AppComponent implements OnInit {
 
     loadAll() {
         if (this.store.selectSnapshot(FabxState.isAuthenticated)) {
-            this.store.dispatch(Users.GetAll);
+            this.store.dispatch(Devices.GetAll);
             this.store.dispatch(Qualifications.GetAll);
+            this.store.dispatch(Users.GetAll);
         }
     }
 }

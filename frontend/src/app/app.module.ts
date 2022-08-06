@@ -36,10 +36,12 @@ import { QualificationsComponent } from './qualifications/qualifications.compone
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
+import { DevicesComponent } from './devices/devices.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        DevicesComponent,
         LoginComponent,
         NavbarComponent,
         QualificationAddComponent,

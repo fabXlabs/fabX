@@ -12,6 +12,9 @@ import { Navigate, RouterState, RouterStateModel } from "@ngxs/router-plugin";
 import { Qualification } from "../models/qualification.model";
 import { Qualifications } from "./qualification.action";
 import { QualificationService } from "../services/qualification.service";
+import { Device } from "../models/device.model";
+import { Devices } from "./device.actions";
+import { DeviceService } from "../services/device.service";
 
 export interface AuthModel {
     username: string,
@@ -28,7 +31,8 @@ export interface FabxStateModel {
     loggedInUserId: string | null,
     users: LoadingState<User[]>,
     usersSort: UserSortModel,
-    qualifications: LoadingState<Qualification[]>
+    qualifications: LoadingState<Qualification[]>,
+    devices: LoadingState<Device[]>
 }
 
 @State<FabxStateModel>({
@@ -41,7 +45,8 @@ export interface FabxStateModel {
             by: "isAdmin",
             order: "descending",
         },
-        qualifications: { tag: "LOADING" }
+        qualifications: { tag: "LOADING" },
+        devices: { tag: "LOADING" }
     }
 })
 @Injectable()
@@ -49,7 +54,8 @@ export class FabxState {
     constructor(
         private authService: AuthService,
         private userService: UserService,
-        private qualificationService: QualificationService
+        private qualificationService: QualificationService,
+        private deviceService: DeviceService,
     ) {}
 
     // AUTH
@@ -340,6 +346,39 @@ export class FabxState {
                         next: () => {
                             ctx.dispatch(new Navigate(['qualification', value]));
                         }
+                    });
+                }
+            })
+        );
+    }
+
+    // DEVICES
+    @Selector()
+    static devicesLoadingState(state: FabxStateModel): LoadingStateTag {
+        return state.devices.tag;
+    }
+
+    @Selector()
+    static devices(state: FabxStateModel): Device[] {
+        return getFinishedValueOrDefault(state.devices, []);
+    }
+
+    @Action(Devices.GetAll)
+    getAllDevices(ctx: StateContext<FabxStateModel>) {
+        ctx.patchState({
+            devices: { tag: "LOADING" }
+        });
+
+        return this.deviceService.getAllDevices().pipe(
+            tap({
+                next: value => {
+                    ctx.patchState({
+                        devices: { tag: "FINISHED", value: value }
+                    });
+                },
+                error: (err: HttpErrorResponse) => {
+                    ctx.patchState({
+                        devices: { tag: "ERROR", err: err }
                     });
                 }
             })
