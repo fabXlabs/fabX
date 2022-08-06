@@ -72,7 +72,7 @@ class DeviceWebsocketController(
                                     .flatMap {
                                         deserializeResponse(text)
                                             .map {
-                                                responseChannels.remove(it.commandId)?.send(it)
+                                                responseChannels[it.commandId]?.send(it)
                                                     ?: logger.warn("Received response for unknown command (id ${it.commandId})")
                                             }
                                             .swap()
