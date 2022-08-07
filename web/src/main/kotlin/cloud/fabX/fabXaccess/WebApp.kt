@@ -12,8 +12,6 @@ import cloud.fabX.fabXaccess.user.rest.UserController
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.ktor.plugins.spa.SinglePageApplication
-import io.ktor.plugins.spa.angular
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -23,6 +21,8 @@ import io.ktor.server.auth.basic
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.angular
+import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.CORS
@@ -50,22 +50,22 @@ class WebApp(
 
     val moduleConfiguration: Application.() -> Unit = {
         install(CORS) {
-            method(HttpMethod.Options)
-            method(HttpMethod.Get)
-            method(HttpMethod.Post)
-            method(HttpMethod.Put)
-            method(HttpMethod.Delete)
-            method(HttpMethod.Patch)
+            allowMethod(HttpMethod.Options)
+            allowMethod(HttpMethod.Get)
+            allowMethod(HttpMethod.Post)
+            allowMethod(HttpMethod.Put)
+            allowMethod(HttpMethod.Delete)
+            allowMethod(HttpMethod.Patch)
 
-            header(HttpHeaders.Accept)
-            header(HttpHeaders.AccessControlRequestHeaders)
-            header(HttpHeaders.AccessControlRequestMethod)
-            header(HttpHeaders.ContentType)
-            header(HttpHeaders.XForwardedProto)
-            header(HttpHeaders.Origin)
-            header(HttpHeaders.Referrer)
-            header(HttpHeaders.UserAgent)
-            header(HttpHeaders.Authorization)
+            allowHeader(HttpHeaders.Accept)
+            allowHeader(HttpHeaders.AccessControlRequestHeaders)
+            allowHeader(HttpHeaders.AccessControlRequestMethod)
+            allowHeader(HttpHeaders.ContentType)
+            allowHeader(HttpHeaders.XForwardedProto)
+            allowHeader(HttpHeaders.Origin)
+            allowHeader(HttpHeaders.Referrer)
+            allowHeader(HttpHeaders.UserAgent)
+            allowHeader(HttpHeaders.Authorization)
 
             anyHost()
 
@@ -105,13 +105,11 @@ class WebApp(
             masking = false
         }
 
-        // TODO wait for fix: https://youtrack.jetbrains.com/issue/KTOR-515
-        install(SinglePageApplication) {
-            angular("fabx-dashboard")
-            useResources = true
-        }
-
         routing {
+            singlePageApplication {
+                angular("fabx-dashboard")
+                useResources = true
+            }
             authenticate("api-basic") {
                 route("/api/v1") {
                     qualificationController.routes(this)
