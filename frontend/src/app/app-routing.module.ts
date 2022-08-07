@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from "./state/auth-guard";
+import { DeviceDetailsComponent } from "./device-details/device-details.component";
 import { DevicesComponent } from "./devices/devices.component";
 import { LoginComponent } from "./login/login.component";
 import { QualificationAddComponent } from "./qualification-add/qualification-add.component";
@@ -21,6 +22,7 @@ const routes: Routes = [
     { path: 'qualification/add', component: QualificationAddComponent, canActivate: [AuthGuard] },
     { path: 'qualification/:id', component: QualificationDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device', component: DevicesComponent, canActivate: [AuthGuard] },
+    { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

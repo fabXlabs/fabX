@@ -363,6 +363,17 @@ export class FabxState {
         return getFinishedValueOrDefault(state.devices, []);
     }
 
+    @Selector([RouterState])
+    static selectedDevice(state: FabxStateModel, router: RouterStateModel): Device | null {
+        const id = router.state?.root.firstChild?.params['id'];
+
+        if (state.devices.tag == "FINISHED" && id) {
+            const device = state.devices.value.find(device => device.id == id);
+            return device || null;
+        }
+        return null;
+    }
+
     @Action(Devices.GetAll)
     getAllDevices(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({

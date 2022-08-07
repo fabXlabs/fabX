@@ -26,6 +26,8 @@ import { environment } from "../environments/environment";
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthGuard } from "./state/auth-guard";
+import { DeviceDetailsComponent } from './device-details/device-details.component';
+import { DevicesComponent } from './devices/devices.component';
 import { FabxState } from "./state/fabx-state";
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -36,11 +38,11 @@ import { QualificationsComponent } from './qualifications/qualifications.compone
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
-import { DevicesComponent } from './devices/devices.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        DeviceDetailsComponent,
         DevicesComponent,
         LoginComponent,
         NavbarComponent,
