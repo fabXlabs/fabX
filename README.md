@@ -29,13 +29,15 @@ you require these or other features and would like to extend fabX, you're welcom
   backend can run on-site (i.e. in the LAN of the space), but e.g. multiple backend instances are currently not
   supported.
 
-## Requirements
-
-TODO
-
 ## Installation
 
-TODO
+fabX is provided as a [Docker](https://www.docker.com) image. Additionally, a Postgres database is required.
+See [docker-compose.yml](docker-compose.yml) for reference.
+
+For a simple deployment we recommend utilising [Heroku's free tier](https://www.heroku.com/pricing). See their
+documentation on
+[how to deploy an existing Docker image](https://devcenter.heroku.com/articles/container-registry-and-runtime#pushing-an-existing-image)
+. This process is shown in the [GitHub Action to deploy the DEV stage](.github/workflows/heroku-dev.yml). 
 
 ## Setup / Documentation
 
