@@ -39,6 +39,7 @@ import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { ToolsComponent } from './tools/tools.component';
+import { ToolDetailsComponent } from './tool-details/tool-details.component';
 
 @NgModule({
     declarations: [
@@ -54,6 +55,7 @@ import { ToolsComponent } from './tools/tools.component';
         UserDetailsComponent,
         UsersComponent,
         ToolsComponent,
+        ToolDetailsComponent,
     ],
     imports: [
         BrowserAnimationsModule,

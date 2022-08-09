@@ -1,6 +1,7 @@
 export interface Tool {
     id: string,
     aggregateVersion: number,
+    name: string,
     type: ToolType,
     time: number,
     idleState: IdleState,

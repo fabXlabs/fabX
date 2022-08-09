@@ -12,11 +12,14 @@
                 <div class="text-900 w-8">{{device.name}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
-                <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">background</div>
+                <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">background
+                </div>
                 <div class="text-900 w-8">{{device.background}}</div>
             </li>
-            <li class="flex align-items-center py-3 px-2 flex-wrap">
-                <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">backup backend url</div>
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">backup backend
+                    url
+                </div>
                 <div class="text-900 w-8">{{device.backupBackendUrl}}</div>
             </li>
         </ul>
@@ -24,12 +27,15 @@
         <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">Tools</div>
         <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
-                <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">attached tools</div>
+                <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">attached
+                    tools
+                </div>
                 <div class="text-900 w-8">
                     <ul>
                         <!--suppress TypeScriptValidateTypes -->
                         <li *ngFor="let tool of (device.attachedTools | keyvalue)">
-                            {{tool.key}}: <pre class="inline ">{{tool.value}}</pre>
+                            {{tool.key}}:
+                            <pre class="inline ">{{tool.value}}</pre>
                         </li>
                     </ul>
                 </div>

@@ -452,6 +452,17 @@ export class FabxState {
         return getFinishedValueOrDefault(state.tools, []);
     }
 
+    @Selector([RouterState])
+    static selectedTool(state: FabxStateModel, router: RouterStateModel): Tool | null {
+        const id = router.state?.root.firstChild?.params['id'];
+
+        if (state.tools.tag == "FINISHED" && id) {
+            const tool = state.tools.value.find(tool => tool.id == id);
+            return tool || null;
+        }
+        return null;
+    }
+
     @Action(Tools.GetAll)
     getAllTools(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
