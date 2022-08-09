@@ -50,17 +50,22 @@
                         </div>
                     </div>
                     <div>
-                        <p-splitButton label="Add" [model]="items"></p-splitButton>
+                        <p-splitButton label="Add" [model]="memberQualificationItems"></p-splitButton>
                     </div>
                 </div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">instructor qualifications</div>
-                <div class="text-900 w-8">
-                    <div *ngFor="let q of user.instructorQualifications"
-                         class="inline-block p-1 m-1 border-round text-300 text-sm"
-                         [style.background-color]="q.colour">
-                        {{q.name}}
+                <div class="text-900 w-8 flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div *ngFor="let q of user.instructorQualifications"
+                             class="inline-block p-1 m-1 border-round text-300 text-sm"
+                             [style.background-color]="q.colour">
+                            {{q.name}}
+                        </div>
+                    </div>
+                    <div>
+                        <p-splitButton label="Add" [model]="instructorQualificationItems"></p-splitButton>
                     </div>
                 </div>
             </li>

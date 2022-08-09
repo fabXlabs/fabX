@@ -15,18 +15,33 @@ import { Users } from "../state/user.actions";
 export class UserDetailsComponent implements OnDestroy {
 
     @Select(FabxState.selectedUser) user$!: Observable<UserVM>;
-    @Select(FabxState.availableMemberQualificationsForSelectedUser) missingMemberQualifications$!: Observable<Qualification[]>;
-    private subscription: Subscription;
+    @Select(FabxState.availableMemberQualificationsForSelectedUser) availableMemberQualifications$!: Observable<Qualification[]>;
+    @Select(FabxState.availableInstructorQualificationsForSelectedUser) availableInstructorQualifications$!: Observable<Qualification[]>;
+    private availableMemberQualificationsSubscription: Subscription;
+    private availableInstructorQualificationsSubscription: Subscription;
 
-    items: MenuItem[] = [];
+    memberQualificationItems: MenuItem[] = [];
+    instructorQualificationItems: MenuItem[] = [];
 
     constructor(private store: Store) {
-        this.subscription = this.missingMemberQualifications$.subscribe({
+        this.availableMemberQualificationsSubscription = this.availableMemberQualifications$.subscribe({
             next: value => {
-                this.items = value.map(qualification => {
+                this.memberQualificationItems = value.map(qualification => {
                     return {
                         label: qualification.name,
                         command: _ => this.addMemberQualification(qualification.id)
+                    };
+                });
+            }
+        });
+
+        this.availableInstructorQualificationsSubscription = this.availableInstructorQualifications$.subscribe({
+            next: value => {
+                this.instructorQualificationItems = value.map(qualification => {
+                    console.log("add i: ", qualification);
+                    return {
+                        label: qualification.name,
+                        command: _ => this.addInstructorQualification(qualification.id)
                     };
                 });
             }
@@ -40,7 +55,14 @@ export class UserDetailsComponent implements OnDestroy {
         ));
     }
 
+    addInstructorQualification(qualificationId: string) {
+        this.store.dispatch(new Users.AddInstructorQualification(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            qualificationId
+        ));
+    }
+
     ngOnDestroy(): void {
-        this.subscription.unsubscribe();
+        this.availableMemberQualificationsSubscription.unsubscribe();
     }
 }

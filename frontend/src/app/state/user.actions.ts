@@ -29,4 +29,10 @@ export namespace Users {
 
         constructor(public userId: string, public qualificationId: string) {}
     }
+
+    export class AddInstructorQualification {
+        static readonly type = "[fabX Users] Add Instructor Qualification"
+
+        constructor(public userId: string, public qualificationId: string) {}
+    }
 }

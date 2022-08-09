@@ -188,6 +188,29 @@ export class FabxState {
         return [];
     }
 
+    @Selector([RouterState])
+    static availableInstructorQualificationsForSelectedUser(state: FabxStateModel, router: RouterStateModel): Qualification[] {
+        const userId = router.state?.root.firstChild?.params['id'];
+
+        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+
+        const loggedInUserIsAdmin = this.loggedInUser(state)?.isAdmin || false;
+
+        if (state.users.tag == "FINISHED" && userId && loggedInUserIsAdmin) {
+            const user = state.users.value.find(user => user.id == userId);
+            if (user) {
+                return qualifications.filter(qualification => {
+                    if (user.instructorQualifications) {
+                        return !user.instructorQualifications.some(qualificationId => qualification.id === qualificationId);
+                    } else {
+                        return true;
+                    }
+                });
+            }
+        }
+        return [];
+    }
+
     @Selector()
     static loggedInUser(state: FabxStateModel): User | null {
         if (state.users.tag == "FINISHED" && state.loggedInUserId) {
@@ -266,6 +289,15 @@ export class FabxState {
     @Action(Users.AddMemberQualification)
     addMemberQualification(ctx: StateContext<FabxStateModel>, action: Users.AddMemberQualification) {
         return this.userService.addMemberQualification(action.userId, action.qualificationId).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
+    @Action(Users.AddInstructorQualification)
+    addInstructorQualification(ctx: StateContext<FabxStateModel>, action: Users.AddInstructorQualification) {
+        return this.userService.addInstructorQualification(action.userId, action.qualificationId).pipe(
             tap({
                 next: _ => ctx.dispatch(new Users.GetById(action.userId))
             })

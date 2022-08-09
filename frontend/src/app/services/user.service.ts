@@ -52,5 +52,20 @@ export class UserService {
             }
         );
     }
+
+    public addInstructorQualification(userId: string, qualificationId: string): Observable<string> {
+        const details: QualificationAdditionDetails = {
+            qualificationId: qualificationId
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/instructor-qualification`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
 }
 
