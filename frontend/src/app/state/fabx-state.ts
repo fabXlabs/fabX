@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Action, Selector, State, StateContext } from "@ngxs/store";
 import { UserService } from "../services/user.service";
-import { User, UserVM } from "../models/user.model";
+import { AugmentedUser, User } from "../models/user.model";
 import { Users } from "./user.actions";
 import { tap } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -15,7 +15,7 @@ import { QualificationService } from "../services/qualification.service";
 import { Device } from "../models/device.model";
 import { Devices } from "./device.actions";
 import { DeviceService } from "../services/device.service";
-import { Tool } from "../models/tool.model";
+import { AugmentedTool, Tool } from "../models/tool.model";
 import { Tools } from "./tool.actions";
 import { ToolService } from "../services/tool.service";
 
@@ -107,14 +107,14 @@ export class FabxState {
 
 
     @Selector()
-    static users(state: FabxStateModel): UserVM[] {
+    static users(state: FabxStateModel): AugmentedUser[] {
         let qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
-        let users: UserVM[] = [...getFinishedValueOrDefault(state.users, [])]
+        let users: AugmentedUser[] = [...getFinishedValueOrDefault(state.users, [])]
             .map(user => this.augmentUserWithQualifications(user, qualifications));
 
         let orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
 
-        return users.sort((a: UserVM, b: UserVM) => {
+        return users.sort((a: AugmentedUser, b: AugmentedUser) => {
             let aVal = a[state.usersSort.by] || false;
             let bVal = b[state.usersSort.by] || false;
 
@@ -139,7 +139,7 @@ export class FabxState {
     }
 
     @Selector([RouterState])
-    static selectedUser(state: FabxStateModel, router: RouterStateModel): UserVM | null {
+    static selectedUser(state: FabxStateModel, router: RouterStateModel): AugmentedUser | null {
         const id = router.state?.root.firstChild?.params['id'];
 
         const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
@@ -153,7 +153,7 @@ export class FabxState {
         return null;
     }
 
-    private static augmentUserWithQualifications(user: User, qualifications: Qualification[]): UserVM {
+    private static augmentUserWithQualifications(user: User, qualifications: Qualification[]): AugmentedUser {
         const memberQualifications = user.memberQualifications
             .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
             .filter((q): q is Qualification => !!q)
@@ -448,17 +448,23 @@ export class FabxState {
     }
 
     @Selector()
-    static tools(state: FabxStateModel): Tool[] {
-        return getFinishedValueOrDefault(state.tools, []);
+    static tools(state: FabxStateModel): AugmentedTool[] {
+        let qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+        return getFinishedValueOrDefault(state.tools, [])
+            .map(tool => this.augmentToolWithQualifications(tool, qualifications));
     }
 
     @Selector([RouterState])
-    static selectedTool(state: FabxStateModel, router: RouterStateModel): Tool | null {
+    static selectedTool(state: FabxStateModel, router: RouterStateModel): AugmentedTool | null {
         const id = router.state?.root.firstChild?.params['id'];
+
+        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
 
         if (state.tools.tag == "FINISHED" && id) {
             const tool = state.tools.value.find(tool => tool.id == id);
-            return tool || null;
+            if (tool) {
+                return this.augmentToolWithQualifications(tool, qualifications);
+            }
         }
         return null;
     }
@@ -483,5 +489,19 @@ export class FabxState {
                 }
             })
         );
+    }
+
+    private static augmentToolWithQualifications(tool: Tool, qualifications: Qualification[]): AugmentedTool {
+        const requiredQualifications = tool.requiredQualifications
+            .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
+            .filter((q): q is Qualification => !!q)
+            .sort((a: Qualification, b: Qualification) => {
+                return a.orderNr - b.orderNr;
+            });
+
+        return {
+            ...tool,
+            requiredQualifications: requiredQualifications
+        };
     }
 }

@@ -13,7 +13,7 @@ export interface User {
     isAdmin: boolean
 }
 
-export interface UserVM {
+export interface AugmentedUser {
     id: string,
     aggregateVersion: number,
     firstName: string,

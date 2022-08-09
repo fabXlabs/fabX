@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable } from "rxjs";
-import { Tool } from "../models/tool.model";
+import { AugmentedTool } from "../models/tool.model";
 
 @Component({
     selector: 'fabx-tool-details',
@@ -11,7 +11,7 @@ import { Tool } from "../models/tool.model";
 })
 export class ToolDetailsComponent {
 
-    @Select(FabxState.selectedTool) tool$!: Observable<Tool>;
+    @Select(FabxState.selectedTool) tool$!: Observable<AugmentedTool>;
 
     constructor(private store: Store) { }
 }

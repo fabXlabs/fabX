@@ -45,11 +45,11 @@
                     required qualifications
                 </div>
                 <div class="text-900 w-8">
-                    <ul class="m-0">
-                        <li *ngFor="let q of tool.requiredQualifications">
-                            <pre class="inline">{{q}}</pre>
-                        </li>
-                    </ul>
+                    <div *ngFor="let q of tool.requiredQualifications"
+                         class="inline-block p-1 m-1 border-round text-300 text-sm"
+                         [style.background-color]="q.colour">
+                        {{q.name}}
+                    </div>
                 </div>
             </li>
         </ul>

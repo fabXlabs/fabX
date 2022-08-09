@@ -3,7 +3,7 @@ import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable } from "rxjs";
 import { LoadingStateTag } from "../state/loading-state.model";
-import { Tool } from "../models/tool.model";
+import { AugmentedTool } from "../models/tool.model";
 
 @Component({
     selector: 'fabx-tools',
@@ -13,7 +13,7 @@ import { Tool } from "../models/tool.model";
 export class ToolsComponent {
 
     @Select(FabxState.toolsLoadingState) loading$!: Observable<LoadingStateTag>;
-    @Select(FabxState.tools) tools$!: Observable<Tool[]>;
+    @Select(FabxState.tools) tools$!: Observable<AugmentedTool[]>;
 
     constructor(private store: Store) { }
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { Observable } from "rxjs";
-import { User, UserVM } from "../models/user.model";
+import { User, AugmentedUser } from "../models/user.model";
 import { Users } from "../state/user.actions";
 import { FabxState } from "../state/fabx-state";
 import { LoadingStateTag } from "../state/loading-state.model";
@@ -15,7 +15,7 @@ import { LazyLoadEvent } from "primeng/api";
 export class UsersComponent {
 
     @Select(FabxState.usersLoadingState) loading$!: Observable<LoadingStateTag>;
-    @Select(FabxState.users) users$!: Observable<UserVM[]>;
+    @Select(FabxState.users) users$!: Observable<AugmentedUser[]>;
 
     constructor(private store: Store) {}
 

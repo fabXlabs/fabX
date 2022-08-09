@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable, Subscription } from "rxjs";
-import { UserVM } from "../models/user.model";
+import { AugmentedUser } from "../models/user.model";
 import { Qualification } from "../models/qualification.model";
 import { MenuItem } from "primeng/api";
 import { Users } from "../state/user.actions";
@@ -14,7 +14,7 @@ import { Users } from "../state/user.actions";
 })
 export class UserDetailsComponent implements OnDestroy {
 
-    @Select(FabxState.selectedUser) user$!: Observable<UserVM>;
+    @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
     @Select(FabxState.availableMemberQualificationsForSelectedUser) availableMemberQualifications$!: Observable<Qualification[]>;
     @Select(FabxState.availableInstructorQualificationsForSelectedUser) availableInstructorQualifications$!: Observable<Qualification[]>;
     private availableMemberQualificationsSubscription: Subscription;
