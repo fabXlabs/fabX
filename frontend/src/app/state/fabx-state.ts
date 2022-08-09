@@ -151,12 +151,18 @@ export class FabxState {
         const memberQualifications = user.memberQualifications
             .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
             .filter((q): q is Qualification => !!q)
+            .sort((a: Qualification, b: Qualification) => {
+                return a.orderNr - b.orderNr;
+            });
 
         let instructorQualifications: Qualification[] = [];
         if (user.instructorQualifications) {
             instructorQualifications = user.instructorQualifications
                 .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
-                .filter((q): q is Qualification => !!q);
+                .filter((q): q is Qualification => !!q)
+                .sort((a: Qualification, b: Qualification) => {
+                    return a.orderNr - b.orderNr;
+                });
         }
 
         return {
