@@ -12,7 +12,7 @@ import { Navigate, RouterState, RouterStateModel } from "@ngxs/router-plugin";
 import { Qualification } from "../models/qualification.model";
 import { Qualifications } from "./qualification.action";
 import { QualificationService } from "../services/qualification.service";
-import { Device } from "../models/device.model";
+import { AugmentedDevice, Device } from "../models/device.model";
 import { Devices } from "./device.actions";
 import { DeviceService } from "../services/device.service";
 import { AugmentedTool, Tool } from "../models/tool.model";
@@ -108,11 +108,11 @@ export class FabxState {
 
     @Selector()
     static users(state: FabxStateModel): AugmentedUser[] {
-        let qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
-        let users: AugmentedUser[] = [...getFinishedValueOrDefault(state.users, [])]
+        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
+        const users: AugmentedUser[] = [...getFinishedValueOrDefault(state.users, [])]
             .map(user => this.augmentUserWithQualifications(user, qualifications));
 
-        let orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
+        const orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
 
         return users.sort((a: AugmentedUser, b: AugmentedUser) => {
             let aVal = a[state.usersSort.by] || false;
@@ -142,7 +142,7 @@ export class FabxState {
     static selectedUser(state: FabxStateModel, router: RouterStateModel): AugmentedUser | null {
         const id = router.state?.root.firstChild?.params['id'];
 
-        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
 
         if (state.users.tag == "FINISHED" && id) {
             const user = state.users.value.find(user => user.id == id);
@@ -182,7 +182,7 @@ export class FabxState {
     static availableMemberQualificationsForSelectedUser(state: FabxStateModel, router: RouterStateModel): Qualification[] {
         const userId = router.state?.root.firstChild?.params['id'];
 
-        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
 
         const instructorQualificationsOfLoggedInUser = this.loggedInUser(state)?.instructorQualifications;
 
@@ -204,7 +204,7 @@ export class FabxState {
     static availableInstructorQualificationsForSelectedUser(state: FabxStateModel, router: RouterStateModel): Qualification[] {
         const userId = router.state?.root.firstChild?.params['id'];
 
-        const qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
 
         const loggedInUserIsAdmin = this.loggedInUser(state)?.isAdmin || false;
 
@@ -403,17 +403,23 @@ export class FabxState {
     }
 
     @Selector()
-    static devices(state: FabxStateModel): Device[] {
-        return getFinishedValueOrDefault(state.devices, []);
+    static devices(state: FabxStateModel): AugmentedDevice[] {
+        const tools: Tool[] = getFinishedValueOrDefault(state.tools, []);
+        return getFinishedValueOrDefault(state.devices, [])
+            .map(device => this.augmentDeviceWithTools(device, tools));
     }
 
     @Selector([RouterState])
-    static selectedDevice(state: FabxStateModel, router: RouterStateModel): Device | null {
+    static selectedDevice(state: FabxStateModel, router: RouterStateModel): AugmentedDevice | null {
         const id = router.state?.root.firstChild?.params['id'];
+
+        const tools: Tool[] = getFinishedValueOrDefault(state.tools, []);
 
         if (state.devices.tag == "FINISHED" && id) {
             const device = state.devices.value.find(device => device.id == id);
-            return device || null;
+            if (device) {
+                return this.augmentDeviceWithTools(device, tools);
+            }
         }
         return null;
     }
@@ -440,6 +446,18 @@ export class FabxState {
         );
     }
 
+    private static augmentDeviceWithTools(device: Device, tools: Tool[]): AugmentedDevice {
+        const attachedTools = Array.from(
+            Object.entries(device.attachedTools),
+            ([pin, toolId]) => [Number(pin), tools.find(tool => tool.id == toolId)!]
+        ).filter(([_, v]) => v);
+
+        return {
+            ...device,
+            attachedTools: Object.fromEntries(attachedTools)
+        }
+    }
+
     // TOOLS
 
     @Selector()
@@ -449,7 +467,7 @@ export class FabxState {
 
     @Selector()
     static tools(state: FabxStateModel): AugmentedTool[] {
-        let qualifications: Qualification[] = [...getFinishedValueOrDefault(state.qualifications, [])];
+        let qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
         return getFinishedValueOrDefault(state.tools, [])
             .map(tool => this.augmentToolWithQualifications(tool, qualifications));
     }

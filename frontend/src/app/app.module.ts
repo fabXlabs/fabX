@@ -27,7 +27,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthGuard } from "./state/auth-guard";
 import { DeviceDetailsComponent } from './device-details/device-details.component';
-import { DevicesComponent } from './devices/devices.component';
+import { AttachedToolNames, DevicesComponent } from './devices/devices.component';
 import { FabxState } from "./state/fabx-state";
 import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
@@ -35,15 +35,16 @@ import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { QualificationAddComponent } from './qualification-add/qualification-add.component';
 import { QualificationDetailsComponent } from './qualification-details/qualification-details.component';
 import { QualificationsComponent } from './qualifications/qualifications.component';
+import { ToolDetailsComponent } from './tool-details/tool-details.component';
+import { ToolsComponent } from './tools/tools.component';
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
-import { ToolsComponent } from './tools/tools.component';
-import { ToolDetailsComponent } from './tool-details/tool-details.component';
 
 @NgModule({
     declarations: [
         AppComponent,
+        AttachedToolNames,
         DeviceDetailsComponent,
         DevicesComponent,
         LoginComponent,
@@ -51,11 +52,11 @@ import { ToolDetailsComponent } from './tool-details/tool-details.component';
         QualificationAddComponent,
         QualificationDetailsComponent,
         QualificationsComponent,
+        ToolDetailsComponent,
+        ToolsComponent,
         UserAddComponent,
         UserDetailsComponent,
         UsersComponent,
-        ToolsComponent,
-        ToolDetailsComponent,
     ],
     imports: [
         BrowserAnimationsModule,

@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Pipe, PipeTransform } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable } from "rxjs";
 import { LoadingStateTag } from "../state/loading-state.model";
 import { Device } from "../models/device.model";
+import { Tool } from "../models/tool.model";
 
 @Component({
     selector: 'fabx-devices',
@@ -16,4 +17,12 @@ export class DevicesComponent {
     @Select(FabxState.devices) devices$!: Observable<Device[]>;
 
     constructor(private store: Store) { }
+}
+
+@Pipe({ name: 'attachedToolNames' })
+export class AttachedToolNames implements PipeTransform {
+    transform(value: Record<number, Tool>): string {
+        const tools: Tool[] = Object.values(value);
+        return tools.map(tool => tool.name).join(", ");
+    }
 }

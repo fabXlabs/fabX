@@ -34,8 +34,7 @@
                     <ul>
                         <!--suppress TypeScriptValidateTypes -->
                         <li *ngFor="let tool of (device.attachedTools | keyvalue)">
-                            {{tool.key}}:
-                            <pre class="inline ">{{tool.value}}</pre>
+                            <a routerLink="/tool/{{tool.value.id}}">{{tool.key}}: {{tool.value.name}}</a>
                         </li>
                     </ul>
                 </div>

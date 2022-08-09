@@ -9,12 +9,14 @@
     <ng-template pTemplate="header">
         <tr>
             <th>Name</th>
+            <th>Attached Devices</th>
         </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-device>
         <tr routerLink="/device/{{device.id}}" class="cursor-pointer">
             <td>{{device.name}}</td>
+            <td>{{device.attachedTools | attachedToolNames}}</td>
         </tr>
     </ng-template>
 </p-table>
