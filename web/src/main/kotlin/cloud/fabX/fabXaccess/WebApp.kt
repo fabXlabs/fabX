@@ -26,6 +26,9 @@ import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.CORS
+import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
+import io.ktor.server.plugins.httpsredirect.HttpsRedirect
+import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
@@ -71,6 +74,11 @@ class WebApp(
 
             allowNonSimpleContentTypes = true
         }
+
+        install(HttpsRedirect) {
+            exclude { it.request.origin.host == "localhost" }
+        }
+        install(XForwardedHeaders)
 
         install(ContentNegotiation) {
             json(Json {

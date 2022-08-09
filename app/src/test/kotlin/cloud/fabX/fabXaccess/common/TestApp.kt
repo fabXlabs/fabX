@@ -20,9 +20,12 @@ import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import cloud.fabX.fabXaccess.webModule
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.header
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
@@ -188,6 +191,9 @@ internal fun ApplicationTestBuilder.c(): HttpClient {
             json()
         }
         install(WebSockets)
+        defaultRequest {
+            header(HttpHeaders.XForwardedProto, "https")
+        }
     }
 }
 
