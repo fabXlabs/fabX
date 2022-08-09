@@ -4,7 +4,7 @@ val logbackVersion: String by rootProject
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.20"
 }
 
 dependencies {

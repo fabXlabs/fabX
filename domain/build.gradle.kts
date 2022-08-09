@@ -5,7 +5,7 @@ val assertKVersion: String by project
 plugins {
     kotlin("jvm")
     `java-test-fixtures`
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.20"
 }
 
 dependencies {
