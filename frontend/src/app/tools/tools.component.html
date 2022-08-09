@@ -21,12 +21,12 @@
             <td>
                 <i *ngIf="tool.type == 'UNLOCK'" class="pi pi-unlock mx-1"></i>
                 <i *ngIf="tool.type == 'KEEP'" class="pi pi-id-card mx-1"></i>
-                {{tool.type}}
+                <span class="text-hidden md:text-base">{{tool.type}}</span>
             </td>
             <td>
                 <i *ngIf="tool.enabled" class="pi pi-check mx-1"></i>
                 <i *ngIf="!tool.enabled" class="pi pi-times mx-1"></i>
-                {{tool.enabled}}
+                <span class="text-hidden md:text-base">{{tool.enabled}}</span>
             </td>
             <td>
                 <ul class="m-0">
