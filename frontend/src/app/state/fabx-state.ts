@@ -15,6 +15,9 @@ import { QualificationService } from "../services/qualification.service";
 import { Device } from "../models/device.model";
 import { Devices } from "./device.actions";
 import { DeviceService } from "../services/device.service";
+import { Tool } from "../models/tool.model";
+import { Tools } from "./tool.actions";
+import { ToolService } from "../services/tool.service";
 
 export interface AuthModel {
     username: string,
@@ -32,7 +35,8 @@ export interface FabxStateModel {
     users: LoadingState<User[]>,
     usersSort: UserSortModel,
     qualifications: LoadingState<Qualification[]>,
-    devices: LoadingState<Device[]>
+    devices: LoadingState<Device[]>,
+    tools: LoadingState<Tool[]>
 }
 
 @State<FabxStateModel>({
@@ -46,7 +50,8 @@ export interface FabxStateModel {
             order: "descending",
         },
         qualifications: { tag: "LOADING" },
-        devices: { tag: "LOADING" }
+        devices: { tag: "LOADING" },
+        tools: { tag: "LOADING" }
     }
 })
 @Injectable()
@@ -56,6 +61,7 @@ export class FabxState {
         private userService: UserService,
         private qualificationService: QualificationService,
         private deviceService: DeviceService,
+        private toolService: ToolService,
     ) {}
 
     // AUTH
@@ -428,6 +434,40 @@ export class FabxState {
                 error: (err: HttpErrorResponse) => {
                     ctx.patchState({
                         devices: { tag: "ERROR", err: err }
+                    });
+                }
+            })
+        );
+    }
+
+    // TOOLS
+
+    @Selector()
+    static toolsLoadingState(state: FabxStateModel): LoadingStateTag {
+        return state.tools.tag;
+    }
+
+    @Selector()
+    static tools(state: FabxStateModel): Tool[] {
+        return getFinishedValueOrDefault(state.tools, []);
+    }
+
+    @Action(Tools.GetAll)
+    getAllTools(ctx: StateContext<FabxStateModel>) {
+        ctx.patchState({
+            tools: { tag: "LOADING" }
+        });
+
+        return this.toolService.getAllTools().pipe(
+            tap({
+                next: value => {
+                    ctx.patchState({
+                        tools: { tag: "FINISHED", value: value }
+                    });
+                },
+                error: (err: HttpErrorResponse) => {
+                    ctx.patchState({
+                        tools: { tag: "ERROR", err: err }
                     });
                 }
             })

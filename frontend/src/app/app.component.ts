@@ -7,6 +7,7 @@ import { Devices } from "./state/device.actions";
 import { FabxState } from "./state/fabx-state";
 import { Qualifications } from "./state/qualification.action";
 import { Users } from "./state/user.actions";
+import { Tools } from "./state/tool.actions";
 
 @Component({
     selector: 'fabx-root',
@@ -55,6 +56,7 @@ export class AppComponent implements OnInit {
 
     loadAll() {
         if (this.store.selectSnapshot(FabxState.isAuthenticated)) {
+            this.store.dispatch(Tools.GetAll);
             this.store.dispatch(Devices.GetAll);
             this.store.dispatch(Qualifications.GetAll);
             this.store.dispatch(Users.GetAll);

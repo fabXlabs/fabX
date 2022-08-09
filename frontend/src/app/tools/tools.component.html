@@ -1,0 +1,40 @@
+<p-table [value]="(tools$ | async)!"
+         [loading]="(loading$ | async)! === 'LOADING'"
+         [showLoader]="false"
+         [lazy]="false"
+         styleClass="p-datatable-m"
+         responsiveLayout="scroll"
+         selectionMode="single"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Enabled</th>
+            <th>Qualifications</th>
+        </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-tool>
+        <tr routerLink="/tool/{{tool.id}}" class="cursor-pointer">
+            <td>{{tool.name}}</td>
+            <td>
+                <i *ngIf="tool.type == 'UNLOCK'" class="pi pi-unlock mx-1"></i>
+                <i *ngIf="tool.type == 'KEEP'" class="pi pi-id-card mx-1"></i>
+                {{tool.type}}
+            </td>
+            <td>
+                <i *ngIf="tool.enabled" class="pi pi-check mx-1"></i>
+                <i *ngIf="!tool.enabled" class="pi pi-times mx-1"></i>
+                {{tool.enabled}}
+            </td>
+            <td>
+                <ul class="m-0">
+                    <li *ngFor="let q of tool.requiredQualifications">
+                        <pre class="inline">{{q}}</pre>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>

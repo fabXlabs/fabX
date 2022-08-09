@@ -38,6 +38,7 @@ import { QualificationsComponent } from './qualifications/qualifications.compone
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
+import { ToolsComponent } from './tools/tools.component';
 
 @NgModule({
     declarations: [
@@ -52,6 +53,7 @@ import { UsersComponent } from './users/users.component';
         UserAddComponent,
         UserDetailsComponent,
         UsersComponent,
+        ToolsComponent,
     ],
     imports: [
         BrowserAnimationsModule,
