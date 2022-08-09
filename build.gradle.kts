@@ -12,7 +12,7 @@ val mockitoJunitVersion: String by project
 
 plugins {
     base
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
     jacoco
 }
 
