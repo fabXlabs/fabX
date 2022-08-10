@@ -14,8 +14,8 @@
             <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 max-w-20rem font-medium overflow-hidden text-overflow-ellipsis">type</div>
                 <div class="text-900 w-8">
-                    <i *ngIf="tool.type == 'UNLOCK'" class="pi pi-unlock mx-1"></i>
-                    <i *ngIf="tool.type == 'KEEP'" class="pi pi-id-card mx-1"></i>
+                    <i *ngIf="tool.type === 'UNLOCK'" class="pi pi-unlock mx-1"></i>
+                    <i *ngIf="tool.type === 'KEEP'" class="pi pi-id-card mx-1"></i>
                     {{tool.type}}
                 </div>
             </li>

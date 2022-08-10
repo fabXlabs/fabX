@@ -25,8 +25,8 @@
         <tr routerLink="/tool/{{tool.id}}" class="cursor-pointer">
             <td>{{tool.name}}</td>
             <td>
-                <i *ngIf="tool.type == 'UNLOCK'" class="pi pi-unlock mx-1"></i>
-                <i *ngIf="tool.type == 'KEEP'" class="pi pi-id-card mx-1"></i>
+                <i *ngIf="tool.type === 'UNLOCK'" class="pi pi-unlock mx-1"></i>
+                <i *ngIf="tool.type === 'KEEP'" class="pi pi-id-card mx-1"></i>
                 <span class="text-hidden md:text-base">{{tool.type}}</span>
             </td>
             <td>
