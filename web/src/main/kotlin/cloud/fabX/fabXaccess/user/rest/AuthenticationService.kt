@@ -38,6 +38,7 @@ class AuthenticationService(
                     it
                 )
             }
+                // TODO check for lock state of user
             .fold(
                 { ErrorPrincipal(it) },
                 { UserPrincipal(it) }
@@ -87,6 +88,8 @@ class AuthenticationService(
         val actorOnBehalfOf = phoneNrUser?.let { deviceActor.copy(onBehalfOf = it.asMember()) }
             ?: cardUser?.let { deviceActor.copy(onBehalfOf = it.asMember()) }
             ?: deviceActor
+
+        // TODO check for lock state of user
 
         return actorOnBehalfOf.right()
     }
