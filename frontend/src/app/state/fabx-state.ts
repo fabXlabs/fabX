@@ -307,9 +307,27 @@ export class FabxState {
         );
     }
 
+    @Action(Users.RemoveMemberQualification)
+    removeMemberQualification(ctx: StateContext<FabxStateModel>, action: Users.RemoveMemberQualification) {
+        return this.userService.removeMemberQualification(action.userId, action.qualificationId).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
     @Action(Users.AddInstructorQualification)
     addInstructorQualification(ctx: StateContext<FabxStateModel>, action: Users.AddInstructorQualification) {
         return this.userService.addInstructorQualification(action.userId, action.qualificationId).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
+    @Action(Users.RemoveInstructorQualification)
+    removeInstructorQualification(ctx: StateContext<FabxStateModel>, action: Users.RemoveInstructorQualification) {
+        return this.userService.removeInstructorQualification(action.userId, action.qualificationId).pipe(
             tap({
                 next: _ => ctx.dispatch(new Users.GetById(action.userId))
             })

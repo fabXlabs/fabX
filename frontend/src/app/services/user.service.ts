@@ -53,6 +53,16 @@ export class UserService {
         );
     }
 
+    public removeMemberQualification(userId: string, qualificationId: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/member-qualification/${qualificationId}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
     public addInstructorQualification(userId: string, qualificationId: string): Observable<string> {
         const details: QualificationAdditionDetails = {
             qualificationId: qualificationId
@@ -61,6 +71,16 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/instructor-qualification`,
             details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public removeInstructorQualification(userId: string, qualificationId: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/instructor-qualification/${qualificationId}`,
             {
                 ...this.authService.getOptions(),
                 responseType: 'text'

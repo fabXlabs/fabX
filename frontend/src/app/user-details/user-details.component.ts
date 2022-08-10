@@ -55,8 +55,22 @@ export class UserDetailsComponent implements OnDestroy {
         ));
     }
 
+    removeMemberQualification(qualificationId: string) {
+        this.store.dispatch(new Users.RemoveMemberQualification(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            qualificationId
+        ));
+    }
+
     addInstructorQualification(qualificationId: string) {
         this.store.dispatch(new Users.AddInstructorQualification(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            qualificationId
+        ));
+    }
+
+    removeInstructorQualification(qualificationId: string) {
+        this.store.dispatch(new Users.RemoveInstructorQualification(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             qualificationId
         ));
