@@ -3,7 +3,13 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
-import { QualificationAdditionDetails, User, UserCreationDetails, UserDetails } from '../models/user.model';
+import {
+    QualificationAdditionDetails,
+    User,
+    UserCreationDetails,
+    UserDetails,
+    UserLockDetails
+} from '../models/user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -47,6 +53,17 @@ export class UserService {
                 responseType: 'text'
             }
         );
+    }
+
+    public changeLockState(userId: string, lockDetails: UserLockDetails): Observable<string> {
+        return this.http.put(
+            `${this.baseUrl}/user/${userId}/lock`,
+            lockDetails,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        )
     }
 
     public addMemberQualification(userId: string, qualificationId: string): Observable<string> {

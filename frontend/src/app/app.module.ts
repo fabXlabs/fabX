@@ -41,6 +41,7 @@ import { ToolAddComponent } from './tool-add/tool-add.component';
 import { ToolDetailsComponent } from './tool-details/tool-details.component';
 import { ToolsComponent } from './tools/tools.component';
 import { UserAddComponent } from './user-add/user-add.component';
+import { UserChangeLockStateComponent } from './user-change-lock-state/user-change-lock-state.component';
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
@@ -60,9 +61,10 @@ import { UsersComponent } from './users/users.component';
         ToolDetailsComponent,
         ToolsComponent,
         UserAddComponent,
+        UserChangeLockStateComponent,
+        UserChangePersonalInfoComponent,
         UserDetailsComponent,
         UsersComponent,
-        UserChangePersonalInfoComponent,
     ],
     imports: [
         BrowserAnimationsModule,

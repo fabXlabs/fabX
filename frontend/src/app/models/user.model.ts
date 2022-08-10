@@ -39,6 +39,11 @@ export interface UserDetails {
     wikiName: ChangeableValue<string> | null
 }
 
+export interface UserLockDetails {
+    locked: ChangeableValue<boolean> | null
+    notes: ChangeableValue<string | null> | null
+}
+
 export interface QualificationAdditionDetails {
     qualificationId: string
 }

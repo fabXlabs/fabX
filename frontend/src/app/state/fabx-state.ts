@@ -313,6 +313,21 @@ export class FabxState {
         );
     }
 
+    @Action(Users.ChangeLockState)
+    changeLockState(ctx: StateContext<FabxStateModel>, action: Users.ChangeLockState) {
+        return this.userService.changeLockState(action.userId, action.details).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['user', action.userId]));
+                        }
+                    });
+                }
+            })
+        );
+    }
+
     @Action(Users.AddMemberQualification)
     addMemberQualification(ctx: StateContext<FabxStateModel>, action: Users.AddMemberQualification) {
         return this.userService.addMemberQualification(action.userId, action.qualificationId).pipe(

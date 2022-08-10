@@ -78,7 +78,6 @@ export class UserChangePersonalInfoComponent implements OnDestroy {
                 wikiName: wikiNameChange
             }
         )).subscribe({
-
             error: (err: HttpErrorResponse) => {
                 this.error = this.errorHandler.format(err);
             }

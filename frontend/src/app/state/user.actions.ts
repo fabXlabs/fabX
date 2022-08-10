@@ -1,5 +1,5 @@
 import { UserSortModel } from "./fabx-state";
-import { UserCreationDetails, UserDetails } from "../models/user.model";
+import { UserCreationDetails, UserDetails, UserLockDetails } from "../models/user.model";
 
 export namespace Users {
     export class GetAll {
@@ -28,6 +28,12 @@ export namespace Users {
         static readonly type = "[fabX Users] Change Personal Information"
 
         constructor(public userId: string, public details: UserDetails) {}
+    }
+
+    export class ChangeLockState {
+        static readonly type = "[fabX Users] Change Lock State"
+
+        constructor(public userId: string, public details: UserLockDetails) {}
     }
 
     export class AddMemberQualification {
