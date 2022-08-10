@@ -38,7 +38,6 @@ export class UserDetailsComponent implements OnDestroy {
         this.availableInstructorQualificationsSubscription = this.availableInstructorQualifications$.subscribe({
             next: value => {
                 this.instructorQualificationItems = value.map(qualification => {
-                    console.log("add i: ", qualification);
                     return {
                         label: qualification.name,
                         command: _ => this.addInstructorQualification(qualification.id)

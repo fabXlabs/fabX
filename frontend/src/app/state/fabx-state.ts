@@ -298,6 +298,21 @@ export class FabxState {
         );
     }
 
+    @Action(Users.ChangePersonalInformation)
+    changePersonalInformation(ctx: StateContext<FabxStateModel>, action: Users.ChangePersonalInformation) {
+        return this.userService.changePersonalInformation(action.userId, action.details).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['user', action.userId]));
+                        }
+                    });
+                }
+            })
+        );
+    }
+
     @Action(Users.AddMemberQualification)
     addMemberQualification(ctx: StateContext<FabxStateModel>, action: Users.AddMemberQualification) {
         return this.userService.addMemberQualification(action.userId, action.qualificationId).pipe(

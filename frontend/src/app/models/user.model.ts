@@ -1,4 +1,5 @@
 import { Qualification } from "./qualification.model";
+import { ChangeableValue } from "./changeable-value";
 
 export interface User {
     id: string,
@@ -30,6 +31,12 @@ export interface UserCreationDetails {
     firstName: string,
     lastName: string,
     wikiName: string
+}
+
+export interface UserDetails {
+    firstName: ChangeableValue<string> | null,
+    lastName: ChangeableValue<string> | null,
+    wikiName: ChangeableValue<string> | null
 }
 
 export interface QualificationAdditionDetails {

@@ -24,6 +24,7 @@ import { StyleClassModule } from "primeng/styleclass";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
 
+import { environment } from "../environments/environment";
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AttachedToolNames, DevicesComponent } from './devices/devices.component';
@@ -40,9 +41,9 @@ import { ToolAddComponent } from './tool-add/tool-add.component';
 import { ToolDetailsComponent } from './tool-details/tool-details.component';
 import { ToolsComponent } from './tools/tools.component';
 import { UserAddComponent } from './user-add/user-add.component';
+import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
-import { environment } from "../environments/environment";
 
 @NgModule({
     declarations: [
@@ -61,6 +62,7 @@ import { environment } from "../environments/environment";
         UserAddComponent,
         UserDetailsComponent,
         UsersComponent,
+        UserChangePersonalInfoComponent,
     ],
     imports: [
         BrowserAnimationsModule,

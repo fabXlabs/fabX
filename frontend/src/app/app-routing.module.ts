@@ -14,6 +14,7 @@ import { UsersComponent } from "./users/users.component";
 import { ToolsComponent } from "./tools/tools.component";
 import { ToolDetailsComponent } from "./tool-details/tool-details.component";
 import { ToolAddComponent } from "./tool-add/tool-add.component";
+import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -21,6 +22,7 @@ const routes: Routes = [
     { path: 'user', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'user/add', component: UserAddComponent, canActivate: [AuthGuard] },
     { path: 'user/:id', component: UserDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'user/:id/change-personal-info', component: UserChangePersonalInfoComponent, canActivate: [AuthGuard] },
     { path: 'qualification', component: QualificationsComponent, canActivate: [AuthGuard] },
     { path: 'qualification/add', component: QualificationAddComponent, canActivate: [AuthGuard] },
     { path: 'qualification/:id', component: QualificationDetailsComponent, canActivate: [AuthGuard] },

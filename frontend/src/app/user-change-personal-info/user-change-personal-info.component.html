@@ -1,0 +1,45 @@
+<div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
+    <div class="grid">
+        <h2 class="col-12 md:col-offset-2 md:col-10 mb-0 text-xl pl-3">Edit Personal Information</h2>
+
+        <div class="col-12 md:col-2 md:pt-3">
+            <div class="pl-2 md:pl-0 text-sm uppercase text-500 font-medium overflow-hidden text-overflow-ellipsis">
+                Personal Information
+            </div>
+        </div>
+        <div class="col-12 md:col-10">
+            <div class="formgrid p-fluid">
+                <form [formGroup]="form" (ngSubmit)="onSubmit()">
+                    <div class="field col-12">
+                        <label for="firstname" class="font-medium text-900">First Name</label>
+                        <input id="firstname" formControlName="firstName" type="text" pInputText>
+                    </div>
+
+                    <div class="field col-12">
+                        <label for="lastname" class="font-medium text-900">Last Name</label>
+                        <input id="lastname" formControlName="lastName" type="text" pInputText>
+                    </div>
+
+                    <div class="field col-12">
+                        <label for="wikiname" class="font-medium text-900">Wiki Name</label>
+                        <input id="wikiname" formControlName="wikiName" type="text" pInputText>
+                    </div>
+
+                    <div *ngIf="error" class="field col-12 my-0">
+                        <p-messages severity="error">
+                            <ng-template pTemplate="">
+                                <div class="ml-2">{{error}}</div>
+                            </ng-template>
+                        </p-messages>
+                    </div>
+
+
+                    <div class="field mb-4 col-12">
+                        <button type="submit" label="Save" icon="pi pi-plus" pButton class="w-auto"
+                                [disabled]="!form.valid"></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
