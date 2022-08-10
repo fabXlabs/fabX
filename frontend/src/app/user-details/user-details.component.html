@@ -8,7 +8,10 @@
         <div class="flex">
             <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">Personal Information</div>
             <div class="m-1">
-                <p-button label="Edit" routerLink="/user/{{user.id}}/change-personal-info"></p-button>
+                <p-button label="Edit"
+                          styleClass="p-button-outlined"
+                          routerLink="/user/{{user.id}}/change-personal-info">
+                </p-button>
             </div>
         </div>
         <ul class="list-none p-0 m-0">
@@ -59,7 +62,10 @@
                         </div>
                     </div>
                     <div>
-                        <p-splitButton label="Add" [model]="memberQualificationItems"></p-splitButton>
+                        <p-splitButton label="Add"
+                                       styleClass="p-button-outlined"
+                                       [model]="memberQualificationItems">
+                        </p-splitButton>
                     </div>
                 </div>
             </li>
@@ -77,7 +83,10 @@
                         </div>
                     </div>
                     <div>
-                        <p-splitButton label="Add" [model]="instructorQualificationItems"></p-splitButton>
+                        <p-splitButton label="Add"
+                                       styleClass="p-button-outlined"
+                                       [model]="instructorQualificationItems">
+                        </p-splitButton>
                     </div>
                 </div>
             </li>
