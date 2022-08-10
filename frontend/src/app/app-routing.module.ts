@@ -13,6 +13,7 @@ import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UsersComponent } from "./users/users.component";
 import { ToolsComponent } from "./tools/tools.component";
 import { ToolDetailsComponent } from "./tool-details/tool-details.component";
+import { ToolAddComponent } from "./tool-add/tool-add.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -26,6 +27,7 @@ const routes: Routes = [
     { path: 'device', component: DevicesComponent, canActivate: [AuthGuard] },
     { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
     { path: 'tool', component: ToolsComponent, canActivate: [AuthGuard] },
+    { path: 'tool/add', component: ToolAddComponent, canActivate: [AuthGuard] },
     { path: 'tool/:id', component: ToolDetailsComponent, canActivate: [AuthGuard] },
 ];
 

@@ -6,6 +6,12 @@
          responsiveLayout="scroll"
          selectionMode="single"
 >
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center">
+            <button pButton label="Add Tool" routerLink="/tool/add"></button>
+        </div>
+    </ng-template>
+
     <ng-template pTemplate="header">
         <tr>
             <th>Name</th>

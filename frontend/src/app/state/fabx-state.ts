@@ -527,6 +527,40 @@ export class FabxState {
         );
     }
 
+    @Action(Tools.GetById)
+    getTool(ctx: StateContext<FabxStateModel>, action: Tools.GetById) {
+        return this.toolService.getById(action.id).pipe(
+            tap({
+                next: value => {
+                    const state = ctx.getState();
+                    if (state.tools.tag == "FINISHED") {
+                        ctx.patchState({
+                            tools: {
+                                tag: "FINISHED",
+                                value: state.tools.value.filter((q) => q.id != action.id).concat([value])
+                            }
+                        });
+                    }
+                }
+            })
+        );
+    }
+
+    @Action(Tools.Add)
+    addTool(ctx: StateContext<FabxStateModel>, action: Tools.Add) {
+        return this.toolService.addTool(action.details).pipe(
+            tap({
+                next: value => {
+                    ctx.dispatch(new Tools.GetById(value)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['tool', value]));
+                        }
+                    });
+                }
+            })
+        );
+    }
+
     private static augmentToolWithQualifications(tool: Tool, qualifications: Qualification[]): AugmentedTool {
         const requiredQualifications = tool.requiredQualifications
             .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))
