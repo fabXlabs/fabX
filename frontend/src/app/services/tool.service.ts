@@ -38,9 +38,9 @@ export class ToolService {
         );
     }
 
-    public changeDetails(toolId: string, details: ToolDetails): Observable<string> {
+    public changeDetails(id: string, details: ToolDetails): Observable<string> {
         return this.http.put(
-            `${this.baseUrl}/tool/${toolId}`,
+            `${this.baseUrl}/tool/${id}`,
             details,
             {
                 ...this.authService.getOptions(),

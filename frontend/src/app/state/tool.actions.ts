@@ -20,6 +20,6 @@ export namespace Tools {
     export class ChangeDetails {
         static readonly type = "[fabX Tools] Change Details"
 
-        constructor(public toolId: string, public details: ToolDetails) {}
+        constructor(public id: string, public details: ToolDetails) {}
     }
 }

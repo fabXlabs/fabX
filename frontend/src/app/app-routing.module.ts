@@ -7,6 +7,7 @@ import { DeviceDetailsComponent } from "./device-details/device-details.componen
 import { DevicesComponent } from "./devices/devices.component";
 import { LoginComponent } from "./login/login.component";
 import { QualificationAddComponent } from "./qualification-add/qualification-add.component";
+import { QualificationChangeDetailsComponent } from "./qualification-change-details/qualification-change-details.component";
 import { QualificationDetailsComponent } from "./qualification-details/qualification-details.component";
 import { QualificationsComponent } from "./qualifications/qualifications.component";
 import { ToolAddComponent } from "./tool-add/tool-add.component";
@@ -30,6 +31,7 @@ const routes: Routes = [
     { path: 'qualification', component: QualificationsComponent, canActivate: [AuthGuard] },
     { path: 'qualification/add', component: QualificationAddComponent, canActivate: [AuthGuard] },
     { path: 'qualification/:id', component: QualificationDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'qualification/:id/change-details', component: QualificationChangeDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device', component: DevicesComponent, canActivate: [AuthGuard] },
     { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device/:id/attach-tool', component: DeviceAttachToolComponent, canActivate: [AuthGuard] },

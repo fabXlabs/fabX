@@ -1,4 +1,4 @@
-import { QualificationCreationDetails } from "../models/qualification.model";
+import { QualificationCreationDetails, QualificationDetails } from "../models/qualification.model";
 
 export namespace Qualifications {
     export class GetAll {
@@ -15,5 +15,11 @@ export namespace Qualifications {
         static readonly type = "[fabX Qualifications] Add"
 
         constructor(public details: QualificationCreationDetails) {}
+    }
+
+    export class ChangeDetails {
+        static readonly type = "[fabX Qualifications] Change Details"
+
+        constructor(public id: string, public details: QualificationDetails) {}
     }
 }

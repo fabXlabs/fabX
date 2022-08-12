@@ -453,6 +453,21 @@ export class FabxState {
         );
     }
 
+    @Action(Qualifications.ChangeDetails)
+    changeQualificationDetails(ctx: StateContext<FabxStateModel>, action: Qualifications.ChangeDetails) {
+        return this.qualificationService.changeDetails(action.id, action.details).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Qualifications.GetById(action.id)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['qualification', action.id]));
+                        }
+                    })
+                }
+            })
+        );
+    }
+
     // DEVICES
     @Selector()
     static devicesLoadingState(state: FabxStateModel): LoadingStateTag {
@@ -647,12 +662,12 @@ export class FabxState {
 
     @Action(Tools.ChangeDetails)
     changeToolDetails(ctx: StateContext<FabxStateModel>, action: Tools.ChangeDetails) {
-        return this.toolService.changeDetails(action.toolId, action.details).pipe(
+        return this.toolService.changeDetails(action.id, action.details).pipe(
             tap({
                 next: _ => {
-                    ctx.dispatch(new Tools.GetById(action.toolId)).subscribe({
+                    ctx.dispatch(new Tools.GetById(action.id)).subscribe({
                         next: () => {
-                            ctx.dispatch(new Navigate(['tool', action.toolId]));
+                            ctx.dispatch(new Navigate(['tool', action.id]));
                         }
                     })
                 }
