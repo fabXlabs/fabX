@@ -46,11 +46,13 @@ import { UserChangeLockStateComponent } from './user-change-lock-state/user-chan
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
+import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AttachedToolNames,
+        DeviceAttachToolComponent,
         DeviceDetailsComponent,
         DevicesComponent,
         LoginComponent,

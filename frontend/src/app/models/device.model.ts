@@ -17,3 +17,7 @@ export interface AugmentedDevice {
     backupBackendUrl: string,
     attachedTools: Record<number, Tool>,
 }
+
+export interface ToolAttachmentDetails {
+    toolId: string
+}

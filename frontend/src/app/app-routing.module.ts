@@ -16,6 +16,7 @@ import { UserChangeLockStateComponent } from "./user-change-lock-state/user-chan
 import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UsersComponent } from "./users/users.component";
+import { DeviceAttachToolComponent } from "./device-attach-tool/device-attach-tool.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -30,6 +31,7 @@ const routes: Routes = [
     { path: 'qualification/:id', component: QualificationDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device', component: DevicesComponent, canActivate: [AuthGuard] },
     { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'device/:id/attach-tool', component: DeviceAttachToolComponent, canActivate: [AuthGuard] },
     { path: 'tool', component: ToolsComponent, canActivate: [AuthGuard] },
     { path: 'tool/add', component: ToolAddComponent, canActivate: [AuthGuard] },
     { path: 'tool/:id', component: ToolDetailsComponent, canActivate: [AuthGuard] },

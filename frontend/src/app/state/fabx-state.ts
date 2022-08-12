@@ -481,6 +481,18 @@ export class FabxState {
         return null;
     }
 
+    private static augmentDeviceWithTools(device: Device, tools: Tool[]): AugmentedDevice {
+        const attachedTools = Array.from(
+            Object.entries(device.attachedTools),
+            ([pin, toolId]) => [Number(pin), tools.find(tool => tool.id == toolId)!]
+        ).filter(([_, v]) => v);
+
+        return {
+            ...device,
+            attachedTools: Object.fromEntries(attachedTools)
+        }
+    }
+
     @Action(Devices.GetAll)
     getAllDevices(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
@@ -503,16 +515,49 @@ export class FabxState {
         );
     }
 
-    private static augmentDeviceWithTools(device: Device, tools: Tool[]): AugmentedDevice {
-        const attachedTools = Array.from(
-            Object.entries(device.attachedTools),
-            ([pin, toolId]) => [Number(pin), tools.find(tool => tool.id == toolId)!]
-        ).filter(([_, v]) => v);
+    @Action(Devices.GetById)
+    getDevice(ctx: StateContext<FabxStateModel>, action: Devices.GetById) {
+        return this.deviceService.getById(action.id).pipe(
+            tap({
+                next: value => {
+                    const state = ctx.getState();
+                    if (state.devices.tag == "FINISHED") {
+                        ctx.patchState({
+                            devices: {
+                                tag: "FINISHED",
+                                value: state.devices.value.filter((d) => d.id != action.id).concat([value])
+                            }
+                        });
+                    }
+                }
+            })
+        );
+    }
 
-        return {
-            ...device,
-            attachedTools: Object.fromEntries(attachedTools)
-        }
+    @Action(Devices.AttachTool)
+    attachTool(ctx: StateContext<FabxStateModel>, action: Devices.AttachTool) {
+        return this.deviceService.attachTool(action.deviceId, action.pin, action.toolId).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Devices.GetById(action.deviceId)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['device', action.deviceId]))
+                        }
+                    });
+                }
+            })
+        );
+    }
+
+    @Action(Devices.DetachTool)
+    detachTool(ctx: StateContext<FabxStateModel>, action: Devices.DetachTool) {
+        return this.deviceService.detachTool(action.deviceId, action.pin).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Devices.GetById(action.deviceId));
+                }
+            })
+        );
     }
 
     // TOOLS

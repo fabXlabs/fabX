@@ -47,7 +47,6 @@ export class UserChangePersonalInfoComponent implements OnDestroy {
         const wikiName = this.form.get('wikiName')!.value;
 
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
-        console.log("currentUser", currentUser);
 
         let firstNameChange: ChangeableValue<string> | null = null;
         if (firstName != currentUser.firstName) {
