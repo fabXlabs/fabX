@@ -1,11 +1,11 @@
-@file:DependsOn("io.ktor:ktor-client-core-jvm:2.0.0-beta-1")
-@file:DependsOn("io.ktor:ktor-client-cio-jvm:2.0.0-beta-1")
-@file:DependsOn("io.ktor:ktor-client-content-negotiation-jvm:2.0.0-beta-1")
-@file:DependsOn("io.ktor:ktor-client-auth-jvm:2.0.0-beta-1")
-@file:DependsOn("io.ktor:ktor-serialization-kotlinx-json-jvm:2.0.0-beta-1")
+@file:DependsOn("io.ktor:ktor-client-core-jvm:2.0.0")
+@file:DependsOn("io.ktor:ktor-client-cio-jvm:2.0.0")
+@file:DependsOn("io.ktor:ktor-client-content-negotiation-jvm:2.0.0")
+@file:DependsOn("io.ktor:ktor-client-auth-jvm:2.0.0")
+@file:DependsOn("io.ktor:ktor-serialization-kotlinx-json-jvm:2.0.0")
 
-@file:DependsOn("io.ktor:ktor-client-okhttp:2.0.0-beta-1")
-@file:DependsOn("io.ktor:ktor-client-gson:2.0.0-beta-1")
+@file:DependsOn("io.ktor:ktor-client-okhttp:2.0.0")
+@file:DependsOn("io.ktor:ktor-client-gson:2.0.0")
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -22,7 +22,6 @@ import io.ktor.http.contentType
 import kotlin.random.Random
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
