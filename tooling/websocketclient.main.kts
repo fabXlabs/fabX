@@ -26,7 +26,7 @@ val client = HttpClient(CIO) {
     install(Auth) {
         basic {
             credentials {
-                BasicAuthCredentials(username = "AABBCCDDEEFF", password = "abcdef0123456789abcdef0123456789")
+                BasicAuthCredentials(username = "aabbcc000000", password = "supersecret")
             }
         }
     }
