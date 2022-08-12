@@ -3,7 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
-import { Tool, ToolCreationDetails } from "../models/tool.model";
+import { Tool, ToolCreationDetails, ToolDetails } from "../models/tool.model";
 
 @Injectable({
     providedIn: 'root'
@@ -30,6 +30,17 @@ export class ToolService {
     public addTool(details: ToolCreationDetails): Observable<string> {
         return this.http.post(
             `${this.baseUrl}/tool`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public changeDetails(toolId: string, details: ToolDetails): Observable<string> {
+        return this.http.put(
+            `${this.baseUrl}/tool/${toolId}`,
             details,
             {
                 ...this.authService.getOptions(),

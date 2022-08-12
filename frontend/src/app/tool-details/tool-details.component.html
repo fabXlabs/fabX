@@ -5,7 +5,16 @@
             <pre class="mt-0">{{tool.id}}</pre>
         </div>
 
-        <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">About</div>
+        <div class="flex align-items-end">
+            <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">About</div>
+            <div class="m-2">
+                <p-button label="Edit"
+                          icon="pi pi-pencil"
+                          styleClass="p-button-outlined"
+                          routerLink="/tool/{{tool.id}}/change-details">
+                </p-button>
+            </div>
+        </div>
         <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">name</div>
@@ -29,7 +38,8 @@
                 <div class="text-900 w-8">{{tool.idleState}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
-                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">enabled</div>
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">enabled
+                </div>
                 <div class="text-900 w-8">
                     <i *ngIf="tool.enabled" class="pi pi-check mx-1"></i>
                     <i *ngIf="!tool.enabled" class="pi pi-times mx-1"></i>
@@ -37,7 +47,8 @@
                 </div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
-                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">wiki link</div>
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">wiki link
+                </div>
                 <div class="text-900 w-8"><a href="{{tool.wikiLink}}">{{tool.wikiLink}}</a></div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">

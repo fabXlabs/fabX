@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from "./state/auth-guard";
+import { DeviceAttachToolComponent } from "./device-attach-tool/device-attach-tool.component";
 import { DeviceDetailsComponent } from "./device-details/device-details.component";
 import { DevicesComponent } from "./devices/devices.component";
 import { LoginComponent } from "./login/login.component";
@@ -9,6 +10,7 @@ import { QualificationAddComponent } from "./qualification-add/qualification-add
 import { QualificationDetailsComponent } from "./qualification-details/qualification-details.component";
 import { QualificationsComponent } from "./qualifications/qualifications.component";
 import { ToolAddComponent } from "./tool-add/tool-add.component";
+import { ToolChangeDetailsComponent } from "./tool-change-details/tool-change-details.component";
 import { ToolDetailsComponent } from "./tool-details/tool-details.component";
 import { ToolsComponent } from "./tools/tools.component";
 import { UserAddComponent } from "./user-add/user-add.component";
@@ -16,7 +18,6 @@ import { UserChangeLockStateComponent } from "./user-change-lock-state/user-chan
 import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UsersComponent } from "./users/users.component";
-import { DeviceAttachToolComponent } from "./device-attach-tool/device-attach-tool.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -35,6 +36,7 @@ const routes: Routes = [
     { path: 'tool', component: ToolsComponent, canActivate: [AuthGuard] },
     { path: 'tool/add', component: ToolAddComponent, canActivate: [AuthGuard] },
     { path: 'tool/:id', component: ToolDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'tool/:id/change-details', component: ToolChangeDetailsComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

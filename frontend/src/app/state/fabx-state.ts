@@ -645,6 +645,21 @@ export class FabxState {
         );
     }
 
+    @Action(Tools.ChangeDetails)
+    changeToolDetails(ctx: StateContext<FabxStateModel>, action: Tools.ChangeDetails) {
+        return this.toolService.changeDetails(action.toolId, action.details).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Tools.GetById(action.toolId)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['tool', action.toolId]));
+                        }
+                    })
+                }
+            })
+        );
+    }
+
     private static augmentToolWithQualifications(tool: Tool, qualifications: Qualification[]): AugmentedTool {
         const requiredQualifications = tool.requiredQualifications
             .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))

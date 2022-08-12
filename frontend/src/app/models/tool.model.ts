@@ -1,4 +1,5 @@
 import { Qualification } from "./qualification.model";
+import { ChangeableValue } from "./changeable-value";
 
 export interface Tool {
     id: string,
@@ -31,6 +32,16 @@ export interface ToolCreationDetails {
     idleState: IdleState,
     wikiLink: string,
     requiredQualifications: string[]
+}
+
+export interface ToolDetails {
+    name: ChangeableValue<string> | null,
+    type: ChangeableValue<ToolType> | null,
+    time: ChangeableValue<number> | null,
+    idleState: ChangeableValue<IdleState> | null,
+    enabled: ChangeableValue<boolean> | null,
+    wikiLink: ChangeableValue<string> | null,
+    requiredQualifications: ChangeableValue<string[]> | null,
 }
 
 export const toolTypes = ["UNLOCK", "KEEP"]

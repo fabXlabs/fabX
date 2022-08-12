@@ -47,6 +47,7 @@ import { UserChangePersonalInfoComponent } from './user-change-personal-info/use
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
+import { ToolChangeDetailsComponent } from './tool-change-details/tool-change-details.component';
 
 @NgModule({
     declarations: [
@@ -61,6 +62,7 @@ import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-to
         QualificationDetailsComponent,
         QualificationsComponent,
         ToolAddComponent,
+        ToolChangeDetailsComponent,
         ToolDetailsComponent,
         ToolsComponent,
         UserAddComponent,

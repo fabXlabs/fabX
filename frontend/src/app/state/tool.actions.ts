@@ -1,4 +1,4 @@
-import { ToolCreationDetails } from "../models/tool.model";
+import { ToolCreationDetails, ToolDetails } from "../models/tool.model";
 
 export namespace Tools {
     export class GetAll {
@@ -15,5 +15,11 @@ export namespace Tools {
         static readonly type = "[fabX Tools] Add"
 
         constructor(public details: ToolCreationDetails) {}
+    }
+
+    export class ChangeDetails {
+        static readonly type = "[fabX Tools] Change Details"
+
+        constructor(public toolId: string, public details: ToolDetails) {}
     }
 }
