@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from "primeng/card";
 import { CheckboxModule } from "primeng/checkbox";
 import { ColorPickerModule } from "primeng/colorpicker";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DropdownModule } from "primeng/dropdown";
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from "primeng/inputtext";
@@ -86,6 +87,7 @@ import { UsersComponent } from './users/users.component';
         CardModule,
         CheckboxModule,
         ColorPickerModule,
+        ConfirmDialogModule,
         DropdownModule,
         InputNumberModule,
         InputTextModule,

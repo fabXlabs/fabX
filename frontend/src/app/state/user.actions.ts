@@ -59,4 +59,10 @@ export namespace Users {
 
         constructor(public userId: string, public qualificationId: string) {}
     }
+
+    export class ChangeIsAdmin {
+        static readonly type = "[fabX Users] Change Is Admin"
+
+        constructor(public userId: string, public isAdmin: boolean) {}
+    }
 }

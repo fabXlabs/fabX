@@ -47,3 +47,7 @@ export interface UserLockDetails {
 export interface QualificationAdditionDetails {
     qualificationId: string
 }
+
+export interface IsAdminDetails {
+    isAdmin: boolean
+}

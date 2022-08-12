@@ -364,6 +364,15 @@ export class FabxState {
         );
     }
 
+    @Action(Users.ChangeIsAdmin)
+    changeIsAdmin(ctx: StateContext<FabxStateModel>, action: Users.ChangeIsAdmin) {
+        return this.userService.changeIsAdmin(action.userId, action.isAdmin).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
     // QUALIFICATIONS
     @Selector()
     static qualificationsLoadingState(state: FabxStateModel): LoadingStateTag {

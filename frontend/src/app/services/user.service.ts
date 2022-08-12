@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
 import {
+    IsAdminDetails,
     QualificationAdditionDetails,
     User,
     UserCreationDetails,
@@ -114,6 +115,21 @@ export class UserService {
                 responseType: 'text'
             }
         );
+    }
+
+    public changeIsAdmin(userId: string, isAdmin: boolean): Observable<string> {
+        const details: IsAdminDetails = {
+            isAdmin: isAdmin
+        }
+
+        return this.http.put(
+            `${this.baseUrl}/user/${userId}/is-admin`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        )
     }
 }
 
