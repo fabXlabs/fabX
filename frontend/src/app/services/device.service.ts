@@ -3,7 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
-import { Device, ToolAttachmentDetails } from "../models/device.model";
+import { Device, DeviceDetails, ToolAttachmentDetails } from "../models/device.model";
 
 @Injectable({
     providedIn: 'root'
@@ -25,6 +25,17 @@ export class DeviceService {
 
     public getById(id: string): Observable<Device> {
         return this.http.get<Device>(`${this.baseUrl}/device/${id}`, this.authService.getOptions());
+    }
+
+    public changeDetails(id: string, details: DeviceDetails): Observable<string> {
+        return this.http.put(
+            `${this.baseUrl}/device/${id}`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
     }
 
     public attachTool(deviceId: string, pin: number, toolId: string): Observable<string> {

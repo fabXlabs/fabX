@@ -549,6 +549,21 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.ChangeDetails)
+    changeDeviceDetails(ctx: StateContext<FabxStateModel>, action: Devices.ChangeDetails) {
+        return this.deviceService.changeDetails(action.id, action.details).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Devices.GetById(action.id)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['device', action.id]));
+                        }
+                    })
+                }
+            })
+        );
+    }
+
     @Action(Devices.AttachTool)
     attachTool(ctx: StateContext<FabxStateModel>, action: Devices.AttachTool) {
         return this.deviceService.attachTool(action.deviceId, action.pin, action.toolId).pipe(

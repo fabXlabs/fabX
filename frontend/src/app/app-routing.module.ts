@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from "./state/auth-guard";
 import { DeviceAttachToolComponent } from "./device-attach-tool/device-attach-tool.component";
+import { DeviceChangeDetailsComponent } from "./device-change-details/device-change-details.component";
 import { DeviceDetailsComponent } from "./device-details/device-details.component";
 import { DevicesComponent } from "./devices/devices.component";
 import { LoginComponent } from "./login/login.component";
@@ -34,6 +35,7 @@ const routes: Routes = [
     { path: 'qualification/:id/change-details', component: QualificationChangeDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device', component: DevicesComponent, canActivate: [AuthGuard] },
     { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'device/:id/change-details', component: DeviceChangeDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device/:id/attach-tool', component: DeviceAttachToolComponent, canActivate: [AuthGuard] },
     { path: 'tool', component: ToolsComponent, canActivate: [AuthGuard] },
     { path: 'tool/add', component: ToolAddComponent, canActivate: [AuthGuard] },

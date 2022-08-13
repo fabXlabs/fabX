@@ -49,17 +49,20 @@ import { UsersComponent } from './users/users.component';
 import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
 import { ToolChangeDetailsComponent } from './tool-change-details/tool-change-details.component';
 import { QualificationChangeDetailsComponent } from './qualification-change-details/qualification-change-details.component';
+import { DeviceChangeDetailsComponent } from './device-change-details/device-change-details.component';
 
 @NgModule({
     declarations: [
         AppComponent,
         AttachedToolNames,
         DeviceAttachToolComponent,
+        DeviceChangeDetailsComponent,
         DeviceDetailsComponent,
         DevicesComponent,
         LoginComponent,
         NavbarComponent,
         QualificationAddComponent,
+        QualificationChangeDetailsComponent,
         QualificationDetailsComponent,
         QualificationsComponent,
         ToolAddComponent,
@@ -71,7 +74,6 @@ import { QualificationChangeDetailsComponent } from './qualification-change-deta
         UserChangePersonalInfoComponent,
         UserDetailsComponent,
         UsersComponent,
-        QualificationChangeDetailsComponent,
     ],
     imports: [
         BrowserAnimationsModule,

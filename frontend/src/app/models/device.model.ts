@@ -1,4 +1,5 @@
 import { Tool } from "./tool.model";
+import { ChangeableValue } from "./changeable-value";
 
 export interface Device {
     id: string,
@@ -16,6 +17,12 @@ export interface AugmentedDevice {
     background: string,
     backupBackendUrl: string,
     attachedTools: Record<number, Tool>,
+}
+
+export interface DeviceDetails {
+    name: ChangeableValue<string> | null
+    background: ChangeableValue<string> | null
+    backupBackendUrl: ChangeableValue<string> | null
 }
 
 export interface ToolAttachmentDetails {
