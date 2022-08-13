@@ -21,6 +21,36 @@
                 <div class="text-900 w-8">{{tool.name}}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">wiki link
+                </div>
+                <div class="text-900 w-8"><a href="{{tool.wikiLink}}">{{tool.wikiLink}}</a></div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">enabled
+                </div>
+                <div class="text-900 w-8">
+                    <i *ngIf="tool.enabled" class="pi pi-check mx-1"></i>
+                    <i *ngIf="!tool.enabled" class="pi pi-times mx-1"></i>
+                    {{tool.enabled}}
+                </div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
+                    required qualifications
+                </div>
+                <div class="text-900 w-8">
+                    <div *ngFor="let q of tool.requiredQualifications"
+                         class="inline-block p-1 m-1 border-round text-300 text-sm"
+                         [style.background-color]="q.colour">
+                        {{q.name}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">Setup</div>
+        <ul class="list-none p-0 m-0">
+            <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">type</div>
                 <div class="text-900 w-8">
                     <i *ngIf="tool.type === 'UNLOCK'" class="pi pi-unlock mx-1"></i>
@@ -36,32 +66,6 @@
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">idle state
                 </div>
                 <div class="text-900 w-8">{{tool.idleState}}</div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
-                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">enabled
-                </div>
-                <div class="text-900 w-8">
-                    <i *ngIf="tool.enabled" class="pi pi-check mx-1"></i>
-                    <i *ngIf="!tool.enabled" class="pi pi-times mx-1"></i>
-                    {{tool.enabled}}
-                </div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 flex-wrap">
-                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">wiki link
-                </div>
-                <div class="text-900 w-8"><a href="{{tool.wikiLink}}">{{tool.wikiLink}}</a></div>
-            </li>
-            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
-                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
-                    required qualifications
-                </div>
-                <div class="text-900 w-8">
-                    <div *ngFor="let q of tool.requiredQualifications"
-                         class="inline-block p-1 m-1 border-round text-300 text-sm"
-                         [style.background-color]="q.colour">
-                        {{q.name}}
-                    </div>
-                </div>
             </li>
         </ul>
     </div>
