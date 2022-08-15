@@ -12,6 +12,7 @@ data class User(
     val wikiName: String,
     val locked: Boolean,
     val notes: String?,
+    val identities: Set<UserIdentity>,
     val memberQualifications: Set<String>,
     val instructorQualifications: Set<String>?,
     val isAdmin: Boolean
@@ -25,6 +26,7 @@ fun cloud.fabX.fabXaccess.user.model.User.toRestModel() = User(
     wikiName = wikiName,
     locked = locked,
     notes = notes,
+    identities = identities.map { it.toRestModel() }.toSet(),
     memberQualifications = memberQualifications.map { it.serialize() }.toSet(),
     instructorQualifications = instructorQualifications?.map { it.serialize() }?.toSet(),
     isAdmin = isAdmin
@@ -67,12 +69,26 @@ data class UsernamePasswordIdentityAdditionDetails(
 )
 
 @Serializable
+sealed class UserIdentity
+
+@Serializable
+data class UsernamePasswordIdentity(
+    val username: String
+) : UserIdentity()
+
+@Serializable
 data class CardIdentity(
     val cardId: String,
     val cardSecret: String
-)
+) : UserIdentity()
 
 @Serializable
 data class PhoneNrIdentity(
     val phoneNr: String
-)
+) : UserIdentity()
+
+fun cloud.fabX.fabXaccess.user.model.UserIdentity.toRestModel(): UserIdentity = when (this) {
+    is cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity -> UsernamePasswordIdentity(username)
+    is cloud.fabX.fabXaccess.user.model.PhoneNrIdentity -> PhoneNrIdentity(phoneNr)
+    is cloud.fabX.fabXaccess.user.model.CardIdentity -> CardIdentity(cardId, cardSecret)
+}

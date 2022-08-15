@@ -22,6 +22,7 @@ import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
 import cloud.fabX.fabXaccess.user.rest.UserLockDetails
+import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
@@ -105,6 +106,7 @@ internal class UserIntegrationTest {
                     "member",
                     false,
                     null,
+                    setOf(UsernamePasswordIdentity("member")),
                     setOf(),
                     null,
                     false
@@ -117,6 +119,7 @@ internal class UserIntegrationTest {
                     "admin",
                     false,
                     null,
+                    setOf(UsernamePasswordIdentity("admin")),
                     setOf(),
                     null,
                     true
@@ -129,6 +132,7 @@ internal class UserIntegrationTest {
                     "turing",
                     false,
                     null,
+                    setOf(),
                     setOf(),
                     null,
                     false
@@ -162,6 +166,7 @@ internal class UserIntegrationTest {
                     "turing",
                     false,
                     null,
+                    setOf(),
                     setOf(),
                     null,
                     false
@@ -200,6 +205,7 @@ internal class UserIntegrationTest {
                     "turing",
                     false,
                     null,
+                    setOf(UsernamePasswordIdentity("alan.turing")),
                     setOf(),
                     null,
                     false
@@ -263,6 +269,7 @@ internal class UserIntegrationTest {
                     false,
                     null,
                     setOf(),
+                    setOf(),
                     null,
                     false
                 )
@@ -323,6 +330,7 @@ internal class UserIntegrationTest {
                     "wiki",
                     true,
                     "some notes",
+                    setOf(),
                     setOf(),
                     null,
                     false
@@ -420,6 +428,7 @@ internal class UserIntegrationTest {
                     false,
                     null,
                     setOf(),
+                    setOf(),
                     null,
                     true
                 )
@@ -458,6 +467,7 @@ internal class UserIntegrationTest {
                     "wiki",
                     false,
                     null,
+                    setOf(),
                     setOf(),
                     null,
                     false
@@ -515,6 +525,7 @@ internal class UserIntegrationTest {
                     false,
                     null,
                     setOf(),
+                    setOf(),
                     setOf(qualificationId),
                     false
                 )
@@ -567,6 +578,7 @@ internal class UserIntegrationTest {
                     "wiki",
                     false,
                     null,
+                    setOf(),
                     setOf(),
                     null,
                     false
@@ -632,6 +644,7 @@ internal class UserIntegrationTest {
                     "wiki",
                     false,
                     null,
+                    setOf(),
                     setOf(qualificationId),
                     null,
                     false
@@ -688,6 +701,7 @@ internal class UserIntegrationTest {
                     "wiki",
                     false,
                     null,
+                    setOf(),
                     setOf(qualificationId2),
                     null,
                     false

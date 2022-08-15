@@ -15,7 +15,6 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
-import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
@@ -96,7 +95,14 @@ class UserControllerGetTest {
             "wiki1",
             false,
             "notes1",
-            setOf(UsernamePasswordIdentity("username1", "hash1")),
+            setOf(
+                cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity("username1", "hash1"),
+                cloud.fabX.fabXaccess.user.model.PhoneNrIdentity("+49123456789"),
+                cloud.fabX.fabXaccess.user.model.CardIdentity(
+                    "11223344556677",
+                    "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+                )
+            ),
             setOf(qualification11),
             null,
             false
@@ -114,7 +120,7 @@ class UserControllerGetTest {
             "wiki2",
             true,
             null,
-            setOf(UsernamePasswordIdentity("username2", "hash2")),
+            setOf(cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity("username2", "hash2")),
             setOf(qualification21, qualification22),
             setOf(qualification23),
             true
@@ -135,6 +141,14 @@ class UserControllerGetTest {
             "wiki1",
             false,
             "notes1",
+            setOf(
+                UsernamePasswordIdentity("username1"),
+                PhoneNrIdentity("+49123456789"),
+                CardIdentity(
+                    "11223344556677",
+                    "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+                )
+            ),
             setOf(qualification11.serialize()),
             null,
             false
@@ -148,6 +162,7 @@ class UserControllerGetTest {
             "wiki2",
             true,
             null,
+            setOf(UsernamePasswordIdentity("username2")),
             setOf(qualification21.serialize(), qualification22.serialize()),
             setOf(qualification23.serialize()),
             true
@@ -176,7 +191,7 @@ class UserControllerGetTest {
             "wiki1",
             false,
             "notes1",
-            setOf(UsernamePasswordIdentity("username1", "hash1")),
+            setOf(cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity("username1", "hash1")),
             setOf(qualificationId),
             null,
             false
@@ -190,6 +205,7 @@ class UserControllerGetTest {
             "wiki1",
             false,
             "notes1",
+            setOf(UsernamePasswordIdentity("username1")),
             setOf(qualificationId.serialize()),
             null,
             false
@@ -253,7 +269,7 @@ class UserControllerGetTest {
             "some.one",
             false,
             null,
-            setOf(UsernamePasswordIdentity("username1", "hash1")),
+            setOf(cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity("username1", "hash1")),
             setOf(),
             null,
             false
@@ -267,6 +283,7 @@ class UserControllerGetTest {
             "some.one",
             false,
             null,
+            setOf(UsernamePasswordIdentity("username1")),
             setOf(),
             null,
             false

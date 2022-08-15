@@ -9,7 +9,7 @@ import cloud.fabX.fabXaccess.common.model.Identity
 /**
  * Identifying a User.
  */
-interface UserIdentity : Identity
+sealed interface UserIdentity : Identity
 
 /**
  * Identifying a User by username and password hash.

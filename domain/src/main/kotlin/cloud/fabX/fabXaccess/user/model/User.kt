@@ -32,7 +32,7 @@ data class User internal constructor(
     val wikiName: String,
     val locked: Boolean,
     val notes: String?,
-    internal val identities: Set<UserIdentity>,
+    val identities: Set<UserIdentity>,
     val memberQualifications: Set<QualificationId>,
     val instructorQualifications: Set<QualificationId>?,
     val isAdmin: Boolean
