@@ -306,7 +306,7 @@ class UserController(
             route("/{id}/identity") {
                 route("/username-password") {
                     post("") {
-                        readBody<UsernamePasswordIdentity>()
+                        readBody<UsernamePasswordIdentityAdditionDetails>()
                             ?.let {
                                 readUUIDParameter("id")
                                     ?.let { UserId(it) }

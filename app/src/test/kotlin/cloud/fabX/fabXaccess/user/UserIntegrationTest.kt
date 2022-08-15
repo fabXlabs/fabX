@@ -22,7 +22,7 @@ import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UserDetails
 import cloud.fabX.fabXaccess.user.rest.UserLockDetails
-import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.delete
@@ -722,7 +722,7 @@ internal class UserIntegrationTest {
     fun `when adding username password identity then returns http no content`() = withTestApp {
         // given
         val userId = givenUser()
-        val requestBody = UsernamePasswordIdentity(
+        val requestBody = UsernamePasswordIdentityAdditionDetails(
             "some.one",
             "supersecret123"
         )
@@ -742,7 +742,7 @@ internal class UserIntegrationTest {
     fun `given non-admin authentication when adding username password identity then returns http forbidden`() =
         withTestApp {
             // given
-            val requestBody = UsernamePasswordIdentity(
+            val requestBody = UsernamePasswordIdentityAdditionDetails(
                 "some.one",
                 "supersecret123"
             )

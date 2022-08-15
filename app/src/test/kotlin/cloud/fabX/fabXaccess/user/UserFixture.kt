@@ -10,7 +10,7 @@ import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
-import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -98,7 +98,7 @@ internal suspend fun ApplicationTestBuilder.givenUsernamePasswordIdentity(
     username: String,
     password: String
 ) {
-    val requestBody = UsernamePasswordIdentity(username, password)
+    val requestBody = UsernamePasswordIdentityAdditionDetails(username, password)
 
     val response = c().post("/api/v1/user/$userId/identity/username-password") {
         adminAuth()

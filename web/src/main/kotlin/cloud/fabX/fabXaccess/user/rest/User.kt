@@ -61,7 +61,7 @@ data class QualificationAdditionDetails(
 )
 
 @Serializable
-data class UsernamePasswordIdentity(
+data class UsernamePasswordIdentityAdditionDetails(
     val username: String,
     val password: String
 )

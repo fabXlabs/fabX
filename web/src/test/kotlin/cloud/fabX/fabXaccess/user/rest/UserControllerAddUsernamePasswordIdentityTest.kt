@@ -62,7 +62,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
         // given
         val userId = UserIdFixture.arbitrary()
 
-        val requestBody = UsernamePasswordIdentity(
+        val requestBody = UsernamePasswordIdentityAdditionDetails(
             "username123",
             "password123"
         )
@@ -96,7 +96,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
     fun `given no admin authentication when adding username password identity then returns http forbidden`() =
         withConfiguredTestApp {
             // given
-            val requestBody = UsernamePasswordIdentity(
+            val requestBody = UsernamePasswordIdentityAdditionDetails(
                 "username123",
                 "password123"
             )
@@ -149,7 +149,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
             // given
             val invalidUserId = "invalidUserId"
 
-            val requestBody = UsernamePasswordIdentity(
+            val requestBody = UsernamePasswordIdentityAdditionDetails(
                 "username123",
                 "password123"
             )
@@ -175,7 +175,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
         withConfiguredTestApp {
             val userId = UserIdFixture.arbitrary()
 
-            val requestBody = UsernamePasswordIdentity(
+            val requestBody = UsernamePasswordIdentityAdditionDetails(
                 "username123",
                 "password123"
             )
