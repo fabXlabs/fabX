@@ -100,5 +100,6 @@ export class UserDetailsComponent implements OnDestroy {
 
     ngOnDestroy(): void {
         this.availableMemberQualificationsSubscription.unsubscribe();
+        this.availableInstructorQualificationsSubscription.unsubscribe();
     }
 }

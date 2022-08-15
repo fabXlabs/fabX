@@ -65,6 +65,32 @@
             </li>
         </ul>
 
+        <div class="flex align-items-end">
+            <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">Identities</div>
+        </div>
+        <ul class="list-none p-0 m-0">
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
+                    identities
+                </div>
+                <div class="text-900 w-8">
+                    <ul>
+                        <li *ngFor="let identity of user.identities">
+                            <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'">
+                                Username/Password: {{identity.username}}
+                            </span>
+                            <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'">
+                                Card: {{identity.cardId}}
+                            </span>
+                            <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
+                                Phone Number: {{identity.phoneNr}}
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+
         <div class="mt-3 mb-1 text-sm uppercase text-500 font-medium">Access</div>
         <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">

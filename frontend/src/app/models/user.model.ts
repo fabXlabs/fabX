@@ -9,6 +9,7 @@ export interface User {
     wikiName: string,
     locked: boolean,
     notes: string | null,
+    identities: UserIdentity[],
     memberQualifications: string[],
     instructorQualifications: string[] | null,
     isAdmin: boolean
@@ -22,6 +23,7 @@ export interface AugmentedUser {
     wikiName: string,
     locked: boolean,
     notes: string | null,
+    identities: UserIdentity[],
     memberQualifications: Qualification[],
     instructorQualifications: Qualification[] | null,
     isAdmin: boolean
@@ -51,3 +53,21 @@ export interface QualificationAdditionDetails {
 export interface IsAdminDetails {
     isAdmin: boolean
 }
+
+export interface UsernamePasswordIdentity {
+    type: "cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity",
+    username: string
+}
+
+export interface CardIdentity {
+    type: "cloud.fabX.fabXaccess.user.rest.CardIdentity",
+    cardId: string,
+    cardSecret: string
+}
+
+export interface PhoneNrIdentity {
+    type: "cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity",
+    phoneNr: string
+}
+
+export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity
