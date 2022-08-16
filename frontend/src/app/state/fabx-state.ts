@@ -635,6 +635,21 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.Add)
+    addDevice(ctx: StateContext<FabxStateModel>, action: Devices.Add) {
+        return this.deviceService.addDevice(action.details).pipe(
+            tap({
+                next: value => {
+                    ctx.dispatch(new Devices.GetById(value)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['device', value]));
+                        }
+                    });
+                }
+            })
+        );
+    }
+
     @Action(Devices.ChangeDetails)
     changeDeviceDetails(ctx: StateContext<FabxStateModel>, action: Devices.ChangeDetails) {
         return this.deviceService.changeDetails(action.id, action.details).pipe(

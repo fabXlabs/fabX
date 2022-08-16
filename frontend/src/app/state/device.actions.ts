@@ -1,4 +1,4 @@
-import { DeviceDetails } from "../models/device.model";
+import { DeviceCreationDetails, DeviceDetails } from "../models/device.model";
 
 export namespace Devices {
     export class GetAll {
@@ -9,6 +9,12 @@ export namespace Devices {
         static readonly type = "[fabX Devices] Get By Id"
 
         constructor(public id: string) {}
+    }
+
+    export class Add {
+        static readonly type = "[fabX Devices] Add"
+
+        constructor(public details: DeviceCreationDetails) {}
     }
 
     export class ChangeDetails {

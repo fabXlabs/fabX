@@ -19,6 +19,14 @@ export interface AugmentedDevice {
     attachedTools: Record<number, Tool>,
 }
 
+export interface DeviceCreationDetails {
+    name: string,
+    background: string,
+    backupBackendUrl: string,
+    mac: string,
+    secret: string
+}
+
 export interface DeviceDetails {
     name: ChangeableValue<string> | null
     background: ChangeableValue<string> | null

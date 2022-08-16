@@ -30,6 +30,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AttachedToolNames, DevicesComponent } from './devices/devices.component';
 import { AuthGuard } from "./state/auth-guard";
+import { DeviceAddComponent } from './device-add/device-add.component';
 import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
 import { DeviceChangeDetailsComponent } from './device-change-details/device-change-details.component';
 import { DeviceDetailsComponent } from './device-details/device-details.component';
@@ -59,6 +60,7 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
     declarations: [
         AppComponent,
         AttachedToolNames,
+        DeviceAddComponent,
         DeviceAttachToolComponent,
         DeviceChangeDetailsComponent,
         DeviceDetailsComponent,
