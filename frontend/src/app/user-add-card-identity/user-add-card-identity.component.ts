@@ -7,6 +7,7 @@ import { AugmentedUser } from "../models/user.model";
 import { ErrorService } from "../services/error.service";
 import { Users } from "../state/user.actions";
 import { HttpErrorResponse } from "@angular/common/http";
+import { BarcodeFormat } from '@zxing/library';
 
 @Component({
     selector: 'fabx-user-add-card-identity',
@@ -17,6 +18,10 @@ export class UserAddCardIdentityComponent {
 
     error = "";
 
+    QR_CODE = BarcodeFormat.QR_CODE;
+
+    qrScanning = false;
+
     form = new FormGroup({
         cardId: new FormControl(""),
         cardSecret: new FormControl("")
@@ -25,6 +30,28 @@ export class UserAddCardIdentityComponent {
     @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
 
     constructor(private store: Store, private errorHandler: ErrorService) { }
+
+    enableQrScanning() {
+        this.qrScanning = true;
+    }
+
+    onQrSuccess(event: string) {
+        console.log("QR Code Success:", event);
+
+        const parts = event.split("\n");
+
+        if (parts.length != 2) {
+            this.error = "Error reading QR Code: Not 2 parts.";
+            return;
+        }
+
+        this.qrScanning = false;
+
+        this.form.patchValue({
+            cardId: parts[0],
+            cardSecret: parts[1]
+        });
+    }
 
     onSubmit() {
         const cardId = this.form.get('cardId')!.value;

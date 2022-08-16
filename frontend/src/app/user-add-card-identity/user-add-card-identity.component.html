@@ -13,6 +13,15 @@
         </div>
         <div class="col-12 md:col-10">
             <div class="formgrid p-fluid">
+                <div class="col-12">
+                    <zxing-scanner [formats]="[QR_CODE]" *ngIf="qrScanning" (scanSuccess)="onQrSuccess($event)"></zxing-scanner>
+                    <button label="Scan QR Code"
+                            icon="pi pi-qrcode"
+                            pButton
+                            (click)="enableQrScanning()"
+                    >
+                    </button>
+                </div>
                 <form [formGroup]="form" (ngSubmit)="onSubmit()">
                     <div class="field col-12">
                         <label for="cardId" class="font-medium text-900">Card ID</label>
