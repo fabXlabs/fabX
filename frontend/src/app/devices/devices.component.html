@@ -25,4 +25,15 @@
             <td>{{device.attachedTools | attachedToolNames}}</td>
         </tr>
     </ng-template>
+
+    <ng-template pTemplate="loadingbody">
+        <tr *ngFor="let _ of [].constructor(5)">
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
+        </tr>
+    </ng-template>
 </p-table>
