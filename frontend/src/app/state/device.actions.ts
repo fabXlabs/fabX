@@ -34,4 +34,10 @@ export namespace Devices {
 
         constructor(public deviceId: string, public pin: number) {}
     }
+
+    export class Delete {
+        static readonly type = "[fabX Devices] Delete"
+
+        constructor(public id: string) {}
+    }
 }

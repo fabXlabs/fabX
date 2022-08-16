@@ -70,4 +70,14 @@ export class DeviceService {
             }
         );
     }
+
+    public deleteDevice(id: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/device/${id}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
 }

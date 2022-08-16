@@ -459,6 +459,26 @@ export class FabxState {
         );
     }
 
+    @Action(Users.Delete)
+    deleteUser(ctx: StateContext<FabxStateModel>, action: Users.Delete) {
+        return this.userService.deleteUser(action.userId).pipe(
+            tap({
+                next: _ => {
+                    const state = ctx.getState();
+                    if (state.users.tag == "FINISHED") {
+                        ctx.patchState({
+                            users: {
+                                tag: "FINISHED",
+                                value: state.users.value.filter((u) => u.id != action.userId)
+                            }
+                        });
+                    }
+                    ctx.dispatch(new Navigate(['user']));
+                }
+            })
+        );
+    }
+
     // QUALIFICATIONS
     @Selector()
     static qualificationsLoadingState(state: FabxStateModel): LoadingStateTag {
@@ -549,6 +569,26 @@ export class FabxState {
                             ctx.dispatch(new Navigate(['qualification', action.id]));
                         }
                     })
+                }
+            })
+        );
+    }
+
+    @Action(Qualifications.Delete)
+    deleteQualification(ctx: StateContext<FabxStateModel>, action: Qualifications.Delete) {
+        return this.qualificationService.deleteQualification(action.id).pipe(
+            tap({
+                next: _ => {
+                    const state = ctx.getState();
+                    if (state.qualifications.tag == "FINISHED") {
+                        ctx.patchState({
+                            qualifications: {
+                                tag: "FINISHED",
+                                value: state.qualifications.value.filter((q) => q.id != action.id)
+                            }
+                        });
+                    }
+                    ctx.dispatch(new Navigate(['qualification']));
                 }
             })
         );
@@ -691,6 +731,26 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.Delete)
+    deleteDevice(ctx: StateContext<FabxStateModel>, action: Devices.Delete) {
+        return this.deviceService.deleteDevice(action.id).pipe(
+            tap({
+                next: _ => {
+                    const state = ctx.getState();
+                    if (state.devices.tag == "FINISHED") {
+                        ctx.patchState({
+                            devices: {
+                                tag: "FINISHED",
+                                value: state.devices.value.filter((d) => d.id != action.id)
+                            }
+                        });
+                    }
+                    ctx.dispatch(new Navigate(['device']));
+                }
+            })
+        );
+    }
+
     // TOOLS
 
     @Selector()
@@ -752,7 +812,7 @@ export class FabxState {
                         ctx.patchState({
                             tools: {
                                 tag: "FINISHED",
-                                value: state.tools.value.filter((q) => q.id != action.id).concat([value])
+                                value: state.tools.value.filter((t) => t.id != action.id).concat([value])
                             }
                         });
                     }
@@ -786,6 +846,26 @@ export class FabxState {
                             ctx.dispatch(new Navigate(['tool', action.id]));
                         }
                     })
+                }
+            })
+        );
+    }
+
+    @Action(Tools.Delete)
+    deleteTool(ctx: StateContext<FabxStateModel>, action: Tools.Delete) {
+        return this.toolService.deleteTool(action.id).pipe(
+            tap({
+                next: _ => {
+                    const state = ctx.getState();
+                    if (state.tools.tag == "FINISHED") {
+                        ctx.patchState({
+                            tools: {
+                                tag: "FINISHED",
+                                value: state.tools.value.filter((t) => t.id != action.id)
+                            }
+                        });
+                    }
+                    ctx.dispatch(new Navigate(['tool']));
                 }
             })
         );

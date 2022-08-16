@@ -183,13 +183,35 @@
                                   icon="pi pi-shield"
                                   *ngIf="!user.isAdmin"
                                   (onClick)="toggleAdmin($event)"
-                                  styleClass="p-button-outlined">
+                                  styleClass="p-button-outlined p-button-warning">
                         </p-button>
                         <p-button label="Remove Admin"
                                   icon="pi pi-times"
                                   *ngIf="user.isAdmin && user.id !== loggedInUser.id"
                                   (onClick)="toggleAdmin($event)"
-                                  styleClass="p-button-outlined">
+                                  styleClass="p-button-outlined p-button-warning">
+                        </p-button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+        <div class="flex align-items-end">
+            <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">Danger Zone</div>
+        </div>
+        <ul class="list-none p-0 m-0">
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
+                    delete
+                </div>
+                <div class="text-900 w-8 flex align-items-center">
+                    <div class="flex-grow-1"></div>
+                    <div *ngIf="loggedInUser$ | async let loggedInUser">
+                        <p-button label="Delete"
+                                  styleClass="p-button-outlined p-button-danger"
+                                  icon="pi pi-trash"
+                                  *ngIf="user.id !== loggedInUser.id"
+                                  (onClick)="delete()">
                         </p-button>
                     </div>
                 </div>

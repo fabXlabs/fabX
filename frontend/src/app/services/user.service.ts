@@ -208,5 +208,15 @@ export class UserService {
             }
         );
     }
+
+    public deleteUser(id: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${id}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        )
+    }
 }
 

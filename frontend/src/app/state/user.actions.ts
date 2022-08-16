@@ -107,4 +107,10 @@ export namespace Users {
 
         constructor(public userId: string, public phoneNr: string) {}
     }
+
+    export class Delete {
+        static readonly type = "[fabX Users] Delete"
+
+        constructor(public userId: string) {}
+    }
 }

@@ -22,4 +22,10 @@ export namespace Qualifications {
 
         constructor(public id: string, public details: QualificationDetails) {}
     }
+
+    export class Delete {
+        static readonly type = "[fabX Qualifications] Delete"
+
+        constructor(public id: string) {}
+    }
 }

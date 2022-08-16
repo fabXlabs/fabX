@@ -45,4 +45,14 @@ export class ToolService {
             }
         );
     }
+
+    public deleteTool(id: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/tool/${id}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
 }

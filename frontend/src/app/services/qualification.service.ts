@@ -45,4 +45,14 @@ export class QualificationService {
             }
         );
     }
+
+    public deleteQualification(id: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/qualification/${id}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
 }

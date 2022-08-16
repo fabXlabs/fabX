@@ -22,4 +22,10 @@ export namespace Tools {
 
         constructor(public id: string, public details: ToolDetails) {}
     }
+
+    export class Delete {
+        static readonly type = "[fabX Tools] Delete"
+
+        constructor(public id: string) {}
+    }
 }

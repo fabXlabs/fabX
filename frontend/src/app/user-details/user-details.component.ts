@@ -119,6 +119,26 @@ export class UserDetailsComponent implements OnDestroy {
         });
     }
 
+    delete() {
+        const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
+
+        let message = `Are you sure you want to delete user ${currentUser.firstName} ${currentUser.lastName}?`
+
+        this.confirmationService.confirm({
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-danger',
+            acceptIcon: 'pi pi-trash',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+            message: message,
+            accept: () => {
+                this.store.dispatch(new Users.Delete(
+                    currentUser.id
+                ));
+            }
+        });
+    }
+
     ngOnDestroy(): void {
         this.availableMemberQualificationsSubscription.unsubscribe();
         this.availableInstructorQualificationsSubscription.unsubscribe();
