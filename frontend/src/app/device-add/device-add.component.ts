@@ -4,6 +4,7 @@ import { Store } from "@ngxs/store";
 import { ErrorService } from "../services/error.service";
 import { Devices } from "../state/device.actions";
 import { HttpErrorResponse } from "@angular/common/http";
+import { BarcodeFormat } from "@zxing/library";
 
 @Component({
     selector: 'fabx-device-add',
@@ -14,6 +15,10 @@ export class DeviceAddComponent {
 
     error = "";
 
+    QR_CODE = BarcodeFormat.QR_CODE;
+
+    qrScanning = false;
+
     form = new FormGroup({
         mac: new FormControl('', Validators.required),
         secret: new FormControl('', Validators.required),
@@ -23,6 +28,28 @@ export class DeviceAddComponent {
     });
 
     constructor(private store: Store, private errorHandler: ErrorService) { }
+
+    enableQrScanning() {
+        this.qrScanning = true;
+    }
+
+    onQrSuccess(event: string) {
+        console.log("QR Code Success:", event);
+
+        const parts = event.split("\n");
+
+        if (parts.length != 2) {
+            this.error = "Error reading QR Code: Not 2 parts.";
+            return;
+        }
+
+        this.qrScanning = false;
+
+        this.form.patchValue({
+            mac: parts[0],
+            secret: parts[1]
+        });
+    }
 
     onSubmit() {
         const mac = this.form.get('mac')!.value;

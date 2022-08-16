@@ -1,13 +1,32 @@
 <div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="grid">
-            <h2 class="col-12 md:col-offset-2 md:col-10 mb-0 text-xl pl-3">Add Device</h2>
+    <div class="grid">
+        <h2 class="col-12 md:col-offset-2 md:col-10 mb-0 text-xl pl-3">Add Device</h2>
 
-            <div class="col-12 md:col-2 md:pt-3">
-                <div class="pl-2 md:pl-0 text-sm uppercase text-500 font-medium overflow-hidden text-overflow-ellipsis">
-                    Identity
+        <div class="col-12 md:col-2 md:pt-3">
+            <div class="pl-2 md:pl-0 text-sm uppercase text-500 font-medium overflow-hidden text-overflow-ellipsis">
+                Identity
+            </div>
+        </div>
+
+        <div class="col-12 md:col-10">
+            <div class="formgrid p-fluid">
+                <div class="col-12">
+                    <zxing-scanner [formats]="[QR_CODE]" *ngIf="qrScanning"
+                                   (scanSuccess)="onQrSuccess($event)"></zxing-scanner>
+                    <button label="Scan QR Code"
+                            icon="pi pi-qrcode"
+                            pButton
+                            (click)="enableQrScanning()"
+                    >
+                    </button>
                 </div>
             </div>
+        </div>
+
+        <div class="col-12 md:col-2 md:pt-3"></div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" style="display: contents">
+
             <div class="col-12 md:col-10">
                 <div class="formgrid p-fluid">
 
@@ -59,6 +78,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
