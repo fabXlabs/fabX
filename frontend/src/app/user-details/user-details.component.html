@@ -96,15 +96,22 @@
                 </div>
                 <div class="text-900 w-8">
                     <ul>
-                        <li *ngFor="let identity of user.identities">
+                        <li *ngFor="let identity of user.identities"
+                            class="line-height-3">
                             <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'">
                                 Username/Password: {{identity.username}}
+                                <i class="pi pi-times cursor-pointer"
+                                   (click)="removeUsernamePasswordIdentity(identity.username)"></i>
                             </span>
                             <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'">
                                 Card: {{identity.cardId}}
+                                <i class="pi pi-times cursor-pointer"
+                                   (click)="removeCardIdentity(identity.cardId)"></i>
                             </span>
                             <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
                                 Phone Number: {{identity.phoneNr}}
+                                <i class="pi pi-times cursor-pointer"
+                                   (click)="removePhoneNrIdentity(identity.phoneNr)"></i>
                             </span>
                         </li>
                     </ul>

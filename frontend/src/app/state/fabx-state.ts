@@ -390,6 +390,18 @@ export class FabxState {
         );
     }
 
+    @Action(Users.RemoveUsernamePasswordIdentity)
+    removeUsernamePasswordIdentity(ctx: StateContext<FabxStateModel>, action: Users.RemoveUsernamePasswordIdentity) {
+        return this.userService.removeUsernamePasswordIdentity(
+            action.userId,
+            action.username
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
     @Action(Users.AddCardIdentity)
     addCardIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddCardIdentity) {
         return this.userService.addCardIdentity(
@@ -407,6 +419,18 @@ export class FabxState {
         );
     }
 
+    @Action(Users.RemoveCardIdentity)
+    removeCardIdentity(ctx: StateContext<FabxStateModel>, action: Users.RemoveCardIdentity) {
+        return this.userService.removeCardIdentity(
+            action.userId,
+            action.cardId
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
     @Action(Users.AddPhoneNrIdentity)
     addPhoneNrIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddPhoneNrIdentity) {
         return this.userService.addPhoneNrIdentity(
@@ -419,6 +443,18 @@ export class FabxState {
                         ctx.dispatch(new Navigate(['user', action.userId]));
                     }
                 })
+            })
+        );
+    }
+
+    @Action(Users.RemovePhoneNrIdentity)
+    removePhoneNrIdentity(ctx: StateContext<FabxStateModel>, action: Users.RemovePhoneNrIdentity) {
+        return this.userService.removePhoneNrIdentity(
+            action.userId,
+            action.phoneNr
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
             })
         );
     }

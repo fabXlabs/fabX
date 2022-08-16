@@ -78,15 +78,33 @@ export namespace Users {
         constructor(public userId: string, public details: UsernamePasswordIdentityAdditionDetails) {}
     }
 
+    export class RemoveUsernamePasswordIdentity {
+        static readonly type = "[fabX Users] Remove Username/Password Identity"
+
+        constructor(public userId: string, public username: string) {}
+    }
+
     export class AddCardIdentity {
         static readonly type = "[fabX Users] Add Card Identity"
 
         constructor(public userId: string, public details: CardIdentityAdditionDetails) {}
     }
 
+    export class RemoveCardIdentity {
+        static readonly type = "[fabX Users] Remove Card Identity"
+
+        constructor(public userId: string, public cardId: string) {}
+    }
+
     export class AddPhoneNrIdentity {
         static readonly type = "[fabX Users] Add Phone Number Identity"
 
         constructor(public userId: string, public details: PhoneNrIdentityAdditionDetails) {}
+    }
+
+    export class RemovePhoneNrIdentity {
+        static readonly type = "[fabX Users] Remove Phone Number Identity"
+
+        constructor(public userId: string, public phoneNr: string) {}
     }
 }

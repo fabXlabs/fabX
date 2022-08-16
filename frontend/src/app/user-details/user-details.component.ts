@@ -77,6 +77,27 @@ export class UserDetailsComponent implements OnDestroy {
         ));
     }
 
+    removeUsernamePasswordIdentity(username: string) {
+        this.store.dispatch(new Users.RemoveUsernamePasswordIdentity(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            username
+        ));
+    }
+
+    removeCardIdentity(cardId: string) {
+        this.store.dispatch(new Users.RemoveCardIdentity(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            cardId
+        ));
+    }
+
+    removePhoneNrIdentity(phoneNr: string) {
+        this.store.dispatch(new Users.RemovePhoneNrIdentity(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            phoneNr
+        ));
+    }
+
     toggleAdmin(_: any) {
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

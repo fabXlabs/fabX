@@ -151,6 +151,16 @@ export class UserService {
         );
     }
 
+    public removeUsernamePasswordIdentity(userId: string, username: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/identity/username-password/${username}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
     public addCardIdentity(userId: string, cardId: string, cardSecret: string): Observable<string> {
         const details: CardIdentityAdditionDetails = {
             cardId: cardId,
@@ -167,6 +177,16 @@ export class UserService {
         );
     }
 
+    public removeCardIdentity(userId: string, cardId: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/identity/card/${cardId}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
     public addPhoneNrIdentity(userId: string, phoneNr: string): Observable<string> {
         const details: PhoneNrIdentityAdditionDetails = {
             phoneNr: phoneNr
@@ -175,6 +195,16 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/phone`,
             details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public removePhoneNrIdentity(userId: string, phoneNr: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/identity/phone/${phoneNr}`,
             {
                 ...this.authService.getOptions(),
                 responseType: 'text'
