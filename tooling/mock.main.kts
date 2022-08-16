@@ -1,11 +1,11 @@
-@file:DependsOn("io.ktor:ktor-client-core-jvm:2.0.0")
-@file:DependsOn("io.ktor:ktor-client-cio-jvm:2.0.0")
-@file:DependsOn("io.ktor:ktor-client-content-negotiation-jvm:2.0.0")
-@file:DependsOn("io.ktor:ktor-client-auth-jvm:2.0.0")
-@file:DependsOn("io.ktor:ktor-serialization-kotlinx-json-jvm:2.0.0")
+@file:DependsOn("io.ktor:ktor-client-core-jvm:2.0.2")
+@file:DependsOn("io.ktor:ktor-client-cio-jvm:2.0.2")
+@file:DependsOn("io.ktor:ktor-client-content-negotiation-jvm:2.0.2")
+@file:DependsOn("io.ktor:ktor-client-auth-jvm:2.0.2")
+@file:DependsOn("io.ktor:ktor-serialization-kotlinx-json-jvm:2.0.2")
 
-@file:DependsOn("io.ktor:ktor-client-okhttp:2.0.0")
-@file:DependsOn("io.ktor:ktor-client-gson:2.0.0")
+@file:DependsOn("io.ktor:ktor-client-okhttp:2.0.2")
+@file:DependsOn("io.ktor:ktor-client-gson:2.0.2")
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -22,6 +22,7 @@ import io.ktor.http.contentType
 import kotlin.random.Random
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -148,7 +149,11 @@ qualifications.forEachIndexed { i, qualificationName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
-        qualificationIds.add(response.bodyAsText())
+        qualificationIds.add(
+            Json.parseToJsonElement(response.bodyAsText())
+                .jsonPrimitive
+                .contentOrNull!!
+        )
     }
 }
 
@@ -177,7 +182,11 @@ devices.forEachIndexed { i, deviceName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
-        deviceIds.add(response.bodyAsText())
+        deviceIds.add(
+            Json.parseToJsonElement(response.bodyAsText())
+                .jsonPrimitive
+                .contentOrNull!!
+        )
     }
 }
 
@@ -198,7 +207,11 @@ tools.forEachIndexed { i, toolName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
-        toolIds.add(response.bodyAsText())
+        toolIds.add(
+            Json.parseToJsonElement(response.bodyAsText())
+                .jsonPrimitive
+                .contentOrNull!!
+        )
     }
 }
 
@@ -233,7 +246,11 @@ users.forEach { userName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
-        userIds.add(response.bodyAsText())
+        userIds.add(
+            Json.parseToJsonElement(response.bodyAsText())
+                .jsonPrimitive
+                .contentOrNull!!
+        )
     }
 }
 
