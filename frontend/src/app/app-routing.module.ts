@@ -16,6 +16,7 @@ import { ToolChangeDetailsComponent } from "./tool-change-details/tool-change-de
 import { ToolDetailsComponent } from "./tool-details/tool-details.component";
 import { ToolsComponent } from "./tools/tools.component";
 import { UserAddComponent } from "./user-add/user-add.component";
+import { UserAddUsernamePasswordIdentityComponent } from "./user-add-username-password-identity/user-add-username-password-identity.component";
 import { UserChangeLockStateComponent } from "./user-change-lock-state/user-change-lock-state.component";
 import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
@@ -27,6 +28,7 @@ const routes: Routes = [
     { path: 'user', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'user/add', component: UserAddComponent, canActivate: [AuthGuard] },
     { path: 'user/:id', component: UserDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'user/:id/add-username-password-identity', component: UserAddUsernamePasswordIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/change-personal-info', component: UserChangePersonalInfoComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/lock', component: UserChangeLockStateComponent, canActivate: [AuthGuard] },
     { path: 'qualification', component: QualificationsComponent, canActivate: [AuthGuard] },

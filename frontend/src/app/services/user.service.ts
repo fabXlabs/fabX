@@ -9,7 +9,7 @@ import {
     User,
     UserCreationDetails,
     UserDetails,
-    UserLockDetails
+    UserLockDetails, UsernamePasswordIdentityAdditionDetails
 } from '../models/user.model';
 
 @Injectable({
@@ -120,7 +120,7 @@ export class UserService {
     public changeIsAdmin(userId: string, isAdmin: boolean): Observable<string> {
         const details: IsAdminDetails = {
             isAdmin: isAdmin
-        }
+        };
 
         return this.http.put(
             `${this.baseUrl}/user/${userId}/is-admin`,
@@ -129,7 +129,23 @@ export class UserService {
                 ...this.authService.getOptions(),
                 responseType: 'text'
             }
-        )
+        );
+    }
+
+    public addUsernamePasswordIdentity(userId: string, username: string, password: string): Observable<string> {
+        const details: UsernamePasswordIdentityAdditionDetails = {
+            username: username,
+            password: password
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/identity/username-password`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
     }
 }
 

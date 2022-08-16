@@ -373,6 +373,23 @@ export class FabxState {
         );
     }
 
+    @Action(Users.AddUsernamePasswordIdentity)
+    addUsernamePasswordIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddUsernamePasswordIdentity) {
+        return this.userService.addUsernamePasswordIdentity(
+            action.userId,
+            action.details.username,
+            action.details.password
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                    next: () => {
+                        ctx.dispatch(new Navigate(['user', action.userId]));
+                    }
+                })
+            })
+        );
+    }
+
     // QUALIFICATIONS
     @Selector()
     static qualificationsLoadingState(state: FabxStateModel): LoadingStateTag {

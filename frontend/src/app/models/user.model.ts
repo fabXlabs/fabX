@@ -54,6 +54,11 @@ export interface IsAdminDetails {
     isAdmin: boolean
 }
 
+export interface UsernamePasswordIdentityAdditionDetails {
+    username: string,
+    password: string
+}
+
 export interface UsernamePasswordIdentity {
     type: "cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity",
     username: string

@@ -1,5 +1,10 @@
 import { UserSortModel } from "./fabx-state";
-import { UserCreationDetails, UserDetails, UserLockDetails } from "../models/user.model";
+import {
+    UserCreationDetails,
+    UserDetails,
+    UserLockDetails,
+    UsernamePasswordIdentityAdditionDetails
+} from "../models/user.model";
 
 export namespace Users {
     export class GetAll {
@@ -64,5 +69,11 @@ export namespace Users {
         static readonly type = "[fabX Users] Change Is Admin"
 
         constructor(public userId: string, public isAdmin: boolean) {}
+    }
+
+    export class AddUsernamePasswordIdentity {
+        static readonly type = "[fabX Users] Add Username/Password Identity"
+
+        constructor(public userId: string, public details: UsernamePasswordIdentityAdditionDetails) {}
     }
 }

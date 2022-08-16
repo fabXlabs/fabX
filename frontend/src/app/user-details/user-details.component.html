@@ -67,6 +67,13 @@
 
         <div class="flex align-items-end">
             <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">Identities</div>
+            <div class="m-2">
+                <p-button label="Add Username/Password"
+                          icon="pi pi-plus"
+                          styleClass="p-button-outlined"
+                          routerLink="/user/{{user.id}}/add-username-password-identity">
+                </p-button>
+            </div>
         </div>
         <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
