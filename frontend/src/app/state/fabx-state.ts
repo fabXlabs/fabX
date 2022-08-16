@@ -390,6 +390,39 @@ export class FabxState {
         );
     }
 
+    @Action(Users.AddCardIdentity)
+    addCardIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddCardIdentity) {
+        return this.userService.addCardIdentity(
+            action.userId,
+            action.details.cardId,
+            action.details.cardSecret
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                    next: () => {
+                        ctx.dispatch(new Navigate(['user', action.userId]));
+                    }
+                })
+            })
+        );
+    }
+
+    @Action(Users.AddPhoneNrIdentity)
+    addPhoneNrIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddPhoneNrIdentity) {
+        return this.userService.addPhoneNrIdentity(
+            action.userId,
+            action.details.phoneNr
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                    next: () => {
+                        ctx.dispatch(new Navigate(['user', action.userId]));
+                    }
+                })
+            })
+        );
+    }
+
     // QUALIFICATIONS
     @Selector()
     static qualificationsLoadingState(state: FabxStateModel): LoadingStateTag {

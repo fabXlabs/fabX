@@ -1,5 +1,6 @@
 import { UserSortModel } from "./fabx-state";
 import {
+    CardIdentityAdditionDetails, PhoneNrIdentityAdditionDetails,
     UserCreationDetails,
     UserDetails,
     UserLockDetails,
@@ -75,5 +76,17 @@ export namespace Users {
         static readonly type = "[fabX Users] Add Username/Password Identity"
 
         constructor(public userId: string, public details: UsernamePasswordIdentityAdditionDetails) {}
+    }
+
+    export class AddCardIdentity {
+        static readonly type = "[fabX Users] Add Card Identity"
+
+        constructor(public userId: string, public details: CardIdentityAdditionDetails) {}
+    }
+
+    export class AddPhoneNrIdentity {
+        static readonly type = "[fabX Users] Add Phone Number Identity"
+
+        constructor(public userId: string, public details: PhoneNrIdentityAdditionDetails) {}
     }
 }

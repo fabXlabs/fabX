@@ -45,7 +45,9 @@ import { ToolAddComponent } from './tool-add/tool-add.component';
 import { ToolChangeDetailsComponent } from './tool-change-details/tool-change-details.component';
 import { ToolDetailsComponent } from './tool-details/tool-details.component';
 import { ToolsComponent } from './tools/tools.component';
+import { UserAddCardIdentityComponent } from './user-add-card-identity/user-add-card-identity.component';
 import { UserAddComponent } from './user-add/user-add.component';
+import { UserAddPhoneNrIdentityComponent } from './user-add-phone-nr-identity/user-add-phone-nr-identity.component';
 import { UserAddUsernamePasswordIdentityComponent } from './user-add-username-password-identity/user-add-username-password-identity.component';
 import { UserChangeLockStateComponent } from './user-change-lock-state/user-change-lock-state.component';
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
@@ -70,7 +72,9 @@ import { UsersComponent } from './users/users.component';
         ToolChangeDetailsComponent,
         ToolDetailsComponent,
         ToolsComponent,
+        UserAddCardIdentityComponent,
         UserAddComponent,
+        UserAddPhoneNrIdentityComponent,
         UserAddUsernamePasswordIdentityComponent,
         UserChangeLockStateComponent,
         UserChangePersonalInfoComponent,

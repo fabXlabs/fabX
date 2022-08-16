@@ -1,6 +1,6 @@
 <div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
     <div class="grid">
-        <h2 class="col-12 md:col-offset-2 md:col-10 mb-0 text-xl pl-3">Add Username/Password for
+        <h2 class="col-12 md:col-offset-2 md:col-10 mb-0 text-xl pl-3">Add Card for
             <span *ngIf="user$ | async let user">
                 {{user.firstName}} {{user.lastName}}
             </span>
@@ -15,13 +15,13 @@
             <div class="formgrid p-fluid">
                 <form [formGroup]="form" (ngSubmit)="onSubmit()">
                     <div class="field col-12">
-                        <label for="username" class="font-medium text-900">Username</label>
-                        <input id="username" formControlName="username" type="text" pInputText>
+                        <label for="cardId" class="font-medium text-900">Card ID</label>
+                        <input id="cardId" formControlName="cardId" type="text" pInputText>
                     </div>
 
                     <div class="field col-12">
-                        <label for="password" class="font-medium text-900">Password</label>
-                        <input id="password" formControlName="password" type="password" pInputText>
+                        <label for="cardSecret" class="font-medium text-900">Card Secret</label>
+                        <input id="cardSecret" formControlName="cardSecret" type="text" pInputText>
                     </div>
 
                     <div *ngIf="error" class="field col-12 my-0">

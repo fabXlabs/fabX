@@ -64,10 +64,19 @@ export interface UsernamePasswordIdentity {
     username: string
 }
 
+export interface CardIdentityAdditionDetails {
+    cardId: string,
+    cardSecret: string
+}
+
 export interface CardIdentity {
     type: "cloud.fabX.fabXaccess.user.rest.CardIdentity",
     cardId: string,
     cardSecret: string
+}
+
+export interface PhoneNrIdentityAdditionDetails {
+    phoneNr: string
 }
 
 export interface PhoneNrIdentity {

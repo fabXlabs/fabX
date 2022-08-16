@@ -4,12 +4,15 @@ import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
 import {
+    CardIdentityAdditionDetails,
     IsAdminDetails,
+    PhoneNrIdentityAdditionDetails,
     QualificationAdditionDetails,
     User,
     UserCreationDetails,
     UserDetails,
-    UserLockDetails, UsernamePasswordIdentityAdditionDetails
+    UserLockDetails,
+    UsernamePasswordIdentityAdditionDetails
 } from '../models/user.model';
 
 @Injectable({
@@ -140,6 +143,37 @@ export class UserService {
 
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/username-password`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public addCardIdentity(userId: string, cardId: string, cardSecret: string): Observable<string> {
+        const details: CardIdentityAdditionDetails = {
+            cardId: cardId,
+            cardSecret: cardSecret
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/identity/card`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public addPhoneNrIdentity(userId: string, phoneNr: string): Observable<string> {
+        const details: PhoneNrIdentityAdditionDetails = {
+            phoneNr: phoneNr
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/identity/phone`,
             details,
             {
                 ...this.authService.getOptions(),
