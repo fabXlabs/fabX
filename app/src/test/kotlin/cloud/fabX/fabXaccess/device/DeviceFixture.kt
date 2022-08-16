@@ -6,10 +6,10 @@ import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
 import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
+import io.ktor.client.call.body
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -37,7 +37,7 @@ internal suspend fun ApplicationTestBuilder.givenDevice(
     }
 
     assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-    return response.bodyAsText()
+    return response.body()
 }
 
 internal suspend fun ApplicationTestBuilder.givenToolAttachedToDevice(

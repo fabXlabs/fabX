@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
+import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -39,7 +40,7 @@ internal suspend fun ApplicationTestBuilder.givenUser(
     }
 
     assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-    return response.bodyAsText()
+    return response.body()
 }
 
 internal suspend fun ApplicationTestBuilder.givenUserIsAdmin(

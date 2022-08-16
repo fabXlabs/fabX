@@ -153,9 +153,9 @@ internal class ToolIntegrationTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.bodyAsText()).isNotEmpty()
+        assertThat(response.body<String>()).isNotEmpty()
 
-        val id = response.bodyAsText()
+        val id = response.body<String>()
         val getResponse = c().get("/api/v1/tool/$id") {
             memberAuth()
         }

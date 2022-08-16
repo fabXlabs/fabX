@@ -18,7 +18,6 @@ import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
@@ -99,7 +98,7 @@ internal class ToolControllerAddTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.bodyAsText()).isEqualTo(toolId.serialize())
+        assertThat(response.body<String>()).isEqualTo(toolId.serialize())
     }
 
     @Test

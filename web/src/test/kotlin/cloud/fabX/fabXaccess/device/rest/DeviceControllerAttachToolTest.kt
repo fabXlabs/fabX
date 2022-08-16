@@ -6,7 +6,6 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNull
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.c
@@ -159,7 +158,7 @@ internal class DeviceControllerAttachToolTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(response.bodyAsText())
+        assertThat(response.body<String>())
             .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
     }
 
@@ -182,7 +181,7 @@ internal class DeviceControllerAttachToolTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(response.bodyAsText())
+        assertThat(response.body<String>())
             .isEqualTo("Required int parameter \"pin\" not given or invalid.")
     }
 

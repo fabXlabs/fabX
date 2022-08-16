@@ -8,7 +8,6 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.basicAuth
 import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
@@ -19,11 +18,9 @@ import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.delete
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.handleRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -129,7 +126,7 @@ internal class UserControllerRemoveUsernamePasswordIdentityTest {
 
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-            assertThat(response.bodyAsText()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
+            assertThat(response.body<String>()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
         }
 
     @Test

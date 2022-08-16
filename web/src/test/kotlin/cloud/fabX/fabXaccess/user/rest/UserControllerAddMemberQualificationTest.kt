@@ -6,10 +6,8 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isNotNull
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.basicAuth
 import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
@@ -22,14 +20,11 @@ import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.handleRequest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -160,7 +155,7 @@ internal class UserControllerAddMemberQualificationTest {
 
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-            assertThat(response.bodyAsText())
+            assertThat(response.body<String>())
                 .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
         }
 

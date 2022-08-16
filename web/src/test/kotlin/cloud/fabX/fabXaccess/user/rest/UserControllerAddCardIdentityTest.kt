@@ -161,7 +161,7 @@ internal class UserControllerAddCardIdentityTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(response.bodyAsText())
+        assertThat(response.body<String>())
             .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
     }
 

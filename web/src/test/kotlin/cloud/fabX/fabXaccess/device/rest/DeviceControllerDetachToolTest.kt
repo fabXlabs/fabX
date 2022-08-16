@@ -127,7 +127,7 @@ internal class DeviceControllerDetachToolTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(response.bodyAsText()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
+        assertThat(response.body<String>()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
     }
 
     @Test
@@ -146,7 +146,7 @@ internal class DeviceControllerDetachToolTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-        assertThat(response.bodyAsText()).isEqualTo("Required int parameter \"pin\" not given or invalid.")
+        assertThat(response.body<String>()).isEqualTo("Required int parameter \"pin\" not given or invalid.")
     }
 
     @Test

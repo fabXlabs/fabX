@@ -17,14 +17,11 @@ import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.client.statement.bodyAsText
-import io.ktor.client.utils.EmptyContent.contentType
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.setBody
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -91,7 +88,7 @@ internal class UserControllerAddTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.bodyAsText()).isEqualTo(userId.serialize())
+        assertThat(response.body<String>()).isEqualTo(userId.serialize())
     }
 
     @Test
