@@ -38,13 +38,10 @@ export class UserService {
     }
 
     public addUser(details: UserCreationDetails): Observable<string> {
-        return this.http.post(
+        return this.http.post<string>(
             `${this.baseUrl}/user`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            this.authService.getOptions()
         );
     }
 

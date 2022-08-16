@@ -28,13 +28,10 @@ export class ToolService {
     }
 
     public addTool(details: ToolCreationDetails): Observable<string> {
-        return this.http.post(
+        return this.http.post<string>(
             `${this.baseUrl}/tool`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            this.authService.getOptions()
         );
     }
 

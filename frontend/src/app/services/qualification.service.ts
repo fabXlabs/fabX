@@ -28,13 +28,10 @@ export class QualificationService {
     }
 
     public addQualification(details: QualificationCreationDetails): Observable<string> {
-        return this.http.post(
+        return this.http.post<string>(
             `${this.baseUrl}/qualification`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            this.authService.getOptions()
         );
     }
 
