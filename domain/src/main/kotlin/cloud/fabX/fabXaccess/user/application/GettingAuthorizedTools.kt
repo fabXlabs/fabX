@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.Either
 import arrow.core.flatMap
-import arrow.core.sequenceEither
+import arrow.core.sequence
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -37,7 +37,7 @@ class GettingAuthorizedTools(
                     .map { it.attachedTools.values }
                     .flatMap { attachedToolIds ->
                         attachedToolIds.map { toolId -> toolRepository.getById(toolId) }
-                            .sequenceEither()
+                            .sequence()
                             .map { tools ->
                                 tools.filter { it.enabled }
                                     .filter { memberQualifications.containsAll(it.requiredQualifications) }

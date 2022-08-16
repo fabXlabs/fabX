@@ -25,7 +25,6 @@ import io.ktor.server.http.content.angular
 import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.cors.CORS
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.plugins.httpsredirect.HttpsRedirect
 import io.ktor.server.plugins.origin
@@ -52,7 +51,7 @@ class WebApp(
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
     val moduleConfiguration: Application.() -> Unit = {
-        install(CORS) {
+        install(io.ktor.server.plugins.cors.routing.CORS) {
             allowMethod(HttpMethod.Options)
             allowMethod(HttpMethod.Get)
             allowMethod(HttpMethod.Post)

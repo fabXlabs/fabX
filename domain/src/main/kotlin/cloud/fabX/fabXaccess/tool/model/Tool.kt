@@ -5,7 +5,7 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.right
-import arrow.core.sequenceEither
+import arrow.core.sequence
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -88,7 +88,7 @@ data class Tool internal constructor(
         ): Either<Error, Unit> {
             return qualifications
                 .map { gettingQualificationById.getQualificationById(it) }
-                .sequenceEither()
+                .sequence()
                 .map { }
                 .mapLeft {
                     if (it is Error.QualificationNotFound) {
@@ -126,6 +126,7 @@ data class Tool internal constructor(
                 gettingQualificationById,
                 correlationId
             )
+
             is ChangeableValue.LeaveAsIs -> Unit.right()
         }.map {
             ToolDetailsChanged(
