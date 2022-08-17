@@ -3,20 +3,26 @@ import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable } from "rxjs";
 import { AugmentedTool } from "../models/tool.model";
-import { ConfirmationService } from "primeng/api";
+import { ConfirmationService, MessageService } from "primeng/api";
 import { Tools } from "../state/tool.actions";
+import { ErrorService } from "../services/error.service";
 
 @Component({
     selector: 'fabx-tool-details',
     templateUrl: './tool-details.component.html',
     styleUrls: ['./tool-details.component.scss'],
-    providers: [ConfirmationService]
+    providers: [ConfirmationService, MessageService]
 })
 export class ToolDetailsComponent {
 
     @Select(FabxState.selectedTool) tool$!: Observable<AugmentedTool>;
 
-    constructor(private store: Store, private confirmationService: ConfirmationService) { }
+    constructor(
+        private store: Store,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private errorService: ErrorService
+    ) { }
 
     delete() {
         const currentTool = this.store.selectSnapshot(FabxState.selectedTool)!;
@@ -33,7 +39,17 @@ export class ToolDetailsComponent {
             accept: () => {
                 this.store.dispatch(new Tools.Delete(
                     currentTool.id
-                ));
+                )).subscribe({
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Deleting Tool',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
+                });
             }
         });
     }

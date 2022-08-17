@@ -4,14 +4,15 @@ import { FabxState } from "../state/fabx-state";
 import { Observable, Subscription } from "rxjs";
 import { AugmentedUser, User } from "../models/user.model";
 import { Qualification } from "../models/qualification.model";
-import { ConfirmationService, MenuItem } from "primeng/api";
+import { ConfirmationService, MenuItem, MessageService } from "primeng/api";
 import { Users } from "../state/user.actions";
+import { ErrorService } from "../services/error.service";
 
 @Component({
     selector: 'fabx-user-details',
     templateUrl: './user-details.component.html',
     styleUrls: ['./user-details.component.scss'],
-    providers: [ConfirmationService]
+    providers: [ConfirmationService, MessageService]
 })
 export class UserDetailsComponent implements OnDestroy {
 
@@ -25,7 +26,12 @@ export class UserDetailsComponent implements OnDestroy {
     memberQualificationItems: MenuItem[] = [];
     instructorQualificationItems: MenuItem[] = [];
 
-    constructor(private store: Store, private confirmationService: ConfirmationService) {
+    constructor(
+        private store: Store,
+        private confirmationService: ConfirmationService,
+        private messageService: MessageService,
+        private errorService: ErrorService
+    ) {
         this.availableMemberQualificationsSubscription = this.availableMemberQualifications$.subscribe({
             next: value => {
                 this.memberQualificationItems = value.map(qualification => {
@@ -53,49 +59,119 @@ export class UserDetailsComponent implements OnDestroy {
         this.store.dispatch(new Users.AddMemberQualification(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             qualificationId
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Adding Member Qualification',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     removeMemberQualification(qualificationId: string) {
         this.store.dispatch(new Users.RemoveMemberQualification(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             qualificationId
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Member Qualification',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     addInstructorQualification(qualificationId: string) {
         this.store.dispatch(new Users.AddInstructorQualification(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             qualificationId
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Adding Instructor Qualification',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     removeInstructorQualification(qualificationId: string) {
         this.store.dispatch(new Users.RemoveInstructorQualification(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             qualificationId
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Instructor Qualification',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     removeUsernamePasswordIdentity(username: string) {
         this.store.dispatch(new Users.RemoveUsernamePasswordIdentity(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             username
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Username/Password Identity',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     removeCardIdentity(cardId: string) {
         this.store.dispatch(new Users.RemoveCardIdentity(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             cardId
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Card Identity',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     removePhoneNrIdentity(phoneNr: string) {
         this.store.dispatch(new Users.RemovePhoneNrIdentity(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
             phoneNr
-        ));
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Phone Nr. Identity',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
     }
 
     toggleAdmin(_: any) {
@@ -114,7 +190,17 @@ export class UserDetailsComponent implements OnDestroy {
                 this.store.dispatch(new Users.ChangeIsAdmin(
                     currentUser.id,
                     !currentUser.isAdmin
-                ));
+                )).subscribe({
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Changing Admin Privilege',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
+                });
             }
         });
     }
@@ -134,7 +220,17 @@ export class UserDetailsComponent implements OnDestroy {
             accept: () => {
                 this.store.dispatch(new Users.Delete(
                     currentUser.id
-                ));
+                )).subscribe({
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Deleting User',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
+                });
             }
         });
     }

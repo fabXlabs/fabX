@@ -24,6 +24,7 @@ import { SplitButtonModule } from "primeng/splitbutton";
 import { StyleClassModule } from "primeng/styleclass";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { ToastModule } from 'primeng/toast';
 
 import { environment } from "../environments/environment";
 import { AppComponent } from './app.component';
@@ -117,10 +118,11 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
         StyleClassModule,
         TableModule,
         TagModule,
+        ToastModule,
 
         ZXingScannerModule,
 
-        AppRoutingModule,
+        AppRoutingModule
     ],
     providers: [AuthGuard],
     bootstrap: [AppComponent]
