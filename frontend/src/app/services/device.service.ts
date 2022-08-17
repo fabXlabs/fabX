@@ -3,7 +3,13 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
-import { Device, DeviceCreationDetails, DeviceDetails, ToolAttachmentDetails } from "../models/device.model";
+import {
+    Device,
+    DeviceCreationDetails,
+    DeviceDetails,
+    ToolAttachmentDetails,
+    ToolUnlockDetails
+} from "../models/device.model";
 
 @Injectable({
     providedIn: 'root'
@@ -64,6 +70,17 @@ export class DeviceService {
     public detachTool(deviceId: string, pin: number): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/device/${deviceId}/attached-tool/${pin}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public unlockTool(deviceId: string, details: ToolUnlockDetails): Observable<string> {
+        return this.http.post(
+            `${this.baseUrl}/device/${deviceId}/unlock-tool`,
+            details,
             {
                 ...this.authService.getOptions(),
                 responseType: 'text'

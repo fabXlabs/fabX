@@ -53,7 +53,8 @@
                         <!--suppress TypeScriptValidateTypes -->
                         <li *ngFor="let tool of (device.attachedTools | keyvalue)">
                             <a routerLink="/tool/{{tool.value.id}}">{{tool.key}}: {{tool.value.name}}</a>
-                            <i class="pi pi-times cursor-pointer" (click)="detachTool(tool.key)"></i>
+                            <i class="pi pi-times cursor-pointer ml-2" (click)="detachTool(tool.key)"></i>
+                            <i class="pi pi-lock-open cursor-pointer ml-2" (click)="unlock(tool.value.id)"></i>
                         </li>
                     </ul>
                 </div>

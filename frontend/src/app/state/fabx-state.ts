@@ -731,6 +731,16 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.UnlockTool)
+    unlockTool(ctx: StateContext<FabxStateModel>, action: Devices.UnlockTool) {
+        return this.deviceService.unlockTool(
+            action.deviceId,
+            {
+                toolId: action.toolId
+            }
+        );
+    }
+
     @Action(Devices.Delete)
     deleteDevice(ctx: StateContext<FabxStateModel>, action: Devices.Delete) {
         return this.deviceService.deleteDevice(action.id).pipe(

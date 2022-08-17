@@ -25,6 +25,13 @@ export class DeviceDetailsComponent {
         ));
     }
 
+    unlock(toolId: string) {
+        this.store.dispatch(new Devices.UnlockTool(
+            this.store.selectSnapshot(FabxState.selectedDevice)!.id,
+            toolId
+        ));
+    }
+
     delete() {
         const currentDevice = this.store.selectSnapshot(FabxState.selectedDevice)!;
 

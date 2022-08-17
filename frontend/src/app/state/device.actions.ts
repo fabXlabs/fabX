@@ -35,6 +35,12 @@ export namespace Devices {
         constructor(public deviceId: string, public pin: number) {}
     }
 
+    export class UnlockTool {
+        static readonly type = "[fabX Devices] Unlock Tool"
+
+        constructor(public deviceId: string, public toolId: string) {}
+    }
+
     export class Delete {
         static readonly type = "[fabX Devices] Delete"
 

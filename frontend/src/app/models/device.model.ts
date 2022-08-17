@@ -36,3 +36,7 @@ export interface DeviceDetails {
 export interface ToolAttachmentDetails {
     toolId: string
 }
+
+export interface ToolUnlockDetails {
+    toolId: string
+}
