@@ -26,6 +26,7 @@ import kotlin.random.Random
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -57,13 +58,17 @@ class DeviceWebsocketController(
                         close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "invalid authentication: $it"))
                     }, { deviceActor ->
                         logger.debug("new connection $this for device $deviceActor")
-                        closeExistingConnectionIfExists(deviceActor.deviceId)
+                        removeExistingConnectionIfExists(deviceActor.deviceId)
+                        logger.debug("adding connection for device $deviceActor")
                         connections[deviceActor.deviceId] = this
+                        logger.debug("currently connected devices: ${connections.keys}")
 
                         send("connected to fabX")
 
                         try {
                             for (frame in incoming) {
+                                logger.debug("received $frame from ${deviceActor.name}")
+
                                 frame as? Frame.Text ?: continue
                                 val text = frame.readText()
                                 logger.debug("received \"$text\" from ${deviceActor.name}")
@@ -87,7 +92,11 @@ class DeviceWebsocketController(
                                             .map { command ->
                                                 command.handle(deviceActor, commandHandler)
                                                     .getOrHandle { errorHandler(-1, it) }
-                                                    .let { send(serializeResponse(it)) }
+                                                    .let {
+                                                        val response = serializeResponse(it)
+                                                        logger.debug("Sending response to ${deviceActor.deviceId}: $response")
+                                                        send(response)
+                                                    }
                                             }
                                             .swap()
                                     }
@@ -147,10 +156,10 @@ class DeviceWebsocketController(
         )
     }
 
-    private suspend fun closeExistingConnectionIfExists(deviceId: DeviceId) {
+    private fun removeExistingConnectionIfExists(deviceId: DeviceId) {
         connections.remove(deviceId)?.let {
-            it.close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "New connection of same device established"))
-            logger.warn("Closed websocket to device $deviceId as new connection of same device was established.")
+            it.coroutineContext.cancel()
+            logger.warn("Removed websocket to device $deviceId as new connection of same device was established.")
         }
     }
 
@@ -170,6 +179,7 @@ class DeviceWebsocketController(
                 )
             }
             .map {
+                logger.debug("Sending command to $deviceId: $command")
                 it.send(serializeServerToDeviceCommand(command))
             }
     }
