@@ -6,11 +6,17 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
 
-interface UserRepository {
+interface UserRepository : GettingUserById {
     suspend fun getAll(): Set<User>
     suspend fun getById(id: UserId): Either<Error, User>
     suspend fun getSourcingEvents(): List<UserSourcingEvent>
     suspend fun store(event: UserSourcingEvent): Option<Error>
+
+    override suspend fun getUserById(id: UserId): Either<Error, User> = getById(id)
+}
+
+fun interface GettingUserById {
+    suspend fun getUserById(id: UserId): Either<Error, User>
 }
 
 fun interface GettingUserByIdentity {

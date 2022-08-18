@@ -198,6 +198,12 @@ sealed class Error(
 
     data class VersionConflict(override val message: String) : Error(message)
 
+    data class UserIdInvalid(
+        override val message: String,
+        val value: String,
+        override val correlationId: CorrelationId?
+    ) : Error(message, mapOf("value" to value), correlationId)
+
     data class UsernameInvalid(
         override val message: String,
         val value: String,

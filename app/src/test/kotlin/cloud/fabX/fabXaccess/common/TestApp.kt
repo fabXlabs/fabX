@@ -68,12 +68,16 @@ private fun testSetup(): WebApp {
         bindConstant(tag = "port") { -1 }
         bindConstant(tag = "deviceReceiveTimeoutMillis") { 2000L }
 
-        bindSingleton { SynchronousDomainEventPublisher() }
-        bindSingleton { Clock.System }
-
         bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
         bindInstance(tag = "dbuser") { postgresContainer.username }
         bindInstance(tag = "dbpassword") { postgresContainer.password }
+
+        bindConstant(tag = "jwtIssuer") { "http://localhost/" }
+        bindConstant(tag = "jwtAudience") { "http://localhost/" }
+        bindConstant(tag = "jwtHMAC256Secret") { "secret12345" }
+
+        bindSingleton { SynchronousDomainEventPublisher() }
+        bindSingleton { Clock.System }
     }
 
     // only initialise database once

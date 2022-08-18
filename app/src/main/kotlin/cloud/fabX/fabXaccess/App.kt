@@ -32,9 +32,15 @@ val app = DI {
     import(loggingModule)
 
     bindConstant(tag = "port") { config.port }
+
     bindInstance(tag = "dburl") { config.dbUrl }
     bindInstance(tag = "dbuser") { config.dbUser }
     bindInstance(tag = "dbpassword") { config.dbPassword }
+
+    bindConstant(tag = "jwtIssuer") { config.jwtIssuer }
+    bindConstant(tag = "jwtAudience") { config.jwtAudience }
+    bindConstant(tag = "jwtHMAC256Secret") { config.jwtHMAC256Secret }
+
     bindInstance(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
 
     bindSingleton { SynchronousDomainEventPublisher() }

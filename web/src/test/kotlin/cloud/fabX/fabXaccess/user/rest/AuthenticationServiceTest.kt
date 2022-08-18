@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.device.ws.DevicePrincipal
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.model.GettingUserById
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
@@ -40,6 +41,7 @@ internal class AuthenticationServiceTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
 
     private lateinit var gettingUserByIdentity: GettingUserByIdentity
+    private lateinit var gettingUserById: GettingUserById
     private lateinit var gettingDeviceByIdentity: GettingDeviceByIdentity
 
     private lateinit var testee: AuthenticationService
@@ -47,12 +49,14 @@ internal class AuthenticationServiceTest {
     @BeforeEach
     fun setUp(
         @Mock gettingUserByIdentity: GettingUserByIdentity,
+        @Mock gettingUserById: GettingUserById,
         @Mock gettingDeviceByIdentity: GettingDeviceByIdentity
     ) {
         this.gettingUserByIdentity = gettingUserByIdentity
+        this.gettingUserById = gettingUserById
         this.gettingDeviceByIdentity = gettingDeviceByIdentity
 
-        testee = AuthenticationService(gettingUserByIdentity, gettingDeviceByIdentity)
+        testee = AuthenticationService(gettingUserByIdentity, gettingUserById, gettingDeviceByIdentity)
     }
 
     @Test
@@ -109,7 +113,7 @@ internal class AuthenticationServiceTest {
     }
 
     @Test
-    fun `given user not exists when basic then returns null`() = runTest {
+    fun `given user not exists when basic then returns ErrorPrincipal`() = runTest {
         // given
         val username = "some.one"
         val password = "supersecret42"
@@ -167,6 +171,61 @@ internal class AuthenticationServiceTest {
             .isInstanceOf(DevicePrincipal::class)
             .transform { it.device }
             .isEqualTo(device)
+    }
+
+    @Test
+    fun `when jwt then returns UserPrincipal`() = runTest {
+        // given
+        val userId = UserIdFixture.arbitrary()
+        val user = UserFixture.arbitrary(userId)
+
+        whenever(gettingUserById.getUserById(eq(userId)))
+            .thenReturn(user.right())
+
+        // when
+        val result = testee.jwt(userId.serialize())
+
+        // then
+        assertThat(result)
+            .isInstanceOf(UserPrincipal::class)
+            .transform { it.asMember() }
+            .transform { it.userId }
+            .isEqualTo(userId)
+    }
+
+    @Test
+    fun `given user not exists when jwt then returns ErrorPrincipal`() = runTest {
+        // given
+        val userId = UserIdFixture.arbitrary()
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(gettingUserById.getUserById(eq(userId)))
+            .thenReturn(error.left())
+
+        // when
+        val result = testee.jwt(userId.serialize())
+
+        // then
+        assertThat(result)
+            .isInstanceOf(ErrorPrincipal::class)
+            .transform { it.error }
+            .isSameAs(error)
+    }
+
+    @Test
+    fun `given invalid user id when jwt then returns ErrorPrincipal`() = runTest {
+        // given
+        val invalidUserId = "123"
+
+        // when
+        val result = testee.jwt(invalidUserId)
+
+        // then
+        assertThat(result)
+            .isInstanceOf(ErrorPrincipal::class)
+            .transform { it.error }
+            .isInstanceOf(Error.UserIdInvalid::class)
     }
 
     @Test

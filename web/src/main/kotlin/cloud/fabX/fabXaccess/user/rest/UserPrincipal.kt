@@ -9,7 +9,8 @@ import cloud.fabX.fabXaccess.user.model.User
 import io.ktor.server.auth.Principal
 
 data class UserPrincipal(
-    private val user: User
+    private val user: User,
+    val authenticationMethod: AuthenticationMethod = AuthenticationMethod.JWT
 ) : Principal {
     fun asAdmin(): Either<Error, Admin> {
         return user.asAdmin()
@@ -22,4 +23,9 @@ data class UserPrincipal(
     fun asMember(): Member {
         return user.asMember()
     }
+}
+
+enum class AuthenticationMethod {
+    BASIC,
+    JWT
 }

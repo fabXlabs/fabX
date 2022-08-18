@@ -8,13 +8,14 @@ import cloud.fabX.fabXaccess.device.ws.UnlockToolAtDeviceViaWebsocket
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
+import cloud.fabX.fabXaccess.user.rest.LoginController
 import cloud.fabX.fabXaccess.user.rest.UserController
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
 val webModule = DI.Module("web") {
-    bindSingleton { AuthenticationService(instance(), instance()) }
+    bindSingleton { AuthenticationService(instance(), instance(), instance()) }
 
     bindSingleton { DeviceCommandHandlerImpl(instance(), instance(), instance()) }
     bindSingleton { DeviceNotificationHandlerImpl(instance(), instance()) }
@@ -59,6 +60,14 @@ val webModule = DI.Module("web") {
             instance()
         )
     }
+    bindSingleton {
+        LoginController(
+            instance(),
+            instance(tag = "jwtIssuer"),
+            instance(tag = "jwtAudience"),
+            instance(tag = "jwtHMAC256Secret")
+        )
+    }
 
     bindSingleton { UnlockToolAtDeviceViaWebsocket(instance()) }
 
@@ -66,6 +75,10 @@ val webModule = DI.Module("web") {
         WebApp(
             instance(),
             instance(tag = "port"),
+            instance(tag = "jwtIssuer"),
+            instance(tag = "jwtAudience"),
+            instance(tag = "jwtHMAC256Secret"),
+            instance(),
             instance(),
             instance(),
             instance(),

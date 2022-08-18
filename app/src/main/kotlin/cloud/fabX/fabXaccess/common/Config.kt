@@ -1,17 +1,24 @@
 package cloud.fabX.fabXaccess.common
 
 import java.net.URI
+import kotlin.random.Random
 
 data class Config(
     val port: Int,
     val dbUrl: String,
     val dbUser: String,
     val dbPassword: String,
+    val jwtIssuer: String,
+    val jwtAudience: String,
+    val jwtHMAC256Secret: String,
     val deviceReceiveTimeoutMillis: Long
 ) {
     companion object {
         fun fromEnv(): Config {
             val port = readEnvInt("PORT", 80)
+            val jwtIssuer = readEnvString("JWT_ISSUER", "localhost")
+            val jwtAudience = readEnvString("JWT_AUDIENCE", "localhost")
+            val jwtHMAC256Secret = readEnvString("JWT_HMAC256_SECRET", Random.nextBytes(32).decodeToString())
             val deviceReceiveTimeoutMillis = readEnvLong("DEVICE_RECEIVE_TIMEOUT", 5000L)
 
             return System.getenv("DATABASE_URL").takeUnless { it.isNullOrEmpty() }
@@ -22,14 +29,32 @@ data class Config(
                     val dbUser = dbUri.userInfo.split(":")[0]
                     val dbPassword = dbUri.userInfo.split(":")[1]
 
-                    Config(port, dbUrl, dbUser, dbPassword, deviceReceiveTimeoutMillis)
+                    Config(
+                        port,
+                        dbUrl,
+                        dbUser,
+                        dbPassword,
+                        jwtIssuer,
+                        jwtAudience,
+                        jwtHMAC256Secret,
+                        deviceReceiveTimeoutMillis
+                    )
                 }
                 ?: run {
                     val dbUrl = readEnvString("FABX_DB_URL", "jdbc:postgresql://localhost/postgres")
                     val dbUser = readEnvString("FABX_DB_USER", "postgres")
                     val dbPassword = readEnvString("FABX_DB_PASSWORD", "postgrespassword")
 
-                    Config(port, dbUrl, dbUser, dbPassword, deviceReceiveTimeoutMillis)
+                    Config(
+                        port,
+                        dbUrl,
+                        dbUser,
+                        dbPassword,
+                        jwtIssuer,
+                        jwtAudience,
+                        jwtHMAC256Secret,
+                        deviceReceiveTimeoutMillis
+                    )
                 }
         }
 

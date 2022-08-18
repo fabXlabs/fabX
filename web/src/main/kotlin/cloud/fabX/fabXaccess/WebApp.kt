@@ -8,7 +8,10 @@ import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
+import cloud.fabX.fabXaccess.user.rest.LoginController
 import cloud.fabX.fabXaccess.user.rest.UserController
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -18,6 +21,7 @@ import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.basic
+import io.ktor.server.auth.jwt.jwt
 import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
@@ -41,12 +45,16 @@ import kotlinx.serialization.json.Json
 class WebApp(
     loggerFactory: LoggerFactory,
     private val publicPort: Int,
+    private val jwtIssuer: String,
+    private val jwtAudience: String,
+    private val jwtHMAC256Secret: String,
     private val authenticationService: AuthenticationService,
     private val qualificationController: QualificationController,
     private val toolController: ToolController,
     private val deviceController: DeviceController,
     private val deviceWebsocketController: DeviceWebsocketController,
-    private val userController: UserController
+    private val userController: UserController,
+    private val loginController: LoginController
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -103,6 +111,20 @@ class WebApp(
                     authenticationService.basic(credentials)
                 }
             }
+            jwt("api-jwt") {
+                realm = "fabX"
+
+                verifier(
+                    JWT.require(Algorithm.HMAC256(jwtHMAC256Secret))
+                        .withIssuer(jwtIssuer)
+                        .withAudience(jwtAudience)
+                        .build()
+                )
+
+                validate { jwtCredential ->
+                    jwtCredential.subject?.let { authenticationService.jwt(it) }
+                }
+            }
         }
 
         install(WebSockets) {
@@ -117,13 +139,14 @@ class WebApp(
                 angular("fabx-dashboard")
                 useResources = true
             }
-            authenticate("api-basic") {
+            authenticate("api-basic", "api-jwt") {
                 route("/api/v1") {
                     qualificationController.routes(this)
                     toolController.routes(this)
                     deviceController.routes(this)
                     deviceWebsocketController.routes(this)
                     userController.routes(this)
+                    loginController.routes(this)
                 }
             }
         }

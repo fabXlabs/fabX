@@ -7,17 +7,20 @@ import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.SystemActor
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.device.ws.DevicePrincipal
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.model.GettingUserById
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import io.ktor.server.auth.Principal
 import io.ktor.server.auth.UserPasswordCredential
 
 class AuthenticationService(
     private val gettingUserByIdentity: GettingUserByIdentity,
+    private val gettingUserById: GettingUserById,
     private val gettingDeviceByIdentity: GettingDeviceByIdentity
 ) {
     suspend fun basic(credentials: UserPasswordCredential): Principal {
@@ -38,16 +41,30 @@ class AuthenticationService(
                     it
                 )
             }
-                // TODO check for lock state of user
+            // TODO check for lock state of user
             .fold(
                 { ErrorPrincipal(it) },
-                { UserPrincipal(it) }
+                { UserPrincipal(it, AuthenticationMethod.BASIC) }
             )
 
         return device.fold(
             { user },
             { DevicePrincipal(it) }
         )
+    }
+
+    suspend fun jwt(userId: String): Principal {
+        return Either.catch { UserId.fromString(userId) }
+            .mapLeft {
+                Error.UserIdInvalid(
+                    "UserId is invalid.",
+                    userId,
+                    null
+                )
+            }
+            .flatMap { gettingUserById.getUserById(it) }
+            // TODO check for lock state of user
+            .fold({ ErrorPrincipal(it) }, { UserPrincipal(it) })
     }
 
     suspend fun augmentDeviceActorOnBehalfOfUser(

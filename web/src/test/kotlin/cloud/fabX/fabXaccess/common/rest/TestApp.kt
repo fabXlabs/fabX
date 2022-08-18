@@ -47,14 +47,13 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.datetime.Clock
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
 import org.kodein.di.bindInstance
+import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.mockito.Mockito
-
-@OptIn(ExperimentalCoroutinesApi::class)
 
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
@@ -63,7 +62,6 @@ internal fun withTestApp(
     withTestApp(diSetup, {}, block)
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
     diGetter: (DI) -> Unit = {},
@@ -75,6 +73,12 @@ internal fun withTestApp(
 
         bindConstant(tag = "port") { -1 }
         bindConstant(tag = "deviceReceiveTimeoutMillis") { 1000L }
+
+        bindConstant(tag = "jwtIssuer") { "http://localhost/" }
+        bindConstant(tag = "jwtAudience") { "http://localhost/" }
+        bindConstant(tag = "jwtHMAC256Secret") { "secret123" }
+
+        bindSingleton<Clock> { Clock.System }
 
         bindInstance { Mockito.mock(GettingUserByIdentity::class.java) }
         bindInstance { Mockito.mock(GettingUser::class.java) }

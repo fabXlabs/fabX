@@ -10,6 +10,8 @@ env:
   VERSION: latest
   HK_NAME: fabx-dev
   HK_REGION: eu
+  JWT_ISSUER: https://fabx-dev.herokuapp.com/
+  JWT_AUDIENCE: https://fabx-dev.herokuapp.com/
 
 jobs:
   deploy:
@@ -25,8 +27,8 @@ jobs:
       - name: Log in to Heroku
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "fabx-dev"
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: $HK_NAME
           heroku_email: "simon.schaeffner@googlemail.com"
           region: "eu"
           justlogin: true
@@ -36,6 +38,9 @@ jobs:
 
       - name: Create Heroku App
         run: heroku create --addons=heroku-postgresql:hobby-dev --region=$HK_REGION --no-remote $HK_NAME || true
+
+      - name: Set Environment Variables
+        run: heroku config:set JWT_ISSUER=$JWT_ISSUER JWT_AUDIENCE=$JWT_AUDIENCE JWT_HMAC256_SECRET=${{ secrets.JWT_HMAC256_SECRET }} -a $HK_NAME
 
       - name: Determine Image ID
         run: |
