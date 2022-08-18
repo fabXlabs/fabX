@@ -101,6 +101,7 @@ export class FabxState {
             auth: null,
             loggedInUserId: null
         });
+        ctx.dispatch(new Navigate(['login']));
     }
 
     // USERS

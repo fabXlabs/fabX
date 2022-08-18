@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgxsModule } from "@ngxs/store";
 import { NgxsStoragePluginModule } from "@ngxs/storage-plugin";
@@ -40,7 +40,9 @@ import { LoginComponent } from './login/login.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { QualificationAddComponent } from './qualification-add/qualification-add.component';
-import { QualificationChangeDetailsComponent } from './qualification-change-details/qualification-change-details.component';
+import {
+    QualificationChangeDetailsComponent
+} from './qualification-change-details/qualification-change-details.component';
 import { QualificationDetailsComponent } from './qualification-details/qualification-details.component';
 import { QualificationsComponent } from './qualifications/qualifications.component';
 import { ToolAddComponent } from './tool-add/tool-add.component';
@@ -50,12 +52,15 @@ import { ToolsComponent } from './tools/tools.component';
 import { UserAddCardIdentityComponent } from './user-add-card-identity/user-add-card-identity.component';
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserAddPhoneNrIdentityComponent } from './user-add-phone-nr-identity/user-add-phone-nr-identity.component';
-import { UserAddUsernamePasswordIdentityComponent } from './user-add-username-password-identity/user-add-username-password-identity.component';
+import {
+    UserAddUsernamePasswordIdentityComponent
+} from './user-add-username-password-identity/user-add-username-password-identity.component';
 import { UserChangeLockStateComponent } from './user-change-lock-state/user-change-lock-state.component';
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { ZXingScannerModule } from "@zxing/ngx-scanner";
+import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-unauthorized-interceptor.service";
 
 @NgModule({
     declarations: [
@@ -124,7 +129,10 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
 
         AppRoutingModule
     ],
-    providers: [AuthGuard],
+    providers: [
+        AuthGuard,
+        { provide: HTTP_INTERCEPTORS, useClass: LogoutOnUnauthorizedInterceptorService, multi: true }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
