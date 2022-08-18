@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Observable, Subscription } from "rxjs";
-import { AugmentedTool, IdleState, ToolType, toolTypes, idleStates } from "../models/tool.model";
+import { AugmentedTool, IdleState, idleStates, ToolType, toolTypes } from "../models/tool.model";
 import { FabxState } from "../state/fabx-state";
 import { Select, Store } from "@ngxs/store";
 import { ErrorService } from "../services/error.service";
@@ -15,7 +15,7 @@ import { Qualification } from "../models/qualification.model";
     templateUrl: './tool-change-details.component.html',
     styleUrls: ['./tool-change-details.component.scss']
 })
-export class ToolChangeDetailsComponent {
+export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
 
     error = "";
 
@@ -36,9 +36,11 @@ export class ToolChangeDetailsComponent {
     @Select(FabxState.qualifications) qualifications$!: Observable<Qualification[]>;
 
     @Select(FabxState.selectedTool) tool$!: Observable<AugmentedTool>;
-    private selectedToolSubscription: Subscription;
+    private selectedToolSubscription: Subscription | null = null;
 
-    constructor(private store: Store, private errorHandler: ErrorService) {
+    constructor(private store: Store, private errorHandler: ErrorService) {}
+
+    ngOnInit() {
         this.selectedToolSubscription = this.tool$.subscribe({
             next: value => {
                 if (value) {
@@ -137,5 +139,11 @@ export class ToolChangeDetailsComponent {
                 this.error = this.errorHandler.format(err);
             }
         });
+    }
+
+    ngOnDestroy() {
+        if (this.selectedToolSubscription) {
+            this.selectedToolSubscription.unsubscribe();
+        }
     }
 }

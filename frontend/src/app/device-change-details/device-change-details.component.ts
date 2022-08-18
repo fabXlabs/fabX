@@ -14,7 +14,7 @@ import { HttpErrorResponse } from "@angular/common/http";
     templateUrl: './device-change-details.component.html',
     styleUrls: ['./device-change-details.component.scss']
 })
-export class DeviceChangeDetailsComponent implements OnDestroy {
+export class DeviceChangeDetailsComponent implements OnInit, OnDestroy {
 
     error = "";
 
@@ -25,9 +25,11 @@ export class DeviceChangeDetailsComponent implements OnDestroy {
     });
 
     @Select(FabxState.selectedDevice) device$!: Observable<AugmentedDevice>;
-    private selectedDeviceSubscription: Subscription;
+    private selectedDeviceSubscription: Subscription | null = null;
 
-    constructor(private store: Store, private errorHandler: ErrorService) {
+    constructor(private store: Store, private errorHandler: ErrorService) {}
+
+    ngOnInit() {
         this.selectedDeviceSubscription = this.device$.subscribe({
             next: value => {
                 if (value) {
@@ -84,6 +86,8 @@ export class DeviceChangeDetailsComponent implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.selectedDeviceSubscription.unsubscribe();
+        if (this.selectedDeviceSubscription) {
+            this.selectedDeviceSubscription.unsubscribe();
+        }
     }
 }

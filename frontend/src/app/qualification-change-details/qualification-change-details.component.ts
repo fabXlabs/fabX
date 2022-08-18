@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Select, Store } from "@ngxs/store";
 import { ErrorService } from "../services/error.service";
@@ -14,7 +14,7 @@ import { ChangeableValue } from "../models/changeable-value";
     templateUrl: './qualification-change-details.component.html',
     styleUrls: ['./qualification-change-details.component.scss']
 })
-export class QualificationChangeDetailsComponent {
+export class QualificationChangeDetailsComponent implements OnInit, OnDestroy {
 
     error = "";
 
@@ -26,9 +26,11 @@ export class QualificationChangeDetailsComponent {
     });
 
     @Select(FabxState.selectedQualification) qualification$!: Observable<Qualification>;
-    private selectedQualificationSubscription: Subscription;
+    private selectedQualificationSubscription: Subscription | null = null;
 
-    constructor(private store: Store, private errorHandler: ErrorService) {
+    constructor(private store: Store, private errorHandler: ErrorService) {}
+
+    ngOnInit() {
         this.selectedQualificationSubscription = this.qualification$.subscribe({
             next: value => {
                 if (value) {
@@ -92,5 +94,11 @@ export class QualificationChangeDetailsComponent {
                 this.error = this.errorHandler.format(err);
             }
         });
+    }
+
+    ngOnDestroy() {
+        if (this.selectedQualificationSubscription) {
+            this.selectedQualificationSubscription.unsubscribe();
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from "@angular/forms";
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
@@ -14,7 +14,7 @@ import { HttpErrorResponse } from "@angular/common/http";
     templateUrl: './user-change-lock-state.component.html',
     styleUrls: ['./user-change-lock-state.component.scss']
 })
-export class UserChangeLockStateComponent implements OnDestroy {
+export class UserChangeLockStateComponent implements OnInit, OnDestroy {
 
     error = "";
 
@@ -24,9 +24,11 @@ export class UserChangeLockStateComponent implements OnDestroy {
     });
 
     @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
-    private selectedUserSubscription: Subscription;
+    private selectedUserSubscription: Subscription | null = null;
 
-    constructor(private store: Store, private errorHandler: ErrorService) {
+    constructor(private store: Store, private errorHandler: ErrorService) {}
+
+    ngOnInit() {
         this.selectedUserSubscription = this.user$.subscribe({
             next: value => {
                 if (value) {
@@ -82,7 +84,8 @@ export class UserChangeLockStateComponent implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.selectedUserSubscription.unsubscribe();
+        if (this.selectedUserSubscription) {
+            this.selectedUserSubscription.unsubscribe();
+        }
     }
-
 }

@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { Observable, Subscription } from "rxjs";
@@ -14,14 +14,14 @@ import { ErrorService } from "../services/error.service";
     styleUrls: ['./user-details.component.scss'],
     providers: [ConfirmationService, MessageService]
 })
-export class UserDetailsComponent implements OnDestroy {
+export class UserDetailsComponent implements OnInit, OnDestroy {
 
     @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
     @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
     @Select(FabxState.availableMemberQualificationsForSelectedUser) availableMemberQualifications$!: Observable<Qualification[]>;
     @Select(FabxState.availableInstructorQualificationsForSelectedUser) availableInstructorQualifications$!: Observable<Qualification[]>;
-    private availableMemberQualificationsSubscription: Subscription;
-    private availableInstructorQualificationsSubscription: Subscription;
+    private availableMemberQualificationsSubscription: Subscription | null = null;
+    private availableInstructorQualificationsSubscription: Subscription | null = null;
 
     memberQualificationItems: MenuItem[] = [];
     instructorQualificationItems: MenuItem[] = [];
@@ -31,7 +31,9 @@ export class UserDetailsComponent implements OnDestroy {
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
         private errorService: ErrorService
-    ) {
+    ) {}
+
+    ngOnInit() {
         this.availableMemberQualificationsSubscription = this.availableMemberQualifications$.subscribe({
             next: value => {
                 this.memberQualificationItems = value.map(qualification => {
@@ -236,7 +238,11 @@ export class UserDetailsComponent implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.availableMemberQualificationsSubscription.unsubscribe();
-        this.availableInstructorQualificationsSubscription.unsubscribe();
+        if (this.availableMemberQualificationsSubscription) {
+            this.availableMemberQualificationsSubscription.unsubscribe();
+        }
+        if (this.availableInstructorQualificationsSubscription) {
+            this.availableInstructorQualificationsSubscription.unsubscribe();
+        }
     }
 }

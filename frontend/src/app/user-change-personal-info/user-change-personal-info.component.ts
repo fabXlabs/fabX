@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Select, Store } from "@ngxs/store";
 import { ErrorService } from "../services/error.service";
@@ -14,7 +14,7 @@ import { ChangeableValue } from "../models/changeable-value";
     templateUrl: './user-change-personal-info.component.html',
     styleUrls: ['./user-change-personal-info.component.scss']
 })
-export class UserChangePersonalInfoComponent implements OnDestroy {
+export class UserChangePersonalInfoComponent implements OnInit, OnDestroy {
 
     error = "";
 
@@ -25,9 +25,11 @@ export class UserChangePersonalInfoComponent implements OnDestroy {
     });
 
     @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
-    private selectedUserSubscription: Subscription;
+    private selectedUserSubscription: Subscription | null = null;
 
-    constructor(private store: Store, private errorHandler: ErrorService) {
+    constructor(private store: Store, private errorHandler: ErrorService) {}
+
+    ngOnInit() {
         this.selectedUserSubscription = this.user$.subscribe({
             next: value => {
                 if (value) {
@@ -39,6 +41,7 @@ export class UserChangePersonalInfoComponent implements OnDestroy {
                 }
             }
         });
+
     }
 
     onSubmit() {
@@ -84,6 +87,8 @@ export class UserChangePersonalInfoComponent implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.selectedUserSubscription.unsubscribe();
+        if (this.selectedUserSubscription) {
+            this.selectedUserSubscription.unsubscribe();
+        }
     }
 }
