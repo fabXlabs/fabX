@@ -6,7 +6,7 @@ val testcontainersVersion: String by project
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("plugin.serialization") version "1.7.0"
 }
 
 dependencies {
