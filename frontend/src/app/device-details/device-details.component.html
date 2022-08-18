@@ -67,10 +67,10 @@
                                 <td>{{tool.key}}</td>
                                 <td><a routerLink="/tool/{{tool.value.id}}">{{tool.value.name}}</a></td>
                                 <td>
-                                    <p-button icon="pi pi-lock-open" styleClass="p-button-warning" (onClick)="unlock(tool.value.id)"></p-button>
+                                    <p-button icon="pi pi-lock-open" styleClass="p-button-warning" (onClick)="unlock(tool.value.id, tool.value.name)"></p-button>
                                 </td>
                                 <td>
-                                    <p-button icon="pi pi-times" styleClass="p-button-danger" (onClick)="detachTool(tool.key)"></p-button>
+                                    <p-button icon="pi pi-times" styleClass="p-button-danger" (onClick)="detachTool(tool.key, tool.value.name)"></p-button>
                                 </td>
                             </tr>
                         </ng-template>

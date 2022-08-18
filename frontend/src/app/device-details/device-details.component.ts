@@ -24,38 +24,64 @@ export class DeviceDetailsComponent {
         private errorService: ErrorService
     ) { }
 
-    detachTool(pin: string) {
-        this.store.dispatch(new Devices.DetachTool(
-            this.store.selectSnapshot(FabxState.selectedDevice)!.id,
-            parseInt(pin)
-        )).subscribe({
-            error: err => {
-                const message = this.errorService.format(err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error Detaching Tool',
-                    detail: message,
-                    sticky: true
+    detachTool(pin: string, toolName: string) {
+        let message = `Are you sure you want to detach tool ${toolName} from pin ${pin}?`
+
+        this.confirmationService.confirm({
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-error',
+            acceptIcon: 'pi pi-trash',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+            message: message,
+            accept: () => {
+                this.store.dispatch(new Devices.DetachTool(
+                    this.store.selectSnapshot(FabxState.selectedDevice)!.id,
+                    parseInt(pin)
+                )).subscribe({
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Detaching Tool',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
                 });
             }
         });
     }
 
-    unlock(toolId: string) {
-        this.store.dispatch(new Devices.UnlockTool(
-            this.store.selectSnapshot(FabxState.selectedDevice)!.id,
-            toolId
-        )).subscribe({
-            next: _ => {
-                this.messageService.add({ severity: 'success', summary: 'Unlocked Tool', detail: 'Yay!' });
-            },
-            error: err => {
-                const message = this.errorService.format(err);
-                this.messageService.add({
-                    severity: 'error',
-                    summary: 'Error Unlocking Tool',
-                    detail: message,
-                    sticky: true
+    unlock(toolId: string, toolName: string) {
+        let device = this.store.selectSnapshot(FabxState.selectedDevice)!;
+
+        let message = `Are you sure you want to unlock tool ${toolName}?`
+
+        this.confirmationService.confirm({
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-warning',
+            acceptIcon: 'pi pi-lock-open',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+            message: message,
+            accept: () => {
+                this.store.dispatch(new Devices.UnlockTool(
+                    device.id,
+                    toolId
+                )).subscribe({
+                    next: _ => {
+                        this.messageService.add({ severity: 'success', summary: 'Unlocked Tool', detail: 'Yay!' });
+                    },
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Unlocking Tool',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
                 });
             }
         });
