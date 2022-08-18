@@ -85,3 +85,7 @@ export interface PhoneNrIdentity {
 }
 
 export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity
+
+export interface TokenResponse {
+    token: string
+}

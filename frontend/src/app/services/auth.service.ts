@@ -4,7 +4,7 @@ import { catchError, Observable, throwError } from "rxjs";
 import { environment } from "../../environments/environment";
 import { Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
-import { User } from "../models/user.model";
+import { TokenResponse } from "../models/user.model";
 
 @Injectable({
     providedIn: 'root'
@@ -15,14 +15,14 @@ export class AuthService {
 
     constructor(private http: HttpClient, private store: Store) {}
 
-    login(username: string, password: string): Observable<User> {
-        return this.http.get<User>(`${this.baseUrl}/user/me`, {
+    login(username: string, password: string): Observable<TokenResponse> {
+        return this.http.get<TokenResponse>(`${this.baseUrl}/login`, {
             headers: new HttpHeaders({
                 "Authorization": "Basic " + btoa(`${username}:${password}`)
             })
         }).pipe(
             catchError((err: HttpErrorResponse, _) => {
-                console.error("checkLogin error: %o", err)
+                console.error("login error: %o", err)
                 return throwError(() => err)
             })
         );
@@ -34,15 +34,11 @@ export class AuthService {
         if (auth) {
             return {
                 headers: new HttpHeaders({
-                    "Authorization": "Basic " + btoa(`${auth.username}:${auth.password}`)
+                    "Authorization": `Bearer ${auth.token}`
                 })
             };
         } else {
             return {};
         }
-    }
-
-    doLogout(): void {
-        localStorage.clear();
     }
 }

@@ -37,6 +37,10 @@ export class UserService {
         return this.http.get<User>(`${this.baseUrl}/user/${id}`, this.authService.getOptions());
     }
 
+    public getMe(): Observable<User> {
+        return this.http.get<User>(`${this.baseUrl}/user/me`, this.authService.getOptions());
+    }
+
     public addUser(details: UserCreationDetails): Observable<string> {
         return this.http.post<string>(
             `${this.baseUrl}/user`,

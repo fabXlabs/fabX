@@ -3,7 +3,7 @@ import { Action, Selector, State, StateContext } from "@ngxs/store";
 import { UserService } from "../services/user.service";
 import { AugmentedUser, User } from "../models/user.model";
 import { Users } from "./user.actions";
-import { tap } from "rxjs";
+import { mergeMap, tap } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 import { getFinishedValueOrDefault, LoadingState, LoadingStateTag } from "./loading-state.model";
 import { AuthService } from "../services/auth.service";
@@ -21,7 +21,7 @@ import { ToolService } from "../services/tool.service";
 
 export interface AuthModel {
     username: string,
-    password: string,
+    token: string,
 }
 
 export interface UserSortModel {
@@ -79,13 +79,18 @@ export class FabxState {
     @Action(Auth.Login)
     login(ctx: StateContext<FabxStateModel>, action: Auth.Login) {
         return this.authService.login(action.payload.username, action.payload.password).pipe(
-            tap({
-                next: loggedInUser => {
-                    ctx.patchState({
-                        auth: { username: action.payload.username, password: action.payload.password },
-                        loggedInUserId: loggedInUser.id
-                    });
-                }
+            mergeMap(tokenResponse => {
+                ctx.patchState({
+                    auth: { username: action.payload.username, token: tokenResponse.token }
+                });
+
+                return this.userService.getMe().pipe(tap({
+                    next: loggedInUser => {
+                        ctx.patchState({
+                            loggedInUserId: loggedInUser.id
+                        });
+                    }
+                }));
             })
         );
     }
