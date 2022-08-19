@@ -7,6 +7,7 @@ import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.AuthenticatorImpl
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
+import cloud.fabX.fabXaccess.common.application.toHex
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -146,8 +147,8 @@ class WebauthnIdentityService(
                 .toOption()
                 .toEither {
                     Error.UserIdentityNotFound(
-                        "Not able to find identity with credential id \"$credentialId\".",
-                        mapOf("credentialId" to credentialId.toString()),
+                        "Not able to find identity with credential id \"${credentialId.toHex()}\".",
+                        mapOf("credentialId" to credentialId.toHex()),
                         correlationId
                     )
                 }
