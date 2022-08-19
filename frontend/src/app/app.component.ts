@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
     ngOnInit(): void {
         this.loadAll();
 
-        this.actions.pipe(ofActionCompleted(Auth.Login)).subscribe(() => {
+        this.actions.pipe(ofActionCompleted(Auth.Login, Auth.LoginWebauthn)).subscribe(() => {
             this.loadAll();
         });
 

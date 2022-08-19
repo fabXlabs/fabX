@@ -84,6 +84,12 @@ export namespace Users {
         constructor(public userId: string, public username: string) {}
     }
 
+    export class AddWebauthnIdentity {
+        static readonly type = "[fabX Users] Add Webauthn Identity"
+
+        constructor(public userId: string) {}
+    }
+
     export class AddCardIdentity {
         static readonly type = "[fabX Users] Add Card Identity"
 

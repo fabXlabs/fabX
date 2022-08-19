@@ -5,7 +5,6 @@ import { Store } from "@ngxs/store";
 import { Auth } from "../state/auth.actions";
 import { Navigate } from "@ngxs/router-plugin";
 import { ErrorService } from "../services/error.service";
-import { AuthService } from "../services/auth.service";
 
 @Component({
     selector: 'fabx-login',
@@ -15,16 +14,20 @@ import { AuthService } from "../services/auth.service";
 export class LoginComponent {
 
     error = "";
+    errorWebauthn = "";
 
     form = new FormGroup({
         username: new FormControl('', Validators.required),
-        password: new FormControl('')
+        password: new FormControl('', Validators.required)
+    });
+
+    formWebauthn = new FormGroup({
+        username: new FormControl('', Validators.required)
     });
 
     constructor(
         private store: Store,
-        private errorHandler: ErrorService,
-        private authService: AuthService
+        private errorHandler: ErrorService
     ) { }
 
     onSubmit() {
@@ -42,8 +45,17 @@ export class LoginComponent {
             });
     }
 
-    loginWebauthn() {
-        let username = this.form.get('username')!.value;
-        this.authService.loginWebauthn(username);
+    onSubmitWebauthn() {
+        let username = this.formWebauthn.get('username')!.value;
+
+        this.store.dispatch(new Auth.LoginWebauthn(username))
+            .subscribe({
+                next: _ => {
+                    this.store.dispatch(new Navigate(['user']));
+                },
+                error: (err: HttpErrorResponse) => {
+                    this.error = this.errorHandler.format(err);
+                }
+            });
     }
 }

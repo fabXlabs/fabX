@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
-import { catchError, Observable, throwError } from "rxjs";
+import { catchError, mergeMap, Observable, throwError } from "rxjs";
 import { environment } from "../../environments/environment";
 import { Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
 import { TokenResponse } from "../models/user.model";
+import { fromPromise } from "rxjs/internal/observable/innerFrom";
 
 @Injectable({
     providedIn: 'root'
@@ -28,19 +29,12 @@ export class AuthService {
         );
     }
 
-    loginWebauthn(username: string) {
-        console.log("loginWebauthn", username);
+    loginWebauthn(username: string): Observable<TokenResponse> {
+        return this.loginWebauthn_(username).pipe(
+            mergeMap((loginResponse) => {
+                const userId = loginResponse.userId;
 
-        this.http.post<WebauthnLoginResponse>(
-            `${this.baseUrl}/webauthn/login`,
-            {
-                'username': username
-            }
-        ).subscribe({
-            next: value => {
-                const userId = value.userId;
-
-                const allowCred: PublicKeyCredentialDescriptor[] = value.credentialIds.map(e => {
+                const allowCred: PublicKeyCredentialDescriptor[] = loginResponse.credentialIds.map(e => {
                     const eArr = new Int8Array(e.values());
                     return {
                         id: eArr.buffer,
@@ -48,45 +42,55 @@ export class AuthService {
                     }
                 });
 
-                const challengeArray = new Int8Array(value.challenge);
+                const challengeArray = new Int8Array(loginResponse.challenge);
 
-                navigator.credentials.get({
+                return fromPromise(navigator.credentials.get({
                     publicKey: {
                         allowCredentials: allowCred,
                         challenge: challengeArray.buffer
                     }
-                }).then((response) => {
-                    console.log("response", response);
+                })).pipe(
+                    mergeMap((credential) => {
+                        if (credential) {
+                            const pkc = credential as PublicKeyCredential
+                            const r = pkc.response as AuthenticatorAssertionResponse
 
-                    if (response) {
-                        const pkc = response as PublicKeyCredential
-                        const r = pkc.response as AuthenticatorAssertionResponse
+                            const credentialIdArray = new Int8Array(pkc.rawId)
+                            const authenticatorDataArray = new Int8Array(r.authenticatorData)
+                            const clientDataJSONArray = new Int8Array(r.clientDataJSON)
+                            const signatureArray = new Int8Array(r.signature)
 
-                        const credentialIdArray = new Int8Array(pkc.rawId)
-                        const authenticatorDataArray = new Int8Array(r.authenticatorData)
-                        const clientDataJSONArray = new Int8Array(r.clientDataJSON)
-                        const signatureArray = new Int8Array(r.signature)
-
-                        const responseDetails: WebauthnResponseDetails = {
-                            userId: userId,
-                            credentialId: Array.from(credentialIdArray),
-                            authenticatorData: Array.from(authenticatorDataArray),
-                            clientDataJSON: Array.from(clientDataJSONArray),
-                            signature: Array.from(signatureArray),
-                        }
-
-                        this.http.post<TokenResponse>(
-                            `${this.baseUrl}/webauthn/response`,
-                            responseDetails
-                        ).subscribe({
-                            next: value => {
-                                console.log("value", value);
+                            const response: WebauthnResponseDetails = {
+                                userId: userId,
+                                credentialId: Array.from(credentialIdArray),
+                                authenticatorData: Array.from(authenticatorDataArray),
+                                clientDataJSON: Array.from(clientDataJSONArray),
+                                signature: Array.from(signatureArray),
                             }
-                        });
-                    }
-                });
+                            return this.responseWebauthn(response);
+                        } else {
+                            throw Error("Not able to get credential");
+                        }
+                    })
+                );
+            })
+        );
+    }
+
+    private loginWebauthn_(username: string): Observable<WebauthnLoginResponse> {
+        return this.http.post<WebauthnLoginResponse>(
+            `${this.baseUrl}/webauthn/login`,
+            {
+                'username': username
             }
-        })
+        );
+    }
+
+    private responseWebauthn(response: WebauthnResponseDetails): Observable<TokenResponse> {
+        return this.http.post<TokenResponse>(
+            `${this.baseUrl}/webauthn/response`,
+            response
+        );
     }
 
     getOptions() {

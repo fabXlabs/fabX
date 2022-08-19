@@ -95,6 +95,25 @@ export class FabxState {
         );
     }
 
+    @Action(Auth.LoginWebauthn)
+    loginWebauthn(ctx: StateContext<FabxStateModel>, action: Auth.LoginWebauthn) {
+        return this.authService.loginWebauthn(action.username).pipe(
+            mergeMap(tokenResponse => {
+                ctx.patchState({
+                    auth: { username: action.username, token: tokenResponse.token }
+                });
+
+                return this.userService.getMe().pipe(tap({
+                    next: loggedInUser => {
+                        ctx.patchState({
+                            loggedInUserId: loggedInUser.id
+                        });
+                    }
+                }));
+            })
+        );
+    }
+
     @Action(Auth.Logout)
     logout(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
@@ -404,6 +423,21 @@ export class FabxState {
         ).pipe(
             tap({
                 next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
+    @Action(Users.AddWebauthnIdentity)
+    addWebauthnIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddWebauthnIdentity) {
+        return this.userService.addWebauthnIdentity(
+            action.userId,
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                    next: () => {
+                        ctx.dispatch(new Navigate(['user', action.userId]));
+                    }
+                })
             })
         );
     }

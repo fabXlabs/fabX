@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
-import { Observable, retry } from "rxjs";
+import { mergeMap, Observable, retry } from "rxjs";
 import {
     CardIdentityAdditionDetails,
     IsAdminDetails,
@@ -12,7 +12,9 @@ import {
     UserCreationDetails,
     UserDetails,
     UserLockDetails,
-    UsernamePasswordIdentityAdditionDetails, WebauthnIdentityAdditionDetails, WebauthnRegistrationDetails
+    UsernamePasswordIdentityAdditionDetails,
+    WebauthnIdentityAdditionDetails,
+    WebauthnRegistrationDetails
 } from '../models/user.model';
 
 @Injectable({
@@ -162,7 +164,52 @@ export class UserService {
         );
     }
 
-    public registerWebauthn(userId: string): Observable<WebauthnRegistrationDetails> {
+    public addWebauthnIdentity(userId: string): Observable<string> {
+        return this.registerWebauthn(userId).pipe(
+            mergeMap((registrationDetails) => {
+                const challengeArray = new Int8Array(registrationDetails.challenge);
+                const userIdArray = new Int8Array(registrationDetails.userId);
+
+                let options: CredentialCreationOptions = {
+                    publicKey: {
+                        attestation: registrationDetails.attestation,
+                        challenge: challengeArray.buffer,
+                        rp: {
+                            id: registrationDetails.rpId,
+                            name: registrationDetails.rpName
+                        },
+                        user: {
+                            id: userIdArray.buffer,
+                            name: registrationDetails.userName,
+                            displayName: registrationDetails.userDisplayName
+                        },
+                        pubKeyCredParams: registrationDetails.pubKeyCredParams
+                    }
+                };
+
+                return navigator.credentials.create(options);
+            }),
+            mergeMap((credential) => {
+                if (credential) {
+                    const pkc = credential as PublicKeyCredential;
+                    const r = pkc.response as AuthenticatorAttestationResponse;
+
+                    const attestationArray = new Int8Array(r.attestationObject);
+                    const clientDataArray = new Int8Array(pkc.response.clientDataJSON);
+
+                    return this.responseWebauthn(
+                        userId,
+                        Array.from(attestationArray),
+                        Array.from(clientDataArray)
+                    );
+                } else {
+                    throw Error("Not able to get credential");
+                }
+            })
+        );
+    }
+
+    private registerWebauthn(userId: string): Observable<WebauthnRegistrationDetails> {
         return this.http.post<WebauthnRegistrationDetails>(
             `${this.baseUrl}/user/${userId}/identity/webauthn/register`,
             {},
@@ -170,7 +217,7 @@ export class UserService {
         );
     }
 
-    public responseWebauthn(
+    private responseWebauthn(
         userId: string,
         attestationObject: number[],
         clientDataJSON: number[]
