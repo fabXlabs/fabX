@@ -43,19 +43,23 @@ data class Device internal constructor(
             name: String,
             background: String,
             backupBackendUrl: String,
-            identity: MacSecretIdentity
-        ): DeviceSourcingEvent {
-            return DeviceCreated(
-                deviceIdFactory.invoke(),
-                actor.id,
-                clock.now(),
-                correlationId,
-                name,
-                background,
-                backupBackendUrl,
-                identity.mac,
-                identity.secret
-            )
+            mac: String,
+            secret: String
+        ): Either<Error, DeviceSourcingEvent> {
+            return MacSecretIdentity.fromUnvalidated(mac, secret, correlationId)
+                .map {
+                    DeviceCreated(
+                        deviceIdFactory.invoke(),
+                        actor.id,
+                        clock.now(),
+                        correlationId,
+                        name,
+                        background,
+                        backupBackendUrl,
+                        it.mac,
+                        it.secret
+                    )
+                }
         }
 
         fun fromSourcingEvents(events: Iterable<DeviceSourcingEvent>): Option<Device> {
@@ -108,9 +112,6 @@ data class Device internal constructor(
         toolId: ToolId,
         gettingToolById: GettingToolById
     ): Either<Error, DeviceSourcingEvent> {
-        // TODO Check if tool is attached to other device (or other pin on this device)?
-        //      Or is it a feature that it can be attached multiple times?
-
         return attachedTools.getOrNone(pin)
             .toEither {
                 ToolAttached(

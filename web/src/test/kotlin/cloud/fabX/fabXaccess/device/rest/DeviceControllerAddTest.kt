@@ -9,7 +9,6 @@ import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
-import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
@@ -79,7 +78,8 @@ class DeviceControllerAddTest {
                 eq("device1"),
                 eq("https://example.com/bg1.bmp"),
                 eq("https://backup.example.com"),
-                eq(MacSecretIdentity("aabbccddeeff", "supersecret"))
+                eq("aabbccddeeff"),
+                eq("supersecret")
             )
         ).thenReturn(deviceId.right())
 

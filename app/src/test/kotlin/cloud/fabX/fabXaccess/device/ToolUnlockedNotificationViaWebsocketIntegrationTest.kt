@@ -22,8 +22,8 @@ internal class ToolUnlockedNotificationViaWebsocketIntegrationTest {
     @Test
     fun `when receives ToolUnlockedNotification then logs tool unlocked`() = withTestApp {
         // given
-        val mac = "aabb11cc22dd"
-        val secret = "supersecret123"
+        val mac = "AABB11CC22DD"
+        val secret = "49ecad93aac0bdff2915768bd514678f"
         val deviceId = givenDevice(mac = mac, secret = secret)
 
         val toolId = givenTool()

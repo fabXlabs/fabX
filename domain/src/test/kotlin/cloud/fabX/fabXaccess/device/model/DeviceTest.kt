@@ -76,10 +76,9 @@ internal class DeviceTest {
             name,
             background,
             backupBackendUrl,
-            "aabbccddeeff",
-            "supersecret"
+            "AABBCCDDEEFF",
+            "4b99e67a0251e93ce84c919acf69cbad"
         )
-
 
         // when
         val result = Device.addNew(
@@ -90,11 +89,14 @@ internal class DeviceTest {
             name,
             background,
             backupBackendUrl,
-            MacSecretIdentity("aabbccddeeff", "supersecret")
+            "AABBCCDDEEFF",
+            "4b99e67a0251e93ce84c919acf69cbad"
         )
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
     }
 
     @Test

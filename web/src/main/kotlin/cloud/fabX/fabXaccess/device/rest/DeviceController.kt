@@ -17,7 +17,6 @@ import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
-import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -82,7 +81,8 @@ class DeviceController(
                                     it.name,
                                     it.background,
                                     it.backupBackendUrl,
-                                    MacSecretIdentity(it.mac, it.secret)
+                                    it.mac,
+                                    it.secret
                                 )
                             }
                             .map { it.serialize() }

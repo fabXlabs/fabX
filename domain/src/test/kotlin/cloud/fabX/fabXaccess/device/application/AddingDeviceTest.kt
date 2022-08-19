@@ -11,7 +11,6 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.model.DeviceCreated
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
-import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
@@ -58,8 +57,8 @@ internal class AddingDeviceTest {
         val name = "name"
         val backgroundUrl = "https://example.com/bg.bmp"
         val backupBackendUrl = "https://backup.example.com"
-        val mac = "aa11bb22cc33"
-        val secret = "verysecret123"
+        val mac = "A0B1C2D3E4F5"
+        val secret = "755f78e6a43a7d319e5a05b4a4eaa800"
 
         val expectedSourcingEvent = DeviceCreated(
             deviceId,
@@ -83,7 +82,8 @@ internal class AddingDeviceTest {
             name,
             backgroundUrl,
             backupBackendUrl,
-            MacSecretIdentity(mac, secret)
+            mac,
+            secret
         )
 
         // then
@@ -98,8 +98,8 @@ internal class AddingDeviceTest {
         val name = "name"
         val backgroundUrl = "https://example.com/bg.bmp"
         val backupBackendUrl = "https://backup.example.com"
-        val mac = "aa11bb22cc33"
-        val secret = "verysecret123"
+        val mac = "AA11BB22CC33"
+        val secret = "9d2fedd835842a422ddee01215d0495e"
 
         val event = DeviceCreated(
             deviceId,
@@ -125,7 +125,8 @@ internal class AddingDeviceTest {
             name,
             backgroundUrl,
             backupBackendUrl,
-            MacSecretIdentity(mac, secret)
+            mac,
+            secret
         )
 
         // then

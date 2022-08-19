@@ -249,6 +249,20 @@ sealed class Error(
         override val correlationId: CorrelationId?
     ) : Error(message, mapOf("value" to value, "regex" to regex.toString()), correlationId)
 
+    data class MacInvalid(
+        override val message: String,
+        val value: String,
+        val regex: Regex,
+        override val correlationId: CorrelationId?
+    ) : Error(message, mapOf("value" to value, "regex" to regex.toString()), correlationId)
+
+    data class SecretInvalid(
+        override val message: String,
+        val value: String,
+        val regex: Regex,
+        override val correlationId: CorrelationId?
+    ) : Error(message, mapOf("value" to value, "regex" to regex.toString()), correlationId)
+
     data class InstructorPermissionNotFound(
         override val message: String,
         val qualificationId: QualificationId,

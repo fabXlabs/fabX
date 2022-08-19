@@ -22,7 +22,7 @@ internal class DeviceDomainEventHandlerIntegrationTest {
     @Test
     fun `when deleting tool then it is detached from device`() = withTestApp {
         // given
-        val deviceId = givenDevice(mac = "aabbccddeeff")
+        val deviceId = givenDevice(mac = "AABBCCDDEEFF")
         val toolId = givenTool()
         givenToolAttachedToDevice(deviceId, 0, toolId)
 

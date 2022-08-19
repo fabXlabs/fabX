@@ -69,8 +69,8 @@ internal class DeviceWebsocketIntegrationTest {
     @Test
     fun `given valid authentication when connecting then connects`() = withTestApp {
         // given
-        val mac = "aabb11cc22dd"
-        val secret = "supersecret123"
+        val mac = "AABB11CC22DD"
+        val secret = "081b19abe23b8c36f2117d10b93063e4"
         givenDevice(mac = mac, secret = secret)
 
         // when & then
@@ -91,8 +91,8 @@ internal class DeviceWebsocketIntegrationTest {
         val name = "a device"
         val background = "https://example.com/bg123.bmp"
         val backupBackendUrl = "https://backup123.example.com"
-        val mac = "aabb11cc22dd"
-        val secret = "supersecret123"
+        val mac = "AABB11CC22DD"
+        val secret = "bc167ed6fd750441532f6002ec891b73"
         val deviceId = givenDevice(name, background, backupBackendUrl, mac, secret)
 
         val toolId1 = givenTool("tool1")
@@ -155,8 +155,8 @@ internal class DeviceWebsocketIntegrationTest {
         givenCardIdentity(userId, cardId, cardSecret)
         givenUserHasQualificationFor(userId, qualificationId1)
 
-        val mac = "aabb11cc22dd"
-        val secret = "supersecret123"
+        val mac = "AABB11CC22DD"
+        val secret = "4318db4c2e57501b0f24fd7ddcef07a4"
         val deviceId = givenDevice(mac = mac, secret = secret)
         givenToolAttachedToDevice(deviceId, 1, toolId1)
         givenToolAttachedToDevice(deviceId, 2, toolId2)

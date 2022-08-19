@@ -35,6 +35,8 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.PinNotInUse -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ToolTypeNotUnlock -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // domain device
+        is Error.MacInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.SecretInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.DeviceNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.DeviceNotFoundByIdentity -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.PinInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())

@@ -173,8 +173,8 @@ devices.forEachIndexed { i, deviceName ->
             "\"name\": \"$deviceName\", " +
             "\"background\": \"https://example.com/bg1.bmp\", " +
             "\"backupBackendUrl\": \"https://backup.example.com\", " +
-            "\"mac\": \"aabbcc${i.toString(16).padStart(6, '0')}\" " +
-            "\"secret\": \"supersecret\" " +
+            "\"mac\": \"AABBCC${i.toString(16).padStart(6, '0')}\" " +
+            "\"secret\": \"a2a50c75e271104dcbaeda71c2e9a7fc\" " +
             "}"
 
     runBlocking {

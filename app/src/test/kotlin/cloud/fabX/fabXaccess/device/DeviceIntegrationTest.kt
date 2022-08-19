@@ -84,9 +84,9 @@ internal class DeviceIntegrationTest {
     @Test
     fun `given devices when get devices then returns devices`() = withTestApp {
         // given
-        val deviceId1 = givenDevice("device1", mac = "aabbccaabb01")
-        val deviceId2 = givenDevice("device2", mac = "aabbccaabb02")
-        val deviceId3 = givenDevice("device3", mac = "aabbccaabb03")
+        val deviceId1 = givenDevice("device1", mac = "AABBCCAABB01")
+        val deviceId2 = givenDevice("device2", mac = "AABBCCAABB02")
+        val deviceId3 = givenDevice("device3", mac = "AABBCCAABB03")
 
         // when
         val response = c().get("/api/v1/device") {
@@ -171,7 +171,7 @@ internal class DeviceIntegrationTest {
     @Test
     fun `given device when changing device then returns http no content`() = withTestApp {
         // given
-        val deviceId = givenDevice(mac = "aa00bb11cc22")
+        val deviceId = givenDevice(mac = "AA00BB11CC22")
 
         val requestBody = DeviceDetails(
             ChangeableValue("newName"),
@@ -238,7 +238,7 @@ internal class DeviceIntegrationTest {
     @Test
     fun `given device when deleting device then returns http no content`() = withTestApp {
         // given
-        val deviceId = givenDevice(mac = "aabbcc001122")
+        val deviceId = givenDevice(mac = "AABBCC001122")
 
         // when
         val response = c().delete("/api/v1/device/$deviceId") {
@@ -273,7 +273,7 @@ internal class DeviceIntegrationTest {
     @Test
     fun `given non-admin authentication when deleting device then returns http forbidden`() = withTestApp {
         // given
-        val deviceId = givenDevice(mac = "aabbcc001122")
+        val deviceId = givenDevice(mac = "AABBCC001122")
 
         // when
         val response = c().delete("/api/v1/device/$deviceId") {
@@ -292,7 +292,7 @@ internal class DeviceIntegrationTest {
     @Test
     fun `when attaching tool then returns http no content`() = withTestApp {
         // given
-        val deviceId = givenDevice(mac = "aabbccddeeff")
+        val deviceId = givenDevice(mac = "AABBCCDDEEFF")
         val pin = 2
         val toolId = givenTool()
         val requestBody = ToolAttachmentDetails(toolId)
@@ -351,7 +351,7 @@ internal class DeviceIntegrationTest {
     fun `when detaching tool then returns http no content`() = withTestApp {
         // given
         val pin = 2
-        val deviceId = givenDevice(mac = "001122334455aa")
+        val deviceId = givenDevice(mac = "0011223344AA")
         val toolId = givenTool()
         givenToolAttachedToDevice(deviceId, pin, toolId)
 

@@ -20,7 +20,7 @@ internal suspend fun ApplicationTestBuilder.givenDevice(
     background: String = "https://example.com/bg.bmp",
     backupBackendUrl: String = "https://backup.example.com",
     mac: String,
-    secret: String = "supersecret123"
+    secret: String = "cff3c69e288ac223789e0fbda6a5dc0f"
 ): String {
     val requestBody = DeviceCreationDetails(
         name,

@@ -42,8 +42,8 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
     @Test
     fun `when unlocking tool then sends command, receives answer, returns http no content`() = withTestApp {
         // given
-        val mac = "aabb11cc22dd"
-        val secret = "supersecret123"
+        val mac = "AABB11CC22DD"
+        val secret = "c8760b55353aa7bfc536f2d29499b549"
         val deviceId = givenDevice(mac = mac, secret = secret)
 
         val toolId = givenTool()
@@ -85,8 +85,8 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
     @Test
     fun `given device does not respond when unlocking tool then returns http service unavailable`() = withTestApp {
         // given
-        val mac = "aabb11cc22dd"
-        val secret = "supersecret123"
+        val mac = "AABB11CC22DD"
+        val secret = "6d96ff992cc0004843a1d8a9d7118986"
         val deviceId = givenDevice(mac = mac, secret = secret)
 
         val toolId = givenTool()
@@ -133,7 +133,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
     fun `given tool not attached to device when unlocking tool then returns http unprocessable entity`() =
         withTestApp {
             // given
-            val deviceId = givenDevice(mac = "aabbccddeeff")
+            val deviceId = givenDevice(mac = "AABBCCDDEEFF")
             val toolId = ToolIdFixture.arbitrary().serialize()
 
             // when
