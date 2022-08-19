@@ -12,8 +12,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 class AuthenticatorImpl(
-    val serializableAttestedCredentialData: SerializableAttestedCredentialData,
-    var myCounter: Long
+    private val serializableAttestedCredentialData: SerializableAttestedCredentialData,
+    private var myCounter: Long
 ) : Authenticator {
     companion object {
         fun from(
@@ -41,15 +41,15 @@ class AuthenticatorImpl(
 @Serializable
 data class SerializableAttestedCredentialData(
     @Serializable(with = UuidSerializer::class)
-    val aaguid: UUID?,
-    val credentialId: ByteArray,
-    val coseKey: SerializableCOSEKey
+    private val aaguid: UUID?,
+    private val credentialId: ByteArray,
+    private val coseKey: SerializableCOSEKey
 ) {
     companion object {
         fun from(attestedCredentialData: AttestedCredentialData): SerializableAttestedCredentialData {
             val key = when (val coseKey = attestedCredentialData.coseKey) {
                 is EC2COSEKey -> SerializableCOSEKey.from(coseKey)
-                else -> throw NotImplementedError() // TODO implement other COSEKey types
+                else -> throw NotImplementedError()
             }
 
             return SerializableAttestedCredentialData(
@@ -71,13 +71,13 @@ data class SerializableAttestedCredentialData(
 
 @Serializable
 data class SerializableCOSEKey(
-    val keyId: ByteArray?,
-    val algorithm: Long?,
-    val keyOps: List<COSEKeyOperation>?,
-    val curve: Int?,
-    val x: ByteArray?,
-    val y: ByteArray?,
-    val d: ByteArray?,
+    private val keyId: ByteArray?,
+    private val algorithm: Long?,
+    private val keyOps: List<COSEKeyOperation>?,
+    private val curve: Int?,
+    private val x: ByteArray?,
+    private val y: ByteArray?,
+    private val d: ByteArray?,
 ) {
     companion object {
         fun from(coseKey: EC2COSEKey): SerializableCOSEKey {

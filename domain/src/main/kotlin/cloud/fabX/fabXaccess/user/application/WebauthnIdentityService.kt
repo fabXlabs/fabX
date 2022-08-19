@@ -49,15 +49,11 @@ class WebauthnIdentityService(
     private val webauthnManager = WebAuthnManager.createNonStrictWebAuthnManager()
     private val originObj = Origin(origin)
 
+    // the algorithms with key type EC2
     val pubKeyCredParams = listOf(
-        COSEAlgorithmIdentifier.RS1,
-        COSEAlgorithmIdentifier.RS256,
-        COSEAlgorithmIdentifier.RS384,
-        COSEAlgorithmIdentifier.RS512,
         COSEAlgorithmIdentifier.ES256,
         COSEAlgorithmIdentifier.ES384,
         COSEAlgorithmIdentifier.ES512,
-        COSEAlgorithmIdentifier.EdDSA,
     ).map {
         PublicKeyCredentialParameters(PublicKeyCredentialType.PUBLIC_KEY, it)
     }
@@ -182,7 +178,6 @@ class WebauthnIdentityService(
                             try {
                                 webauthnManager.validate(authenticationData, authenticationParameters)
 
-                                // TODO store updated counter
                                 val counter = authenticationData.authenticatorData?.signCount
                                 log.debug("new counter value: $counter")
 
