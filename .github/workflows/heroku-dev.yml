@@ -14,7 +14,7 @@ env:
   JWT_AUDIENCE: https://fabx-dev.herokuapp.com/
   WEBAUTHN_ORIGIN: https://fabx-dev.herokuapp.com
   WEBAUTHN_RP_ID: fabx-dev.herokuapp.com
-  WEBAUTHN_RP_NAME: fabX DEV
+  WEBAUTHN_RP_NAME: "fabX DEV"
 
 jobs:
   deploy:
