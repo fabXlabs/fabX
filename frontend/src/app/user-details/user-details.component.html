@@ -74,7 +74,8 @@
                 </div>
                 <div class="text-900 w-8">
                     <p-table [value]="user.identities"
-                             styleClass="p-datatable-sm">
+                             styleClass="p-datatable-sm"
+                             [tableStyle]="{'width': '100%'}">
                         <ng-template pTemplate="caption">
                             <div class="flex justify-content-end flex-wrap">
                                 <div class="ml-3">
@@ -111,9 +112,9 @@
 
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Type</th>
-                                <th>Identity</th>
-                                <th style="width:4em">Delete</th>
+                                <th style="width: 42%">Type</th>
+                                <th style="width: 42%">Identity</th>
+                                <th style="width: 15%" class="text-center">Delete</th>
                             </tr>
                         </ng-template>
 
@@ -134,22 +135,29 @@
                                         Webauthn
                                     </span>
                                 </td>
-                                <td style="overflow-wrap: break-word" class="max-w-30rem">
+                                <td style="overflow-wrap: break-word">
                                     <span
+                                        class="overflow-hidden"
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'">
                                         {{identity.username}}
                                      </span>
-                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'">
+                                    <span
+                                        class="overflow-hidden"
+                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'">
                                         {{identity.cardId}}
                                     </span>
-                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
+                                    <span
+                                        class="overflow-hidden"
+                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
                                         {{identity.phoneNr}}
                                     </span>
-                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
+                                    <span
+                                        class="overflow-hidden"
+                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
                                         {{userService.toHexString(identity.credentialId)}}
                                     </span>
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <p-button
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'"
                                         icon="pi pi-trash"
