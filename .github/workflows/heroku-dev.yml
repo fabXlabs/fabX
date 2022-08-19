@@ -14,7 +14,7 @@ env:
   JWT_AUDIENCE: https://fabx-dev.herokuapp.com/
   WEBAUTHN_ORIGIN: https://fabx-dev.herokuapp.com
   WEBAUTHN_RP_ID: fabx-dev.herokuapp.com
-  WEBAUTHN_RP_NAME: "fabX DEV"
+  WEBAUTHN_RP_NAME: fabX DEV
 
 jobs:
   deploy:
@@ -44,12 +44,12 @@ jobs:
 
       - name: Set Environment Variables
         run: |
-          heroku config:set -a $HK_NAME JWT_ISSUER=$JWT_ISSUER
-          heroku config:set -a $HK_NAME JWT_AUDIENCE=$JWT_AUDIENCE
-          heroku config:set -a $HK_NAME JWT_HMAC256_SECRET=${{ secrets.JWT_HMAC256_SECRET }}
-          heroku config:set -a $HK_NAME WEBAUTHN_ORIGIN=$WEBAUTHN_ORIGIN
-          heroku config:set -a $HK_NAME WEBAUTHN_RP_ID=$WEBAUTHN_RP_ID
-          heroku config:set -a $HK_NAME WEBAUTHN_RP_NAME=$WEBAUTHN_RP_NAME
+          heroku config:set -a $HK_NAME JWT_ISSUER="$JWT_ISSUER"
+          heroku config:set -a $HK_NAME JWT_AUDIENCE="$JWT_AUDIENCE"
+          heroku config:set -a $HK_NAME JWT_HMAC256_SECRET="${{ secrets.JWT_HMAC256_SECRET }}"
+          heroku config:set -a $HK_NAME WEBAUTHN_ORIGIN="$WEBAUTHN_ORIGIN"
+          heroku config:set -a $HK_NAME WEBAUTHN_RP_ID="$WEBAUTHN_RP_ID"
+          heroku config:set -a $HK_NAME WEBAUTHN_RP_NAME="$WEBAUTHN_RP_NAME"
 
       - name: Determine Image ID
         run: |
