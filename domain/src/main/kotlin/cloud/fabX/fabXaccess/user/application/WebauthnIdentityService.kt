@@ -15,6 +15,7 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.GettingUserById
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentity
+import cloud.fabX.fabXaccess.user.model.WebauthnRepository
 import com.webauthn4j.WebAuthnManager
 import com.webauthn4j.authenticator.Authenticator
 import com.webauthn4j.data.AuthenticationParameters
@@ -38,6 +39,7 @@ class WebauthnIdentityService(
     loggerFactory: LoggerFactory,
     private val gettingUserById: GettingUserById,
     private val gettingUserByUsername: GettingUserByUsername,
+    private val webauthnRepository: WebauthnRepository,
     origin: String,
     val rpId: String,
     val rpName: String
@@ -65,13 +67,13 @@ class WebauthnIdentityService(
     private val userPresenceRequired = true
 
     suspend fun getNewChallenge(userId: UserId): Either<Error, ByteArray> {
-        // TODO create new random challenge and store for specific user
-        return ByteArray(8).right()
+        val challenge = DefaultChallenge()
+        webauthnRepository.storeChallenge(userId, challenge.value)
+        return challenge.value.right()
     }
 
     suspend fun getChallenge(userId: UserId): Either<Error, ByteArray> {
-        // TODO get challenge for specific user
-        return ByteArray(8).right()
+        return webauthnRepository.getChallenge(userId)
     }
 
     fun parseAndValidateRegistration(

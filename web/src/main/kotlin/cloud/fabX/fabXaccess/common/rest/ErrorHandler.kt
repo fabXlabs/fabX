@@ -82,5 +82,6 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // webauthn
         is Error.WebauthnError -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.ChallengeNotFound -> respond(HttpStatusCode.Unauthorized, error.toRestModel())
     }
 }

@@ -264,4 +264,10 @@ sealed class Error(
         override val message: String,
         override val correlationId: CorrelationId? = null
     ) : Error(message, correlationId = correlationId)
+
+    data class ChallengeNotFound(
+        override val message: String,
+        val userId: UserId,
+        override val correlationId: CorrelationId? = null
+    ) : Error(message, mapOf("userId" to userId.serialize()), correlationId = correlationId)
 }

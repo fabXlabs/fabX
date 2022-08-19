@@ -98,6 +98,7 @@ val domainModule = DI.Module("domain") {
             instance(),
             instance(),
             instance(),
+            instance(),
             instance(tag = "webauthnOrigin"),
             instance(tag = "webauthnRpId"),
             instance(tag = "webauthnRpName")
