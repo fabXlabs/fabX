@@ -5,7 +5,6 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
-import cloud.fabX.fabXaccess.common.application.AuthenticatorImpl
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.application.toHex
 import cloud.fabX.fabXaccess.common.model.CorrelationId

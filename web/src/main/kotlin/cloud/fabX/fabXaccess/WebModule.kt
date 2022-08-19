@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.device.ws.UnlockToolAtDeviceViaWebsocket
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
+import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.LoginController
 import cloud.fabX.fabXaccess.user.rest.UserController
@@ -70,6 +71,17 @@ val webModule = DI.Module("web") {
             instance(tag = "jwtIssuer"),
             instance(tag = "jwtAudience"),
             instance(tag = "jwtHMAC256Secret")
+        )
+    }
+    bindSingleton {
+        WebauthnIdentityService(
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance(tag = "webauthnOrigin"),
+            instance(tag = "webauthnRpId"),
+            instance(tag = "webauthnRpName")
         )
     }
 

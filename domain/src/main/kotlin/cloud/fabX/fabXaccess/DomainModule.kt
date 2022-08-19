@@ -42,7 +42,6 @@ import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
-import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
@@ -93,17 +92,6 @@ val domainModule = DI.Module("domain") {
     bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingWebauthnIdentity(instance(), instance(), instance()) }
     bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance()) }
-    bindSingleton {
-        WebauthnIdentityService(
-            instance(),
-            instance(),
-            instance(),
-            instance(),
-            instance(tag = "webauthnOrigin"),
-            instance(tag = "webauthnRpId"),
-            instance(tag = "webauthnRpName")
-        )
-    }
 
     bindSingleton { { newDeviceId() } }
     bindSingleton { { newQualificationId() } }

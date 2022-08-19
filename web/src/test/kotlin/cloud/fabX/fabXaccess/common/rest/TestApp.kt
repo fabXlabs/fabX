@@ -39,7 +39,9 @@ import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
-import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
+import cloud.fabX.fabXaccess.user.model.GettingUserById
+import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
+import cloud.fabX.fabXaccess.user.model.WebauthnRepository
 import cloud.fabX.fabXaccess.webModule
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -83,7 +85,9 @@ internal fun withTestApp(
 
         bindSingleton<Clock> { Clock.System }
 
+        bindInstance { Mockito.mock(GettingUserById::class.java) }
         bindInstance { Mockito.mock(GettingUserByIdentity::class.java) }
+        bindInstance { Mockito.mock(GettingUserByUsername::class.java) }
         bindInstance { Mockito.mock(GettingUser::class.java) }
         bindInstance { Mockito.mock(AddingUser::class.java) }
         bindInstance { Mockito.mock(ChangingUser::class.java) }
@@ -102,7 +106,6 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(AddingPhoneNrIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingPhoneNrIdentity::class.java) }
         bindInstance { Mockito.mock(LoggingUnlockedTool::class.java) }
-        bindInstance { Mockito.mock(WebauthnIdentityService::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }
@@ -124,6 +127,12 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(UnlockingTool::class.java) }
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
         bindInstance { Mockito.mock(DeviceNotificationHandler::class.java) }
+
+        bindInstance { Mockito.mock(WebauthnRepository::class.java) }
+
+        bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
+        bindConstant(tag = "webauthnRpId") { "localhost" }
+        bindConstant(tag = "webauthnRpName") { "fabX" }
 
         diSetup()
     }

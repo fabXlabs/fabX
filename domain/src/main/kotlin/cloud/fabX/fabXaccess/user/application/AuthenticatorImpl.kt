@@ -1,5 +1,6 @@
-package cloud.fabX.fabXaccess.common.application
+package cloud.fabX.fabXaccess.user.application
 
+import cloud.fabX.fabXaccess.common.application.UuidSerializer
 import com.webauthn4j.authenticator.Authenticator
 import com.webauthn4j.data.attestation.authenticator.AAGUID
 import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData

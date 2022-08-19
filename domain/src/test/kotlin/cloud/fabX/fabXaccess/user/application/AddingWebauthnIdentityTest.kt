@@ -11,12 +11,12 @@ import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentityAdded
+import cloud.fabX.fabXaccess.user.model.WebauthnService
 import com.webauthn4j.authenticator.Authenticator
 import isNone
 import isSome
@@ -43,7 +43,7 @@ internal class AddingWebauthnIdentityTest {
 
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
-    private lateinit var webauthnService: WebauthnIdentityService
+    private lateinit var webauthnService: WebauthnService
 
     private lateinit var testee: AddingWebauthnIdentity
 
@@ -51,7 +51,7 @@ internal class AddingWebauthnIdentityTest {
     fun `configure DomainModule`(
         @Mock logger: Logger,
         @Mock userRepository: UserRepository,
-        @Mock webauthnService: WebauthnIdentityService
+        @Mock webauthnService: WebauthnService
     ) {
         this.logger = logger
         this.userRepository = userRepository
