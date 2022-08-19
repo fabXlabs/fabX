@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentityAdded
 import com.webauthn4j.authenticator.Authenticator
@@ -60,15 +61,15 @@ internal class AddingWebauthnIdentityTest {
     }
 
     @Test
-    fun `given user can be found when adding identity, then sourcing event is created and stored`(
-        @Mock authenticator: Authenticator
-    ) = runTest {
+    fun `given user can be found when adding identity, then sourcing event is created and stored`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
 
         val challenge = byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)
         val attestationObject = byteArrayOf(1, 2, 3)
         val clientDataJson = byteArrayOf(4, 5)
+
+        val authenticator = UserIdentityFixture.webauthn().authenticator
 
         val expectedSourcingEvent = WebauthnIdentityAdded(
             userId,
@@ -163,15 +164,15 @@ internal class AddingWebauthnIdentityTest {
     }
 
     @Test
-    fun `given sourcing event cannot be stored when adding identity then returns error`(
-        @Mock authenticator: Authenticator
-    ) = runTest {
+    fun `given sourcing event cannot be stored when adding identity then returns error`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
 
         val challenge = byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)
         val attestationObject = byteArrayOf(1, 2, 3)
         val clientDataJson = byteArrayOf(4, 5)
+
+        val authenticator = UserIdentityFixture.webauthn().authenticator
 
         val expectedSourcingEvent = WebauthnIdentityAdded(
             userId,

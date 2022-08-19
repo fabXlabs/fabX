@@ -32,7 +32,7 @@ object UserIdentityFixture {
     }
 
     fun webauthn(
-        credentialId: ByteArray
+        credentialId: ByteArray = byteArrayOf(1, 2, 3, 4)
     ): WebauthnIdentity {
         val authenticator = mock(Authenticator::class.java)
         val attestedCredentialData = mock(AttestedCredentialData::class.java)
