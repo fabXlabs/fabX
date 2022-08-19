@@ -79,6 +79,7 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
     override fun handle(event: WebauthnIdentityAdded, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAndSome(event, user) { e, u ->
             u.copy(
+                aggregateVersion = e.aggregateVersion,
                 identities = u.identities + WebauthnIdentity(
                     authenticator = e.authenticator
                 )
@@ -88,6 +89,7 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
     override fun handle(event: WebauthnIdentityRemoved, user: Option<User>): Option<User> {
         return requireSomeUserWithSameIdAndSome(event, user) { e, u ->
             u.copy(
+                aggregateVersion = e.aggregateVersion,
                 identities = u.identities.stream()
                     .filter {
                         !(it is WebauthnIdentity
