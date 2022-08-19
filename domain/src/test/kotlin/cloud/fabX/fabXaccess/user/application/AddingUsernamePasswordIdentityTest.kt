@@ -9,6 +9,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
@@ -145,7 +146,7 @@ internal class AddingUsernamePasswordIdentityTest {
             hash
         )
 
-        val error = Error.UserNotFound("message", userId)
+        val error = ErrorFixture.arbitrary()
 
         whenever(userRepository.getById(userId))
             .thenReturn(user.right())

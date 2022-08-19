@@ -11,6 +11,9 @@ data class Config(
     val jwtIssuer: String,
     val jwtAudience: String,
     val jwtHMAC256Secret: String,
+    val webauthnOrigin: String,
+    val webauthnRpId: String,
+    val webauthnRpName: String,
     val deviceReceiveTimeoutMillis: Long
 ) {
     companion object {
@@ -19,6 +22,9 @@ data class Config(
             val jwtIssuer = readEnvString("JWT_ISSUER", "localhost")
             val jwtAudience = readEnvString("JWT_AUDIENCE", "localhost")
             val jwtHMAC256Secret = readEnvString("JWT_HMAC256_SECRET", Random.nextBytes(32).decodeToString())
+            val webauthnOrigin = readEnvString("WEBAUTHN_ORIGIN", "http://localhost:4200")
+            val webauthnRpId = readEnvString("WEBAUTHN_RP_ID", "localhost")
+            val webauthnRpName = readEnvString("WEBAUTHN_RP_NAME", "fabX")
             val deviceReceiveTimeoutMillis = readEnvLong("DEVICE_RECEIVE_TIMEOUT", 5000L)
 
             return System.getenv("DATABASE_URL").takeUnless { it.isNullOrEmpty() }
@@ -37,6 +43,9 @@ data class Config(
                         jwtIssuer,
                         jwtAudience,
                         jwtHMAC256Secret,
+                        webauthnOrigin,
+                        webauthnRpId,
+                        webauthnRpName,
                         deviceReceiveTimeoutMillis
                     )
                 }
@@ -53,6 +62,9 @@ data class Config(
                         jwtIssuer,
                         jwtAudience,
                         jwtHMAC256Secret,
+                        webauthnOrigin,
+                        webauthnRpId,
+                        webauthnRpName,
                         deviceReceiveTimeoutMillis
                     )
                 }

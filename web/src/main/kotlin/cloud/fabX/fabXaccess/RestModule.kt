@@ -57,11 +57,15 @@ val webModule = DI.Module("web") {
             instance(),
             instance(),
             instance(),
+            instance(),
+            instance(),
+            instance(),
             instance()
         )
     }
     bindSingleton {
         LoginController(
+            instance(),
             instance(),
             instance(tag = "jwtIssuer"),
             instance(tag = "jwtAudience"),

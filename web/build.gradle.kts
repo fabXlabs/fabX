@@ -1,6 +1,7 @@
 val ktorVersion: String by rootProject
 val kotlinxCoroutinesVersion: String by project
 val logbackVersion: String by rootProject
+val webauthn4jVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -24,6 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-server-websockets:$ktorVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("com.webauthn4j:webauthn4j-core:$webauthn4jVersion")
 
     testImplementation(testFixtures(project(":domain")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")

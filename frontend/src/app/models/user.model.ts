@@ -64,6 +64,22 @@ export interface UsernamePasswordIdentity {
     username: string
 }
 
+export interface WebauthnRegistrationDetails {
+    attestation: AttestationConveyancePreference,
+    challenge: number[],
+    rpName: string,
+    rpId: string,
+    userId: number[],
+    userName: string,
+    userDisplayName: string,
+    pubKeyCredParams: PublicKeyCredentialParameters[]
+}
+
+export interface WebauthnIdentityAdditionDetails {
+    attestationObject: number[],
+    clientDataJSON: number[]
+}
+
 export interface CardIdentityAdditionDetails {
     cardId: string,
     cardSecret: string

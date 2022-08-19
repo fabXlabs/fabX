@@ -60,6 +60,11 @@ sealed class Error(
         override val correlationId: CorrelationId
     ) : Error(message)
 
+    data class CredentialIdAlreadyInUse(
+        override val message: String,
+        override val correlationId: CorrelationId
+    ) : Error(message)
+
     data class UserAlreadyAdmin(
         override val message: String,
         override val correlationId: CorrelationId
@@ -71,6 +76,11 @@ sealed class Error(
     ) : Error(message, correlationId = correlationId)
 
     data class UserIsActor(
+        override val message: String,
+        override val correlationId: CorrelationId
+    ) : Error(message, correlationId = correlationId)
+
+    data class UserNotActor(
         override val message: String,
         override val correlationId: CorrelationId
     ) : Error(message, correlationId = correlationId)
@@ -246,6 +256,11 @@ sealed class Error(
     ) : Error(message, mapOf("qualificationId" to qualificationId.serialize()), correlationId)
 
     data class NotAuthenticated(
+        override val message: String,
+        override val correlationId: CorrelationId? = null
+    ) : Error(message, correlationId = correlationId)
+
+    data class WebauthnError(
         override val message: String,
         override val correlationId: CorrelationId? = null
     ) : Error(message, correlationId = correlationId)

@@ -26,6 +26,7 @@ import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
@@ -37,6 +38,8 @@ import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
+import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import cloud.fabX.fabXaccess.webModule
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -92,11 +95,14 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(RemovingMemberQualification::class.java) }
         bindInstance { Mockito.mock(AddingUsernamePasswordIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingUsernamePasswordIdentity::class.java) }
+        bindInstance { Mockito.mock(AddingWebauthnIdentity::class.java) }
+        bindInstance { Mockito.mock(RemovingWebauthnIdentity::class.java) }
         bindInstance { Mockito.mock(AddingCardIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingCardIdentity::class.java) }
         bindInstance { Mockito.mock(AddingPhoneNrIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingPhoneNrIdentity::class.java) }
         bindInstance { Mockito.mock(LoggingUnlockedTool::class.java) }
+        bindInstance { Mockito.mock(WebauthnIdentityService::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }
         bindInstance { Mockito.mock(AddingQualification::class.java) }

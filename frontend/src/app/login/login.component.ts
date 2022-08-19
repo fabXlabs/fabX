@@ -5,6 +5,7 @@ import { Store } from "@ngxs/store";
 import { Auth } from "../state/auth.actions";
 import { Navigate } from "@ngxs/router-plugin";
 import { ErrorService } from "../services/error.service";
+import { AuthService } from "../services/auth.service";
 
 @Component({
     selector: 'fabx-login',
@@ -17,12 +18,13 @@ export class LoginComponent {
 
     form = new FormGroup({
         username: new FormControl('', Validators.required),
-        password: new FormControl('', Validators.required)
+        password: new FormControl('')
     });
 
     constructor(
         private store: Store,
-        private errorHandler: ErrorService
+        private errorHandler: ErrorService,
+        private authService: AuthService
     ) { }
 
     onSubmit() {
@@ -38,5 +40,10 @@ export class LoginComponent {
                     this.error = this.errorHandler.format(err);
                 }
             });
+    }
+
+    loginWebauthn() {
+        let username = this.form.get('username')!.value;
+        this.authService.loginWebauthn(username);
     }
 }

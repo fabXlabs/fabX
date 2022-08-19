@@ -76,6 +76,10 @@ private fun testSetup(): WebApp {
         bindConstant(tag = "jwtAudience") { "http://localhost/" }
         bindConstant(tag = "jwtHMAC256Secret") { "secret12345" }
 
+        bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
+        bindConstant(tag = "webauthnRpId") { "localhost" }
+        bindConstant(tag = "webauthnRpName") { "fabX" }
+
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
     }

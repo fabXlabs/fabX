@@ -85,6 +85,13 @@
                                     </p-button>
                                 </div>
                                 <div class="ml-3">
+                                    <p-button label="Add Webauthn"
+                                              icon="pi pi-plus"
+                                              styleClass="p-button-outlined"
+                                              routerLink="/user/{{user.id}}/add-webauthn-identity">
+                                    </p-button>
+                                </div>
+                                <div class="ml-3">
                                     <p-button label="Add Card"
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
@@ -122,6 +129,9 @@
                                     <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
                                         Phone Number
                                     </span>
+                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
+                                        Webauthn
+                                    </span>
                                 </td>
                                 <td>
                                     <span
@@ -133,6 +143,9 @@
                                     </span>
                                     <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
                                         {{identity.phoneNr}}
+                                    </span>
+                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
+                                        {{toHexString(identity.credentialId)}}
                                     </span>
                                 </td>
                                 <td>
@@ -154,6 +167,9 @@
                                         styleClass="p-button-danger"
                                         (onClick)="removePhoneNrIdentity(identity.phoneNr)">
                                     </p-button>
+                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
+                                        TODO
+                                    </span>
                                 </td>
                             </tr>
                         </ng-template>

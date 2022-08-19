@@ -6,12 +6,13 @@ import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.application.toHex
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import io.ktor.client.call.body
@@ -31,8 +32,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
 @MockitoSettings
-internal class UserControllerRemoveCardIdentityTest {
-    private lateinit var removingCardIdentity: RemovingCardIdentity
+internal class UserControllerRemoveWebauthnIdentityTest {
+    private lateinit var removingWebauthnIdentity: RemovingWebauthnIdentity
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
@@ -42,73 +43,49 @@ internal class UserControllerRemoveCardIdentityTest {
 
     @BeforeEach
     fun `configure WebModule`(
-        @Mock removingCardIdentity: RemovingCardIdentity,
+        @Mock removingWebauthnIdentity: RemovingWebauthnIdentity,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.removingCardIdentity = removingCardIdentity
+        this.removingWebauthnIdentity = removingWebauthnIdentity
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { removingCardIdentity }
+        bindInstance(overrides = true) { removingWebauthnIdentity }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when removing card identity then returns http no content`() = withConfiguredTestApp {
+    fun `when removing webauthn identity then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
-        val cardId = "11223344556677"
+        val credentialId = byteArrayOf(1, 2, 3, 4, 5)
+        val credentialIdHex = credentialId.toHex()
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            removingCardIdentity.removeCardIdentity(
+            removingWebauthnIdentity.removeWebauthnIdentity(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(userId),
-                eq(cardId)
+                eq(credentialId)
             )
         ).thenReturn(None)
 
         // when
-        val response = c().delete("/api/v1/user/${userId.serialize()}/identity/card/$cardId") {
+        val response = c().delete("/api/v1/user/${userId.serialize()}/identity/webauthn/$credentialIdHex") {
             basicAuth(username, password)
         }
 
-        // then
+        //  then
         assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
         assertThat(response.bodyAsText()).isEmpty()
     }
 
     @Test
-    fun `given no admin authentication when removing card identity then returns http forbidden`() =
-        withConfiguredTestApp {
-            // given
-            val message = "msg123"
-            val error = Error.UserNotAdmin(message)
-
-            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-                .thenReturn(ErrorPrincipal(error))
-
-            // when
-            val response =
-                c().delete("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/card/AABB1122CCDD33") {
-                    basicAuth(username, password)
-                }
-
-            // then
-            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
-            assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
-                .isError(
-                    "UserNotAdmin",
-                    message
-                )
-        }
-
-    @Test
-    fun `given invalid user id when removing card identity then returns http bad request`() =
+    fun `given invalid user id when removing webauthn identity then returns http bad request`() =
         withConfiguredTestApp {
             // given
             val invalidUserId = "invalidUserId"
@@ -117,7 +94,7 @@ internal class UserControllerRemoveCardIdentityTest {
                 .thenReturn(UserPrincipal(actingUser))
 
             // when
-            val response = c().delete("/api/v1/user/$invalidUserId/identity/card/AA11BB22CC33DD") {
+            val response = c().delete("/api/v1/user/$invalidUserId/identity/webauthn/010203") {
                 basicAuth(username, password)
             }
 
@@ -127,40 +104,63 @@ internal class UserControllerRemoveCardIdentityTest {
         }
 
     @Test
-    fun `given domain error when removing card identity then returns mapped error`() =
+    fun `given invalid credential id when removing webauthn identity then returns http bad request`() =
         withConfiguredTestApp {
             // given
             val userId = UserIdFixture.arbitrary()
-            val cardId = "AABBCC11223344"
-
-            val correlationId = CorrelationIdFixture.arbitrary()
-            val error = Error.UserIdentityNotFound("msg", mapOf("cardId" to cardId), correlationId)
+            val invalidCredentialId = "123XYZ"
 
             whenever(authenticationService.basic(UserPasswordCredential(username, password)))
                 .thenReturn(UserPrincipal(actingUser))
 
-            whenever(
-                removingCardIdentity.removeCardIdentity(
-                    eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
-                    any(),
-                    eq(userId),
-                    eq(cardId)
-                )
-            ).thenReturn(error.some())
 
             // when
-            val response = c().delete("/api/v1/user/${userId.serialize()}/identity/card/$cardId") {
+            val response = c().delete("/api/v1/user/${userId.serialize()}/identity/webauthn/$invalidCredentialId") {
                 basicAuth(username, password)
             }
 
             // then
-            assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
-            assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
-                .isError(
-                    "UserIdentityNotFound",
-                    "msg",
-                    mapOf("cardId" to cardId),
-                    correlationId.serialize()
-                )
+            assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+            assertThat(response.body<String>()).isEqualTo(
+                "Required hex string parameter \"credentialId\" not given or invalid."
+            )
         }
+
+    @Test
+    fun `given domain error when removing webauthn identity then returns mapped error`() = withConfiguredTestApp {
+        // given
+        val userId = UserIdFixture.arbitrary()
+        val credentialId = byteArrayOf(1, 2, 3, 4, 5)
+        val credentialIdHex = credentialId.toHex()
+
+        val correlationId = CorrelationIdFixture.arbitrary()
+        val error = Error.UserIdentityNotFound("msg", mapOf("credentialId" to credentialIdHex), correlationId)
+
+        whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+            .thenReturn(UserPrincipal(actingUser))
+
+        whenever(
+            removingWebauthnIdentity.removeWebauthnIdentity(
+                eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
+                any(),
+                eq(userId),
+                eq(credentialId)
+            )
+        ).thenReturn(error.some())
+
+        // when
+        val response = c().delete("/api/v1/user/${userId.serialize()}/identity/webauthn/$credentialIdHex") {
+            basicAuth(username, password)
+        }
+
+        //  then
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
+            .isError(
+                "UserIdentityNotFound",
+                "msg",
+                mapOf("credentialId" to credentialIdHex),
+                correlationId.serialize()
+            )
+    }
 }

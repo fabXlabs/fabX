@@ -5,7 +5,7 @@
 
     <div>
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
-            <label for="username-input" class="block text-900 font-medium mb-2">Email</label>
+            <label for="username-input" class="block text-900 font-medium mb-2">Username</label>
             <input id="username-input" type="text" formControlName="username" pInputText class="w-full mb-3"
                    autocapitalize="none">
 
@@ -20,6 +20,13 @@
 
             <button type="submit" pButton label="Login" icon="pi pi-user" class="w-full"
                     [disabled]="!form.valid"></button>
+
+            <p-button label="Login Webauthn"
+                    icon="pi pi-user"
+                    class="w-full"
+                    [disabled]="!form.valid"
+                    (onClick)="loginWebauthn()">
+            </p-button>
         </form>
     </div>
 </div>

@@ -39,3 +39,24 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readStringParameter(name:
     call.respond(HttpStatusCode.BadRequest, "Required string parameter \"$name\" not given or invalid.")
     return null
 }
+
+suspend inline fun PipelineContext<*, ApplicationCall>.readHexStringParameter(name: String): ByteArray? {
+    call.parameters[name]?.let {
+        try {
+            check(it.length % 2 == 0) { "Must have an even length" }
+
+            val byteIterator = it.chunkedSequence(2)
+                .map { it.toInt(16).toByte() }
+                .iterator()
+
+            return ByteArray(it.length / 2) { byteIterator.next() }
+        } catch (e: IllegalStateException) {
+            null
+        } catch (e: NumberFormatException) {
+            null
+        }
+    }
+
+    call.respond(HttpStatusCode.BadRequest, "Required hex string parameter \"$name\" not given or invalid.")
+    return null
+}

@@ -27,6 +27,7 @@ import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
@@ -39,7 +40,9 @@ import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
+import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
@@ -75,19 +78,31 @@ val domainModule = DI.Module("domain") {
     bindSingleton { AddingPhoneNrIdentity(instance(), instance(), instance(), instance()) }
     bindSingleton { AddingUser(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { AddingUsernamePasswordIdentity(instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingWebauthnIdentity(instance(), instance(), instance(), instance()) }
     bindSingleton { ChangingIsAdmin(instance(), instance(), instance()) }
     bindSingleton { ChangingUser(instance(), instance(), instance(), instance()) }
     bindSingleton { DeletingUser(instance(), instance(), instance()) }
+    bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
-    bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
     bindSingleton { LoggingUnlockedTool(instance()) }
     bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingMemberQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingPhoneNrIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
+    bindSingleton { RemovingWebauthnIdentity(instance(), instance(), instance()) }
     bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton {
+        WebauthnIdentityService(
+            instance(),
+            instance(),
+            instance(),
+            instance(tag = "webauthnOrigin"),
+            instance(tag = "webauthnRpId"),
+            instance(tag = "webauthnRpName")
+        )
+    }
 
     bindSingleton { { newDeviceId() } }
     bindSingleton { { newQualificationId() } }

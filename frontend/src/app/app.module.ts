@@ -55,6 +55,7 @@ import { UserAddPhoneNrIdentityComponent } from './user-add-phone-nr-identity/us
 import {
     UserAddUsernamePasswordIdentityComponent
 } from './user-add-username-password-identity/user-add-username-password-identity.component';
+import { UserAddWebauthnIdentityComponent } from './user-add-webauthn-identity/user-add-webauthn-identity.component';
 import { UserChangeLockStateComponent } from './user-change-lock-state/user-change-lock-state.component';
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
@@ -85,6 +86,7 @@ import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-una
         UserAddComponent,
         UserAddPhoneNrIdentityComponent,
         UserAddUsernamePasswordIdentityComponent,
+        UserAddWebauthnIdentityComponent,
         UserChangeLockStateComponent,
         UserChangePersonalInfoComponent,
         UserDetailsComponent,

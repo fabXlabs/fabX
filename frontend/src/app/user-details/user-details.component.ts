@@ -142,6 +142,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
+    // TODO removeWebauthnIdentity(credentialId)
+
     removeCardIdentity(cardId: string) {
         this.store.dispatch(new Users.RemoveCardIdentity(
             this.store.selectSnapshot(FabxState.selectedUser)!.id,
@@ -244,5 +246,11 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         if (this.availableInstructorQualificationsSubscription) {
             this.availableInstructorQualificationsSubscription.unsubscribe();
         }
+    }
+
+    toHexString(arr: number[]): string {
+        return Array.from(arr, function(byte) {
+            return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+        }).join('')
     }
 }

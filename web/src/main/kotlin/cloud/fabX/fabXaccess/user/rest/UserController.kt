@@ -6,11 +6,13 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
+import cloud.fabX.fabXaccess.common.rest.readHexStringParameter
 import cloud.fabX.fabXaccess.common.rest.readInstructorAuthentication
 import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
+import cloud.fabX.fabXaccess.common.rest.toByteArray
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
@@ -18,6 +20,7 @@ import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
@@ -27,6 +30,8 @@ import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
+import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -47,10 +52,13 @@ class UserController(
     private val removingMemberQualification: RemovingMemberQualification,
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
+    private val addingWebauthnIdentity: AddingWebauthnIdentity,
+    private val removingWebauthnIdentity: RemovingWebauthnIdentity,
     private val addingCardIdentity: AddingCardIdentity,
     private val removingCardIdentity: RemovingCardIdentity,
     private val addingPhoneNrIdentity: AddingPhoneNrIdentity,
-    private val removingPhoneNrIdentity: RemovingPhoneNrIdentity
+    private val removingPhoneNrIdentity: RemovingPhoneNrIdentity,
+    private val webauthnService: WebauthnIdentityService
 ) {
 
     val routes: Route.() -> Unit = {
@@ -343,6 +351,80 @@ class UserController(
                                                         newCorrelationId(),
                                                         id,
                                                         username
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+                }
+
+                route("/webauthn") {
+                    post("/register") {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                call.respondWithErrorHandler(
+                                    readMemberAuthentication()
+                                        .flatMap { member ->
+                                            webauthnService.getNewChallenge(id)
+                                                .map { challenge ->
+                                                    WebauthnRegistrationDetails(
+                                                        "direct",
+                                                        challenge,
+                                                        webauthnService.rpId,
+                                                        webauthnService.rpName,
+                                                        member.userId.value.toByteArray(),
+                                                        member.name,
+                                                        member.name,
+                                                        webauthnService.pubKeyCredParams.map {
+                                                            PubKeyCredParamEntry(it.type.value, it.alg.value)
+                                                        }
+                                                    )
+                                                }
+                                        }
+                                )
+                            }
+                    }
+                    post("/response") {
+                        readBody<WebauthnIdentityAdditionDetails>()
+                            ?.let {
+                                readUUIDParameter("id")
+                                    ?.let { UserId(it) }
+                                    ?.let { id ->
+                                        call.respondWithErrorHandler(
+                                            readMemberAuthentication()
+                                                .flatMap { member ->
+                                                    addingWebauthnIdentity.addWebauthnIdentity(
+                                                        member,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        it.attestationObject,
+                                                        it.clientDataJSON
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+                    delete("/{credentialId}") {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                readHexStringParameter("credentialId")
+                                    ?.let { credentialId ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    removingWebauthnIdentity.removeWebauthnIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        credentialId
                                                     )
                                                         .toEither { }
                                                         .swap()

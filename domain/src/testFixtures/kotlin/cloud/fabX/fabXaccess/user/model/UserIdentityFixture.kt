@@ -1,6 +1,10 @@
 package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.getOrElse
+import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData
+import org.mockito.Mockito.mock
+import org.mockito.kotlin.whenever
 
 object UserIdentityFixture {
 
@@ -25,5 +29,15 @@ object UserIdentityFixture {
     ): PhoneNrIdentity {
         return PhoneNrIdentity.fromUnvalidated(phoneNr, null)
             .getOrElse { throw IllegalArgumentException("Invalid phone nr.") }
+    }
+
+    fun webauthn(
+        credentialId: ByteArray
+    ): WebauthnIdentity {
+        val authenticator = mock(Authenticator::class.java)
+        val attestedCredentialData = mock(AttestedCredentialData::class.java)
+        whenever(authenticator.attestedCredentialData).thenReturn(attestedCredentialData)
+        whenever(attestedCredentialData.credentialId).thenReturn(credentialId)
+        return WebauthnIdentity(authenticator)
     }
 }

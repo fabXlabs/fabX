@@ -69,11 +69,57 @@ data class UsernamePasswordIdentityAdditionDetails(
 )
 
 @Serializable
+data class WebauthnRegistrationDetails(
+    val attestation: String,
+    val challenge: ByteArray,
+    val rpId: String,
+    val rpName: String,
+    val userId: ByteArray,
+    val userName: String,
+    val userDisplayName: String,
+    val pubKeyCredParams: List<PubKeyCredParamEntry>
+)
+
+@Serializable
+data class PubKeyCredParamEntry(val type: String, val alg: Long)
+
+@Serializable
+data class WebauthnIdentityAdditionDetails(
+    val attestationObject: ByteArray,
+    val clientDataJSON: ByteArray
+)
+
+@Serializable
+data class WebauthnLoginDetails(val username: String)
+
+@Serializable
+data class WebauthnResponseDetails(
+    val userId: String,
+    val credentialId: ByteArray,
+    val authenticatorData: ByteArray,
+    val clientDataJSON: ByteArray,
+    val signature: ByteArray
+)
+
+@Serializable
+data class WebauthnLoginResponse(
+    val userId: String,
+    val challenge: ByteArray,
+    val credentialIds: List<ByteArray>
+)
+
+@Serializable
 sealed class UserIdentity
 
 @Serializable
 data class UsernamePasswordIdentity(
     val username: String
+) : UserIdentity()
+
+@Suppress("ArrayInDataClass")
+@Serializable
+data class WebauthnIdentity(
+    val credentialId: ByteArray
 ) : UserIdentity()
 
 @Serializable
@@ -89,6 +135,7 @@ data class PhoneNrIdentity(
 
 fun cloud.fabX.fabXaccess.user.model.UserIdentity.toRestModel(): UserIdentity = when (this) {
     is cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity -> UsernamePasswordIdentity(username)
+    is cloud.fabX.fabXaccess.user.model.WebauthnIdentity -> WebauthnIdentity(authenticator.attestedCredentialData.credentialId)
     is cloud.fabX.fabXaccess.user.model.PhoneNrIdentity -> PhoneNrIdentity(phoneNr)
     is cloud.fabX.fabXaccess.user.model.CardIdentity -> CardIdentity(cardId, cardSecret)
 }

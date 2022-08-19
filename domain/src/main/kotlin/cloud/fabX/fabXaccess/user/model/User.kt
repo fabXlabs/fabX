@@ -8,6 +8,7 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
+import cloud.fabX.fabXaccess.common.application.toHex
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -22,6 +23,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.biFlatmap
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
+import com.webauthn4j.authenticator.Authenticator
 import kotlinx.datetime.Clock
 
 data class User internal constructor(
@@ -250,6 +252,86 @@ data class User internal constructor(
                     clock.now(),
                     correlationId,
                     username
+                )
+            }
+    }
+
+    fun addWebauthnIdentity(
+        actor: Member,
+        clock: Clock,
+        correlationId: CorrelationId,
+        authenticator: Authenticator
+    ): Either<Error, UserSourcingEvent> {
+        return requireUserIsActor(actor, correlationId)
+            .flatMap { requireUniqueCredentialId(authenticator.attestedCredentialData.credentialId, correlationId) }
+            .map {
+                WebauthnIdentityAdded(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId,
+                    authenticator
+                )
+            }
+    }
+
+    private fun requireUniqueCredentialId(
+        credentialId: ByteArray,
+        correlationId: CorrelationId
+    ): Either<Error, Unit> {
+        return identities.firstOrNull {
+            it is WebauthnIdentity
+                    && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
+        }
+            .toOption()
+            .map {
+                Error.CredentialIdAlreadyInUse(
+                    "Credential id is already in use.",
+                    correlationId
+                )
+            }
+            .toEither { }
+            .swap()
+    }
+
+    private fun requireUserIsActor(
+        actor: Member,
+        correlationId: CorrelationId
+    ): Either<Error, Unit> {
+        return Either.conditionally(
+            actor.userId == id,
+            { Error.UserNotActor("User is not actor.", correlationId) },
+            {}
+        )
+    }
+
+    fun removeWebauthnIdentity(
+        actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+        credentialId: ByteArray
+    ): Either<Error, UserSourcingEvent> {
+        return identities.firstOrNull {
+            it is WebauthnIdentity
+                    && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
+        }
+            .toOption()
+            .toEither {
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with credentialId \"${credentialId.toHex()}\".",
+                    mapOf("credentialId" to credentialId.toHex()),
+                    correlationId
+                )
+            }
+            .map {
+                WebauthnIdentityRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId,
+                    credentialId
                 )
             }
     }

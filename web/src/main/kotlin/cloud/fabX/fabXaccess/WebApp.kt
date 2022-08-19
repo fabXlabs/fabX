@@ -139,8 +139,8 @@ class WebApp(
                 angular("fabx-dashboard")
                 useResources = true
             }
-            authenticate("api-basic", "api-jwt") {
-                route("/api/v1") {
+            route("/api/v1") {
+                authenticate("api-basic", "api-jwt") {
                     qualificationController.routes(this)
                     toolController.routes(this)
                     deviceController.routes(this)
@@ -148,6 +148,7 @@ class WebApp(
                     userController.routes(this)
                     loginController.routes(this)
                 }
+                loginController.routesWebauthn(this)
             }
         }
     }

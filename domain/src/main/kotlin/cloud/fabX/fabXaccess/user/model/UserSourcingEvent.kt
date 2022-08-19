@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newUserId
+import com.webauthn4j.authenticator.Authenticator
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -28,6 +29,8 @@ sealed class UserSourcingEvent : SourcingEvent {
 
         fun handle(event: UsernamePasswordIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: UsernamePasswordIdentityRemoved, user: Option<User>): Option<User>
+        fun handle(event: WebauthnIdentityAdded, user: Option<User>): Option<User>
+        fun handle(event: WebauthnIdentityRemoved, user: Option<User>): Option<User>
         fun handle(event: CardIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: CardIdentityRemoved, user: Option<User>): Option<User>
         fun handle(event: PhoneNrIdentityAdded, user: Option<User>): Option<User>
@@ -119,6 +122,58 @@ data class UsernamePasswordIdentityRemoved(
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)
+}
+
+@Serializable
+data class WebauthnIdentityAdded(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val authenticator: Authenticator
+) : UserSourcingEvent() {
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+@Serializable
+data class WebauthnIdentityRemoved(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val credentialId: ByteArray
+) : UserSourcingEvent() {
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as WebauthnIdentityRemoved
+
+        if (aggregateRootId != other.aggregateRootId) return false
+        if (aggregateVersion != other.aggregateVersion) return false
+        if (actorId != other.actorId) return false
+        if (timestamp != other.timestamp) return false
+        if (correlationId != other.correlationId) return false
+        if (!credentialId.contentEquals(other.credentialId)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = aggregateRootId.hashCode()
+        result = 31 * result + aggregateVersion.hashCode()
+        result = 31 * result + actorId.hashCode()
+        result = 31 * result + timestamp.hashCode()
+        result = 31 * result + correlationId.hashCode()
+        result = 31 * result + credentialId.contentHashCode()
+        return result
+    }
 }
 
 @Serializable

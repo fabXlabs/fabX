@@ -41,6 +41,10 @@ val app = DI {
     bindConstant(tag = "jwtAudience") { config.jwtAudience }
     bindConstant(tag = "jwtHMAC256Secret") { config.jwtHMAC256Secret }
 
+    bindConstant(tag = "webauthnOrigin") { config.webauthnOrigin }
+    bindConstant(tag = "webauthnRpId") { config.webauthnRpId }
+    bindConstant(tag = "webauthnRpName") { config.webauthnRpName }
+
     bindInstance(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
 
     bindSingleton { SynchronousDomainEventPublisher() }

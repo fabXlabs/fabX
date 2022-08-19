@@ -76,6 +76,28 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
             )
         }
 
+    override fun handle(event: WebauthnIdentityAdded, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                identities = u.identities + WebauthnIdentity(
+                    authenticator = e.authenticator
+                )
+            )
+        }
+
+    override fun handle(event: WebauthnIdentityRemoved, user: Option<User>): Option<User> {
+        return requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                identities = u.identities.stream()
+                    .filter {
+                        !(it is WebauthnIdentity
+                                && it.authenticator.attestedCredentialData.credentialId.contentEquals(e.credentialId))
+                    }
+                    .collect(Collectors.toSet())
+            )
+        }
+    }
+
     override fun handle(event: CardIdentityAdded, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAndSome(event, user) { e, u ->
             u.copy(

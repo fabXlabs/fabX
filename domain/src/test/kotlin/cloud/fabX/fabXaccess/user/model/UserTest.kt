@@ -1026,6 +1026,163 @@ internal class UserTest {
     }
 
     @Test
+    fun `when adding webauthn identity then expected sourcing event is returned`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val authenticator = UserIdentityFixture.webauthn(byteArrayOf(1, 2, 3)).authenticator
+
+        val expectedSourcingEvent = WebauthnIdentityAdded(
+            userId,
+            aggregateVersion + 1,
+            userId,
+            fixedInstant,
+            correlationId,
+            authenticator
+        )
+
+        // when
+        val result = user.addWebauthnIdentity(
+            user.asMember(),
+            fixedClock,
+            correlationId,
+            authenticator
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given credential id is in use when adding webauthn identity then returns error`() {
+        // given
+        val existingIdentity = UserIdentityFixture.webauthn(byteArrayOf(1, 2, 3))
+        val user = UserFixture.arbitrary(userId, identities = setOf(existingIdentity))
+
+        // when
+        val result = user.addWebauthnIdentity(
+            user.asMember(),
+            fixedClock,
+            correlationId,
+            existingIdentity.authenticator
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.CredentialIdAlreadyInUse(
+                    "Credential id is already in use.",
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `given user is not actor when adding webauthn identity then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val authenticator = UserIdentityFixture.webauthn(byteArrayOf(1, 2, 3)).authenticator
+
+        // when
+        val result = user.addWebauthnIdentity(
+            UserFixture.arbitrary().asMember(),
+            fixedClock,
+            correlationId,
+            authenticator
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserNotActor("User is not actor.", correlationId))
+    }
+
+    @Test
+    fun `given credential id when removing webauthn identity then expected sourcing event is returned`() {
+        // given
+        val credentialId = byteArrayOf(1, 2, 3)
+        val identity = UserIdentityFixture.webauthn(credentialId)
+        val user = UserFixture.arbitrary(userId, identities = setOf(identity), aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = WebauthnIdentityRemoved(
+            userId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
+            credentialId
+        )
+
+        // when
+        val result = user.removeWebauthnIdentity(adminActor, fixedClock, correlationId, credentialId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given different credential id when removing webauthn identity then returns error`() {
+        // given
+        val credentialId = byteArrayOf(1, 2, 3)
+        val otherCredentialId = byteArrayOf(4, 5, 6)
+
+        val identity = UserIdentityFixture.webauthn(credentialId)
+        val user = UserFixture.arbitrary(userId, identities = setOf(identity))
+
+        // when
+        val result = user.removeWebauthnIdentity(
+            adminActor,
+            fixedClock,
+            correlationId,
+            otherCredentialId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with credentialId \"040506\".",
+                    mapOf("credentialId" to "040506"),
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `given no webauthn identity when removing webauthn identity then returns error`() {
+        // given
+        val credentialId = byteArrayOf(1, 2, 3)
+
+        val user = UserFixture.arbitrary(userId, identities = setOf())
+
+        // when
+        val result = user.removeWebauthnIdentity(
+            adminActor,
+            fixedClock,
+            correlationId,
+            credentialId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find identity with credentialId \"010203\".",
+                    mapOf("credentialId" to "010203"),
+                    correlationId
+                )
+            )
+    }
+
+    @Test
     fun `when adding phone number identity then expected sourcing event is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)

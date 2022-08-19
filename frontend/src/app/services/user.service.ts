@@ -12,7 +12,7 @@ import {
     UserCreationDetails,
     UserDetails,
     UserLockDetails,
-    UsernamePasswordIdentityAdditionDetails
+    UsernamePasswordIdentityAdditionDetails, WebauthnIdentityAdditionDetails, WebauthnRegistrationDetails
 } from '../models/user.model';
 
 @Injectable({
@@ -155,6 +155,34 @@ export class UserService {
     public removeUsernamePasswordIdentity(userId: string, username: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/username-password/${username}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public registerWebauthn(userId: string): Observable<WebauthnRegistrationDetails> {
+        return this.http.post<WebauthnRegistrationDetails>(
+            `${this.baseUrl}/user/${userId}/identity/webauthn/register`,
+            {},
+            this.authService.getOptions()
+        );
+    }
+
+    public responseWebauthn(
+        userId: string,
+        attestationObject: number[],
+        clientDataJSON: number[]
+    ): Observable<string> {
+        const details: WebauthnIdentityAdditionDetails = {
+            attestationObject: attestationObject,
+            clientDataJSON: clientDataJSON
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/identity/webauthn/response`,
+            details,
             {
                 ...this.authService.getOptions(),
                 responseType: 'text'

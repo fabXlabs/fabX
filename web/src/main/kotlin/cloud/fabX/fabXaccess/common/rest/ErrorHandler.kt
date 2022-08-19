@@ -76,7 +76,10 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.PhoneNrInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserIdentityNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserIsActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.UserNotActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         // persistence
         is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        // webauthn
+        is Error.WebauthnError -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
     }
 }
