@@ -30,8 +30,8 @@ export class DeviceAttachToolComponent {
 
     onSubmit() {
         const deviceId = this.store.selectSnapshot(FabxState.selectedDevice)!.id;
-        const pin = parseInt(this.form.get('pin')!.value);
-        const toolId = this.form.get('toolId')!.value;
+        const pin = this.form.get('pin')!.value!;
+        const toolId = this.form.get('toolId')!.value!;
 
         this.store.dispatch(new Devices.AttachTool(
             deviceId,

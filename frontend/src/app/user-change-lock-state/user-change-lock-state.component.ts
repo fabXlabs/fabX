@@ -20,7 +20,7 @@ export class UserChangeLockStateComponent implements OnInit, OnDestroy {
 
     form = new FormGroup({
         locked: new FormControl(false),
-        notes: new FormControl(null)
+        notes: new FormControl<string | null>(null)
     });
 
     @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
@@ -59,14 +59,14 @@ export class UserChangeLockStateComponent implements OnInit, OnDestroy {
         let lockedChange: ChangeableValue<boolean> | null = null;
         if (locked != currentUser.locked) {
             lockedChange = {
-                newValue: locked
+                newValue: locked!
             }
         }
 
         let notesChange: ChangeableValue<string | null> | null = null;
         if (notes != currentUser.lastName) {
             notesChange = {
-                newValue: notes
+                newValue: notes!
             }
         }
 

@@ -31,8 +31,8 @@ export class LoginComponent {
     ) { }
 
     onSubmit() {
-        let username = this.form.get('username')!.value;
-        let password = this.form.get('password')!.value;
+        let username = this.form.get('username')!.value!;
+        let password = this.form.get('password')!.value!;
 
         this.store.dispatch(new Auth.Login({ username: username, password: password }))
             .subscribe({
@@ -46,7 +46,7 @@ export class LoginComponent {
     }
 
     onSubmitWebauthn() {
-        let username = this.formWebauthn.get('username')!.value;
+        let username = this.formWebauthn.get('username')!.value!;
 
         this.store.dispatch(new Auth.LoginWebauthn(username))
             .subscribe({

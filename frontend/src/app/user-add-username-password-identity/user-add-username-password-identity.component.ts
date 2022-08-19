@@ -27,8 +27,8 @@ export class UserAddUsernamePasswordIdentityComponent {
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
-        const username = this.form.get('username')!.value;
-        const password = this.form.get('password')!.value;
+        const username = this.form.get('username')!.value!;
+        const password = this.form.get('password')!.value!;
 
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

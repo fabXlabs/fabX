@@ -45,9 +45,9 @@ export class UserChangePersonalInfoComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        const firstName = this.form.get('firstName')!.value;
-        const lastName = this.form.get('lastName')!.value;
-        const wikiName = this.form.get('wikiName')!.value;
+        const firstName = this.form.get('firstName')!.value!;
+        const lastName = this.form.get('lastName')!.value!;
+        const wikiName = this.form.get('wikiName')!.value!;
 
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

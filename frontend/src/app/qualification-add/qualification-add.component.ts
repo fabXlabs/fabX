@@ -18,16 +18,16 @@ export class QualificationAddComponent {
         name: new FormControl('', Validators.required),
         description: new FormControl('', Validators.required),
         colour: new FormControl('', Validators.required),
-        orderNr: new FormControl('100', Validators.required),
+        orderNr: new FormControl(100, Validators.required),
     });
 
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
-        const name = this.form.get('name')!.value;
-        const description = this.form.get('description')!.value;
-        const colour = this.form.get('colour')!.value;
-        const orderNr = this.form.get('orderNr')!.value;
+        const name = this.form.get('name')!.value!;
+        const description = this.form.get('description')!.value!;
+        const colour = this.form.get('colour')!.value!;
+        const orderNr = this.form.get('orderNr')!.value!;
 
         this.store.dispatch(new Qualifications.Add({
             name: name,

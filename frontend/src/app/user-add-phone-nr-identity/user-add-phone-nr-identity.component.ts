@@ -26,7 +26,7 @@ export class UserAddPhoneNrIdentityComponent {
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
-        const phoneNr = this.form.get('phoneNr')!.value;
+        const phoneNr = this.form.get('phoneNr')!.value!;
 
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

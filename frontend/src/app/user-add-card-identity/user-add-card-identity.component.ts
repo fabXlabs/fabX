@@ -54,8 +54,8 @@ export class UserAddCardIdentityComponent {
     }
 
     onSubmit() {
-        const cardId = this.form.get('cardId')!.value;
-        const cardSecret = this.form.get('cardSecret')!.value;
+        const cardId = this.form.get('cardId')!.value!;
+        const cardSecret = this.form.get('cardSecret')!.value!;
 
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

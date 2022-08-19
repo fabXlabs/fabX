@@ -23,9 +23,9 @@ export class UserAddComponent {
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
-        const firstName = this.form.get('firstName')!.value;
-        const lastName = this.form.get('lastName')!.value;
-        const wikiName = this.form.get('wikiName')!.value;
+        const firstName = this.form.get('firstName')!.value!;
+        const lastName = this.form.get('lastName')!.value!;
+        const wikiName = this.form.get('wikiName')!.value!;
 
         this.store.dispatch(new Users.Add({
             firstName: firstName,

@@ -44,9 +44,9 @@ export class DeviceChangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        const name = this.form.get('name')!.value;
-        const background = this.form.get('background')!.value;
-        const backupBackendUrl = this.form.get('backupBackendUrl')!.value;
+        const name = this.form.get('name')!.value!;
+        const background = this.form.get('background')!.value!;
+        const backupBackendUrl = this.form.get('backupBackendUrl')!.value!;
 
         const currentDevice = this.store.selectSnapshot(FabxState.selectedDevice)!;
 

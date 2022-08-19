@@ -52,11 +52,11 @@ export class DeviceAddComponent {
     }
 
     onSubmit() {
-        const mac = this.form.get('mac')!.value;
-        const secret = this.form.get('secret')!.value;
-        const name = this.form.get('name')!.value;
-        const background = this.form.get('background')!.value;
-        const backupBackendUrl = this.form.get('backupBackendUrl')!.value;
+        const mac = this.form.get('mac')!.value!;
+        const secret = this.form.get('secret')!.value!;
+        const name = this.form.get('name')!.value!;
+        const background = this.form.get('background')!.value!;
+        const backupBackendUrl = this.form.get('backupBackendUrl')!.value!;
 
         this.store.dispatch(new Devices.Add({
             mac: mac,

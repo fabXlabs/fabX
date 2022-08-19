@@ -22,12 +22,12 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
     form = new FormGroup({
         name: new FormControl('', Validators.required),
         wikiLink: new FormControl('', Validators.required),
-        enabled: new FormControl(true, Validators.required),
-        requiredQualifications: new FormControl(null, Validators.required),
+        enabled: new FormControl<boolean>(true, Validators.required),
+        requiredQualifications: new FormControl<string[]>([], Validators.required),
 
-        type: new FormControl(null, Validators.required),
-        time: new FormControl('0', Validators.required),
-        idleState: new FormControl('', Validators.required),
+        type: new FormControl<ToolType | null>(null, Validators.required),
+        time: new FormControl(0, Validators.required),
+        idleState: new FormControl<IdleState | null>(null, Validators.required),
     });
 
     types: ToolType[] = toolTypes;
@@ -49,7 +49,7 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
                         type: value.type,
                         time: value.time,
                         idleState: value.idleState,
-                        enabled: value.enabled,
+                        enabled: Boolean(value.enabled),
                         wikiLink: value.wikiLink,
                         requiredQualifications: value.requiredQualifications.map(q => q.id),
                     });
@@ -63,13 +63,13 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     onSubmit() {
-        const name = this.form.get('name')!.value;
-        const type = this.form.get('type')!.value;
-        const time = this.form.get('time')!.value;
-        const idleState = this.form.get('idleState')!.value;
-        const enabled = this.form.get('enabled')!.value;
-        const wikiLink = this.form.get('wikiLink')!.value;
-        const requiredQualifications = this.form.get('requiredQualifications')!.value;
+        const name = this.form.get('name')!.value!;
+        const type = this.form.get('type')!.value!;
+        const time = this.form.get('time')!.value!;
+        const idleState = this.form.get('idleState')!.value!;
+        const enabled = this.form.get('enabled')!.value!;
+        const wikiLink = this.form.get('wikiLink')!.value!;
+        const requiredQualifications = this.form.get('requiredQualifications')!.value!;
 
         const currentTool = this.store.selectSnapshot(FabxState.selectedTool)!;
 

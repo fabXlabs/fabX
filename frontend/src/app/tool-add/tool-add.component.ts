@@ -23,7 +23,7 @@ export class ToolAddComponent {
         wikiLink: new FormControl('', Validators.required),
         requiredQualifications: new FormControl(null, Validators.required),
         type: new FormControl(null, Validators.required),
-        time: new FormControl('300', Validators.required),
+        time: new FormControl(300, Validators.required),
         idleState: new FormControl(null, Validators.required),
     });
 
@@ -35,12 +35,12 @@ export class ToolAddComponent {
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onSubmit() {
-        const name = this.form.get('name')!.value;
-        const type = this.form.get('type')!.value;
-        const time = this.form.get('time')!.value;
-        const idleState = this.form.get('idleState')!.value;
-        const wikiLink = this.form.get('wikiLink')!.value;
-        const requiredQualifications = this.form.get('requiredQualifications')!.value;
+        const name = this.form.get('name')!.value!;
+        const type = this.form.get('type')!.value!;
+        const time = this.form.get('time')!.value!;
+        const idleState = this.form.get('idleState')!.value!;
+        const wikiLink = this.form.get('wikiLink')!.value!;
+        const requiredQualifications = this.form.get('requiredQualifications')!.value!;
 
         this.store.dispatch(new Tools.Add({
             name: name,
@@ -55,5 +55,4 @@ export class ToolAddComponent {
             }
         });
     }
-
 }

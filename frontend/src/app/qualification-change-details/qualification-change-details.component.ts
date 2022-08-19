@@ -22,7 +22,7 @@ export class QualificationChangeDetailsComponent implements OnInit, OnDestroy {
         name: new FormControl('', Validators.required),
         description: new FormControl('', Validators.required),
         colour: new FormControl('#FFFFFF', Validators.required),
-        orderNr: new FormControl('100', Validators.required),
+        orderNr: new FormControl(100, Validators.required),
     });
 
     @Select(FabxState.selectedQualification) qualification$!: Observable<Qualification>;
@@ -56,28 +56,28 @@ export class QualificationChangeDetailsComponent implements OnInit, OnDestroy {
         let nameChange: ChangeableValue<string> | null = null;
         if (name != currentQualification.name) {
             nameChange = {
-                newValue: name
+                newValue: name!
             }
         }
 
         let descriptionChange: ChangeableValue<string> | null = null;
         if (description != currentQualification.description) {
             descriptionChange = {
-                newValue: description
+                newValue: description!
             }
         }
 
         let colourChange: ChangeableValue<string> | null = null;
         if (colour != currentQualification.colour) {
             colourChange = {
-                newValue: colour
+                newValue: colour!
             }
         }
 
         let orderNrChange: ChangeableValue<number> | null = null;
         if (orderNr != currentQualification.orderNr) {
             orderNrChange = {
-                newValue: orderNr
+                newValue: orderNr!
             }
         }
 
