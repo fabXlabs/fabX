@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentity
+import cloud.fabX.fabXaccess.user.model.WebauthnService
 import kotlinx.datetime.Clock
 
 /**
@@ -18,7 +19,7 @@ import kotlinx.datetime.Clock
 class AddingWebauthnIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
-    private val webauthnService: WebauthnIdentityService,
+    private val webauthnService: WebauthnService,
     private val clock: Clock
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)

@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.user.model.GettingUserById
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentity
 import cloud.fabX.fabXaccess.user.model.WebauthnRepository
+import cloud.fabX.fabXaccess.user.model.WebauthnService
 import com.webauthn4j.WebAuthnManager
 import com.webauthn4j.authenticator.Authenticator
 import com.webauthn4j.data.AuthenticationParameters
@@ -31,7 +32,6 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge
 import com.webauthn4j.server.ServerProperty
 import com.webauthn4j.validator.exception.ValidationException
 
-// TODO define interface and move to web module
 /**
  * Service to handle webauthn details.
  */
@@ -43,7 +43,7 @@ class WebauthnIdentityService(
     origin: String,
     val rpId: String,
     val rpName: String
-) {
+) : WebauthnService {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
     private val webauthnManager = WebAuthnManager.createNonStrictWebAuthnManager()
@@ -68,11 +68,11 @@ class WebauthnIdentityService(
         return challenge.value.right()
     }
 
-    suspend fun getChallenge(userId: UserId): Either<Error, ByteArray> {
+    override suspend fun getChallenge(userId: UserId): Either<Error, ByteArray> {
         return webauthnRepository.getChallenge(userId)
     }
 
-    fun parseAndValidateRegistration(
+    override fun parseAndValidateRegistration(
         correlationId: CorrelationId,
         challenge: ByteArray,
         attestationObject: ByteArray,
