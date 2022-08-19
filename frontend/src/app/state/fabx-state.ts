@@ -442,6 +442,18 @@ export class FabxState {
         );
     }
 
+    @Action(Users.RemoveWebauthnIdentity)
+    removeWebauthnIdentity(ctx: StateContext<FabxStateModel>, action: Users.RemoveWebauthnIdentity) {
+        return this.userService.removeWebauthnIdentity(
+            action.userId,
+            action.credentialId
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
     @Action(Users.AddCardIdentity)
     addCardIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddCardIdentity) {
         return this.userService.addCardIdentity(

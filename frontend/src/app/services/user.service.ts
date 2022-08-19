@@ -237,6 +237,18 @@ export class UserService {
         );
     }
 
+    public removeWebauthnIdentity(userId: string, credentialId: number[]): Observable<string> {
+        const credentialIdHex = this.toHexString(credentialId)
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/identity/webauthn/${credentialIdHex}`,
+
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
     public addCardIdentity(userId: string, cardId: string, cardSecret: string): Observable<string> {
         const details: CardIdentityAdditionDetails = {
             cardId: cardId,
@@ -296,6 +308,12 @@ export class UserService {
                 responseType: 'text'
             }
         )
+    }
+
+    toHexString(arr: number[]): string {
+        return Array.from(arr, function (byte) {
+            return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+        }).join('')
     }
 }
 

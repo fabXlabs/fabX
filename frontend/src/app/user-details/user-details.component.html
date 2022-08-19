@@ -145,7 +145,7 @@
                                         {{identity.phoneNr}}
                                     </span>
                                     <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
-                                        {{toHexString(identity.credentialId)}}
+                                        {{userService.toHexString(identity.credentialId)}}
                                     </span>
                                 </td>
                                 <td>
@@ -167,9 +167,12 @@
                                         styleClass="p-button-danger"
                                         (onClick)="removePhoneNrIdentity(identity.phoneNr)">
                                     </p-button>
-                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
-                                        TODO
-                                    </span>
+                                    <p-button
+                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'"
+                                        icon="pi pi-trash"
+                                        styleClass="p-button-danger"
+                                        (onClick)="removeWebauthnIdentity(identity.credentialId)">
+                                    </p-button>
                                 </td>
                             </tr>
                         </ng-template>

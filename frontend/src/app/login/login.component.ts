@@ -54,7 +54,7 @@ export class LoginComponent {
                     this.store.dispatch(new Navigate(['user']));
                 },
                 error: (err: HttpErrorResponse) => {
-                    this.error = this.errorHandler.format(err);
+                    this.errorWebauthn = this.errorHandler.format(err);
                 }
             });
     }

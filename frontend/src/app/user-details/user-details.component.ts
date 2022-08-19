@@ -7,6 +7,7 @@ import { Qualification } from "../models/qualification.model";
 import { ConfirmationService, MenuItem, MessageService } from "primeng/api";
 import { Users } from "../state/user.actions";
 import { ErrorService } from "../services/error.service";
+import { UserService } from "../services/user.service";
 
 @Component({
     selector: 'fabx-user-details',
@@ -30,7 +31,8 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         private store: Store,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
-        private errorService: ErrorService
+        private errorService: ErrorService,
+        public userService: UserService
     ) {}
 
     ngOnInit() {
@@ -142,7 +144,22 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
-    // TODO removeWebauthnIdentity(credentialId)
+    removeWebauthnIdentity(credentialId: number[]) {
+        this.store.dispatch(new Users.RemoveWebauthnIdentity(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+            credentialId
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Webauthn Identity',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
+    }
 
     removeCardIdentity(cardId: string) {
         this.store.dispatch(new Users.RemoveCardIdentity(
@@ -246,11 +263,5 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         if (this.availableInstructorQualificationsSubscription) {
             this.availableInstructorQualificationsSubscription.unsubscribe();
         }
-    }
-
-    toHexString(arr: number[]): string {
-        return Array.from(arr, function(byte) {
-            return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-        }).join('')
     }
 }

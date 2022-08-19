@@ -1,6 +1,7 @@
 import { UserSortModel } from "./fabx-state";
 import {
-    CardIdentityAdditionDetails, PhoneNrIdentityAdditionDetails,
+    CardIdentityAdditionDetails,
+    PhoneNrIdentityAdditionDetails,
     UserCreationDetails,
     UserDetails,
     UserLockDetails,
@@ -88,6 +89,12 @@ export namespace Users {
         static readonly type = "[fabX Users] Add Webauthn Identity"
 
         constructor(public userId: string) {}
+    }
+
+    export class RemoveWebauthnIdentity {
+        static readonly type = "[fabX Users] Remove Webauthn Identity"
+
+        constructor(public userId: string, public credentialId: number[]) {}
     }
 
     export class AddCardIdentity {
