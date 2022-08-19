@@ -84,10 +84,11 @@
                                               routerLink="/user/{{user.id}}/add-username-password-identity">
                                     </p-button>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
                                     <p-button label="Add Webauthn"
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
+                                              *ngIf="user.id === loggedInUser.id"
                                               routerLink="/user/{{user.id}}/add-webauthn-identity">
                                     </p-button>
                                 </div>
