@@ -20,6 +20,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Git Semantic Version
+      uses: PaulHatch/semantic-version@v5.0.0-alpha2
+      with:
+        search_commit_body: true
 
     - name: Set up JDK 16
       uses: actions/setup-java@v3
@@ -38,6 +45,8 @@ jobs:
 
     - name: Build Fat JAR
       run: ./gradlew stage
+      env:
+        FABX_VERSION: $VERSION
 
     - name: Build Docker Image
       run: docker build --tag fabx:latest .
