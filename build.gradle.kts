@@ -23,7 +23,7 @@ tasks.register<GradleBuild>("stage") {
 
 allprojects {
     group = "cloud.fabX"
-    version = "2.0.0-SNAPSHOT"
+    version = System.getenv("FABX_VERSION") ?: "0.0.0-SNAPSHOT"
 
     apply(plugin = "kotlin")
     apply(plugin = "jacoco")

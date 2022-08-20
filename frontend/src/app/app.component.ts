@@ -9,6 +9,9 @@ import { Qualifications } from "./state/qualification.action";
 import { Users } from "./state/user.actions";
 import { Tools } from "./state/tool.actions";
 
+
+declare const process: { env: { FABX_VERSION: string; }; };
+
 @Component({
     selector: 'fabx-root',
     templateUrl: './app.component.html',
@@ -16,6 +19,8 @@ import { Tools } from "./state/tool.actions";
 })
 export class AppComponent implements OnInit {
     title = 'fabX';
+
+    fabxVersion = process.env.FABX_VERSION;
 
     constructor(
         private store: Store,

@@ -19,6 +19,7 @@ val buildTask = tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuil
     inputs.dir("node_modules")
     inputs.files("angular.json", ".browserslistrc", "tsconfig.json", "tsconfig.app.json")
     outputs.dir("${project.projectDir}/dist")
+    environment.put("FABX_VERSION", project.version.toString())
 }
 
 sourceSets {

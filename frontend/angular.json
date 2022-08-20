@@ -18,7 +18,7 @@
             "prefix": "fabx",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
+                    "builder": "ngx-build-plus:browser",
                     "options": {
                         "outputPath": "dist/fabx-dashboard",
                         "index": "src/index.html",
@@ -45,7 +45,8 @@
                                 "inject": false
                             }
                         ],
-                        "scripts": []
+                        "scripts": [],
+                        "extraWebpackConfig": "./webpack.partial.js"
                     },
                     "configurations": {
                         "production": {
@@ -81,7 +82,7 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "builder": "ngx-build-plus:dev-server",
                     "configurations": {
                         "production": {
                             "browserTarget": "fabx-dashboard:build:production"
@@ -90,16 +91,19 @@
                             "browserTarget": "fabx-dashboard:build:development"
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "development",
+                    "options": {
+                        "extraWebpackConfig": "./webpack.partial.js"
+                    }
                 },
                 "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "builder": "ngx-build-plus:extract-i18n",
                     "options": {
                         "browserTarget": "fabx-dashboard:build"
                     }
                 },
                 "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
+                    "builder": "ngx-build-plus:karma",
                     "options": {
                         "main": "src/test.ts",
                         "polyfills": "src/polyfills.ts",
