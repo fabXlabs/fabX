@@ -44,7 +44,7 @@
     "@angular/compiler-cli": "^14.0.4",
     "@ngxs/devtools-plugin": "^3.7.4",
     "@types/jasmine": "^4.0.1",
-    "@types/node": "^18.0.0",
+    "@types/node": "^18.0.2",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "eslint": "^8.18.0",
