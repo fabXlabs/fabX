@@ -57,6 +57,7 @@ class DeviceWebsocketController(
                     .fold({
                         close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "invalid authentication: $it"))
                     }, { deviceActor ->
+                        logger.debug("currently connected devices: ${connections.keys}")
                         logger.debug("new connection $this for device $deviceActor")
                         removeExistingConnectionIfExists(deviceActor.deviceId)
                         logger.debug("adding connection for device $deviceActor")
@@ -169,6 +170,8 @@ class DeviceWebsocketController(
         connections.remove(deviceId)?.let {
             it.coroutineContext.cancel()
             logger.warn("Removed websocket to device $deviceId as new connection of same device was established.")
+        } ?: run {
+            logger.debug("No existing connection for $deviceId.")
         }
     }
 
