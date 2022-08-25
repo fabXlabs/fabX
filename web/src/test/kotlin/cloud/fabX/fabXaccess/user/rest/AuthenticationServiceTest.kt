@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.user.rest
 
 import arrow.core.left
 import arrow.core.right
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
@@ -174,6 +175,42 @@ internal class AuthenticationServiceTest {
     }
 
     @Test
+    fun `given locked user when basic then returns ErrorPrincipal`() = runTest {
+        // given
+        val username = "some.one"
+        val password = "supersecret42"
+        val hash = "mUwJqfJlqOnyvpUc2EcuaU7WXCy0MWQygM7LZAHcgV4="
+
+        val usernamePasswordIdentity = UsernamePasswordIdentity(username, hash)
+
+        val userId = UserIdFixture.arbitrary()
+        val user = UserFixture.withIdentity(usernamePasswordIdentity, userId, locked = true)
+
+        whenever(gettingDeviceByIdentity.getByIdentity(eq(MacSecretIdentity(username, password))))
+            .thenReturn(Error.DeviceNotFoundByIdentity("msg").left())
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                eq(SystemActor),
+                eq(usernamePasswordIdentity)
+            )
+        )
+            .thenReturn(user.right())
+
+        // when
+        val result = testee.basic(UserPasswordCredential(username, password))
+
+        // then
+        assertThat(result)
+            .isInstanceOf(ErrorPrincipal::class)
+            .transform { it.error }
+            .all {
+                transform { it.message }.isEqualTo("User is locked.")
+                transform { it.parameters }.isEqualTo(mapOf("userId" to user.id.serialize()))
+            }
+    }
+
+    @Test
     fun `when jwt then returns UserPrincipal`() = runTest {
         // given
         val userId = UserIdFixture.arbitrary()
@@ -226,6 +263,28 @@ internal class AuthenticationServiceTest {
             .isInstanceOf(ErrorPrincipal::class)
             .transform { it.error }
             .isInstanceOf(Error.UserIdInvalid::class)
+    }
+
+    @Test
+    fun `given locked user when jwt then returns ErrorPrincipal`() = runTest {
+        // given
+        val userId = UserIdFixture.arbitrary()
+        val user = UserFixture.arbitrary(userId, locked = true)
+
+        whenever(gettingUserById.getUserById(eq(userId)))
+            .thenReturn(user.right())
+
+        // when
+        val result = testee.jwt(userId.serialize())
+
+        // then
+        assertThat(result)
+            .isInstanceOf(ErrorPrincipal::class)
+            .transform { it.error }
+            .all {
+                transform { it.message }.isEqualTo("User is locked.")
+                transform { it.parameters }.isEqualTo(mapOf("userId" to user.id.serialize()))
+            }
     }
 
     @Test
@@ -446,5 +505,40 @@ internal class AuthenticationServiceTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(error)
+    }
+
+    @Test
+    fun `given locked user when augmenting on behalf of user then returns actor on behalf of user`() = runTest {
+        // given
+        val deviceActor = DeviceFixture.arbitrary().asActor()
+
+        val user = UserFixture.arbitrary(locked = true)
+
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val cardIdentity = CardIdentity(cardId, cardSecret)
+
+        whenever(
+            gettingUserByIdentity.getUserByIdentity(
+                SystemActor, correlationId,
+                cloud.fabX.fabXaccess.user.model.CardIdentity(cardId, cardSecret)
+            )
+        ).thenReturn(user.right())
+
+        // when
+        val result = testee.augmentDeviceActorOnBehalfOfUser(
+            deviceActor,
+            cardIdentity,
+            null,
+            correlationId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .all {
+                transform { it.message }.isEqualTo("User is locked.")
+                transform { it.parameters }.isEqualTo(mapOf("userId" to user.id.serialize()))
+            }
     }
 }

@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.device.ws.DevicePrincipal
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserById
+import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import io.ktor.server.auth.Principal
 import io.ktor.server.auth.UserPasswordCredential
@@ -41,7 +42,7 @@ class AuthenticationService(
                     it
                 )
             }
-            // TODO check for lock state of user
+            .flatMap { requireUnlockedUser(it) }
             .fold(
                 { ErrorPrincipal(it) },
                 { UserPrincipal(it, AuthenticationMethod.BASIC) }
@@ -63,7 +64,7 @@ class AuthenticationService(
                 )
             }
             .flatMap { gettingUserById.getUserById(it) }
-            // TODO check for lock state of user
+            .flatMap { requireUnlockedUser(it) }
             .fold({ ErrorPrincipal(it) }, { UserPrincipal(it) })
     }
 
@@ -76,6 +77,7 @@ class AuthenticationService(
         val cardUser = cardIdentity?.let {
             cloud.fabX.fabXaccess.user.model.CardIdentity.fromUnvalidated(it.cardId, it.cardSecret, correlationId)
                 .flatMap { identity -> gettingUserByIdentity.getUserByIdentity(SystemActor, correlationId, identity) }
+                .flatMap { user -> requireUnlockedUser(user) }
                 .fold({ error ->
                     return error.left()
                 }, { user ->
@@ -86,6 +88,7 @@ class AuthenticationService(
         val phoneNrUser = phoneNrIdentity?.let {
             cloud.fabX.fabXaccess.user.model.PhoneNrIdentity.fromUnvalidated(it.phoneNr, correlationId)
                 .flatMap { identity -> gettingUserByIdentity.getUserByIdentity(SystemActor, correlationId, identity) }
+                .flatMap { user -> requireUnlockedUser(user) }
                 .fold({ error ->
                     return error.left()
                 }, { user ->
@@ -106,8 +109,14 @@ class AuthenticationService(
             ?: cardUser?.let { deviceActor.copy(onBehalfOf = it.asMember()) }
             ?: deviceActor
 
-        // TODO check for lock state of user
-
         return actorOnBehalfOf.right()
+    }
+
+    private fun requireUnlockedUser(user: User): Either<Error, User> {
+        return Either.conditionally(
+            !user.locked,
+            { Error.UserIsLocked("User is locked.", user.id) },
+            { user }
+        )
     }
 }

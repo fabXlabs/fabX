@@ -25,6 +25,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
         is Error.UserNotInstructor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
+        is Error.UserIsLocked -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         // domain qualification
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
