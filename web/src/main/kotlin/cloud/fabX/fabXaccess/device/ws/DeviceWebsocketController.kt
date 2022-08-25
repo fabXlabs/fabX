@@ -107,8 +107,17 @@ class DeviceWebsocketController(
                         } catch (e: Exception) {
                             logger.warn("Exception during device websocket handling", e)
                         } finally {
-                            logger.debug("Closed connection $this of ${deviceActor.name}")
-                            connections.remove(deviceActor.deviceId)
+                            logger.debug("Closed connection $this of ${deviceActor.name} for reason ${closeReason.await()}")
+
+                            if (connections[deviceActor.deviceId] == this) {
+                                connections.remove(deviceActor.deviceId)
+                                logger.debug("Removed connection $this (is current connection of ${deviceActor.name})")
+                            } else {
+                                logger.debug(
+                                    "Not removing connection, as $this is not current connection " +
+                                            "of ${deviceActor.name} (${connections[deviceActor.deviceId]} is)"
+                                )
+                            }
                         }
                     })
             }
