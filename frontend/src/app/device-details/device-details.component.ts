@@ -103,6 +103,9 @@ export class DeviceDetailsComponent {
                 this.store.dispatch(new Devices.Restart(
                     currentDevice.id
                 )).subscribe({
+                    next: _ => {
+                        this.messageService.add({ severity: 'success', summary: 'Restarted Device', detail: 'Yay!' });
+                    },
                     error: err => {
                         const message = this.errorService.format(err);
                         this.messageService.add({
