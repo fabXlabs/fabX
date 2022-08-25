@@ -41,6 +41,12 @@ export namespace Devices {
         constructor(public deviceId: string, public toolId: string) {}
     }
 
+    export class Restart {
+        static readonly type = "[fabX Devices] Restart"
+
+        constructor(public deviceId: string) {}
+    }
+
     export class Delete {
         static readonly type = "[fabX Devices] Delete"
 

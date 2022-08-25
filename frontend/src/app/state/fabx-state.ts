@@ -793,6 +793,13 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.Restart)
+    restartDevice(ctx: StateContext<FabxStateModel>, action: Devices.Restart) {
+        return this.deviceService.restartDevice(
+            action.deviceId
+        );
+    }
+
     @Action(Devices.Delete)
     deleteDevice(ctx: StateContext<FabxStateModel>, action: Devices.Delete) {
         return this.deviceService.deleteDevice(action.id).pipe(

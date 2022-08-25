@@ -87,6 +87,36 @@ export class DeviceDetailsComponent {
         });
     }
 
+    restart() {
+        const currentDevice = this.store.selectSnapshot(FabxState.selectedDevice)!;
+
+        let message = `Are you sure you want to restart device ${currentDevice.name}?`
+
+        this.confirmationService.confirm({
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-warning',
+            acceptIcon: 'pi pi-power-off',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+            message: message,
+            accept: () => {
+                this.store.dispatch(new Devices.Restart(
+                    currentDevice.id
+                )).subscribe({
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Restarting Device',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
+                });
+            }
+        });
+    }
+
     delete() {
         const currentDevice = this.store.selectSnapshot(FabxState.selectedDevice)!;
 

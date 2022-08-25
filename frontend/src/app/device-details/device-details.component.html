@@ -85,6 +85,21 @@
         <ul class="list-none p-0 m-0">
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
+                    restart
+                </div>
+                <div class="text-900 w-8 flex align-items-center">
+                    <div class="flex-grow-1"></div>
+                    <div>
+                        <p-button label="Restart"
+                                  styleClass="p-button-outlined p-button-warning"
+                                  icon="pi pi-power-off"
+                                  (onClick)="restart()">
+                        </p-button>
+                    </div>
+                </div>
+            </li>
+            <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
+                <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
                     delete
                 </div>
                 <div class="text-900 w-8 flex align-items-center">

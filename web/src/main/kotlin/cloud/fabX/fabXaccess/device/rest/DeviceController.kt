@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
@@ -32,7 +33,8 @@ class DeviceController(
     private val deletingDevice: DeletingDevice,
     private val attachingTool: AttachingTool,
     private val detachingTool: DetachingTool,
-    private val unlockingTool: UnlockingTool
+    private val unlockingTool: UnlockingTool,
+    private val restartingDevice: RestartingDevice
 ) {
 
     val routes: Route.() -> Unit = {
@@ -183,6 +185,23 @@ class DeviceController(
                                 }
                         }
                 }
+            }
+
+            post("/{id}/restart") {
+                readUUIDParameter("id")
+                    ?.let { DeviceId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    restartingDevice.restartDevice(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                                }
+                        )
+                    }
             }
 
             post("/{id}/unlock-tool") {

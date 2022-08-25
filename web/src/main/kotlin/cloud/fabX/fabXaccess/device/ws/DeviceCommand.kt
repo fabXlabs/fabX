@@ -153,3 +153,12 @@ data class UnlockTool(
 
 @Serializable
 data class ToolUnlockResponse(override val commandId: Int) : DeviceResponse()
+
+/**
+ * Command from server -> device to restart the device.
+ */
+@Serializable
+data class RestartDevice(override val commandId: Int) : ServerToDeviceCommand()
+
+@Serializable
+data class DeviceRestartResponse(override val commandId: Int) : DeviceResponse()
