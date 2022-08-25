@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 sealed class DeviceToServerCommand {
-    abstract val commandId: Long
+    abstract val commandId: Int
 
     abstract suspend fun handle(
         actor: DeviceActor,
@@ -42,7 +42,7 @@ interface DeviceNotificationHandler {
 
 @Serializable
 sealed class ServerToDeviceCommand {
-    abstract val commandId: Long
+    abstract val commandId: Int
 }
 
 /**
@@ -54,7 +54,7 @@ sealed class DeviceResponse {
     /**
      * Contains the commandId of the request eliciting this response.
      */
-    abstract val commandId: Long
+    abstract val commandId: Int
 }
 
 /**
@@ -62,7 +62,7 @@ sealed class DeviceResponse {
  */
 @Serializable
 data class ErrorResponse(
-    override val commandId: Long,
+    override val commandId: Int,
     val message: String,
     val parameters: Map<String, String>,
     val correlationId: CorrelationId?
@@ -72,7 +72,7 @@ data class ErrorResponse(
  * Command from device -> server. In the response, the server returns the device's configuration.
  */
 @Serializable
-data class GetConfiguration(override val commandId: Long) : DeviceToServerCommand() {
+data class GetConfiguration(override val commandId: Int) : DeviceToServerCommand() {
     override suspend fun handle(
         actor: DeviceActor,
         commandHandler: DeviceCommandHandler
@@ -85,7 +85,7 @@ data class GetConfiguration(override val commandId: Long) : DeviceToServerComman
  */
 @Serializable
 data class ConfigurationResponse(
-    override val commandId: Long,
+    override val commandId: Int,
     val name: String,
     val background: String,
     val backupBackendUrl: String,
@@ -125,7 +125,7 @@ data class ToolUnlockedNotification(
  */
 @Serializable
 data class GetAuthorizedTools(
-    override val commandId: Long,
+    override val commandId: Int,
     val phoneNrIdentity: PhoneNrIdentity?,
     val cardIdentity: CardIdentity?
 ) : DeviceToServerCommand() {
@@ -138,7 +138,7 @@ data class GetAuthorizedTools(
 
 @Serializable
 data class AuthorizedToolsResponse(
-    override val commandId: Long,
+    override val commandId: Int,
     val toolIds: Set<String>
 ) : DeviceResponse()
 
@@ -147,9 +147,9 @@ data class AuthorizedToolsResponse(
  */
 @Serializable
 data class UnlockTool(
-    override val commandId: Long,
+    override val commandId: Int,
     val toolId: String
 ) : ServerToDeviceCommand()
 
 @Serializable
-data class ToolUnlockResponse(override val commandId: Long) : DeviceResponse()
+data class ToolUnlockResponse(override val commandId: Int) : DeviceResponse()

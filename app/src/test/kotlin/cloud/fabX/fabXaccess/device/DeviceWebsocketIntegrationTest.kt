@@ -100,7 +100,7 @@ internal class DeviceWebsocketIntegrationTest {
         val toolId2 = givenTool("tool2", ToolType.KEEP, 20_000, IdleState.IDLE_LOW)
         givenToolAttachedToDevice(deviceId, 2, toolId2)
 
-        val commandId = 678L
+        val commandId = 678
         val command = GetConfiguration(commandId)
 
         // when
@@ -162,7 +162,7 @@ internal class DeviceWebsocketIntegrationTest {
         givenToolAttachedToDevice(deviceId, 2, toolId2)
         givenToolAttachedToDevice(deviceId, 3, toolId3)
 
-        val commandId = 6754L
+        val commandId = 6754
         val command = GetAuthorizedTools(commandId, null, CardIdentity(cardId, cardSecret))
 
         // when & then

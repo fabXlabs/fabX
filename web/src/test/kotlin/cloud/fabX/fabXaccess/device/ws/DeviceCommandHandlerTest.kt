@@ -60,7 +60,7 @@ internal class DeviceCommandHandlerTest {
     @Test
     fun `when handling GetConfiguration then returns ConfigurationResponse`() = runTest {
         // given
-        val commandId = 123L
+        val commandId = 123
         val command = GetConfiguration(commandId)
 
         val name = "some device"
@@ -135,7 +135,7 @@ internal class DeviceCommandHandlerTest {
     @Test
     fun `given error when handling GetConfiguration then returns error`() = runTest {
         // given
-        val commandId = 123L
+        val commandId = 123
         val command = GetConfiguration(commandId)
 
         val device = DeviceFixture.arbitrary()
@@ -164,7 +164,7 @@ internal class DeviceCommandHandlerTest {
         val actor = device.asActor()
         val actorOnBehalfOfUser = actor.copy(onBehalfOf = user.asMember())
 
-        val commandId = 768L
+        val commandId = 768
 
         val cardId = "11223344556677"
         val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
@@ -207,7 +207,7 @@ internal class DeviceCommandHandlerTest {
         val actor = device.asActor()
         val actorOnBehalfOfUser = actor.copy(onBehalfOf = user.asMember())
 
-        val commandId = 768L
+        val commandId = 768
 
         val phoneNr = "+49123456789"
         val phoneNrIdentity = PhoneNrIdentity(phoneNr)
@@ -255,7 +255,7 @@ internal class DeviceCommandHandlerTest {
             val actor = device.asActor()
             val actorOnBehalfOfUser = actor.copy(onBehalfOf = user.asMember())
 
-            val commandId = 768L
+            val commandId = 768
 
             val phoneNr = "+49123456789"
             val phoneNrIdentity = PhoneNrIdentity(phoneNr)
@@ -308,7 +308,7 @@ internal class DeviceCommandHandlerTest {
 
             val actor = DeviceFixture.arbitrary().asActor()
 
-            val commandId = 768L
+            val commandId = 768
 
             val phoneNr = "+49123456789"
             val phoneNrIdentity = PhoneNrIdentity(phoneNr)
@@ -342,7 +342,7 @@ internal class DeviceCommandHandlerTest {
     @Test
     fun `given no user identity when handling GetAuthorizedTools then does not act on behalf of user`() = runTest {
         // given
-        val commandId = 876L
+        val commandId = 876
         val command = GetAuthorizedTools(commandId, null, null)
 
         val actor = DeviceFixture.arbitrary().asActor()

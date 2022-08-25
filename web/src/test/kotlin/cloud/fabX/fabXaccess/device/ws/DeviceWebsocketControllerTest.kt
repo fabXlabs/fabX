@@ -134,7 +134,7 @@ internal class DeviceWebsocketControllerTest {
     @Test
     fun `when receiving command then calls command handler and returns response`() = withConfiguredTestApp {
         // given
-        val commandId = 24234L
+        val commandId = 24234
         val command = GetConfiguration(commandId)
 
         val expectedResponse = ConfigurationResponse(
@@ -168,7 +168,7 @@ internal class DeviceWebsocketControllerTest {
     @Test
     fun `given error in command handler when receiving command then returns error`() = withConfiguredTestApp {
         // given
-        val commandId = 24234L
+        val commandId = 24234
         val command = GetConfiguration(commandId)
 
         val errorResponse = ErrorResponse(
@@ -238,7 +238,7 @@ internal class DeviceWebsocketControllerTest {
     @Test
     fun `when sending command then command is sent to connected device`() = withConfiguredTestApp {
         // given
-        val command = UnlockTool(123L, ToolIdFixture.arbitrary().serialize())
+        val command = UnlockTool(123, ToolIdFixture.arbitrary().serialize())
 
         val correlationId = CorrelationIdFixture.arbitrary()
 
@@ -269,7 +269,7 @@ internal class DeviceWebsocketControllerTest {
     fun `given device is not connected when sending command then returns error`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
-        val command = UnlockTool(123L, ToolIdFixture.arbitrary().serialize())
+        val command = UnlockTool(123, ToolIdFixture.arbitrary().serialize())
         val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
@@ -290,7 +290,7 @@ internal class DeviceWebsocketControllerTest {
     @Test
     fun `when receiving device response then returns device response`() = withConfiguredTestApp {
         // given
-        val commandId = 567L
+        val commandId = 567
         val response = ToolUnlockResponse(commandId)
 
         val correlationId = CorrelationIdFixture.arbitrary()
@@ -325,7 +325,7 @@ internal class DeviceWebsocketControllerTest {
     fun `given device is not connected when receiving device response then returns error`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
-        val commandId = 987L
+        val commandId = 987
         val correlationId = CorrelationIdFixture.arbitrary()
 
         // when
@@ -348,7 +348,7 @@ internal class DeviceWebsocketControllerTest {
     fun `given device does not respond when receiving device response then returns error after timeout`() =
         withConfiguredTestApp {
             // given
-            val commandId = 567L
+            val commandId = 567
             val deviceId = actingDevice.id
 
             val correlationId = CorrelationIdFixture.arbitrary()

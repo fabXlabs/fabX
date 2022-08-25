@@ -40,7 +40,7 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
     private lateinit var commandCaptor: ArgumentCaptor<UnlockTool>
 
     @Captor
-    private lateinit var responseCommandIdCaptor: ArgumentCaptor<Long>
+    private lateinit var responseCommandIdCaptor: ArgumentCaptor<Int>
 
     @BeforeEach
     fun `configure WebModule`(
@@ -54,7 +54,7 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
     @Test
     fun `when unlocking tool then sends command and receives response`() = runTest {
         // given
-        val deviceResponse = ToolUnlockResponse(123L)
+        val deviceResponse = ToolUnlockResponse(123)
 
         whenever(
             deviceWebsocketController.setupReceivingDeviceResponse(
@@ -198,7 +198,7 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
         // given
         val tId = toolId
 
-        val deviceResponse = ErrorResponse(123L, "msg", mapOf(), null)
+        val deviceResponse = ErrorResponse(123, "msg", mapOf(), null)
 
         whenever(
             deviceWebsocketController.setupReceivingDeviceResponse(

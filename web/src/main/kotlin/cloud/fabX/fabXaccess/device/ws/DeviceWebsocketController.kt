@@ -47,7 +47,7 @@ class DeviceWebsocketController(
     private val connections: MutableMap<DeviceId, DefaultWebSocketSession> =
         Collections.synchronizedMap(HashMap())
 
-    private val responseChannels: MutableMap<Long, Channel<DeviceResponse>> =
+    private val responseChannels: MutableMap<Int, Channel<DeviceResponse>> =
         Collections.synchronizedMap(HashMap())
 
     val routes: Route.() -> Unit = {
@@ -147,7 +147,7 @@ class DeviceWebsocketController(
 
     private fun serializeServerToDeviceCommand(command: ServerToDeviceCommand): String = Json.encodeToString(command)
 
-    private fun errorHandler(commandId: Long, error: Error): DeviceResponse {
+    private fun errorHandler(commandId: Int, error: Error): DeviceResponse {
         return ErrorResponse(
             commandId,
             error.message,
@@ -163,7 +163,7 @@ class DeviceWebsocketController(
         }
     }
 
-    internal fun newCommandId(): Long = Random.nextLong()
+    internal fun newCommandId(): Int = Random.nextInt()
 
     internal suspend fun sendCommand(
         deviceId: DeviceId,
@@ -186,7 +186,7 @@ class DeviceWebsocketController(
 
     internal fun setupReceivingDeviceResponse(
         deviceId: DeviceId,
-        commandId: Long,
+        commandId: Int,
         correlationId: CorrelationId
     ): Either<Error, Unit> {
         // directly return error if device is not even connected
@@ -207,7 +207,7 @@ class DeviceWebsocketController(
 
     internal suspend fun receiveDeviceResponse(
         deviceId: DeviceId,
-        commandId: Long,
+        commandId: Int,
         correlationId: CorrelationId
     ): Either<Error, DeviceResponse> {
         val channel = responseChannels[commandId]
