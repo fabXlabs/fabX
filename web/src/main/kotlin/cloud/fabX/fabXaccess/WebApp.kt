@@ -28,6 +28,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.angular
 import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.plugins.httpsredirect.HttpsRedirect
@@ -95,10 +96,9 @@ class WebApp(
         }
 
         install(StatusPages) {
-            exception<kotlinx.serialization.SerializationException> { call, cause ->
-                cause.printStackTrace()
+            exception<BadRequestException> { call, cause ->
                 call.respond(
-                    HttpStatusCode.UnprocessableEntity,
+                    HttpStatusCode.BadRequest,
                     Error(cause::class.qualifiedName ?: "unknown", cause.localizedMessage, mapOf(), null)
                 )
             }

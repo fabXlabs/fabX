@@ -117,7 +117,7 @@ internal class QualificationIntegrationTest {
     }
 
     @Test
-    fun `given incomplete body when adding qualification then returns http unprocessable entity`() = withTestApp {
+    fun `given incomplete body when adding qualification then returns http bad request`() = withTestApp {
         // given
         val incompleteRequestBody = "{" +
                 "\"name\": \"qualification\"," +
@@ -135,14 +135,14 @@ internal class QualificationIntegrationTest {
         }
 
         // then
-        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
         assertThat(response.bodyAsText())
             .isJson<Error>()
             .isError(
-                "kotlinx.serialization.MissingFieldException",
+                "io.ktor.server.plugins.BadRequestException",
                 "Field 'orderNr' is required for type with serial name " +
                         "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
-                        "but it was missing"
+                        "but it was missing at path: $"
             )
     }
 
