@@ -63,6 +63,7 @@ val webModule = DI.Module("web") {
             instance(),
             instance(),
             instance(),
+            instance(),
             instance()
         )
     }

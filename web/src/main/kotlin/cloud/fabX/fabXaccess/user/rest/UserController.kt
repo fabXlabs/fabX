@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.common.rest.readInstructorAuthentication
 import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
+import cloud.fabX.fabXaccess.common.rest.requireStringQueryParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toByteArray
 import cloud.fabX.fabXaccess.common.rest.toDomain
@@ -25,6 +26,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingUser
+import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
@@ -42,6 +44,7 @@ import io.ktor.server.routing.route
 
 class UserController(
     private val gettingUser: GettingUser,
+    private val gettingUserIdByWikiName: GettingUserIdByWikiName,
     private val addingUser: AddingUser,
     private val changingUser: ChangingUser,
     private val deletingUser: DeletingUser,
@@ -104,6 +107,22 @@ class UserController(
                                 .map { it.toRestModel() }
                         }
                 )
+            }
+
+            get("/id-by-wiki-name") {
+                requireStringQueryParameter("wikiName")?.let {
+                    call.respondWithErrorHandler(
+                        readInstructorAuthentication()
+                            .flatMap { instructor ->
+                                gettingUserIdByWikiName.getUserIdByWikiName(
+                                    instructor,
+                                    newCorrelationId(),
+                                    it
+                                )
+                            }
+                            .map { it.serialize() }
+                    )
+                }
             }
 
             post("") {

@@ -214,6 +214,38 @@ internal class UserIntegrationTest {
     }
 
     @Test
+    fun `given instructor authentication when getting user id by wiki name then returns id`() = withTestApp {
+        // given
+        val userId = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+
+        val qualificationId = givenQualification()
+        val instructorId = givenUser(
+            "Some",
+            "Instructor",
+            "instructor"
+        )
+        givenUsernamePasswordIdentity(instructorId, "instructor", "instructorpassword")
+        givenUserIsInstructorFor(instructorId, qualificationId)
+
+        // when
+        val response = c().get("/api/v1/user/id-by-wiki-name") {
+            url {
+                parameters.append("wikiName", "turing")
+            }
+            basicAuth("instructor", "instructorpassword")
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        println(response.bodyAsText())
+        assertThat(response.body<String>()).isEqualTo(userId)
+    }
+
+    @Test
     fun `given non-admin authentication when adding user then returns http forbidden`() = withTestApp {
         // given
         val requestBody = UserCreationDetails(

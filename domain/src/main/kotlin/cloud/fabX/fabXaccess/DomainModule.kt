@@ -35,6 +35,7 @@ import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingAuthorizedTools
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
+import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
 import cloud.fabX.fabXaccess.user.application.LoggingUnlockedTool
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
@@ -86,6 +87,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
+    bindSingleton { GettingUserIdByWikiName(instance(), instance()) }
     bindSingleton { LoggingUnlockedTool(instance()) }
     bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
