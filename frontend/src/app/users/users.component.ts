@@ -16,6 +16,7 @@ export class UsersComponent {
 
     @Select(FabxState.usersLoadingState) loading$!: Observable<LoadingStateTag>;
     @Select(FabxState.users) users$!: Observable<AugmentedUser[]>;
+    @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
 
     constructor(private store: Store) {}
 

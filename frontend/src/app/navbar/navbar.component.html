@@ -10,7 +10,9 @@
         <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:border-primary transition-duration-150"
            [routerLink]="['/qualification']" routerLinkActive="border-500">Qualifications</a>
         <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:border-primary transition-duration-150"
-           [routerLink]="['/device']" routerLinkActive="border-500">Devices</a>
+           [routerLink]="['/device']" routerLinkActive="border-500"
+           *ngIf="loggedInUser.isAdmin"
+        >Devices</a>
 
         <div class="flex-grow-1"></div>
         <div>

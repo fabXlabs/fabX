@@ -4,6 +4,7 @@ import { FabxState } from "../state/fabx-state";
 import { Observable } from "rxjs";
 import { LoadingStateTag } from "../state/loading-state.model";
 import { AugmentedTool } from "../models/tool.model";
+import { User } from "../models/user.model";
 
 @Component({
     selector: 'fabx-tools',
@@ -14,6 +15,7 @@ export class ToolsComponent {
 
     @Select(FabxState.toolsLoadingState) loading$!: Observable<LoadingStateTag>;
     @Select(FabxState.tools) tools$!: Observable<AugmentedTool[]>;
+    @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
 
     constructor(private store: Store) { }
 }

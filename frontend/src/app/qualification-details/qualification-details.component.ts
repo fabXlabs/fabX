@@ -6,6 +6,7 @@ import { FabxState } from "../state/fabx-state";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Qualifications } from "../state/qualification.action";
 import { ErrorService } from "../services/error.service";
+import { User } from "../models/user.model";
 
 @Component({
     selector: 'fabx-qualification-details',
@@ -16,6 +17,7 @@ import { ErrorService } from "../services/error.service";
 export class QualificationDetailsComponent {
 
     @Select(FabxState.selectedQualification) qualification$!: Observable<Qualification>;
+    @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
 
     constructor(
         private store: Store,

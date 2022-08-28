@@ -8,11 +8,12 @@
 
         <div class="flex align-items-end">
             <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">About</div>
-            <div class="m-2">
+            <div class="m-2" *ngIf="loggedInUser$ | async as loggedInUser">
                 <p-button label="Edit"
                           icon="pi pi-pencil"
                           styleClass="p-button-outlined"
-                          routerLink="/qualification/{{qualification.id}}/change-details">
+                          routerLink="/qualification/{{qualification.id}}/change-details"
+                          *ngIf="loggedInUser.isAdmin">
                 </p-button>
             </div>
         </div>
@@ -53,7 +54,7 @@
                 </div>
                 <div class="text-900 w-8 flex align-items-center">
                     <div class="flex-grow-1"></div>
-                    <div>
+                    <div *ngIf="loggedInUser$ | async as loggedInUser">
                         <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
                                          [style]="{width: '50vw'}"
                                          [baseZIndex]="10000"
@@ -63,7 +64,8 @@
                         <p-button label="Delete"
                                   styleClass="p-button-outlined p-button-danger"
                                   icon="pi pi-trash"
-                                  (onClick)="delete()">
+                                  (onClick)="delete()"
+                                  *ngIf="loggedInUser.isAdmin">
                         </p-button>
                     </div>
                 </div>

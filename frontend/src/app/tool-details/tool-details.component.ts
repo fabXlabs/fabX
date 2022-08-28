@@ -6,6 +6,7 @@ import { AugmentedTool } from "../models/tool.model";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { Tools } from "../state/tool.actions";
 import { ErrorService } from "../services/error.service";
+import { User } from "../models/user.model";
 
 @Component({
     selector: 'fabx-tool-details',
@@ -16,6 +17,7 @@ import { ErrorService } from "../services/error.service";
 export class ToolDetailsComponent {
 
     @Select(FabxState.selectedTool) tool$!: Observable<AugmentedTool>;
+    @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
 
     constructor(
         private store: Store,

@@ -289,6 +289,32 @@ export class FabxState {
         });
     }
 
+    @Action(Users.GetMe)
+    getMe(ctx: StateContext<FabxStateModel>, _: Users.GetMe) {
+        return this.userService.getMe().pipe(
+            tap({
+                next: value => {
+                    const state = ctx.getState();
+                    if (state.users.tag == "FINISHED") {
+                        ctx.patchState({
+                            users: {
+                                tag: "FINISHED",
+                                value: state.users.value.filter((u) => u.id != value.id).concat([value])
+                            }
+                        });
+                    } else {
+                        ctx.patchState({
+                            users: {
+                                tag: "FINISHED",
+                                value: [value]
+                            }
+                        })
+                    }
+                }
+            })
+        );
+    }
+
     @Action(Users.GetById)
     getUser(ctx: StateContext<FabxStateModel>, action: Users.GetById) {
         return this.userService.getById(action.id).pipe(

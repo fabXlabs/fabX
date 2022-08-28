@@ -13,6 +13,10 @@ export namespace Users {
         static readonly type = "[fabX Users] Get All"
     }
 
+    export class GetMe {
+        static readonly type = "[fabX Users] Get Me"
+    }
+
     export class GetById {
         static readonly type = "[fabX Users] Get By Id"
 

@@ -8,11 +8,12 @@
 
         <div class="flex align-items-end">
             <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">Personal Information</div>
-            <div class="m-2">
+            <div class="m-2" *ngIf="loggedInUser$ | async let loggedInUser">
                 <p-button label="Edit"
                           icon="pi pi-pencil"
                           styleClass="p-button-outlined"
-                          routerLink="/user/{{user.id}}/change-personal-info">
+                          routerLink="/user/{{user.id}}/change-personal-info"
+                          *ngIf="loggedInUser.isAdmin">
                 </p-button>
             </div>
         </div>
@@ -39,11 +40,12 @@
 
         <div class="flex align-items-end">
             <div class="flex-grow-1 mt-3 mb-1 text-sm uppercase text-500 font-medium">Lock</div>
-            <div class="m-2">
+            <div class="m-2" *ngIf="loggedInUser$ | async let loggedInUser">
                 <p-button label="Edit"
                           icon="pi pi-pencil"
                           styleClass="p-button-outlined"
-                          routerLink="/user/{{user.id}}/lock">
+                          routerLink="/user/{{user.id}}/lock"
+                          *ngIf="loggedInUser.isAdmin">
                 </p-button>
             </div>
         </div>
@@ -78,11 +80,12 @@
                              [tableStyle]="{'width': '100%'}">
                         <ng-template pTemplate="caption">
                             <div class="flex justify-content-end flex-wrap">
-                                <div class="ml-3">
+                                <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
                                     <p-button label="Add Username/Password"
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
-                                              routerLink="/user/{{user.id}}/add-username-password-identity">
+                                              routerLink="/user/{{user.id}}/add-username-password-identity"
+                                              *ngIf="loggedInUser.isAdmin">
                                     </p-button>
                                 </div>
                                 <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
@@ -93,18 +96,20 @@
                                               routerLink="/user/{{user.id}}/add-webauthn-identity">
                                     </p-button>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
                                     <p-button label="Add Card"
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
-                                              routerLink="/user/{{user.id}}/add-card-identity">
+                                              routerLink="/user/{{user.id}}/add-card-identity"
+                                              *ngIf="loggedInUser.isAdmin">
                                     </p-button>
                                 </div>
-                                <div class="ml-3">
+                                <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
                                     <p-button label="Add Phone Nr."
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
-                                              routerLink="/user/{{user.id}}/add-phone-nr-identity">
+                                              routerLink="/user/{{user.id}}/add-phone-nr-identity"
+                                              *ngIf="loggedInUser.isAdmin">
                                     </p-button>
                                 </div>
                             </div>
@@ -114,7 +119,9 @@
                             <tr>
                                 <th style="width: 42%">Type</th>
                                 <th style="width: 42%">Identity</th>
-                                <th style="width: 15%" class="text-center">Delete</th>
+                                <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
+                                    <th style="width: 15%" class="text-center" *ngIf="loggedInUser.isAdmin">Delete</th>
+                                </ng-container>
                             </tr>
                         </ng-template>
 
@@ -157,32 +164,34 @@
                                         {{userService.toHexString(identity.credentialId)}}
                                     </span>
                                 </td>
-                                <td class="text-center">
-                                    <p-button
-                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'"
-                                        icon="pi pi-trash"
-                                        styleClass="p-button-danger"
-                                        (onClick)="removeUsernamePasswordIdentity(identity.username)">
-                                    </p-button>
-                                    <p-button
-                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'"
-                                        icon="pi pi-trash"
-                                        styleClass="p-button-danger"
-                                        (onClick)="removeCardIdentity(identity.cardId)">
-                                    </p-button>
-                                    <p-button
-                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'"
-                                        icon="pi pi-trash"
-                                        styleClass="p-button-danger"
-                                        (onClick)="removePhoneNrIdentity(identity.phoneNr)">
-                                    </p-button>
-                                    <p-button
-                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'"
-                                        icon="pi pi-trash"
-                                        styleClass="p-button-danger"
-                                        (onClick)="removeWebauthnIdentity(identity.credentialId)">
-                                    </p-button>
-                                </td>
+                                <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
+                                    <td class="text-center" *ngIf="loggedInUser.isAdmin">
+                                        <p-button
+                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'"
+                                            icon="pi pi-trash"
+                                            styleClass="p-button-danger"
+                                            (onClick)="removeUsernamePasswordIdentity(identity.username)">
+                                        </p-button>
+                                        <p-button
+                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'"
+                                            icon="pi pi-trash"
+                                            styleClass="p-button-danger"
+                                            (onClick)="removeCardIdentity(identity.cardId)">
+                                        </p-button>
+                                        <p-button
+                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'"
+                                            icon="pi pi-trash"
+                                            styleClass="p-button-danger"
+                                            (onClick)="removePhoneNrIdentity(identity.phoneNr)">
+                                        </p-button>
+                                        <p-button
+                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'"
+                                            icon="pi pi-trash"
+                                            styleClass="p-button-danger"
+                                            (onClick)="removeWebauthnIdentity(identity.credentialId)">
+                                        </p-button>
+                                    </td>
+                                </ng-container>
                             </tr>
                         </ng-template>
                     </p-table>
@@ -226,10 +235,11 @@
                             <i class="pi pi-times cursor-pointer" (click)="removeInstructorQualification(q.id)"></i>
                         </div>
                     </div>
-                    <div>
+                    <div *ngIf="loggedInUser$ | async let loggedInUser">
                         <p-splitButton label="Add"
                                        styleClass="p-button-outlined"
-                                       [model]="instructorQualificationItems">
+                                       [model]="instructorQualificationItems"
+                                       *ngIf="loggedInUser.isAdmin">
                         </p-splitButton>
                     </div>
                 </div>
@@ -252,13 +262,13 @@
                         </p-confirmDialog>
                         <p-button label="Make Admin"
                                   icon="pi pi-shield"
-                                  *ngIf="!user.isAdmin"
+                                  *ngIf="!user.isAdmin && loggedInUser.isAdmin"
                                   (onClick)="toggleAdmin($event)"
                                   styleClass="p-button-outlined p-button-warning">
                         </p-button>
                         <p-button label="Remove Admin"
                                   icon="pi pi-times"
-                                  *ngIf="user.isAdmin && user.id !== loggedInUser.id"
+                                  *ngIf="user.isAdmin && user.id !== loggedInUser.id && loggedInUser.isAdmin"
                                   (onClick)="toggleAdmin($event)"
                                   styleClass="p-button-outlined p-button-warning">
                         </p-button>
@@ -281,7 +291,7 @@
                         <p-button label="Delete"
                                   styleClass="p-button-outlined p-button-danger"
                                   icon="pi pi-trash"
-                                  *ngIf="user.id !== loggedInUser.id"
+                                  *ngIf="user.id !== loggedInUser.id && loggedInUser.isAdmin"
                                   (onClick)="delete()">
                         </p-button>
                     </div>
