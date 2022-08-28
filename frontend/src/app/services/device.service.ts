@@ -34,10 +34,13 @@ export class DeviceService {
     }
 
     public addDevice(details: DeviceCreationDetails): Observable<string> {
-        return this.http.post<string>(
+        return this.http.post(
             `${this.baseUrl}/device`,
             details,
-            this.authService.getOptions()
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
         );
     }
 
