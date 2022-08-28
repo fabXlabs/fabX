@@ -121,6 +121,7 @@ export class FabxState {
             loggedInUserId: null
         });
         ctx.dispatch(new Navigate(['login']));
+        // TODO also remove all other loaded state
     }
 
     // USERS
@@ -246,6 +247,21 @@ export class FabxState {
             }
         }
         return [];
+    }
+
+    @Selector()
+    static loggedInUserInstructorQualifications(state: FabxStateModel): Qualification[] {
+        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
+
+        const loggedInUser = this.loggedInUser(state);
+
+        if (!loggedInUser) {
+            return [];
+        }
+
+        return qualifications.filter(qualification => {
+            return loggedInUser.instructorQualifications?.some(qualificationId => qualification.id === qualificationId);
+        });
     }
 
     @Selector()
@@ -393,6 +409,18 @@ export class FabxState {
         return this.userService.removeMemberQualification(action.userId, action.qualificationId).pipe(
             tap({
                 next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
+    @Action(Users.AddMemberQualificationAsInstructor)
+    addMemberQualificationAsInstructor(
+        ctx: StateContext<FabxStateModel>,
+        action: Users.AddMemberQualificationAsInstructor
+    ) {
+        return this.userService.getIdByWikiName(action.wikiName).pipe(
+            mergeMap(userId => {
+                return this.userService.addMemberQualification(userId, action.qualificationId);
             })
         );
     }

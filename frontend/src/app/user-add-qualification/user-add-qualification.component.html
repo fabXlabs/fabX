@@ -1,0 +1,46 @@
+<p-toast></p-toast>
+<div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="grid">
+            <h2 class="col-12 md:col-offset-2 md:col-10 mb-0 text-xl pl-3">Add Qualification to Member</h2>
+
+            <div class="col-12 md:col-2 md:pt-3">
+                <div class="pl-2 md:pl-0 text-sm uppercase text-500 font-medium overflow-hidden text-overflow-ellipsis">
+                    Details
+                </div>
+            </div>
+            <div class="col-12 md:col-10">
+                <div class="formgrid p-fluid">
+                    <div class="field col-12">
+                        <label for="wikiName" class="font-medium text-900">Wiki Name</label>
+                        <input id="wikiName" formControlName="wikiName" type="text" pInputText>
+                    </div>
+                    <div class="field col-12">
+                        <label for="qualification" class="font-medium text-900">Qualifications</label>
+                        <p-dropdown id="qualification"
+                                       formControlName="qualification"
+                                       [options]="(qualifications$ | async) || []"
+                                       optionLabel="name"
+                                       optionValue="id"
+                                       placeholder="Select Qualifications"
+                        ></p-dropdown>
+                    </div>
+
+                    <div *ngIf="error" class="field col-12 my-0">
+                        <p-messages severity="error">
+                            <ng-template pTemplate="">
+                                <div class="ml-2">{{error}}</div>
+                            </ng-template>
+                        </p-messages>
+                    </div>
+
+                    <div class="field mb-4 col-12">
+                        <button type="submit" label="Add" icon="pi pi-plus" pButton class="w-auto"
+                                [disabled]="!form.valid"></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

@@ -43,6 +43,13 @@ export class UserService {
         return this.http.get<User>(`${this.baseUrl}/user/me`, this.authService.getOptions());
     }
 
+    public getIdByWikiName(wikiName: string): Observable<string> {
+        return this.http.get<string>(
+            `${this.baseUrl}/user/id-by-wiki-name?wikiName=${wikiName}`,
+            this.authService.getOptions()
+        );
+    }
+
     public addUser(details: UserCreationDetails): Observable<string> {
         return this.http.post<string>(
             `${this.baseUrl}/user`,

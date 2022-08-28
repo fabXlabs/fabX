@@ -37,6 +37,7 @@ import { DeviceChangeDetailsComponent } from './device-change-details/device-cha
 import { DeviceDetailsComponent } from './device-details/device-details.component';
 import { FabxState } from "./state/fabx-state";
 import { LoginComponent } from './login/login.component';
+import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-unauthorized-interceptor.service";
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { QualificationAddComponent } from './qualification-add/qualification-add.component';
@@ -52,6 +53,7 @@ import { ToolsComponent } from './tools/tools.component';
 import { UserAddCardIdentityComponent } from './user-add-card-identity/user-add-card-identity.component';
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserAddPhoneNrIdentityComponent } from './user-add-phone-nr-identity/user-add-phone-nr-identity.component';
+import { UserAddQualificationComponent } from './user-add-qualification/user-add-qualification.component';
 import {
     UserAddUsernamePasswordIdentityComponent
 } from './user-add-username-password-identity/user-add-username-password-identity.component';
@@ -61,7 +63,6 @@ import { UserChangePersonalInfoComponent } from './user-change-personal-info/use
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { ZXingScannerModule } from "@zxing/ngx-scanner";
-import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-unauthorized-interceptor.service";
 
 @NgModule({
     declarations: [
@@ -85,6 +86,7 @@ import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-una
         UserAddCardIdentityComponent,
         UserAddComponent,
         UserAddPhoneNrIdentityComponent,
+        UserAddQualificationComponent,
         UserAddUsernamePasswordIdentityComponent,
         UserAddWebauthnIdentityComponent,
         UserChangeLockStateComponent,

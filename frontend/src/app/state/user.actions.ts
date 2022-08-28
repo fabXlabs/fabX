@@ -59,6 +59,12 @@ export namespace Users {
         constructor(public userId: string, public qualificationId: string) {}
     }
 
+    export class AddMemberQualificationAsInstructor {
+        static readonly type = "[fabX Users] Add Member Qualification as Instructor"
+
+        constructor(public wikiName: string, public qualificationId: string) {}
+    }
+
     export class AddInstructorQualification {
         static readonly type = "[fabX Users] Add Instructor Qualification"
 
