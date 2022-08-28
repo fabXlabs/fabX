@@ -118,10 +118,17 @@ export class FabxState {
     logout(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
             auth: null,
-            loggedInUserId: null
+            loggedInUserId: null,
+            users: { tag: "LOADING" },
+            usersSort: {
+                by: "isAdmin",
+                order: "descending",
+            },
+            qualifications: { tag: "LOADING" },
+            devices: { tag: "LOADING" },
+            tools: { tag: "LOADING" }
         });
         ctx.dispatch(new Navigate(['login']));
-        // TODO also remove all other loaded state
     }
 
     // USERS
