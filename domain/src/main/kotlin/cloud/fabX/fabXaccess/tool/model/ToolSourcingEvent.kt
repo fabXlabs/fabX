@@ -56,6 +56,7 @@ data class ToolDetailsChanged(
     override val correlationId: CorrelationId,
     val name: ChangeableValue<String>,
     val toolType: ChangeableValue<ToolType>,
+    val requires2FA: ChangeableValue<Boolean>,
     val time: ChangeableValue<Int>,
     val idleState: ChangeableValue<IdleState>,
     val enabled: ChangeableValue<Boolean>,

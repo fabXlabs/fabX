@@ -201,6 +201,7 @@ internal class ToolIntegrationTest {
         val requestBody = ToolDetails(
             ChangeableValue("newName"),
             null,
+            ChangeableValue(true),
             ChangeableValue(987),
             ChangeableValue(IdleState.IDLE_LOW),
             ChangeableValue(false),
@@ -230,7 +231,7 @@ internal class ToolIntegrationTest {
                     2,
                     "newName",
                     ToolType.UNLOCK,
-                    false,
+                    true,
                     987,
                     IdleState.IDLE_LOW,
                     false,
@@ -246,6 +247,7 @@ internal class ToolIntegrationTest {
         val invalidToolId = ToolIdFixture.arbitrary().serialize()
 
         val requestBody = ToolDetails(
+            null,
             null,
             null,
             null,
@@ -281,6 +283,7 @@ internal class ToolIntegrationTest {
             val invalidQualificationId = QualificationIdFixture.arbitrary().serialize()
 
             val requestBody = ToolDetails(
+                null,
                 null,
                 null,
                 null,

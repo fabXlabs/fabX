@@ -83,6 +83,7 @@ data class ToolCreationDetails(
 data class ToolDetails(
     val name: ChangeableValue<String>?,
     val type: ChangeableValue<ToolType>?,
+    val requires2FA: ChangeableValue<Boolean>?,
     val time: ChangeableValue<Int>?,
     val idleState: ChangeableValue<IdleState>?,
     val enabled: ChangeableValue<Boolean>?,

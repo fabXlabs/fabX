@@ -39,6 +39,7 @@ internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
                 aggregateVersion = e.aggregateVersion,
                 name = e.name.valueToChangeTo(t.name),
                 type = e.toolType.valueToChangeTo(t.type),
+                requires2FA = e.requires2FA.valueToChangeTo(t.requires2FA),
                 time = e.time.valueToChangeTo(t.time),
                 idleState = e.idleState.valueToChangeTo(t.idleState),
                 enabled = e.enabled.valueToChangeTo(t.enabled),

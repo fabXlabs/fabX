@@ -101,6 +101,7 @@ class ToolController(
                                             id,
                                             it.name.toDomain(),
                                             it.type.toDomain { ChangeableValue.ChangeToValueToolType(it.toDomainModel()) },
+                                            it.requires2FA.toDomain(),
                                             it.time.toDomain(),
                                             it.idleState.toDomain { ChangeableValue.ChangeToValueIdleState(it.toDomainModel()) },
                                             it.enabled.toDomain(),

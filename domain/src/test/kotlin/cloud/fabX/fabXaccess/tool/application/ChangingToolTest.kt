@@ -69,6 +69,7 @@ internal class ChangingToolTest {
 
         val newName = ChangeableValue.ChangeToValueString("newName")
         val newType = ChangeableValue.ChangeToValueToolType(ToolType.UNLOCK)
+        val newRequires2FA = ChangeableValue.ChangeToValueBoolean(true)
         val newTime = ChangeableValue.ChangeToValueInt(42)
         val newIdleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW)
         val newEnabled = ChangeableValue.ChangeToValueBoolean(false)
@@ -83,6 +84,7 @@ internal class ChangingToolTest {
             correlationId,
             newName,
             newType,
+            newRequires2FA,
             newTime,
             newIdleState,
             newEnabled,
@@ -103,6 +105,7 @@ internal class ChangingToolTest {
             toolId,
             newName,
             newType,
+            newRequires2FA,
             newTime,
             newIdleState,
             newEnabled,
@@ -137,6 +140,7 @@ internal class ChangingToolTest {
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
 
@@ -163,6 +167,7 @@ internal class ChangingToolTest {
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
 
@@ -179,6 +184,7 @@ internal class ChangingToolTest {
             adminActor,
             correlationId,
             toolId,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

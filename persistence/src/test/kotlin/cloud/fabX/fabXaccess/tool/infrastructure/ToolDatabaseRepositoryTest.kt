@@ -118,6 +118,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs
             )
             repository.store(event2)
@@ -140,6 +141,7 @@ internal class ToolDatabaseRepositoryTest {
                     transform { it.id }.isEqualTo(toolId)
                     transform { it.aggregateVersion }.isEqualTo(2)
                     transform { it.name }.isEqualTo("name2")
+                    transform { it.requires2FA }.isEqualTo(true)
                     transform { it.type }.isEqualTo(ToolType.KEEP)
                     transform { it.requires2FA }.isEqualTo(true)
                     transform { it.time }.isEqualTo(42)
@@ -161,6 +163,7 @@ internal class ToolDatabaseRepositoryTest {
                 fixedInstant,
                 correlationId,
                 ChangeableValue.ChangeToValueString("name3"),
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
@@ -194,6 +197,7 @@ internal class ToolDatabaseRepositoryTest {
                     actorId,
                     fixedInstant,
                     correlationId,
+                    ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
@@ -256,6 +260,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId2))
             )
             repository.store(tool1event2)
@@ -308,6 +313,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 ChangeableValue.ChangeToValueString("newName3"),
                 ChangeableValue.LeaveAsIs,
+                ChangeableValue.ChangeToValueBoolean(true),
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.ChangeToValueBoolean(false),
