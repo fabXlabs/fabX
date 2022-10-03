@@ -98,6 +98,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "name",
                 ToolType.UNLOCK,
+                true,
                 42,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com",
@@ -140,6 +141,7 @@ internal class ToolDatabaseRepositoryTest {
                     transform { it.aggregateVersion }.isEqualTo(2)
                     transform { it.name }.isEqualTo("name2")
                     transform { it.type }.isEqualTo(ToolType.KEEP)
+                    transform { it.requires2FA }.isEqualTo(true)
                     transform { it.time }.isEqualTo(42)
                     transform { it.idleState }.isEqualTo(IdleState.IDLE_HIGH)
                     transform { it.wikiLink }.isEqualTo("https://wiki.example.com")
@@ -234,6 +236,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "tool1",
                 ToolType.UNLOCK,
+                false,
                 1,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com/tool1",
@@ -265,6 +268,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "tool2",
                 ToolType.KEEP,
+                true,
                 2,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com/tool2",
@@ -279,6 +283,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "tool3",
                 ToolType.KEEP,
+                true,
                 3,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com/tool3",
@@ -329,6 +334,7 @@ internal class ToolDatabaseRepositoryTest {
                     2,
                     "name2",
                     ToolType.KEEP,
+                    false,
                     1,
                     IdleState.IDLE_HIGH,
                     true,
@@ -340,6 +346,7 @@ internal class ToolDatabaseRepositoryTest {
                     2,
                     "newName3",
                     ToolType.KEEP,
+                    true,
                     3,
                     IdleState.IDLE_HIGH,
                     false,
@@ -380,6 +387,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "tool1",
                 ToolType.UNLOCK,
+                false,
                 1,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com/tool1",
@@ -394,6 +402,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "tool2",
                 ToolType.KEEP,
+                true,
                 2,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com/tool2",
@@ -408,6 +417,7 @@ internal class ToolDatabaseRepositoryTest {
                 correlationId,
                 "tool3",
                 ToolType.KEEP,
+                false,
                 3,
                 IdleState.IDLE_HIGH,
                 "https://wiki.example.com/tool3",

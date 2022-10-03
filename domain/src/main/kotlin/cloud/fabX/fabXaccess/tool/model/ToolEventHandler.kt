@@ -20,6 +20,7 @@ internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
                 aggregateVersion = event.aggregateVersion,
                 name = event.name,
                 type = event.toolType,
+                requires2FA = event.requires2FA,
                 time = event.time,
                 idleState = event.idleState,
                 enabled = true,

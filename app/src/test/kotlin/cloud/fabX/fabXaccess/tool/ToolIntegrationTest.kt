@@ -107,6 +107,7 @@ internal class ToolIntegrationTest {
         val requestBody = ToolCreationDetails(
             "tool",
             ToolType.UNLOCK,
+            false,
             123,
             IdleState.IDLE_HIGH,
             "https://example.com/tool",
@@ -138,6 +139,7 @@ internal class ToolIntegrationTest {
         val requestBody = ToolCreationDetails(
             "tool",
             ToolType.UNLOCK,
+            true,
             123,
             IdleState.IDLE_HIGH,
             "https://example.com/tool",
@@ -171,6 +173,7 @@ internal class ToolIntegrationTest {
         val requestBody = ToolCreationDetails(
             "tool",
             ToolType.UNLOCK,
+            false,
             123,
             IdleState.IDLE_HIGH,
             "https://example.com/tool",
@@ -227,6 +230,7 @@ internal class ToolIntegrationTest {
                     2,
                     "newName",
                     ToolType.UNLOCK,
+                    false,
                     987,
                     IdleState.IDLE_LOW,
                     false,

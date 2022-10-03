@@ -9,6 +9,7 @@ data class Tool(
     val aggregateVersion: Long,
     val name: String,
     val type: ToolType,
+    val requires2FA: Boolean,
     val time: Int,
     val idleState: IdleState,
     val enabled: Boolean,
@@ -21,6 +22,7 @@ fun cloud.fabX.fabXaccess.tool.model.Tool.toRestModel(): Tool = Tool(
     aggregateVersion = aggregateVersion,
     name = name,
     type = type.toRestModel(),
+    requires2FA = requires2FA,
     time = time,
     idleState = idleState.toRestModel(),
     enabled = enabled,
@@ -70,6 +72,7 @@ fun IdleState.toDomainModel(): cloud.fabX.fabXaccess.tool.model.IdleState {
 data class ToolCreationDetails(
     val name: String,
     val type: ToolType,
+    val requires2FA: Boolean,
     val time: Int,
     val idleState: IdleState,
     val wikiLink: String,

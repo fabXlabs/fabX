@@ -25,6 +25,7 @@ data class Tool internal constructor(
     override val aggregateVersion: Long,
     val name: String,
     val type: ToolType,
+    val requires2FA: Boolean, // second factor authentication
     val time: Int, // in ms
     val idleState: IdleState,
     val enabled: Boolean,
@@ -40,6 +41,7 @@ data class Tool internal constructor(
             correlationId: CorrelationId,
             name: String,
             type: ToolType,
+            requires2FA: Boolean,
             time: Int,
             idleState: IdleState,
             wikiLink: String,
@@ -55,6 +57,7 @@ data class Tool internal constructor(
                         correlationId,
                         name,
                         type,
+                        requires2FA,
                         time,
                         idleState,
                         wikiLink,

@@ -18,6 +18,7 @@ import io.ktor.server.testing.ApplicationTestBuilder
 internal suspend fun ApplicationTestBuilder.givenTool(
     name: String = "tool",
     type: ToolType = ToolType.UNLOCK,
+    requires2FA: Boolean = false,
     time: Int = 10_000,
     idleState: IdleState = IdleState.IDLE_HIGH,
     wikiLink: String = "https://example.com/tool",
@@ -26,6 +27,7 @@ internal suspend fun ApplicationTestBuilder.givenTool(
     val requestBody = ToolCreationDetails(
         name,
         type,
+        requires2FA,
         time,
         idleState,
         wikiLink,

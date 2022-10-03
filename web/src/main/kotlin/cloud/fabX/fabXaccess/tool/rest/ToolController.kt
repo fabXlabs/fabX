@@ -75,6 +75,7 @@ class ToolController(
                                     newCorrelationId(),
                                     it.name,
                                     it.type.toDomainModel(),
+                                    it.requires2FA,
                                     it.time,
                                     it.idleState.toDomainModel(),
                                     it.wikiLink,

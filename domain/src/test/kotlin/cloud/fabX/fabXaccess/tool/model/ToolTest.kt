@@ -48,6 +48,7 @@ internal class ToolTest {
             aggregateVersion,
             "Door Shop",
             ToolType.UNLOCK,
+            true,
             200,
             IdleState.IDLE_HIGH,
             true,
@@ -72,6 +73,7 @@ internal class ToolTest {
 
         val name = "name"
         val type = ToolType.KEEP
+        val requires2FA = true
         val time = 42
         val idleState = IdleState.IDLE_LOW
         val wikiLink = "https://example.com/tool42"
@@ -84,6 +86,7 @@ internal class ToolTest {
             correlationId,
             name,
             type,
+            requires2FA,
             time,
             idleState,
             wikiLink,
@@ -98,6 +101,7 @@ internal class ToolTest {
             correlationId,
             name,
             type,
+            requires2FA,
             time,
             idleState,
             wikiLink,
@@ -132,6 +136,7 @@ internal class ToolTest {
             correlationId,
             "tool",
             ToolType.UNLOCK,
+            false,
             123,
             IdleState.IDLE_LOW,
             "https://example.com/tool",
@@ -212,6 +217,7 @@ internal class ToolTest {
             CorrelationIdFixture.arbitrary(),
             "name1",
             ToolType.UNLOCK,
+            true,
             1,
             IdleState.IDLE_LOW,
             "https://example.com/1",
@@ -270,6 +276,7 @@ internal class ToolTest {
                     3,
                     "name3",
                     ToolType.KEEP,
+                    true,
                     2,
                     IdleState.IDLE_LOW,
                     false,
@@ -292,6 +299,7 @@ internal class ToolTest {
             CorrelationIdFixture.arbitrary(),
             "name1",
             ToolType.UNLOCK,
+            false,
             1,
             IdleState.IDLE_LOW,
             "https://example.com/1",
@@ -359,6 +367,7 @@ internal class ToolTest {
             CorrelationIdFixture.arbitrary(),
             "name1",
             ToolType.UNLOCK,
+            true,
             1,
             IdleState.IDLE_LOW,
             "https://example.com/1",
@@ -498,6 +507,7 @@ internal class ToolTest {
             aggregateVersion,
             "Door Shop",
             ToolType.UNLOCK,
+            true,
             200,
             IdleState.IDLE_HIGH,
             true,
@@ -513,7 +523,9 @@ internal class ToolTest {
             "Tool(id=ToolId(value=31174c35-800c-3c91-bf56-08f55101fcfc), " +
                     "aggregateVersion=42, " +
                     "name=Door Shop, " +
-                    "type=UNLOCK, time=200, " +
+                    "type=UNLOCK, " +
+                    "requires2FA=true, " +
+                    "time=200, " +
                     "idleState=IDLE_HIGH, " +
                     "enabled=true, " +
                     "wikiLink=https://example.com/shopdoor, " +

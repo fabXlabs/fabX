@@ -35,6 +35,7 @@ data class ToolCreated(
     override val correlationId: CorrelationId,
     val name: String,
     val toolType: ToolType,
+    val requires2FA: Boolean,
     val time: Int, // in ms
     val idleState: IdleState,
     val wikiLink: String,

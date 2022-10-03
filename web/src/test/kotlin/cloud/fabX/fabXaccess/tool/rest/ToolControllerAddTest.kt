@@ -65,6 +65,7 @@ internal class ToolControllerAddTest {
         val requestBody = ToolCreationDetails(
             "tool1",
             ToolType.UNLOCK,
+            true,
             123,
             IdleState.IDLE_LOW,
             "https://example.com/tool1",
@@ -82,6 +83,7 @@ internal class ToolControllerAddTest {
                 any(),
                 eq("tool1"),
                 eq(cloud.fabX.fabXaccess.tool.model.ToolType.UNLOCK),
+                eq(true),
                 eq(123),
                 eq(cloud.fabX.fabXaccess.tool.model.IdleState.IDLE_LOW),
                 eq("https://example.com/tool1"),
@@ -107,6 +109,7 @@ internal class ToolControllerAddTest {
         val requestBody = ToolCreationDetails(
             "tool1",
             ToolType.UNLOCK,
+            false,
             123,
             IdleState.IDLE_LOW,
             "https://example.com/tool1",

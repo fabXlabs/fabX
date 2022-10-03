@@ -63,6 +63,7 @@ internal class AddingToolTest {
         // given
         val name = "Door Shop"
         val toolType = ToolType.UNLOCK
+        val requires2FA = false
         val time = 200
         val idleState = IdleState.IDLE_HIGH
         val wikiUrl = "https://example.com/shopdoor"
@@ -75,6 +76,7 @@ internal class AddingToolTest {
             correlationId,
             name,
             toolType,
+            requires2FA,
             time,
             idleState,
             wikiUrl,
@@ -90,6 +92,7 @@ internal class AddingToolTest {
             correlationId,
             name,
             toolType,
+            requires2FA,
             time,
             idleState,
             wikiUrl,
@@ -107,6 +110,7 @@ internal class AddingToolTest {
         // given
         val name = "Door Shop"
         val toolType = ToolType.UNLOCK
+        val requires2FA = false
         val time = 200
         val idleState = IdleState.IDLE_HIGH
         val wikiUrl = "https://example.com/shopdoor"
@@ -119,6 +123,7 @@ internal class AddingToolTest {
             correlationId,
             name,
             toolType,
+            requires2FA,
             time,
             idleState,
             wikiUrl,
@@ -136,6 +141,7 @@ internal class AddingToolTest {
             correlationId,
             name,
             toolType,
+            requires2FA,
             time,
             idleState,
             wikiUrl,
