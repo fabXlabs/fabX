@@ -79,18 +79,22 @@ internal class DeviceCommandHandlerTest {
 
         val tool1Name = "tool 1"
         val tool1Time = 1234
+        val tool1Requires2FA = false
         val tool1 = ToolFixture.arbitrary(
             name = tool1Name,
             type = ToolType.UNLOCK,
+            requires2FA = tool1Requires2FA,
             time = tool1Time,
             idleState = IdleState.IDLE_LOW
         )
 
         val tool2Name = "tool 2"
         val tool2Time = 3245
+        val tool2Requires2FA = true
         val tool2 = ToolFixture.arbitrary(
             name = tool2Name,
             type = ToolType.KEEP,
+            requires2FA = tool2Requires2FA,
             time = tool2Time,
             idleState = IdleState.IDLE_HIGH
         )
@@ -108,12 +112,14 @@ internal class DeviceCommandHandlerTest {
                 1 to ToolConfigurationResponse(
                     tool1Name,
                     cloud.fabX.fabXaccess.tool.rest.ToolType.UNLOCK,
+                    tool1Requires2FA,
                     tool1Time,
                     cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_LOW
                 ),
                 2 to ToolConfigurationResponse(
                     tool2Name,
                     cloud.fabX.fabXaccess.tool.rest.ToolType.KEEP,
+                    tool2Requires2FA,
                     tool2Time,
                     cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_HIGH
                 )

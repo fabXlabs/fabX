@@ -26,6 +26,7 @@ class DeviceCommandHandlerImpl(
                     ToolConfigurationResponse(
                         it.value.name,
                         it.value.type.toRestModel(),
+                        it.value.requires2FA,
                         it.value.time,
                         it.value.idleState.toRestModel()
                     )

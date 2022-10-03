@@ -97,7 +97,7 @@ internal class DeviceWebsocketIntegrationTest {
 
         val toolId1 = givenTool("tool1")
         givenToolAttachedToDevice(deviceId, 1, toolId1)
-        val toolId2 = givenTool("tool2", ToolType.KEEP, false, 20_000, IdleState.IDLE_LOW)
+        val toolId2 = givenTool("tool2", ToolType.KEEP, true, 20_000, IdleState.IDLE_LOW)
         givenToolAttachedToDevice(deviceId, 2, toolId2)
 
         val commandId = 678
@@ -124,12 +124,14 @@ internal class DeviceWebsocketIntegrationTest {
                             1 to ToolConfigurationResponse(
                                 "tool1",
                                 ToolType.UNLOCK,
+                                false,
                                 10_000,
                                 IdleState.IDLE_HIGH
                             ),
                             2 to ToolConfigurationResponse(
                                 "tool2",
                                 ToolType.KEEP,
+                                true,
                                 20_000,
                                 IdleState.IDLE_LOW
                             )

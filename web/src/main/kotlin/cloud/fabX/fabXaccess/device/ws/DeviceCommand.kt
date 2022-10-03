@@ -99,6 +99,7 @@ data class ConfigurationResponse(
 data class ToolConfigurationResponse(
     val name: String,
     val type: ToolType,
+    val requires2FA: Boolean,
     val time: Int,
     val idleState: IdleState
 )
