@@ -69,6 +69,19 @@ val tools =
         "Door OHWL",
         "AM Laser"
     )
+val toolRequires2FAs = listOf(
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    false,
+    false
+)
 val toolQualification =
     listOf(
         "Router",
@@ -192,10 +205,12 @@ devices.forEachIndexed { i, deviceName ->
 
 tools.forEachIndexed { i, toolName ->
     val qualificationId = qualificationIds[qualifications.indexOf(toolQualification[i])]
+    val requires2FA = toolRequires2FAs[i]
 
     val body = "{" +
             "\"name\": \"$toolName\", " +
             "\"type\": \"UNLOCK\", " +
+            "\"requires2FA\": $requires2FA, " +
             "\"time\": 300, " +
             "\"idleState\": \"IDLE_LOW\" " +
             "\"wikiLink\": \"https://wiki.example.com\" " +

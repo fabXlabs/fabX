@@ -73,6 +73,7 @@ for t in toolsOld:
 	response = requests.post(f'{baseUrlNew}/tool', json={
 		'name': t['name'],
 		'type': t['toolType'],
+		'requires2FA': False,
 		'time': t['time'],
 		'idleState': t['idleState'],
 		'wikiLink': t['wikiLink'],
