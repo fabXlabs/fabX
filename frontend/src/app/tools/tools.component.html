@@ -19,6 +19,7 @@
             <th>Name</th>
             <th>Type</th>
             <th>Enabled</th>
+            <th>2FA</th>
             <th>Qualifications</th>
         </tr>
     </ng-template>
@@ -37,6 +38,11 @@
                 <span class="text-hidden md:text-base">{{tool.enabled}}</span>
             </td>
             <td>
+                <span *ngIf="tool.requires2FA">
+                    <i class="pi pi-calculator mx-1"></i> true
+                </span>
+            </td>
+            <td>
                 <ul class="m-0">
                     <div *ngFor="let q of tool.requiredQualifications"
                          class="inline-block p-2 m-1 border-round text-300 text-hidden md:text-sm md:p-1"
@@ -50,6 +56,9 @@
 
     <ng-template pTemplate="loadingbody">
         <tr *ngFor="let _ of [].constructor(5)">
+            <td>
+                <p-skeleton></p-skeleton>
+            </td>
             <td>
                 <p-skeleton></p-skeleton>
             </td>

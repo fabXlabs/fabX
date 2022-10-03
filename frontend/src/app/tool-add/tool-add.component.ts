@@ -23,6 +23,7 @@ export class ToolAddComponent {
         wikiLink: new FormControl('', Validators.required),
         requiredQualifications: new FormControl(null, Validators.required),
         type: new FormControl(null, Validators.required),
+        requires2FA: new FormControl(false, Validators.required),
         time: new FormControl(300, Validators.required),
         idleState: new FormControl(null, Validators.required),
     });
@@ -37,6 +38,7 @@ export class ToolAddComponent {
     onSubmit() {
         const name = this.form.get('name')!.value!;
         const type = this.form.get('type')!.value!;
+        const requires2FA = this.form.get('requires2FA')!.value!;
         const time = this.form.get('time')!.value!;
         const idleState = this.form.get('idleState')!.value!;
         const wikiLink = this.form.get('wikiLink')!.value!;
@@ -45,6 +47,7 @@ export class ToolAddComponent {
         this.store.dispatch(new Tools.Add({
             name: name,
             type: type,
+            requires2FA: requires2FA,
             time: time,
             idleState: idleState,
             wikiLink: wikiLink,
@@ -54,5 +57,9 @@ export class ToolAddComponent {
                 this.error = this.errorHandler.format(err);
             }
         });
+    }
+
+    get requires2FAForm() {
+        return this.form.controls['requires2FA'] as FormControl;
     }
 }

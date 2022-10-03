@@ -26,6 +26,7 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
         requiredQualifications: new FormControl<string[]>([], Validators.required),
 
         type: new FormControl<ToolType | null>(null, Validators.required),
+        requires2FA: new FormControl<boolean>(false, Validators.required),
         time: new FormControl(0, Validators.required),
         idleState: new FormControl<IdleState | null>(null, Validators.required),
     });
@@ -47,6 +48,7 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
                     this.form.patchValue({
                         name: value.name,
                         type: value.type,
+                        requires2FA: value.requires2FA,
                         time: value.time,
                         idleState: value.idleState,
                         enabled: Boolean(value.enabled),
@@ -62,9 +64,14 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
         return this.form.controls['enabled'] as FormControl;
     }
 
+    get requires2FAForm() {
+        return this.form.controls['requires2FA'] as FormControl;
+    }
+
     onSubmit() {
         const name = this.form.get('name')!.value!;
         const type = this.form.get('type')!.value!;
+        const requires2FA = this.form.get('requires2FA')!.value!;
         const time = this.form.get('time')!.value!;
         const idleState = this.form.get('idleState')!.value!;
         const enabled = this.form.get('enabled')!.value!;
@@ -84,6 +91,13 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
         if (type != currentTool.type) {
             typeChange = {
                 newValue: type
+            }
+        }
+
+        let requires2FAChange: ChangeableValue<boolean> | null = null;
+        if (requires2FA != currentTool.requires2FA) {
+            requires2FAChange = {
+                newValue: requires2FA
             }
         }
 
@@ -128,6 +142,7 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
             {
                 name: nameChange,
                 type: typeChange,
+                requires2FA: requires2FAChange,
                 time: timeChange,
                 idleState: idleStateChange,
                 enabled: enabledChange,

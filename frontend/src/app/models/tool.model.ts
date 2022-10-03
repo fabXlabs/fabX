@@ -6,6 +6,7 @@ export interface Tool {
     aggregateVersion: number,
     name: string,
     type: ToolType,
+    requires2FA: boolean,
     time: number,
     idleState: IdleState,
     enabled: Boolean,
@@ -18,6 +19,7 @@ export interface AugmentedTool {
     aggregateVersion: number,
     name: string,
     type: ToolType,
+    requires2FA: boolean,
     time: number,
     idleState: IdleState,
     enabled: Boolean,
@@ -28,6 +30,7 @@ export interface AugmentedTool {
 export interface ToolCreationDetails {
     name: string,
     type: ToolType,
+    requires2FA: boolean,
     time: number,
     idleState: IdleState,
     wikiLink: string,
@@ -37,6 +40,7 @@ export interface ToolCreationDetails {
 export interface ToolDetails {
     name: ChangeableValue<string> | null,
     type: ChangeableValue<ToolType> | null,
+    requires2FA: ChangeableValue<boolean> | null,
     time: ChangeableValue<number> | null,
     idleState: ChangeableValue<IdleState> | null,
     enabled: ChangeableValue<boolean> | null,

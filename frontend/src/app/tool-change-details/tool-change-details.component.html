@@ -62,6 +62,18 @@
                     </div>
 
                     <div class="field col-12">
+                        <label for="requires2FA" class="font-medium text-900">Requires 2FA</label>
+                        <div class="inputfield w-full flex align-items-center">
+                            <p-checkbox
+                                id="requires2FA"
+                                styleClass="my-2"
+                                [binary]="true"
+                                [formControl]="requires2FAForm">
+                            </p-checkbox>
+                        </div>
+                    </div>
+
+                    <div class="field col-12">
                         <label for="time" class="font-medium text-900">Time</label>
                         <p-inputNumber id="time"
                                        formControlName="time"

@@ -22,11 +22,11 @@
                     <div class="field col-12">
                         <label for="requiredQualifications" class="font-medium text-900">Required Qualifications</label>
                         <p-multiSelect id="requiredQualifications"
-                                    formControlName="requiredQualifications"
-                                    [options]="(qualifications$ | async) || []"
-                                    optionLabel="name"
-                                    optionValue="id"
-                                    placeholder="Select Required Qualifications"
+                                       formControlName="requiredQualifications"
+                                       [options]="(qualifications$ | async) || []"
+                                       optionLabel="name"
+                                       optionValue="id"
+                                       placeholder="Select Required Qualifications"
                         ></p-multiSelect>
                     </div>
                 </div>
@@ -48,6 +48,17 @@
                                     placeholder="Select a Type"
                                     [showClear]="true"
                         ></p-dropdown>
+                    </div>
+
+                    <div class="field col-12">
+                        <label for="requires2FA" class="font-medium text-900">Require Second Authentication Factor</label>
+                        <div class="inputfield w-full flex align-items-center">
+                            <p-checkbox id="requires2FA"
+                                        formControlName="requires2FA"
+                                        [binary]="true"
+                                        [formControl]="requires2FAForm"
+                            ></p-checkbox>
+                        </div>
                     </div>
 
                     <div class="field col-12">
