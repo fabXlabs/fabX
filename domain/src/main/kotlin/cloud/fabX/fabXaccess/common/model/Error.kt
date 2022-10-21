@@ -46,6 +46,11 @@ sealed class Error(
         override val correlationId: CorrelationId
     ) : Error(message)
 
+    data class PinIdentityAlreadyFound(
+        override val message: String,
+        override val correlationId: CorrelationId
+    ) : Error(message)
+
     data class UsernameAlreadyInUse(
         override val message: String,
         override val correlationId: CorrelationId
@@ -254,6 +259,14 @@ sealed class Error(
         val regex: Regex,
         override val correlationId: CorrelationId?
     ) : Error(message, mapOf("value" to value, "regex" to regex.toString()), correlationId)
+
+    data class PinInvalid(
+        override val message: String,
+        val value: String,
+        val regex: Regex,
+        override val correlationId: CorrelationId?
+    ) : Error(message, mapOf("value" to value, "regex" to regex.toString()), correlationId)
+
 
     data class MacInvalid(
         override val message: String,

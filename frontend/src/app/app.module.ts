@@ -57,6 +57,7 @@ import { UserAddQualificationComponent } from './user-add-qualification/user-add
 import {
     UserAddUsernamePasswordIdentityComponent
 } from './user-add-username-password-identity/user-add-username-password-identity.component';
+import { UserAddPinIdentityComponent } from './user-add-pin-identity/user-add-pin-identity.component';
 import { UserAddWebauthnIdentityComponent } from './user-add-webauthn-identity/user-add-webauthn-identity.component';
 import { UserChangeLockStateComponent } from './user-change-lock-state/user-change-lock-state.component';
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
@@ -86,6 +87,7 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
         UserAddCardIdentityComponent,
         UserAddComponent,
         UserAddPhoneNrIdentityComponent,
+        UserAddPinIdentityComponent,
         UserAddQualificationComponent,
         UserAddUsernamePasswordIdentityComponent,
         UserAddWebauthnIdentityComponent,

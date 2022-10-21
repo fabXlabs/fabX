@@ -11,17 +11,14 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
+import io.ktor.client.request.delete
 import io.ktor.client.statement.bodyAsText
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
 import org.junit.jupiter.api.BeforeEach
@@ -34,8 +31,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
 @MockitoSettings
-internal class UserControllerAddPhoneNrIdentityTest {
-    private lateinit var addingPhoneNrIdentity: AddingPhoneNrIdentity
+internal class UserControllerRemovePinIdentityTest {
+    private lateinit var removingPinIdentity: RemovingPinIdentity
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
@@ -45,43 +42,37 @@ internal class UserControllerAddPhoneNrIdentityTest {
 
     @BeforeEach
     fun `configure WebModule`(
-        @Mock addingPhoneNrIdentity: AddingPhoneNrIdentity,
+        @Mock removingPinIdentity: RemovingPinIdentity,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.addingPhoneNrIdentity = addingPhoneNrIdentity
+        this.removingPinIdentity = removingPinIdentity
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { addingPhoneNrIdentity }
+        bindInstance(overrides = true) { removingPinIdentity }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when adding phone number identity then returns http no content`() = withConfiguredTestApp {
+    fun `when removing pin identity then returns http no content`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
-
-        val phoneNr = "+49123456789"
-        val requestBody = PhoneNrIdentity(phoneNr)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            addingPhoneNrIdentity.addPhoneNrIdentity(
+            removingPinIdentity.removePinIdentity(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
-                eq(userId),
-                eq(phoneNr),
+                eq(userId)
             )
         ).thenReturn(None)
 
         // when
-        val response = c().post("/api/v1/user/${userId.serialize()}/identity/phone") {
+        val response = c().delete("/api/v1/user/${userId.serialize()}/identity/pin") {
             basicAuth(username, password)
-            contentType(ContentType.Application.Json)
-            setBody(requestBody)
         }
 
         // then
@@ -90,11 +81,9 @@ internal class UserControllerAddPhoneNrIdentityTest {
     }
 
     @Test
-    fun `given no admin authentication when adding phone number identity then returns http forbidden`() =
+    fun `given no admin authentication when removing pin identity then returns http forbidden`() =
         withConfiguredTestApp {
             // given
-            val requestBody = PhoneNrIdentity("+49123456789")
-
             val message = "msg123"
             val error = Error.UserNotAdmin(message)
 
@@ -102,10 +91,8 @@ internal class UserControllerAddPhoneNrIdentityTest {
                 .thenReturn(ErrorPrincipal(error))
 
             // when
-            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone") {
+            val response = c().delete("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/pin") {
                 basicAuth(username, password)
-                contentType(ContentType.Application.Json)
-                setBody(requestBody)
             }
 
             // then
@@ -118,84 +105,55 @@ internal class UserControllerAddPhoneNrIdentityTest {
         }
 
     @Test
-    fun `given no body when adding phone number identity then returns http bad request`() =
-        withConfiguredTestApp {
-            // given
-            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-                .thenReturn(UserPrincipal(actingUser))
+    fun `given invalid user id when removing pin identity then returns http bad request`() = withConfiguredTestApp {
+        // given
+        val invalidUserId = "invalidUserId"
 
-            // when
-            val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/phone") {
-                basicAuth(username, password)
-                contentType(ContentType.Application.Json)
-                // empty body
-            }
+        whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+            .thenReturn(UserPrincipal(actingUser))
 
-            // then
-            assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+        // when
+        val response = c().delete("/api/v1/user/$invalidUserId/identity/pin") {
+            basicAuth(username, password)
         }
 
-    @Test
-    fun `given invalid user id when adding phone number identity then returns http bad request`() =
-        withConfiguredTestApp {
-            // given
-            val invalidUserId = "invalidUserId"
-
-            val requestBody = PhoneNrIdentity("+49123456789")
-
-            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
-                .thenReturn(UserPrincipal(actingUser))
-
-            // when
-            val response = c().post("/api/v1/user/$invalidUserId/identity/phone") {
-                basicAuth(username, password)
-                contentType(ContentType.Application.Json)
-                setBody(requestBody)
-            }
-
-            // then
-            assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
-            assertThat(response.body<String>())
-                .isEqualTo("Required UUID parameter \"id\" not given or invalid.")
-        }
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.BadRequest)
+        assertThat(response.body<String>()).isEqualTo("Required UUID parameter \"id\" not given or invalid.")
+    }
 
     @Test
-    fun `given domain error when adding phone number identity then returns mapped error`() = withConfiguredTestApp {
+    fun `given domain error when removing pin identity then returns http bad request`() = withConfiguredTestApp {
         // given
         val userId = UserIdFixture.arbitrary()
 
-        val phoneNr = "+49123456789"
-        val requestBody = PhoneNrIdentity(phoneNr)
-
         val correlationId = CorrelationIdFixture.arbitrary()
-        val error = Error.PhoneNrAlreadyInUse("msg678", correlationId)
+        val error = Error.UserIdentityNotFound("msg", mapOf(), correlationId)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            addingPhoneNrIdentity.addPhoneNrIdentity(
+            removingPinIdentity.removePinIdentity(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
-                eq(userId),
-                eq(phoneNr),
+                eq(userId)
             )
         ).thenReturn(error.some())
 
         // when
-        val response = c().post("/api/v1/user/${userId.serialize()}/identity/phone") {
+        val response = c().delete("/api/v1/user/${userId.serialize()}/identity/pin") {
             basicAuth(username, password)
-            contentType(ContentType.Application.Json)
-            setBody(requestBody)
         }
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
         assertThat(response.body<cloud.fabX.fabXaccess.common.rest.Error>())
             .isError(
-                "PhoneNrAlreadyInUse",
-                "msg678",
-                correlationId = correlationId.serialize()
+                "UserIdentityNotFound",
+                "msg",
+                mapOf(),
+                correlationId.serialize()
             )
     }
 }

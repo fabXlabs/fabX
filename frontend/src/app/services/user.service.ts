@@ -6,7 +6,7 @@ import { mergeMap, Observable, retry } from "rxjs";
 import {
     CardIdentityAdditionDetails,
     IsAdminDetails,
-    PhoneNrIdentityAdditionDetails,
+    PhoneNrIdentityAdditionDetails, PinIdentityAdditionDetails,
     QualificationAdditionDetails,
     User,
     UserCreationDetails,
@@ -306,6 +306,31 @@ export class UserService {
     public removePhoneNrIdentity(userId: string, phoneNr: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/phone/${phoneNr}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public addPinIdentity(userId: string, pin: string): Observable<string> {
+        const details: PinIdentityAdditionDetails = {
+            pin: pin
+        };
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/identity/pin`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public removePinIdentity(userId: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/${userId}/identity/pin`,
             {
                 ...this.authService.getOptions(),
                 responseType: 'text'

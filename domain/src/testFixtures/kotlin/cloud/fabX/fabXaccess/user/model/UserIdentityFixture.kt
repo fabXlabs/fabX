@@ -31,6 +31,13 @@ object UserIdentityFixture {
             .getOrElse { throw IllegalArgumentException("Invalid phone nr.") }
     }
 
+    fun pin(
+        pin: String
+    ): PinIdentity {
+        return PinIdentity.fromUnvalidated(pin, null)
+            .getOrElse { throw IllegalArgumentException("Invalid pin.") }
+    }
+
     fun webauthn(
         credentialId: ByteArray = byteArrayOf(1, 2, 3, 4)
     ): WebauthnIdentity {

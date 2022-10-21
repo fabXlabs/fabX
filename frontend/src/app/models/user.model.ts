@@ -100,7 +100,13 @@ export interface PhoneNrIdentity {
     phoneNr: string
 }
 
-export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity
+export interface PinIdentityAdditionDetails {
+    pin: string
+}
+
+export interface PinIdentity {}
+
+export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity | PinIdentity
 
 export interface TokenResponse {
     token: string

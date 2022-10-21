@@ -133,9 +133,19 @@ data class PhoneNrIdentity(
     val phoneNr: String
 ) : UserIdentity()
 
+@Serializable
+data class PinIdentityAdditionDetails(
+    val pin: String
+)
+
+@Suppress("CanSealedSubClassBeObject")
+@Serializable
+class PinIdentity : UserIdentity()
+
 fun cloud.fabX.fabXaccess.user.model.UserIdentity.toRestModel(): UserIdentity = when (this) {
     is cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity -> UsernamePasswordIdentity(username)
     is cloud.fabX.fabXaccess.user.model.WebauthnIdentity -> WebauthnIdentity(authenticator.attestedCredentialData.credentialId)
     is cloud.fabX.fabXaccess.user.model.PhoneNrIdentity -> PhoneNrIdentity(phoneNr)
     is cloud.fabX.fabXaccess.user.model.CardIdentity -> CardIdentity(cardId, cardSecret)
+    is cloud.fabX.fabXaccess.user.model.PinIdentity -> PinIdentity()
 }

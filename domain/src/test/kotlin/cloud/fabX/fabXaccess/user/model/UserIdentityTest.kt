@@ -230,4 +230,57 @@ class UserIdentityTest {
                 )
             )
     }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "1234",
+            "5678",
+            "9012",
+            "4242"
+        ]
+    )
+    fun `given valid pin when building PinIdentity then returns sourcing instance`(
+        pin: String
+    ) {
+        // given
+
+        // when
+        val result = PinIdentity.fromUnvalidated(pin, null)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(UserIdentityFixture.pin(pin))
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = [
+            "123", // too short
+            "56789", // too long
+            "ab12" // illegal characters
+        ]
+    )
+    fun `given invalid pin when building PinIdentity then returns error`(
+        pin: String
+    ) {
+        // given
+        val correlationId = CorrelationIdFixture.arbitrary()
+
+        // when
+        val result = PinIdentity.fromUnvalidated(pin, correlationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PinInvalid(
+                    "Pin is invalid (has to match ^[0-9]{4}\$).",
+                    pin,
+                    PinIdentity.pinRegex,
+                    correlationId
+                )
+            )
+    }
 }

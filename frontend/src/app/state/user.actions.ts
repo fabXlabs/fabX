@@ -2,6 +2,7 @@ import { UserSortModel } from "./fabx-state";
 import {
     CardIdentityAdditionDetails,
     PhoneNrIdentityAdditionDetails,
+    PinIdentityAdditionDetails,
     UserCreationDetails,
     UserDetails,
     UserLockDetails,
@@ -129,6 +130,18 @@ export namespace Users {
         static readonly type = "[fabX Users] Remove Phone Number Identity"
 
         constructor(public userId: string, public phoneNr: string) {}
+    }
+
+    export class AddPinIdentity {
+        static readonly type = "[fabX Users] Add Pin Identity"
+
+        constructor(public userId: string, public details: PinIdentityAdditionDetails) {}
+    }
+
+    export class RemovePinIdentity {
+        static readonly type = "[fabX Users] Remove Pin Identity"
+
+        constructor(public userId: string) {}
     }
 
     export class Delete {

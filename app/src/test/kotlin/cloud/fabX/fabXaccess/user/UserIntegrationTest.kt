@@ -17,6 +17,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
+import cloud.fabX.fabXaccess.user.rest.PinIdentityAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
@@ -982,4 +983,68 @@ internal class UserIntegrationTest {
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
+
+    @Test
+    fun `when adding pin identity then returns http no content`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        val pin = "7658"
+        val requestBody = PinIdentityAdditionDetails(pin)
+
+        // when
+        val response = c().post("/api/v1/user/$userId/identity/pin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+    }
+
+    @Test
+    fun `given non-admin authentication when adding pin identity then returns http forbidden`() = withTestApp {
+        // given
+        val requestBody = PinIdentityAdditionDetails("7658")
+
+        // when
+        val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/pin") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `when removing pin identity then returns http no content`() = withTestApp {
+        // given
+        val userId = givenUser()
+        givenPinIdentity(userId, "4356")
+
+        // when
+        val response = c().delete("/api/v1/user/$userId/identity/pin") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+    }
+
+    @Test
+    fun `given non-admin authentication when removing pin identity then returns http forbidden`() = withTestApp {
+        // given
+
+        // when
+        val response =
+            c().delete("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/pin") {
+                memberAuth()
+            }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+    }
 }

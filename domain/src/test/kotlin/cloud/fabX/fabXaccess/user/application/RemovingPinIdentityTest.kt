@@ -12,10 +12,10 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import cloud.fabX.fabXaccess.user.model.PhoneNrIdentityRemoved
+import cloud.fabX.fabXaccess.user.model.PinIdentity
+import cloud.fabX.fabXaccess.user.model.PinIdentityRemoved
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
-import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import isNone
 import isSome
@@ -31,8 +31,7 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
-internal class RemovingPhoneNrIdentityTest {
-
+internal class RemovingPinIdentityTest {
     private val adminActor = AdminFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
@@ -44,7 +43,7 @@ internal class RemovingPhoneNrIdentityTest {
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
 
-    private lateinit var testee: RemovingPhoneNrIdentity
+    private lateinit var testee: RemovingPinIdentity
 
     @BeforeEach
     fun `configure DomainModule`(
@@ -54,30 +53,25 @@ internal class RemovingPhoneNrIdentityTest {
         this.logger = logger
         this.userRepository = userRepository
 
-        testee = RemovingPhoneNrIdentity({ logger }, userRepository, fixedClock)
+        testee = RemovingPinIdentity({ logger }, userRepository, fixedClock)
     }
 
     @Test
     fun `given user and identity can be found when removing identity then sourcing event is created and stored`() =
         runTest {
             // given
-            val phoneNr = "+491234567890"
-
             val user = UserFixture.arbitrary(
                 userId,
                 aggregateVersion = 1,
-                identities = setOf(
-                    UserIdentityFixture.phoneNr(phoneNr)
-                )
+                identities = setOf(PinIdentity("4365"))
             )
 
-            val expectedSourcingEvent = PhoneNrIdentityRemoved(
+            val expectedSourcingEvent = PinIdentityRemoved(
                 userId,
                 2,
                 adminActor.id,
                 fixedInstant,
-                correlationId,
-                phoneNr
+                correlationId
             )
 
             whenever(userRepository.getById(userId))
@@ -87,11 +81,10 @@ internal class RemovingPhoneNrIdentityTest {
                 .thenReturn(None)
 
             // when
-            val result = testee.removePhoneNrIdentity(
+            val result = testee.removePinIdentity(
                 adminActor,
                 correlationId,
-                userId,
-                phoneNr
+                userId
             )
 
             // then
@@ -111,11 +104,10 @@ internal class RemovingPhoneNrIdentityTest {
             .thenReturn(error.left())
 
         // when
-        val result = testee.removePhoneNrIdentity(
+        val result = testee.removePinIdentity(
             adminActor,
             correlationId,
-            userId,
-            "username"
+            userId
         )
 
         // then
@@ -127,23 +119,18 @@ internal class RemovingPhoneNrIdentityTest {
     @Test
     fun `given sourcing event cannot be stored when removing identity then returns error`() = runTest {
         // given
-        val phoneNr = "+491234567890"
-
         val user = UserFixture.arbitrary(
             userId,
             aggregateVersion = 1,
-            identities = setOf(
-                UserIdentityFixture.phoneNr(phoneNr)
-            )
+            identities = setOf(PinIdentity("4365"))
         )
 
-        val expectedSourcingEvent = PhoneNrIdentityRemoved(
+        val expectedSourcingEvent = PinIdentityRemoved(
             userId,
             2,
             adminActor.id,
             fixedInstant,
-            correlationId,
-            phoneNr
+            correlationId
         )
 
         val error = ErrorFixture.arbitrary()
@@ -155,11 +142,10 @@ internal class RemovingPhoneNrIdentityTest {
             .thenReturn(error.some())
 
         // when
-        val result = testee.removePhoneNrIdentity(
+        val result = testee.removePinIdentity(
             adminActor,
             correlationId,
-            userId,
-            phoneNr
+            userId
         )
 
         // then
@@ -181,11 +167,10 @@ internal class RemovingPhoneNrIdentityTest {
             .thenReturn(user.right())
 
         // when
-        val result = testee.removePhoneNrIdentity(
+        val result = testee.removePinIdentity(
             adminActor,
             correlationId,
-            userId,
-            "+49123"
+            userId
         )
 
         // then
@@ -193,10 +178,8 @@ internal class RemovingPhoneNrIdentityTest {
             .isSome()
             .isEqualTo(
                 Error.UserIdentityNotFound(
-                    "Not able to find identity with phone number +49123.",
-                    mapOf(
-                        "phoneNr" to "+49123"
-                    ),
+                    "Not able to find pin identity.",
+                    mapOf(),
                     correlationId
                 )
             )

@@ -488,6 +488,73 @@ data class User internal constructor(
             }
     }
 
+    fun addPinIdentity(
+        actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+        pin: String
+    ): Either<Error, UserSourcingEvent> {
+        return requireNoPinIdentity(correlationId)
+            .flatMap {
+                PinIdentity.fromUnvalidated(pin, correlationId)
+                    .map {
+                        PinIdentityAdded(
+                            id,
+                            aggregateVersion + 1,
+                            actor.id,
+                            clock.now(),
+                            correlationId,
+                            pin
+                        )
+                    }
+            }
+    }
+
+    private fun requireNoPinIdentity(
+        correlationId: CorrelationId
+    ): Either<Error, Unit> {
+        return identities.firstOrNull { it is PinIdentity }
+            .toOption()
+            .map {
+                Error.PinIdentityAlreadyFound(
+                    "User already has a pin identity.",
+                    correlationId
+                )
+            }
+            .toEither { }
+            .swap()
+    }
+
+    /**
+     * Removes the user's pin identity.
+     *
+     * @return error if no pin identity exists, sourcing event otherwise
+     */
+    fun removePinIdentity(
+        actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+    ): Either<Error, UserSourcingEvent> {
+        return identities.firstOrNull { it is PinIdentity }
+            .toOption()
+            .toEither {
+                Error.UserIdentityNotFound(
+                    "Not able to find pin identity.",
+                    mapOf(),
+                    correlationId
+                )
+            }
+            .map {
+                PinIdentityRemoved(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId
+                )
+            }
+    }
+
     /**
      * Adds a member qualification given by its id to the user.
      *

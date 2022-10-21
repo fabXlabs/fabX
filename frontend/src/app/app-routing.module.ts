@@ -19,13 +19,14 @@ import { ToolsComponent } from "./tools/tools.component";
 import { UserAddCardIdentityComponent } from "./user-add-card-identity/user-add-card-identity.component";
 import { UserAddComponent } from "./user-add/user-add.component";
 import { UserAddPhoneNrIdentityComponent } from "./user-add-phone-nr-identity/user-add-phone-nr-identity.component";
+import { UserAddPinIdentityComponent } from "./user-add-pin-identity/user-add-pin-identity.component";
+import { UserAddQualificationComponent } from "./user-add-qualification/user-add-qualification.component";
 import { UserAddUsernamePasswordIdentityComponent } from "./user-add-username-password-identity/user-add-username-password-identity.component";
 import { UserAddWebauthnIdentityComponent } from "./user-add-webauthn-identity/user-add-webauthn-identity.component";
 import { UserChangeLockStateComponent } from "./user-change-lock-state/user-change-lock-state.component";
 import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UsersComponent } from "./users/users.component";
-import { UserAddQualificationComponent } from "./user-add-qualification/user-add-qualification.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -36,6 +37,7 @@ const routes: Routes = [
     { path: 'user/:id/add-card-identity', component: UserAddCardIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-phone-nr-identity', component: UserAddPhoneNrIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-username-password-identity', component: UserAddUsernamePasswordIdentityComponent, canActivate: [AuthGuard] },
+    { path: 'user/:id/add-pin-identity', component: UserAddPinIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-webauthn-identity', component: UserAddWebauthnIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/change-personal-info', component: UserChangePersonalInfoComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/lock', component: UserChangeLockStateComponent, canActivate: [AuthGuard] },

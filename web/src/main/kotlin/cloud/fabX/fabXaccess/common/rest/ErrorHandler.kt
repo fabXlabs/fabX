@@ -49,6 +49,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
             HttpStatusCode.ServiceUnavailable,
             error.toRestModel()
         )
+
         is Error.UnexpectedDeviceResponse -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
         // domain user
         is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
@@ -78,6 +79,8 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.CardSecretInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.PhoneNrAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.PhoneNrInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.PinIdentityAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.PinInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserIdentityNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserIsActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.UserNotActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())

@@ -1327,6 +1327,108 @@ internal class UserTest {
             )
     }
 
+    @Test
+    fun `when adding pin identity then expected sourcing event is returned`() = runTest {
+        // given
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)
+
+        val pin = "2468"
+
+        val expectedSourcingEvent = PinIdentityAdded(
+            userId,
+            aggregateVersion = aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
+            pin = pin
+        )
+
+        // when
+        val result = user.addPinIdentity(
+            adminActor,
+            fixedClock,
+            correlationId,
+            pin
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given user already has pin identity already when adding pin identity then returns error`() = runTest {
+        // given
+        val identity = UserIdentityFixture.pin("1234")
+        val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion, identities = setOf(identity))
+
+        // when
+        val result = user.addPinIdentity(
+            adminActor,
+            fixedClock,
+            correlationId,
+            "7890"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PinIdentityAlreadyFound(
+                    "User already has a pin identity.",
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `given pin identity when removing identity then expected sourcing event is returned`() = runTest {
+        // given
+        val pinIdentity = UserIdentityFixture.pin("8765")
+        val user = UserFixture.withIdentity(pinIdentity, userId = userId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = PinIdentityRemoved(
+            userId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId
+        )
+
+        // when
+        val result = user.removePinIdentity(adminActor, fixedClock, correlationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given no pin identity when removing identity then error is returned`() = runTest {
+        // given
+        val user = UserFixture.arbitrary(identities = setOf())
+
+        // when
+        val result = user.removePinIdentity(
+            adminActor,
+            fixedClock,
+            correlationId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIdentityNotFound(
+                    "Not able to find pin identity.",
+                    mapOf(),
+                    correlationId
+                )
+            )
+    }
+
     @Nested
     internal inner class GivenInstructor {
 

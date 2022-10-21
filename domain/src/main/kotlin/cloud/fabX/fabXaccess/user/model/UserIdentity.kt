@@ -68,7 +68,7 @@ data class UsernamePasswordIdentity(val username: String, val hash: String) : Us
 /**
  * Identifying a User by webauthn.
  */
-data class WebauthnIdentity(val authenticator: Authenticator): UserIdentity
+data class WebauthnIdentity(val authenticator: Authenticator) : UserIdentity
 
 /**
  * Identifying a User by card id and card secret.
@@ -161,6 +161,40 @@ data class PhoneNrIdentity(val phoneNr: String) : UserIdentity {
                         "Phone number is invalid (has to match $phoneNrRegex).",
                         phoneNr,
                         phoneNrRegex,
+                        correlationId
+                    )
+                },
+                {}
+            )
+        }
+    }
+}
+
+data class PinIdentity(val pin: String) : UserIdentity {
+    companion object {
+        internal val pinRegex = Regex("^[0-9]{4}\$")
+
+        fun fromUnvalidated(
+            pin: String,
+            correlationId: CorrelationId?
+        ): Either<Error, PinIdentity> {
+            return requireValidPin(pin, correlationId)
+                .map {
+                    PinIdentity(pin)
+                }
+        }
+
+        private fun requireValidPin(
+            pin: String,
+            correlationId: CorrelationId?
+        ): Either<Error, Unit> {
+            return Either.conditionally(
+                pin.matches(pinRegex),
+                {
+                    Error.PinInvalid(
+                        "Pin is invalid (has to match $pinRegex).",
+                        pin,
+                        pinRegex,
                         correlationId
                     )
                 },

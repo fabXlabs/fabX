@@ -89,6 +89,14 @@
                                     </p-button>
                                 </div>
                                 <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
+                                    <p-button label="Add Pin"
+                                              icon="pi pi-plus"
+                                              styleClass="p-button-outlined"
+                                              routerLink="/user/{{user.id}}/add-pin-identity"
+                                              *ngIf="loggedInUser.isAdmin">
+                                    </p-button>
+                                </div>
+                                <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
                                     <p-button label="Add Webauthn"
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
@@ -141,6 +149,9 @@
                                     <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
                                         Webauthn
                                     </span>
+                                    <span *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PinIdentity'">
+                                        Pin
+                                    </span>
                                 </td>
                                 <td style="overflow-wrap: break-word">
                                     <span
@@ -162,6 +173,11 @@
                                         class="overflow-hidden"
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
                                         {{userService.toHexString(identity.credentialId)}}
+                                    </span>
+                                    <span
+                                        class="overflow-hidden"
+                                        *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PinIdentity'">
+                                        ****
                                     </span>
                                 </td>
                                 <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
@@ -189,6 +205,12 @@
                                             icon="pi pi-trash"
                                             styleClass="p-button-danger"
                                             (onClick)="removeWebauthnIdentity(identity.credentialId)">
+                                        </p-button>
+                                        <p-button
+                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PinIdentity'"
+                                            icon="pi pi-trash"
+                                            styleClass="p-button-danger"
+                                            (onClick)="removePinIdentity()">
                                         </p-button>
                                     </td>
                                 </ng-container>

@@ -26,6 +26,7 @@ import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.AddingPinIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
@@ -41,6 +42,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
@@ -78,6 +80,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { AddingInstructorQualification(instance(), instance(), instance(), instance()) }
     bindSingleton { AddingMemberQualification(instance(), instance(), instance(), instance()) }
     bindSingleton { AddingPhoneNrIdentity(instance(), instance(), instance(), instance()) }
+    bindSingleton { AddingPinIdentity(instance(), instance(), instance()) }
     bindSingleton { AddingUser(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { AddingUsernamePasswordIdentity(instance(), instance(), instance(), instance()) }
     bindSingleton { AddingWebauthnIdentity(instance(), instance(), instance(), instance()) }
@@ -93,6 +96,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingMemberQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingPhoneNrIdentity(instance(), instance(), instance()) }
+    bindSingleton { RemovingPinIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingWebauthnIdentity(instance(), instance(), instance()) }
     bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance()) }

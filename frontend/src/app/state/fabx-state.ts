@@ -572,6 +572,33 @@ export class FabxState {
         );
     }
 
+    @Action(Users.AddPinIdentity)
+    addPinIdentity(ctx: StateContext<FabxStateModel>, action: Users.AddPinIdentity) {
+        return this.userService.addPinIdentity(
+            action.userId,
+            action.details.pin
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                    next: () => {
+                        ctx.dispatch(new Navigate(['user', action.userId]));
+                    }
+                })
+            })
+        );
+    }
+
+    @Action(Users.RemovePinIdentity)
+    removePinIdentity(ctx: StateContext<FabxStateModel>, action: Users.RemovePinIdentity) {
+        return this.userService.removePinIdentity(
+            action.userId
+        ).pipe(
+            tap({
+                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+            })
+        );
+    }
+
     @Action(Users.Delete)
     deleteUser(ctx: StateContext<FabxStateModel>, action: Users.Delete) {
         return this.userService.deleteUser(action.userId).pipe(

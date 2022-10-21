@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
+import cloud.fabX.fabXaccess.user.rest.PinIdentityAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
@@ -135,6 +136,23 @@ internal suspend fun ApplicationTestBuilder.givenPhoneNrIdentity(
     val requestBody = PhoneNrIdentity(phoneNr)
 
     val response = c().post("/api/v1/user/$userId/identity/phone") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.bodyAsText()).isEmpty()
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+}
+
+
+internal suspend fun ApplicationTestBuilder.givenPinIdentity(
+    userId: String,
+    pin: String
+) {
+    val requestBody = PinIdentityAdditionDetails(pin)
+
+    val response = c().post("/api/v1/user/$userId/identity/pin") {
         adminAuth()
         contentType(ContentType.Application.Json)
         setBody(requestBody)

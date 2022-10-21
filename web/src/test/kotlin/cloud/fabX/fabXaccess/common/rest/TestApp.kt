@@ -25,6 +25,7 @@ import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.AddingPinIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
@@ -39,6 +40,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserById
@@ -108,6 +110,8 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(RemovingCardIdentity::class.java) }
         bindInstance { Mockito.mock(AddingPhoneNrIdentity::class.java) }
         bindInstance { Mockito.mock(RemovingPhoneNrIdentity::class.java) }
+        bindInstance { Mockito.mock(AddingPinIdentity::class.java) }
+        bindInstance { Mockito.mock(RemovingPinIdentity::class.java) }
         bindInstance { Mockito.mock(LoggingUnlockedTool::class.java) }
 
         bindInstance { Mockito.mock(GettingQualification::class.java) }

@@ -195,6 +195,22 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
         });
     }
 
+    removePinIdentity() {
+        this.store.dispatch(new Users.RemovePinIdentity(
+            this.store.selectSnapshot(FabxState.selectedUser)!.id,
+        )).subscribe({
+            error: err => {
+                const message = this.errorService.format(err);
+                this.messageService.add({
+                    severity: 'error',
+                    summary: 'Error Removing Pin Identity',
+                    detail: message,
+                    sticky: true
+                });
+            }
+        });
+    }
+
     toggleAdmin(_: any) {
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

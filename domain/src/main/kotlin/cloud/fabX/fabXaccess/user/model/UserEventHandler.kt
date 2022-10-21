@@ -139,6 +139,24 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
             )
         }
 
+    override fun handle(event: PinIdentityAdded, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                identities = u.identities + PinIdentity(e.pin)
+            )
+        }
+
+    override fun handle(event: PinIdentityRemoved, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                identities = u.identities.stream()
+                    .filter { it !is PinIdentity }
+                    .collect(Collectors.toSet())
+            )
+        }
+
     override fun handle(event: MemberQualificationAdded, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAndSome(event, user) { e, u ->
             u.copy(

@@ -19,6 +19,7 @@ import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
 import cloud.fabX.fabXaccess.user.application.AddingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.AddingPinIdentity
 import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
@@ -31,6 +32,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
 import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
+import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
@@ -61,6 +63,8 @@ class UserController(
     private val removingCardIdentity: RemovingCardIdentity,
     private val addingPhoneNrIdentity: AddingPhoneNrIdentity,
     private val removingPhoneNrIdentity: RemovingPhoneNrIdentity,
+    private val addingPinIdentity: AddingPinIdentity,
+    private val removingPinIdentity: RemovingPinIdentity,
     private val webauthnService: WebauthnIdentityService
 ) {
 
@@ -547,6 +551,50 @@ class UserController(
                                                 }
                                         )
                                     }
+                            }
+                    }
+                }
+
+                route("/pin") {
+                    post("") {
+                        readBody<PinIdentityAdditionDetails>()
+                            ?.let {
+                                readUUIDParameter("id")
+                                    ?.let { UserId(it) }
+                                    ?.let { id ->
+                                        call.respondWithErrorHandler(
+                                            readAdminAuthentication()
+                                                .flatMap { admin ->
+                                                    addingPinIdentity.addPinIdentity(
+                                                        admin,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        it.pin
+                                                    )
+                                                        .toEither { }
+                                                        .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+
+                    delete("") {
+                        readUUIDParameter("id")
+                            ?.let { UserId(it) }
+                            ?.let { id ->
+                                call.respondWithErrorHandler(
+                                    readAdminAuthentication()
+                                        .flatMap { admin ->
+                                            removingPinIdentity.removePinIdentity(
+                                                admin,
+                                                newCorrelationId(),
+                                                id
+                                            )
+                                                .toEither { }
+                                                .swap()
+                                        }
+                                )
                             }
                     }
                 }

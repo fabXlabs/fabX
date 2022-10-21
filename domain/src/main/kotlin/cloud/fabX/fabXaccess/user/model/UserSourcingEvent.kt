@@ -35,6 +35,8 @@ sealed class UserSourcingEvent : SourcingEvent {
         fun handle(event: CardIdentityRemoved, user: Option<User>): Option<User>
         fun handle(event: PhoneNrIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: PhoneNrIdentityRemoved, user: Option<User>): Option<User>
+        fun handle(event: PinIdentityAdded, user: Option<User>): Option<User>
+        fun handle(event: PinIdentityRemoved, user: Option<User>): Option<User>
 
         fun handle(event: MemberQualificationAdded, user: Option<User>): Option<User>
         fun handle(event: MemberQualificationRemoved, user: Option<User>): Option<User>
@@ -227,6 +229,33 @@ data class PhoneNrIdentityRemoved(
     override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val phoneNr: String
+) : UserSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+@Serializable
+data class PinIdentityAdded(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val pin: String
+) : UserSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+@Serializable
+data class PinIdentityRemoved(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
 ) : UserSourcingEvent() {
 
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
