@@ -1,8 +1,10 @@
 package cloud.fabX.fabXaccess.device
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import assertk.assertions.isTrue
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.withTestApp
@@ -10,17 +12,22 @@ import cloud.fabX.fabXaccess.device.ws.AuthorizedToolsResponse
 import cloud.fabX.fabXaccess.device.ws.ConfigurationResponse
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
 import cloud.fabX.fabXaccess.device.ws.DeviceToServerCommand
+import cloud.fabX.fabXaccess.device.ws.ErrorResponse
 import cloud.fabX.fabXaccess.device.ws.GetAuthorizedTools
 import cloud.fabX.fabXaccess.device.ws.GetConfiguration
 import cloud.fabX.fabXaccess.device.ws.ToolConfigurationResponse
+import cloud.fabX.fabXaccess.device.ws.ValidSecondFactorResponse
+import cloud.fabX.fabXaccess.device.ws.ValidateSecondFactor
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.tool.givenTool
 import cloud.fabX.fabXaccess.tool.rest.IdleState
 import cloud.fabX.fabXaccess.tool.rest.ToolType
 import cloud.fabX.fabXaccess.user.givenCardIdentity
+import cloud.fabX.fabXaccess.user.givenPinIdentity
 import cloud.fabX.fabXaccess.user.givenUser
 import cloud.fabX.fabXaccess.user.givenUserHasQualificationFor
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
+import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
@@ -184,6 +191,87 @@ internal class DeviceWebsocketIntegrationTest {
                         setOf(toolId1, toolId2)
                     )
                 )
+        }
+    }
+
+    @Test
+    fun `when validating second factor then returns ValidSecondFactorResponse`() = withTestApp {
+        // given
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val userId = givenUser()
+        givenCardIdentity(userId, cardId, cardSecret)
+
+        val pin = "2345"
+        givenPinIdentity(userId, pin)
+
+        val mac = "AABB11CC22DD"
+        val secret = "4318db4c2e57501b0f24fd7ddcef07a4"
+        givenDevice(mac = mac, secret = secret)
+
+        val commandId = 5436
+        val command = ValidateSecondFactor(
+            commandId,
+            null,
+            CardIdentity(cardId, cardSecret),
+            PinIdentityDetails(pin)
+        )
+
+        // when & then
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
+            (incoming.receive() as Frame.Text).readText() // greeting text
+
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
+            val responseText = (incoming.receive() as Frame.Text).readText()
+            val response = Json.decodeFromString<DeviceResponse>(responseText)
+
+            assertThat(response)
+                .isEqualTo(ValidSecondFactorResponse(commandId))
+        }
+    }
+
+    @Test
+    fun `given invalid second factor when validating second factor then returns ErrorResponse`() = withTestApp {
+        // given
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val userId = givenUser()
+        givenCardIdentity(userId, cardId, cardSecret)
+
+        val pin = "2345"
+        givenPinIdentity(userId, pin)
+
+        val mac = "AABB11CC22DD"
+        val secret = "4318db4c2e57501b0f24fd7ddcef07a4"
+        givenDevice(mac = mac, secret = secret)
+
+        val commandId = 5436
+        val command = ValidateSecondFactor(
+            commandId,
+            null,
+            CardIdentity(cardId, cardSecret),
+            PinIdentityDetails("00000")
+        )
+
+        // when & then
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
+            (incoming.receive() as Frame.Text).readText() // greeting text
+
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
+            val responseText = (incoming.receive() as Frame.Text).readText()
+            val response = Json.decodeFromString<DeviceResponse>(responseText)
+
+            assertThat(response)
+                .isInstanceOf(ErrorResponse::class)
+                .all {
+                    transform { it.commandId }.isEqualTo(commandId)
+                    transform { it.message }.isEqualTo("Invalid second factor provided.")
+                    transform { it.parameters }.isEqualTo(mapOf())
+                }
         }
     }
 }

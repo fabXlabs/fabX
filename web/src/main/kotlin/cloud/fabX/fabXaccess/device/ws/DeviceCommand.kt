@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.tool.rest.IdleState
 import cloud.fabX.fabXaccess.tool.rest.ToolType
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
+import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
 import kotlinx.serialization.Serializable
 
 /**
@@ -26,6 +27,7 @@ sealed class DeviceToServerCommand {
 interface DeviceCommandHandler {
     suspend fun handle(actor: DeviceActor, command: GetConfiguration): Either<Error, DeviceResponse>
     suspend fun handle(actor: DeviceActor, command: GetAuthorizedTools): Either<Error, DeviceResponse>
+    suspend fun handle(actor: DeviceActor, command: ValidateSecondFactor): Either<Error, DeviceResponse>
 }
 
 @Serializable
@@ -142,6 +144,29 @@ data class AuthorizedToolsResponse(
     override val commandId: Int,
     val toolIds: Set<String>
 ) : DeviceResponse()
+
+/**
+ * Command from device -> service. If the server returns [ValidSecondFactorResponse], the second factor is valid.
+ * Otherwise, the server returns [ErrorResponse].
+ */
+@Serializable
+data class ValidateSecondFactor(
+    override val commandId: Int,
+    // primary factor
+    val phoneNrIdentity: PhoneNrIdentity?,
+    val cardIdentity: CardIdentity?,
+    // second factor
+    val pinSecondIdentity: PinIdentityDetails?
+) : DeviceToServerCommand() {
+
+    override suspend fun handle(
+        actor: DeviceActor,
+        commandHandler: DeviceCommandHandler
+    ): Either<Error, DeviceResponse> = commandHandler.handle(actor, this)
+}
+
+@Serializable
+data class ValidSecondFactorResponse(override val commandId: Int) : DeviceResponse()
 
 /**
  * Command from server -> device to unlock a tool given by the tool id.

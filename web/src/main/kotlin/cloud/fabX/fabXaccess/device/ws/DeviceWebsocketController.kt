@@ -92,7 +92,7 @@ class DeviceWebsocketController(
                                         deserializeDeviceToServerCommand(text)
                                             .map { command ->
                                                 command.handle(deviceActor, commandHandler)
-                                                    .getOrHandle { errorHandler(-1, it) }
+                                                    .getOrHandle { errorHandler(command.commandId, it) }
                                                     .let {
                                                         val response = serializeResponse(it)
                                                         logger.debug("Sending response to ${deviceActor.deviceId}: $response")

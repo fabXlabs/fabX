@@ -4,6 +4,7 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotEqualTo
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
@@ -14,10 +15,13 @@ import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.application.GettingAuthorizedTools
+import cloud.fabX.fabXaccess.user.application.ValidatingSecondFactor
+import cloud.fabX.fabXaccess.user.model.PinIdentity
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
+import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
 import isLeft
 import isRight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,6 +40,7 @@ import org.mockito.kotlin.whenever
 internal class DeviceCommandHandlerTest {
     private lateinit var gettingConfiguration: GettingConfiguration
     private lateinit var gettingAuthorizedTools: GettingAuthorizedTools
+    private lateinit var validatingSecondFactor: ValidatingSecondFactor
     private lateinit var authenticationService: AuthenticationService
 
     private lateinit var commandHandler: DeviceCommandHandler
@@ -44,15 +49,18 @@ internal class DeviceCommandHandlerTest {
     fun `configure WebModule`(
         @Mock gettingConfiguration: GettingConfiguration,
         @Mock gettingAuthorizedTools: GettingAuthorizedTools,
+        @Mock validatingSecondFactor: ValidatingSecondFactor,
         @Mock authenticationService: AuthenticationService
     ) {
         this.gettingConfiguration = gettingConfiguration
         this.gettingAuthorizedTools = gettingAuthorizedTools
+        this.validatingSecondFactor = validatingSecondFactor
         this.authenticationService = authenticationService
 
         this.commandHandler = DeviceCommandHandlerImpl(
             gettingConfiguration,
             gettingAuthorizedTools,
+            validatingSecondFactor,
             authenticationService
         )
     }
@@ -365,6 +373,182 @@ internal class DeviceCommandHandlerTest {
         ).thenReturn(actor.right())
 
         whenever(gettingAuthorizedTools.getAuthorizedTools(eq(actor), any()))
+            .thenReturn(error.left())
+
+        // when
+        val result = commandHandler.handle(actor, command)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given valid second factor when handling ValidateSecondFactor then returns ValidSecondFactorResponse`() =
+        runTest {
+            // given
+            val user = UserFixture.arbitrary()
+
+            val device = DeviceFixture.arbitrary()
+            val actor = device.asActor()
+            val actorOnBehalfOfUser = actor.copy(onBehalfOf = user.asMember())
+
+            // primary factor
+            val cardId = "11223344556677"
+            val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+            val cardIdentity = CardIdentity(cardId, cardSecret)
+
+            // second factor
+            val pinIdentity = PinIdentityDetails("7890")
+
+            val commandId = 865
+
+            val command = ValidateSecondFactor(commandId, null, cardIdentity, pinIdentity)
+
+            whenever(
+                authenticationService.augmentDeviceActorOnBehalfOfUser(
+                    eq(actor),
+                    eq(cardIdentity),
+                    isNull(),
+                    any()
+                )
+            )
+                .thenReturn(actorOnBehalfOfUser.right())
+
+            whenever(
+                validatingSecondFactor.validateSecondFactor(
+                    eq(actorOnBehalfOfUser),
+                    any(),
+                    eq(PinIdentity("7890"))
+                )
+            )
+                .thenReturn(Unit.right())
+
+            // when
+            val result = commandHandler.handle(actor, command)
+
+            // then
+            assertThat(result)
+                .isRight()
+                .isEqualTo(ValidSecondFactorResponse(commandId))
+        }
+
+    @Test
+    fun `given invalid second factor when handling ValidateSecondFactor then returns ErrorResponse`() = runTest {
+        // given
+        val user = UserFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary()
+        val actor = device.asActor()
+        val actorOnBehalfOfUser = actor.copy(onBehalfOf = user.asMember())
+
+        // primary factor
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val cardIdentity = CardIdentity(cardId, cardSecret)
+
+        // second factor
+        val pinIdentity = PinIdentityDetails("7890")
+
+        val commandId = 865
+
+        val command = ValidateSecondFactor(commandId, null, cardIdentity, pinIdentity)
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            authenticationService.augmentDeviceActorOnBehalfOfUser(
+                eq(actor),
+                eq(cardIdentity),
+                isNull(),
+                any()
+            )
+        )
+            .thenReturn(actorOnBehalfOfUser.right())
+
+        whenever(
+            validatingSecondFactor.validateSecondFactor(
+                eq(actorOnBehalfOfUser),
+                any(),
+                eq(PinIdentity("7890"))
+            )
+        )
+            .thenReturn(error.left())
+
+        // when
+        val result = commandHandler.handle(actor, command)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given no second factor when handling ValidateSecondFactor then returns InvalidSecondFactor`() = runTest {
+        // given
+        val user = UserFixture.arbitrary()
+
+        val device = DeviceFixture.arbitrary()
+        val actor = device.asActor()
+        val actorOnBehalfOfUser = actor.copy(onBehalfOf = user.asMember())
+
+        // primary factor
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val cardIdentity = CardIdentity(cardId, cardSecret)
+
+        val commandId = 865
+
+        val command = ValidateSecondFactor(commandId, null, cardIdentity, pinSecondIdentity = null)
+
+        whenever(
+            authenticationService.augmentDeviceActorOnBehalfOfUser(
+                eq(actor),
+                eq(cardIdentity),
+                isNull(),
+                any()
+            )
+        )
+            .thenReturn(actorOnBehalfOfUser.right())
+
+        // when
+        val result = commandHandler.handle(actor, command)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isInstanceOf(Error.InvalidSecondFactor::class)
+            .transform { it.message }
+            .isEqualTo("Second Factor not provided.")
+    }
+
+    @Test
+    fun `given invalid primary factor when handling ValidateSecondFactor then returns Error`() = runTest {
+        // given
+        val device = DeviceFixture.arbitrary()
+        val actor = device.asActor()
+
+        // primary factor
+        val cardId = "11223344556677"
+        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
+        val cardIdentity = CardIdentity(cardId, cardSecret)
+
+        val commandId = 865
+
+        val command = ValidateSecondFactor(commandId, null, cardIdentity, pinSecondIdentity = null)
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            authenticationService.augmentDeviceActorOnBehalfOfUser(
+                eq(actor),
+                eq(cardIdentity),
+                isNull(),
+                any()
+            )
+        )
             .thenReturn(error.left())
 
         // when

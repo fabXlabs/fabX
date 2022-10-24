@@ -63,7 +63,7 @@ internal class UserControllerAddPinIdentityTest {
         val userId = UserIdFixture.arbitrary()
 
         val pin = "8765"
-        val requestBody = PinIdentityAdditionDetails(pin)
+        val requestBody = PinIdentityDetails(pin)
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
@@ -95,7 +95,7 @@ internal class UserControllerAddPinIdentityTest {
         val message = "msg123"
         val error = Error.UserNotAdmin(message)
 
-        val requestBody = PinIdentityAdditionDetails("1234")
+        val requestBody = PinIdentityDetails("1234")
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(ErrorPrincipal(error))
@@ -138,7 +138,7 @@ internal class UserControllerAddPinIdentityTest {
         // given
         val invalidUserId = "invalidUserId"
 
-        val requestBody = PinIdentityAdditionDetails("1234")
+        val requestBody = PinIdentityDetails("1234")
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
@@ -162,7 +162,7 @@ internal class UserControllerAddPinIdentityTest {
         val userId = UserIdFixture.arbitrary()
 
         val pin = "8765"
-        val requestBody = PinIdentityAdditionDetails(pin)
+        val requestBody = PinIdentityDetails(pin)
 
         val correlationId = CorrelationIdFixture.arbitrary()
         val error = Error.PinIdentityAlreadyFound("msg678", correlationId)

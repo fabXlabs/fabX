@@ -8,7 +8,7 @@ import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
-import cloud.fabX.fabXaccess.user.rest.PinIdentityAdditionDetails
+import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
@@ -150,7 +150,7 @@ internal suspend fun ApplicationTestBuilder.givenPinIdentity(
     userId: String,
     pin: String
 ) {
-    val requestBody = PinIdentityAdditionDetails(pin)
+    val requestBody = PinIdentityDetails(pin)
 
     val response = c().post("/api/v1/user/$userId/identity/pin") {
         adminAuth()

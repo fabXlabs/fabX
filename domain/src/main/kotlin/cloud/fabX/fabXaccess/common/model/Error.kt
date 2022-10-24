@@ -293,6 +293,11 @@ sealed class Error(
         override val correlationId: CorrelationId? = null
     ) : Error(message, correlationId = correlationId)
 
+    data class InvalidSecondFactor(
+        override val message: String,
+        override val correlationId: CorrelationId? = null
+    ) : Error(message, correlationId = correlationId)
+
     data class WebauthnError(
         override val message: String,
         override val correlationId: CorrelationId? = null

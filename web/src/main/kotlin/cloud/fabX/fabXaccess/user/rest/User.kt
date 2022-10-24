@@ -134,7 +134,7 @@ data class PhoneNrIdentity(
 ) : UserIdentity()
 
 @Serializable
-data class PinIdentityAdditionDetails(
+data class PinIdentityDetails(
     val pin: String
 )
 

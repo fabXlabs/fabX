@@ -17,7 +17,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
-import cloud.fabX.fabXaccess.user.rest.PinIdentityAdditionDetails
+import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
 import cloud.fabX.fabXaccess.user.rest.User
 import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
@@ -990,7 +990,7 @@ internal class UserIntegrationTest {
         val userId = givenUser()
 
         val pin = "7658"
-        val requestBody = PinIdentityAdditionDetails(pin)
+        val requestBody = PinIdentityDetails(pin)
 
         // when
         val response = c().post("/api/v1/user/$userId/identity/pin") {
@@ -1006,7 +1006,7 @@ internal class UserIntegrationTest {
     @Test
     fun `given non-admin authentication when adding pin identity then returns http forbidden`() = withTestApp {
         // given
-        val requestBody = PinIdentityAdditionDetails("7658")
+        val requestBody = PinIdentityDetails("7658")
 
         // when
         val response = c().post("/api/v1/user/${UserIdFixture.arbitrary().serialize()}/identity/pin") {

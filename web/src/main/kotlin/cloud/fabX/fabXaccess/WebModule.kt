@@ -19,7 +19,7 @@ import org.kodein.di.instance
 val webModule = DI.Module("web") {
     bindSingleton { AuthenticationService(instance(), instance(), instance()) }
 
-    bindSingleton { DeviceCommandHandlerImpl(instance(), instance(), instance()) }
+    bindSingleton { DeviceCommandHandlerImpl(instance(), instance(), instance(), instance()) }
     bindSingleton { DeviceNotificationHandlerImpl(instance(), instance()) }
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }

@@ -26,6 +26,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserNotInstructor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserIsLocked -> respond(HttpStatusCode.Forbidden, error.toRestModel())
+        is Error.InvalidSecondFactor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         // domain qualification
         is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.ReferencedQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
@@ -49,7 +50,6 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
             HttpStatusCode.ServiceUnavailable,
             error.toRestModel()
         )
-
         is Error.UnexpectedDeviceResponse -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
         // domain user
         is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())

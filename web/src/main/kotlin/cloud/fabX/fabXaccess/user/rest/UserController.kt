@@ -557,7 +557,7 @@ class UserController(
 
                 route("/pin") {
                     post("") {
-                        readBody<PinIdentityAdditionDetails>()
+                        readBody<PinIdentityDetails>()
                             ?.let {
                                 readUUIDParameter("id")
                                     ?.let { UserId(it) }

@@ -46,6 +46,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
+import cloud.fabX.fabXaccess.user.application.ValidatingSecondFactor
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
@@ -100,6 +101,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingWebauthnIdentity(instance(), instance(), instance()) }
     bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { ValidatingSecondFactor(instance(), instance()) }
 
     bindSingleton { { newDeviceId() } }
     bindSingleton { { newQualificationId() } }
