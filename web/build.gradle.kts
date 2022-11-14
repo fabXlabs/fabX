@@ -5,7 +5,7 @@ val webauthn4jVersion: String by project
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.7.20"
+    kotlin("plugin.serialization") version "1.7.21"
 }
 
 dependencies {

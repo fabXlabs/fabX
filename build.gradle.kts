@@ -12,9 +12,9 @@ val mockitoJunitVersion: String by project
 
 plugins {
     base
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
     jacoco
-    id("com.github.ben-manes.versions") version "0.43.0"
+    id("com.github.ben-manes.versions") version "0.44.0"
 }
 
 tasks.register<GradleBuild>("stage") {
@@ -62,7 +62,7 @@ allprojects {
     }
 
     dependencies {
-        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.7.20"))
+        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.7.21"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:$arrowVersion")
         implementation("org.kodein.di:kodein-di:$kodeinVersion")
