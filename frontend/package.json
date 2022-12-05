@@ -29,7 +29,7 @@
     "primeflex": "^3.2.1",
     "primeicons": "^6.0.1",
     "primeng": "^15.0.0-rc.1",
-    "rxjs": "^7.5.7",
+    "rxjs": "^7.6.0",
     "tslib": "^2.4.1",
     "zone.js": "^0.11.4",
     "ts-custom-error": "3.2.2"
