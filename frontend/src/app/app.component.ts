@@ -63,12 +63,15 @@ export class AppComponent implements OnInit {
         if (this.store.selectSnapshot(FabxState.isAuthenticated)) {
             this.store.dispatch(Users.GetMe).subscribe({
                 next: _ => {
-                    if (this.store.selectSnapshot(FabxState.loggedInUser)?.isAdmin) {
-                        this.store.dispatch(Devices.GetAll);
-                        this.store.dispatch(Users.GetAll);
+                    const loggedInUser = this.store.selectSnapshot(FabxState.loggedInUser)
+                    if (loggedInUser) {
+                        if (loggedInUser.isAdmin) {
+                            this.store.dispatch(Devices.GetAll);
+                            this.store.dispatch(Users.GetAll);
+                        }
+                        this.store.dispatch(Tools.GetAll);
+                        this.store.dispatch(Qualifications.GetAll);
                     }
-                    this.store.dispatch(Tools.GetAll);
-                    this.store.dispatch(Qualifications.GetAll);
                 }
             });
         }
