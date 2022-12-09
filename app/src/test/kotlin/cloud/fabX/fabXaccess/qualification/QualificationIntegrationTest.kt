@@ -139,10 +139,10 @@ internal class QualificationIntegrationTest {
         assertThat(response.bodyAsText())
             .isJson<Error>()
             .isError(
-                "io.ktor.server.plugins.BadRequestException",
+                "kotlinx.serialization.MissingFieldException",
                 "Field 'orderNr' is required for type with serial name " +
                         "'cloud.fabX.fabXaccess.qualification.rest.QualificationCreationDetails', " +
-                        "but it was missing at path: $"
+                        "but it was missing"
             )
     }
 

@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.common.rest.Error
+import cloud.fabX.fabXaccess.common.rest.extractCause
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
@@ -84,7 +84,7 @@ class WebApp(
         }
 
         install(HttpsRedirect) {
-            exclude { it.request.origin.host == "localhost" }
+            exclude { it.request.origin.serverHost == "localhost" }
         }
         install(XForwardedHeaders)
 
@@ -96,11 +96,11 @@ class WebApp(
         }
 
         install(StatusPages) {
+            exception<kotlinx.serialization.SerializationException> { call, cause ->
+                call.respond(HttpStatusCode.BadRequest, cause.toString())
+            }
             exception<BadRequestException> { call, cause ->
-                call.respond(
-                    HttpStatusCode.BadRequest,
-                    Error(cause::class.qualifiedName ?: "unknown", cause.localizedMessage, mapOf(), null)
-                )
+                call.respond(HttpStatusCode.BadRequest, extractCause(cause))
             }
         }
 
