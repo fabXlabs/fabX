@@ -7,8 +7,6 @@ import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.webauthn4j.data.client.challenge.Challenge
-import com.webauthn4j.data.client.challenge.DefaultChallenge
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.auth.principal
