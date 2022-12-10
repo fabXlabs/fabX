@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.common.rest.Slf4jLogger
 import cloud.fabX.fabXaccess.common.rest.extractCause
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
@@ -29,11 +30,15 @@ import io.ktor.server.http.content.angular
 import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
+import io.ktor.server.plugins.callloging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.plugins.httpsredirect.HttpsRedirect
 import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.request.ApplicationRequest
+import io.ktor.server.request.httpMethod
+import io.ktor.server.request.path
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
@@ -42,6 +47,8 @@ import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import java.time.Duration
 import kotlinx.serialization.json.Json
+import org.slf4j.MDC
+import org.slf4j.event.Level
 
 class WebApp(
     loggerFactory: LoggerFactory,
@@ -58,6 +65,8 @@ class WebApp(
     private val loginController: LoginController
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
+
+    private fun ApplicationRequest.toLogStringWithColors(): String = "${httpMethod.value} - ${path()}"
 
     val moduleConfiguration: Application.() -> Unit = {
         install(io.ktor.server.plugins.cors.routing.CORS) {
@@ -132,6 +141,26 @@ class WebApp(
             timeout = Duration.ofSeconds(15)
             maxFrameSize = Long.MAX_VALUE
             masking = false
+        }
+
+        install(CallLogging) {
+            logger = Slf4jLogger(log)
+            level = Level.DEBUG
+            disableDefaultColors()
+            mdc("startTimestamp") { System.nanoTime().toString() }
+            format { call ->
+                val startTimestamp = MDC.get("startTimestamp").toLong()
+                val endTimestamp = System.nanoTime()
+                val delayMillis = (endTimestamp - startTimestamp) / 1_000_000.0
+
+                when (val status = call.response.status() ?: "Unhandled") {
+                    HttpStatusCode.Found -> "${status as HttpStatusCode} (${delayMillis}ms): " +
+                            "${call.request.toLogStringWithColors()} -> ${call.response.headers[HttpHeaders.Location]}"
+
+                    "Unhandled" -> "${status} (${delayMillis}ms): ${call.request.toLogStringWithColors()}"
+                    else -> "${status as HttpStatusCode} (${delayMillis}ms): ${call.request.toLogStringWithColors()}"
+                }
+            }
         }
 
         routing {
