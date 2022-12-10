@@ -43,6 +43,14 @@ class AuthenticationService(
                 )
             }
             .flatMap { requireUnlockedUser(it) }
+            .mapLeft {
+                when (it) {
+                    is Error.UserNotFound -> Error.InvalidAuthentication(it.message, it.correlationId)
+                    is Error.UserNotFoundByIdentity -> Error.InvalidAuthentication(it.message, it.correlationId)
+                    is Error.UserNotFoundByUsername -> Error.InvalidAuthentication(it.message, it.correlationId)
+                    else -> it
+                }
+            }
             .fold(
                 { ErrorPrincipal(it) },
                 { UserPrincipal(it, AuthenticationMethod.BASIC) }

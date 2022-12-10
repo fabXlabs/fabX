@@ -1,7 +1,9 @@
 package cloud.fabX.fabXaccess.user.rest
 
+import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.common.rest.handleError
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
@@ -49,6 +51,10 @@ class LoginController(
                         call.respond(HttpStatusCode.Forbidden)
                     }
                 }
+                call.principal<ErrorPrincipal>()?.let { errorPrincipal ->
+                    call.handleError(errorPrincipal.error)
+                }
+                call.handleError(Error.NotAuthenticated("Required authentication not found."))
             }
         }
     }

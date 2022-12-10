@@ -23,6 +23,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
     val forceExhaustiveWhen = when (error) {
         // authentication, authorization
         is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
+        is Error.InvalidAuthentication -> respond(HttpStatusCode.Unauthorized)
         is Error.UserNotInstructor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserIsLocked -> respond(HttpStatusCode.Forbidden, error.toRestModel())

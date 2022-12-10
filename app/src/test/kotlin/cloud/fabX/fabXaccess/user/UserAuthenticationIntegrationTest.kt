@@ -85,6 +85,22 @@ internal class UserAuthenticationIntegrationTest {
     }
 
     @Test
+    fun `given invalid basic auth when getting jwt then returns http unauthorized`() = withTestApp {
+        // given
+        val invalidUsername = "invalidUsername"
+        val invalidPassword = "invalidPassword"
+
+        // when
+        val response = c().get("/api/v1/login") {
+            basicAuth(invalidUsername, invalidPassword)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
+        assertThat(response.bodyAsText()).isEmpty()
+    }
+
+    @Test
     fun `given jwt auth when getting jwt then returns http forbidden`() = withTestApp {
         // given
         val userId = givenUser()
