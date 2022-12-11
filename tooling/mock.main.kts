@@ -19,6 +19,7 @@ import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import io.ktor.util.date.getTimeMillis
 import kotlin.random.Random
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -149,6 +150,8 @@ val users = listOf(
 )
 val userIds = mutableListOf<String>()
 
+println("Talking to backend...")
+val qualificationsStartTimestamp = getTimeMillis()
 qualifications.forEachIndexed { i, qualificationName ->
     val body = "{" +
             "\"name\": \"$qualificationName\", " +
@@ -169,7 +172,11 @@ qualifications.forEachIndexed { i, qualificationName ->
         )
     }
 }
+val qualificationsDelay = getTimeMillis() - qualificationsStartTimestamp
+println("Took $qualificationsDelay ms to create ${qualifications.size} Qualifications.")
 
+
+val makeAdminInstructorStartTimestamp = getTimeMillis()
 qualificationIds.forEach { qualificationId ->
     val body = "{\"qualificationId\": \"$qualificationId\"}"
 
@@ -180,7 +187,11 @@ qualificationIds.forEach { qualificationId ->
         }
     }
 }
+val makeAdminInstructorDelay = getTimeMillis() - makeAdminInstructorStartTimestamp
+println("Took $makeAdminInstructorDelay ms to make admin Instructor of all ${qualificationIds.size} Qualifications.")
 
+
+val deviceStartTimestamp = getTimeMillis()
 devices.forEachIndexed { i, deviceName ->
     val body = "{" +
             "\"name\": \"$deviceName\", " +
@@ -202,7 +213,11 @@ devices.forEachIndexed { i, deviceName ->
         )
     }
 }
+val devicesDelay = getTimeMillis() - deviceStartTimestamp
+println("Took $devicesDelay ms to create ${devices.size} Devices.")
 
+
+val toolStartTimestamp = getTimeMillis()
 tools.forEachIndexed { i, toolName ->
     val qualificationId = qualificationIds[qualifications.indexOf(toolQualification[i])]
     val requires2FA = toolRequires2FAs[i]
@@ -229,7 +244,11 @@ tools.forEachIndexed { i, toolName ->
         )
     }
 }
+val toolDelay = getTimeMillis() - toolStartTimestamp
+println("Took $toolDelay ms to create ${tools.size} Tools.")
 
+
+val toolAttachmentStartTimestamp = getTimeMillis()
 toolDevices.forEachIndexed { i, device ->
     val toolId = toolIds[i]
     val deviceId = deviceIds[devices.indexOf(device)]
@@ -244,8 +263,13 @@ toolDevices.forEachIndexed { i, device ->
         }
     }
 }
+val toolAttachmentDelay = getTimeMillis() - toolAttachmentStartTimestamp
+println("Took $toolAttachmentDelay ms to attach ${toolDevices.size} Tools to Devices.")
 
-users.forEach { userName ->
+
+val userStartTimestamp = getTimeMillis()
+val moreUsers = users + (1..1000).map { "U$it Last" }
+moreUsers.parallelStream().forEach { userName ->
     val lastName = userName.split(" ").last()
     val firstName = userName.substring(0, userName.length - lastName.length - 1)
     val wikiName = firstName.split(" ")[0].lowercase() + "." + lastName.lowercase()
@@ -268,10 +292,16 @@ users.forEach { userName ->
         )
     }
 }
+val usersDelay = getTimeMillis() - userStartTimestamp
+println("Took $usersDelay ms to create ${moreUsers.size} Users.")
 
-userIds.forEach { userId ->
+
+val userQualificationStartTimestamp = getTimeMillis()
+var qualificationCount = 0
+userIds.parallelStream().forEach { userId ->
     qualificationIds.forEach { qualificationId ->
         if (Random.nextBoolean()) {
+            qualificationCount++
             val body = "{\"qualificationId\": \"$qualificationId\"}"
 
             runBlocking {
@@ -282,6 +312,7 @@ userIds.forEach { userId ->
             }
         }
         if (Random.nextDouble() < 0.1) {
+            qualificationCount++
             val body = "{\"qualificationId\": \"$qualificationId\"}"
 
             runBlocking {
@@ -293,3 +324,8 @@ userIds.forEach { userId ->
         }
     }
 }
+val userQualificationsDelay = getTimeMillis() - userQualificationStartTimestamp
+println("Took $userQualificationsDelay ms to add $qualificationCount Qualifications to Users.")
+
+val totalDelay = getTimeMillis() - qualificationsStartTimestamp
+println("Took $totalDelay ms in total.")
