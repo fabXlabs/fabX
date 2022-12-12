@@ -28,6 +28,7 @@ class DeviceCommandHandlerImpl(
                 configuration.device.backupBackendUrl,
                 configuration.attachedTools.mapValues {
                     ToolConfigurationResponse(
+                        it.value.id.serialize(),
                         it.value.name,
                         it.value.type.toRestModel(),
                         it.value.requires2FA,

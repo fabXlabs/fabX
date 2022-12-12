@@ -106,4 +106,6 @@ class RestartDeviceViaWebsocketIntegrationTest {
                 )
         }
     }
+
+    // TODO test: given device responds with ErrorResponse when restarting device then returns http ...
 }

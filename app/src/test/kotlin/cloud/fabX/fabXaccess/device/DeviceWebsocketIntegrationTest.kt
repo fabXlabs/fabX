@@ -129,6 +129,7 @@ internal class DeviceWebsocketIntegrationTest {
                         backupBackendUrl,
                         mapOf(
                             1 to ToolConfigurationResponse(
+                                toolId1,
                                 "tool1",
                                 ToolType.UNLOCK,
                                 false,
@@ -136,6 +137,7 @@ internal class DeviceWebsocketIntegrationTest {
                                 IdleState.IDLE_HIGH
                             ),
                             2 to ToolConfigurationResponse(
+                                toolId2,
                                 "tool2",
                                 ToolType.KEEP,
                                 true,

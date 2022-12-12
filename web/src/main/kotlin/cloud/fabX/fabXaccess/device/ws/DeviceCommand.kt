@@ -99,6 +99,7 @@ data class ConfigurationResponse(
  */
 @Serializable
 data class ToolConfigurationResponse(
+    val id: String,
     val name: String,
     val type: ToolType,
     val requires2FA: Boolean,

@@ -85,10 +85,12 @@ internal class DeviceCommandHandlerTest {
             secret = secret
         )
 
+        val tool1Id = ToolIdFixture.arbitrary()
         val tool1Name = "tool 1"
         val tool1Time = 1234
         val tool1Requires2FA = false
         val tool1 = ToolFixture.arbitrary(
+            toolId = tool1Id,
             name = tool1Name,
             type = ToolType.UNLOCK,
             requires2FA = tool1Requires2FA,
@@ -96,10 +98,12 @@ internal class DeviceCommandHandlerTest {
             idleState = IdleState.IDLE_LOW
         )
 
+        val tool2Id = ToolIdFixture.arbitrary()
         val tool2Name = "tool 2"
         val tool2Time = 3245
         val tool2Requires2FA = true
         val tool2 = ToolFixture.arbitrary(
+            toolId = tool2Id,
             name = tool2Name,
             type = ToolType.KEEP,
             requires2FA = tool2Requires2FA,
@@ -118,6 +122,7 @@ internal class DeviceCommandHandlerTest {
             backupUrl,
             mapOf(
                 1 to ToolConfigurationResponse(
+                    tool1Id.serialize(),
                     tool1Name,
                     cloud.fabX.fabXaccess.tool.rest.ToolType.UNLOCK,
                     tool1Requires2FA,
@@ -125,6 +130,7 @@ internal class DeviceCommandHandlerTest {
                     cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_LOW
                 ),
                 2 to ToolConfigurationResponse(
+                    tool2Id.serialize(),
                     tool2Name,
                     cloud.fabX.fabXaccess.tool.rest.ToolType.KEEP,
                     tool2Requires2FA,
