@@ -1,6 +1,7 @@
-val ktorVersion: String by rootProject
 val kotlinxCoroutinesVersion: String by project
+val ktorVersion: String by rootProject
 val logbackVersion: String by rootProject
+val slf4jVersion: String by project
 val webauthn4jVersion: String by project
 
 plugins {
@@ -24,7 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-server-status-pages:$ktorVersion")
     implementation("io.ktor:ktor-server-websockets:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("org.slf4j:slf4j-api:2.0.5")
+    implementation("org.slf4j:slf4j-api:$slf4jVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
     implementation("com.webauthn4j:webauthn4j-core:$webauthn4jVersion")
