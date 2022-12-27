@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.github.node-gradle.node") version "3.5.0"
+    id("com.github.node-gradle.node") version "3.5.1"
 }
 
 node {
