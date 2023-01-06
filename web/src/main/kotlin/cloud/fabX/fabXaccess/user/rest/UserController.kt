@@ -131,20 +131,6 @@ class UserController(
                 }
             }
 
-            get("/soft-deleted") {
-                call.respondWithErrorHandler(
-                    readAdminAuthentication()
-                        .map { admin ->
-                            softDeletedUsers
-                                .getSoftDeletedUsers(
-                                    admin,
-                                    newCorrelationId()
-                                )
-                                .map { it.toRestModel() }
-                        }
-                )
-            }
-
             post("") {
                 readBody<UserCreationDetails>()?.let {
                     call.respondWithErrorHandler(
@@ -613,6 +599,41 @@ class UserController(
                                 )
                             }
                     }
+                }
+            }
+
+            route("/soft-deleted") {
+                // TODO integration test
+                get("") {
+                    call.respondWithErrorHandler(
+                        readAdminAuthentication()
+                            .map { admin ->
+                                softDeletedUsers
+                                    .getSoftDeletedUsers(
+                                        admin,
+                                        newCorrelationId()
+                                    )
+                                    .map { it.toRestModel() }
+                            }
+                    )
+                }
+
+                // TODO integration test
+                delete("/{id}") {
+                    readUUIDParameter("id")
+                        ?.let { UserId(it) }
+                        ?.let { id ->
+                            call.respondWithErrorHandler(
+                                readAdminAuthentication()
+                                    .flatMap { admin ->
+                                        deletingUser.hardDeleteUser(
+                                            admin,
+                                            newCorrelationId(),
+                                            id
+                                        )
+                                    }
+                            )
+                        }
                 }
             }
         }
