@@ -46,3 +46,7 @@ fun interface GettingUsersByInstructorQualification {
 fun interface GettingSoftDeletedUsers {
     suspend fun getSoftDeleted(): Set<User>
 }
+
+fun interface HardDeletingUser {
+    suspend fun hardDelete(id: UserId): Either<Error, Int>
+}

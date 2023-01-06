@@ -5,6 +5,7 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.each
 import assertk.assertions.hasSize
+import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isTrue
@@ -68,6 +69,25 @@ internal class UserDatabaseRepositoryTest {
                     )
                 )
         }
+
+    @Test
+    fun `given empty repository when hard deleting user then returns user not found error`() = withTestApp { di ->
+        // given
+        val repository: UserDatabaseRepository by di.instance()
+
+        // when
+        val result = repository.hardDelete(userId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserNotFound(
+                    "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                    userId
+                )
+            )
+    }
 
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
@@ -185,7 +205,7 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `given deleted user when getting soft deleted users then returns user`() = withSetupTestApp { di ->
+        fun `and deleted user when getting soft deleted users then returns user`() = withSetupTestApp { di ->
             // given
             val repository: UserDatabaseRepository by di.instance()
 
@@ -217,6 +237,22 @@ internal class UserDatabaseRepositoryTest {
                         false
                     )
                 )
+        }
+
+        @Test
+        fun `when hard deleting user then no sourcing events left`() = withSetupTestApp { di ->
+            // given
+            val repository: UserDatabaseRepository by di.instance()
+
+            // when
+            val result = repository.hardDelete(userId)
+
+            // then
+            assertThat(result)
+                .isRight()
+                .isEqualTo(2)
+
+            assertThat(repository.getSourcingEvents()).isEmpty()
         }
     }
 
@@ -417,6 +453,21 @@ internal class UserDatabaseRepositoryTest {
                 hasSize(2)
                 transform { it.map { user -> user.id } }.containsExactlyInAnyOrder(userId, userId3)
             }
+        }
+
+        @Test
+        fun `when hard deleting user then sourcing events are deleted`() = withSetupTestApp { di ->
+            // given
+            val repository: UserDatabaseRepository by di.instance()
+
+            // when
+            val result = repository.hardDelete(userId)
+
+            // then
+            assertThat(result)
+                .isRight()
+                .isEqualTo(3)
+            assertThat(repository.getSourcingEvents()).hasSize(4)
         }
     }
 

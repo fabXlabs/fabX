@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
 import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
+import cloud.fabX.fabXaccess.user.model.HardDeletingUser
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserIdentity
@@ -28,8 +29,10 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.select
@@ -53,7 +56,8 @@ class UserDatabaseRepository(private val db: Database) :
     GettingUserByWikiName,
     GettingUsersByMemberQualification,
     GettingUsersByInstructorQualification,
-    GettingSoftDeletedUsers {
+    GettingSoftDeletedUsers,
+    HardDeletingUser {
 
     override suspend fun getAll(): Set<User> {
         return transaction {
@@ -217,6 +221,24 @@ class UserDatabaseRepository(private val db: Database) :
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
         }
+    }
+
+    override suspend fun hardDelete(id: UserId): Either<Error, Int> {
+        val deletedRows = transaction {
+            UserSourcingEventDAO.deleteWhere {
+                aggregateRootId eq id.value
+            }
+        }
+        return Either.conditionally(
+            deletedRows > 0,
+            {
+                Error.UserNotFound(
+                    "User with id $id not found.",
+                    id
+                )
+            },
+            { deletedRows }
+        )
     }
 
     private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {
