@@ -34,6 +34,7 @@ import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingAuthorizedTools
+import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
@@ -88,6 +89,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { ChangingIsAdmin(instance(), instance(), instance()) }
     bindSingleton { ChangingUser(instance(), instance(), instance(), instance()) }
     bindSingleton { DeletingUser(instance(), instance(), instance()) }
+    bindSingleton { GettingSoftDeletedUsers(instance(), instance()) }
     bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
