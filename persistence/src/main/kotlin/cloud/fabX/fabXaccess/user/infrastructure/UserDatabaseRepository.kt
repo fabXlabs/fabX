@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.common.jsonb
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.user.model.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
@@ -18,6 +19,7 @@ import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
 import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 import cloud.fabX.fabXaccess.user.model.User
+import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
@@ -50,7 +52,8 @@ class UserDatabaseRepository(private val db: Database) :
     GettingUserByCardId,
     GettingUserByWikiName,
     GettingUsersByMemberQualification,
-    GettingUsersByInstructorQualification {
+    GettingUsersByInstructorQualification,
+    GettingSoftDeletedUsers {
 
     override suspend fun getAll(): Set<User> {
         return transaction {
@@ -136,7 +139,7 @@ class UserDatabaseRepository(private val db: Database) :
         }
     }
 
-    @Suppress("unused") // supposed to be executed within Transaction
+    @Suppress("UnusedReceiverParameter") // supposed to be executed within Transaction
     private fun Transaction.getVersionById(id: UserId): Long? {
         return UserSourcingEventDAO
             .slice(UserSourcingEventDAO.aggregateVersion)
@@ -185,6 +188,36 @@ class UserDatabaseRepository(private val db: Database) :
                     .fold({ false }, { instructor -> instructor.hasQualification(qualificationId) })
             }
             .toSet()
+
+    override suspend fun getSoftDeleted(): Set<User> {
+        return transaction {
+            val deletedUserIds = UserSourcingEventDAO
+                .selectAll()
+                .asSequence()
+                .map {
+                    it[UserSourcingEventDAO.data]
+                }
+                .filter { it is UserDeleted }
+                .map { it.aggregateRootId }
+                .map { it.value }
+                .toSet()
+
+            UserSourcingEventDAO
+                .select { UserSourcingEventDAO.aggregateRootId inList deletedUserIds }
+                .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
+                .asSequence()
+                .map {
+                    it[UserSourcingEventDAO.data]
+                }
+                .groupBy { it.aggregateRootId }
+                // drop last event (= deleted event) to get the user in its final state
+                .mapValues { e -> e.value.dropLast(1) }
+                .map { User.fromSourcingEvents(it.value) }
+                .filter { it.isDefined() }
+                .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
+                .toSet()
+        }
+    }
 
     private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {
         transaction(db) {

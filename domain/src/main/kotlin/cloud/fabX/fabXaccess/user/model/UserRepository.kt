@@ -42,3 +42,7 @@ fun interface GettingUsersByMemberQualification {
 fun interface GettingUsersByInstructorQualification {
     suspend fun getByInstructorQualification(qualificationId: QualificationId): Set<User>
 }
+
+fun interface GettingSoftDeletedUsers {
+    suspend fun getSoftDeleted(): Set<User>
+}

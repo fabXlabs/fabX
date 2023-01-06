@@ -183,6 +183,41 @@ internal class UserDatabaseRepositoryTest {
                 .isRight()
                 .transform { it.aggregateVersion }.isEqualTo(2)
         }
+
+        @Test
+        fun `given deleted user when getting soft deleted users then returns user`() = withSetupTestApp { di ->
+            // given
+            val repository: UserDatabaseRepository by di.instance()
+
+            val userDeleted = UserDeleted(
+                userId,
+                3,
+                actorId,
+                fixedInstant,
+                correlationId
+            )
+            repository.store(userDeleted)
+
+            // when
+            val result = repository.getSoftDeleted()
+
+            assertThat(result)
+                .containsExactlyInAnyOrder(
+                    UserFixture.arbitrary(
+                        userId,
+                        2,
+                        "first",
+                        "last",
+                        "wiki",
+                        true,
+                        "some notes",
+                        setOf(),
+                        setOf(),
+                        null,
+                        false
+                    )
+                )
+        }
     }
 
     @Nested
@@ -357,6 +392,30 @@ internal class UserDatabaseRepositoryTest {
                 each {
                     it.isInstanceOf(UserSourcingEvent::class)
                 }
+            }
+        }
+
+        @Test
+        fun `when getting soft deleted users then returns users`() = withSetupTestApp { di ->
+            // given
+            val repository: UserDatabaseRepository by di.instance()
+
+            val user1Deleted = UserDeleted(
+                userId,
+                4,
+                actorId,
+                fixedInstant,
+                correlationId
+            )
+            repository.store(user1Deleted)
+
+            // when
+            val result = repository.getSoftDeleted()
+
+            // then
+            assertThat(result).all {
+                hasSize(2)
+                transform { it.map { user -> user.id } }.containsExactlyInAnyOrder(userId, userId3)
             }
         }
     }
