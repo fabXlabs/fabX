@@ -1,5 +1,7 @@
 # 🔐 fabX
 
+[![CI](https://github.com/fabXlabs/fabX/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fabXlabs/fabX/actions/workflows/ci.yml)
+
 fabX is an access system for fab labs, maker spaces, hack spaces, etc. These spaces typically have to ensure that their
 members only use tools/machines that they have a qualification for. With fabX, each member gets an NFC card that enables
 them to use the tools they are qualified for.
