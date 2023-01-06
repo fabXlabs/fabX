@@ -9,14 +9,18 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.HardDeletingUser
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import isLeft
 import isNone
+import isRight
 import isSome
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -41,18 +45,21 @@ internal class DeletingUserTest {
 
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
+    private lateinit var hardDeletingUser: HardDeletingUser
 
     private lateinit var testee: DeletingUser
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock userRepository: UserRepository
+        @Mock userRepository: UserRepository,
+        @Mock hardDeletingUser: HardDeletingUser
     ) {
         this.logger = logger
         this.userRepository = userRepository
+        this.hardDeletingUser = hardDeletingUser
 
-        testee = DeletingUser({ logger }, userRepository, fixedClock)
+        testee = DeletingUser({ logger }, userRepository, hardDeletingUser, fixedClock)
     }
 
     @Test
@@ -162,5 +169,45 @@ internal class DeletingUserTest {
         assertThat(result)
             .isSome()
             .isEqualTo(error)
+    }
+
+    @Test
+    fun `when hard deleting user then returns unit`() = runTest {
+        // given
+        whenever(hardDeletingUser.hardDelete(userId))
+            .thenReturn(2.right())
+
+        // when
+        val result = testee.hardDeleteUser(
+            adminActor,
+            correlationId,
+            userId
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
+    }
+
+    @Test
+    fun `given user cannot be found when hard deleting user then returns error`() = runTest {
+        // given
+        val expectedError = ErrorFixture.arbitrary()
+
+        whenever(hardDeletingUser.hardDelete(userId))
+            .thenReturn(expectedError.left())
+
+        // when
+        val result = testee.hardDeleteUser(
+            adminActor,
+            correlationId,
+            userId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(expectedError)
     }
 }

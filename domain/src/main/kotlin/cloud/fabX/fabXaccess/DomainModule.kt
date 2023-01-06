@@ -88,8 +88,8 @@ val domainModule = DI.Module("domain") {
     bindSingleton { AddingWebauthnIdentity(instance(), instance(), instance(), instance()) }
     bindSingleton { ChangingIsAdmin(instance(), instance(), instance()) }
     bindSingleton { ChangingUser(instance(), instance(), instance(), instance()) }
-    bindSingleton { DeletingUser(instance(), instance(), instance()) }
     bindSingleton { GettingSoftDeletedUsers(instance(), instance()) }
+    bindSingleton { DeletingUser(instance(), instance(), instance(), instance()) }
     bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
