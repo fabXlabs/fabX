@@ -32,6 +32,7 @@ import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
+import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
@@ -98,6 +99,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(ChangingUser::class.java) }
         bindInstance { Mockito.mock(DeletingUser::class.java) }
         bindInstance { Mockito.mock(ChangingIsAdmin::class.java) }
+        bindInstance { Mockito.mock(GettingSoftDeletedUsers::class.java) }
         bindInstance { Mockito.mock(AddingInstructorQualification::class.java) }
         bindInstance { Mockito.mock(RemovingInstructorQualification::class.java) }
         bindInstance { Mockito.mock(AddingMemberQualification::class.java) }

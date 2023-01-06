@@ -26,6 +26,7 @@ import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
+import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
@@ -50,6 +51,7 @@ class UserController(
     private val addingUser: AddingUser,
     private val changingUser: ChangingUser,
     private val deletingUser: DeletingUser,
+    private val softDeletedUsers: GettingSoftDeletedUsers,
     private val changingIsAdmin: ChangingIsAdmin,
     private val addingInstructorQualification: AddingInstructorQualification,
     private val removingInstructorQualification: RemovingInstructorQualification,
@@ -127,6 +129,20 @@ class UserController(
                             .map { it.serialize() }
                     )
                 }
+            }
+
+            get("/soft-deleted") {
+                call.respondWithErrorHandler(
+                    readAdminAuthentication()
+                        .map { admin ->
+                            softDeletedUsers
+                                .getSoftDeletedUsers(
+                                    admin,
+                                    newCorrelationId()
+                                )
+                                .map { it.toRestModel() }
+                        }
+                )
             }
 
             post("") {
