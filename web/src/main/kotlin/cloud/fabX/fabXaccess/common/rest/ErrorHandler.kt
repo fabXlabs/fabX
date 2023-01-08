@@ -58,6 +58,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserNotFoundByCardId -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotFoundByUsername -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.UserNotFoundByWikiName -> respond(HttpStatusCode.NotFound, error.toRestModel())
+        is Error.SoftDeletedUserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
         is Error.WikiNameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.InstructorPermissionNotFound -> respond(HttpStatusCode.Forbidden, error.toRestModel())
         is Error.UserAlreadyAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())

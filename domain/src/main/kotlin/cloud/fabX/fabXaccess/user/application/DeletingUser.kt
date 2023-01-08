@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.model.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.model.HardDeletingUser
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import kotlinx.datetime.Clock
@@ -19,6 +20,7 @@ import kotlinx.datetime.Clock
 class DeletingUser(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,
+    private val gettingSoftDeletedUsers: GettingSoftDeletedUsers,
     private val hardDeletingUser: HardDeletingUser,
     private val clock: Clock
 ) {
@@ -63,11 +65,26 @@ class DeletingUser(
     ): Either<Error, Unit> {
         log.debug("hardDeleteUser (actor: $actor, correlationId: $correlationId)...")
 
-        // TODO enforce user is soft-deleted
-
-        return hardDeletingUser.hardDelete(userId)
+        return requireUserIsSoftDeleted(correlationId, userId)
+            .flatMap { hardDeletingUser.hardDelete(userId) }
             .map { }
             .tap { log.debug("...hardDeleteUser done") }
             .tapLeft { log.error("...hardDeleteUser error: $it") }
     }
+
+    private suspend fun requireUserIsSoftDeleted(
+        correlationId: CorrelationId,
+        userId: UserId
+    ): Either<Error, Unit> =
+        Either.conditionally(
+            gettingSoftDeletedUsers.getSoftDeleted().map { it.id }.contains(userId),
+            {
+                Error.SoftDeletedUserNotFound(
+                    "Soft deleted user not found.",
+                    userId,
+                    correlationId
+                )
+            },
+            { }
+        )
 }

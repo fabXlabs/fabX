@@ -597,6 +597,26 @@ internal class UserIntegrationTest {
     }
 
     @Test
+    fun `given existing user when hard deleting user then returns error`() = withTestApp {
+        // given
+        val userId = givenUser()
+
+        // when
+        val response = c().delete("/api/v1/user/soft-deleted/$userId") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isError(
+                "SoftDeletedUserNotFound",
+                "Soft deleted user not found.",
+                mapOf("userId" to userId)
+            )
+    }
+
+    @Test
     fun `when adding instructor qualification then returns http no content`() = withTestApp {
         // given
         val qualificationId = givenQualification()

@@ -13,6 +13,12 @@ sealed class Error(
         override val correlationId: CorrelationId? = null
     ) : Error(message, mapOf("userId" to userId.serialize()), correlationId)
 
+    data class SoftDeletedUserNotFound(
+        override val message: String,
+        val userId: UserId,
+        override val correlationId: CorrelationId? = null
+    ) : Error(message, mapOf("userId" to userId.serialize()), correlationId)
+
     data class UserNotFoundByIdentity(
         override val message: String
     ) : Error(message)

@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.model.HardDeletingUser
 import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -45,6 +46,7 @@ internal class DeletingUserTest {
 
     private lateinit var logger: Logger
     private lateinit var userRepository: UserRepository
+    private lateinit var gettingSoftDeletedUsers: GettingSoftDeletedUsers
     private lateinit var hardDeletingUser: HardDeletingUser
 
     private lateinit var testee: DeletingUser
@@ -53,13 +55,15 @@ internal class DeletingUserTest {
     fun `configure DomainModule`(
         @Mock logger: Logger,
         @Mock userRepository: UserRepository,
+        @Mock gettingSoftDeletedUsers: GettingSoftDeletedUsers,
         @Mock hardDeletingUser: HardDeletingUser
     ) {
         this.logger = logger
         this.userRepository = userRepository
+        this.gettingSoftDeletedUsers = gettingSoftDeletedUsers
         this.hardDeletingUser = hardDeletingUser
 
-        testee = DeletingUser({ logger }, userRepository, hardDeletingUser, fixedClock)
+        testee = DeletingUser({ logger }, userRepository, gettingSoftDeletedUsers, hardDeletingUser, fixedClock)
     }
 
     @Test
@@ -174,6 +178,11 @@ internal class DeletingUserTest {
     @Test
     fun `when hard deleting user then returns unit`() = runTest {
         // given
+        val user = UserFixture.arbitrary(userId)
+
+        whenever(gettingSoftDeletedUsers.getSoftDeleted())
+            .thenReturn(setOf(user))
+
         whenever(hardDeletingUser.hardDelete(userId))
             .thenReturn(2.right())
 
@@ -191,9 +200,39 @@ internal class DeletingUserTest {
     }
 
     @Test
-    fun `given user cannot be found when hard deleting user then returns error`() = runTest {
+    fun `given user is not soft deleted when hard deleting user then returns error`() = runTest {
+        // given
+        whenever(gettingSoftDeletedUsers.getSoftDeleted())
+            .thenReturn(setOf())
+
+        // when
+        val result = testee.hardDeleteUser(
+            adminActor,
+            correlationId,
+            userId
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.SoftDeletedUserNotFound(
+                    "Soft deleted user not found.",
+                    userId,
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `given user cannot be hard deleted when hard deleting user then returns error`() = runTest {
         // given
         val expectedError = ErrorFixture.arbitrary()
+
+        val user = UserFixture.arbitrary(userId)
+
+        whenever(gettingSoftDeletedUsers.getSoftDeleted())
+            .thenReturn(setOf(user))
 
         whenever(hardDeletingUser.hardDelete(userId))
             .thenReturn(expectedError.left())
