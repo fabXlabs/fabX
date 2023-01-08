@@ -562,6 +562,39 @@ internal class UserIntegrationTest {
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
+    @Test
+    fun `when hard deleting user then user is no longer soft-deleted`() = withTestApp {
+        // given
+        val userId = givenUser()
+        givenUserIsSoftDeleted(userId)
+
+        // when
+        val response = c().delete("/api/v1/user/soft-deleted/$userId") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
+
+        val responseSoftDeleted = c().get("/api/v1/user/soft-deleted") {
+            adminAuth()
+        }
+        assertThat(responseSoftDeleted.body<Set<User>>()).isEmpty()
+    }
+
+    @Test
+    fun `given non-admin authentication when hard deleting user then returns http forbidden`() = withTestApp {
+        // given
+
+        // when
+        val response = c().delete("/api/v1/user/soft-deleted/${UserIdFixture.arbitrary().serialize()}") {
+            memberAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+    }
 
     @Test
     fun `when adding instructor qualification then returns http no content`() = withTestApp {

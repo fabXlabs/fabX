@@ -617,7 +617,6 @@ class UserController(
                     )
                 }
 
-                // TODO integration test
                 delete("/{id}") {
                     readUUIDParameter("id")
                         ?.let { UserId(it) }
