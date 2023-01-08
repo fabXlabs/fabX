@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.user.rest.UserCreationDetails
 import cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentityAdditionDetails
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
+import io.ktor.client.request.delete
 import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
@@ -42,6 +43,16 @@ internal suspend fun ApplicationTestBuilder.givenUser(
 
     assertThat(response.status).isEqualTo(HttpStatusCode.OK)
     return response.body()
+}
+
+internal suspend fun ApplicationTestBuilder.givenUserIsSoftDeleted(
+    userId: String
+) {
+    val response = c().delete("/api/v1/user/$userId") {
+        adminAuth()
+    }
+
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
 }
 
 internal suspend fun ApplicationTestBuilder.givenUserIsAdmin(

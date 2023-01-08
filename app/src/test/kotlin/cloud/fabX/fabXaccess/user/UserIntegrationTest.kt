@@ -1,7 +1,9 @@
 package cloud.fabX.fabXaccess.user
 
+import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
+import assertk.assertions.hasSize
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
@@ -525,6 +527,41 @@ internal class UserIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
+
+    @Test
+    fun `given soft-deleted user when getting soft-deleted users then returns user`() = withTestApp {
+        // given
+        val userId = givenUser()
+        givenUserIsSoftDeleted(userId)
+
+        // when
+        val response = c().get("/api/v1/user/soft-deleted") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        val softDeletedUsers = response.body<Set<User>>()
+        assertThat(softDeletedUsers).hasSize(1)
+        assertThat(softDeletedUsers.first())
+            .all {
+                transform { it.id }.isEqualTo(userId)
+                transform { it.aggregateVersion }.isEqualTo(1)
+            }
+    }
+
+    @Test
+    fun `given non-admin authentication when getting soft-deleted users then returns http forbidden`() = withTestApp {
+        // given
+        // when
+        val response = c().get("/api/v1/user/soft-deleted") {
+            memberAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
 
     @Test
     fun `when adding instructor qualification then returns http no content`() = withTestApp {

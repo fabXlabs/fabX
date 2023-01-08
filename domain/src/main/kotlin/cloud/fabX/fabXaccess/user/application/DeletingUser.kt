@@ -63,6 +63,8 @@ class DeletingUser(
     ): Either<Error, Unit> {
         log.debug("hardDeleteUser (actor: $actor, correlationId: $correlationId)...")
 
+        // TODO enforce user is soft-deleted
+
         return hardDeletingUser.hardDelete(userId)
             .map { }
             .tap { log.debug("...hardDeleteUser done") }

@@ -603,7 +603,6 @@ class UserController(
             }
 
             route("/soft-deleted") {
-                // TODO integration test
                 get("") {
                     call.respondWithErrorHandler(
                         readAdminAuthentication()
