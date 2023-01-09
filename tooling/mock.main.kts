@@ -268,7 +268,7 @@ println("Took $toolAttachmentDelay ms to attach ${toolDevices.size} Tools to Dev
 
 
 val userStartTimestamp = getTimeMillis()
-val moreUsers = users + (1..1000).map { "U$it Last" }
+val moreUsers = users + (1..100).map { "U$it Last" }
 moreUsers.parallelStream().forEach { userName ->
     val lastName = userName.split(" ").last()
     val firstName = userName.substring(0, userName.length - lastName.length - 1)
