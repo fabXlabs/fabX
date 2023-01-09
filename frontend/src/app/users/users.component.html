@@ -9,8 +9,9 @@
 >
     <ng-template pTemplate="caption">
         <ng-container *ngIf="loggedInUser$ | async as loggedInUser">
-            <div class="flex align-items-center" *ngIf="loggedInUser.isAdmin">
+            <div class="flex align-items-center justify-content-between" *ngIf="loggedInUser.isAdmin">
                 <button pButton label="Add User" routerLink="/user/add"></button>
+                <button pButton label="Deleted Users" routerLink="/user/soft-deleted" class="p-button-secondary"></button>
             </div>
         </ng-container>
     </ng-template>

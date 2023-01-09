@@ -348,6 +348,22 @@ export class UserService {
         )
     }
 
+    public getSoftDeletedUsers(): Observable<User[]> {
+        return this.http.get<User[]>(`${this.baseUrl}/user/soft-deleted`, this.authService.getOptions()).pipe(
+            retry(3)
+        );
+    }
+
+    public hardDelete(id: string): Observable<string> {
+        return this.http.delete(
+            `${this.baseUrl}/user/soft-deleted/${id}`,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        )
+    }
+
     toHexString(arr: number[]): string {
         return Array.from(arr, function (byte) {
             return ('0' + (byte & 0xFF).toString(16)).slice(-2);

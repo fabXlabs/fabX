@@ -27,12 +27,14 @@ import { UserChangeLockStateComponent } from "./user-change-lock-state/user-chan
 import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UsersComponent } from "./users/users.component";
+import { UserSoftDeletedComponent } from "./user-soft-deleted/user-soft-deleted.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
     { path: 'user', component: UsersComponent, canActivate: [AuthGuard] },
     { path: 'user/add', component: UserAddComponent, canActivate: [AuthGuard] },
+    { path: 'user/soft-deleted', component: UserSoftDeletedComponent, canActivate: [AuthGuard] },
     { path: 'user/:id', component: UserDetailsComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-card-identity', component: UserAddCardIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-phone-nr-identity', component: UserAddPhoneNrIdentityComponent, canActivate: [AuthGuard] },

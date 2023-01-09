@@ -64,6 +64,7 @@ import { UserChangePersonalInfoComponent } from './user-change-personal-info/use
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { ZXingScannerModule } from "@zxing/ngx-scanner";
+import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
 
 @NgModule({
     declarations: [
@@ -94,6 +95,7 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
         UserChangeLockStateComponent,
         UserChangePersonalInfoComponent,
         UserDetailsComponent,
+        UserSoftDeletedComponent,
         UsersComponent,
     ],
     imports: [
