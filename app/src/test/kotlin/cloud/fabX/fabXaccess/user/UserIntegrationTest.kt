@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
+import cloud.fabX.fabXaccess.user.rest.PasswordChangeDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
 import cloud.fabX.fabXaccess.user.rest.QualificationAdditionDetails
@@ -896,6 +897,59 @@ internal class UserIntegrationTest {
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
+
+    @Test
+    fun `when changing password then can login with new password`() = withTestApp {
+        // given
+        val userId = givenUser()
+        val username = "some.one"
+        val oldPassword = "supersecret123"
+        givenUsernamePasswordIdentity(userId, username, oldPassword)
+
+        val newPassword = "SuPeRSecret42"
+        val requestBody = PasswordChangeDetails(newPassword)
+
+        // when
+        val response = c().post("/api/v1/user/$userId/identity/username-password/change-password") {
+            basicAuth(username, oldPassword)
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
+
+        val responseGet = c().get("/api/v1/user/me") {
+            basicAuth(username, newPassword)
+        }
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<User>())
+            .transform { it.id }
+            .isEqualTo(userId)
+    }
+
+    @Test
+    fun `given other's authentication when changing password then returns http forbidden`() = withTestApp {
+        // given
+        val userId = givenUser()
+        givenUsernamePasswordIdentity(userId, "some.one", "supersecret123")
+
+        // when
+        val response = c().post("/api/v1/user/$userId/identity/username-password/change-password") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(PasswordChangeDetails("newPassword"))
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<Error>())
+            .isError(
+                "UserNotActor",
+                "User is not actor."
+            )
+    }
 
     @Test
     fun `when removing username password identity then returns http no content`() = withTestApp {

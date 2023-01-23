@@ -65,6 +65,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 import { UsersComponent } from './users/users.component';
 import { ZXingScannerModule } from "@zxing/ngx-scanner";
 import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
+import { UserChangePasswordComponent } from "./user-change-password/user-change-password.component";
 
 @NgModule({
     declarations: [
@@ -94,6 +95,7 @@ import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.
         UserAddWebauthnIdentityComponent,
         UserChangeLockStateComponent,
         UserChangePersonalInfoComponent,
+        UserChangePasswordComponent,
         UserDetailsComponent,
         UserSoftDeletedComponent,
         UsersComponent,

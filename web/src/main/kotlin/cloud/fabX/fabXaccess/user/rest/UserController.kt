@@ -24,6 +24,7 @@ import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
+import cloud.fabX.fabXaccess.user.application.ChangingPassword
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
@@ -58,6 +59,7 @@ class UserController(
     private val addingMemberQualification: AddingMemberQualification,
     private val removingMemberQualification: RemovingMemberQualification,
     private val addingUsernamePasswordIdentity: AddingUsernamePasswordIdentity,
+    private val changingPassword: ChangingPassword,
     private val removingUsernamePasswordIdentity: RemovingUsernamePasswordIdentity,
     private val addingWebauthnIdentity: AddingWebauthnIdentity,
     private val removingWebauthnIdentity: RemovingWebauthnIdentity,
@@ -356,6 +358,27 @@ class UserController(
                                                     )
                                                         .toEither { }
                                                         .swap()
+                                                }
+                                        )
+                                    }
+                            }
+                    }
+
+                    post("/change-password") {
+                        readBody<PasswordChangeDetails>()
+                            ?.let {
+                                readUUIDParameter("id")
+                                    ?.let { UserId(it) }
+                                    ?.let { id ->
+                                        call.respondWithErrorHandler(
+                                            readMemberAuthentication()
+                                                .flatMap { member ->
+                                                    changingPassword.changeOwnPassword(
+                                                        member,
+                                                        newCorrelationId(),
+                                                        id,
+                                                        hash(it.password)
+                                                    )
                                                 }
                                         )
                                     }

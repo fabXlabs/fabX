@@ -5,8 +5,10 @@ import { AuthService } from "./auth.service";
 import { mergeMap, Observable, retry } from "rxjs";
 import {
     CardIdentityAdditionDetails,
+    ChangePasswordDetails,
     IsAdminDetails,
-    PhoneNrIdentityAdditionDetails, PinIdentityAdditionDetails,
+    PhoneNrIdentityAdditionDetails,
+    PinIdentityAdditionDetails,
     QualificationAdditionDetails,
     User,
     UserCreationDetails,
@@ -165,6 +167,19 @@ export class UserService {
                 responseType: 'text'
             }
         );
+    }
+
+    public changePassword(userId: string, password: string): Observable<string> {
+        const details: ChangePasswordDetails = { password: password }
+
+        return this.http.post(
+            `${this.baseUrl}/user/${userId}/identity/username-password/change-password`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        )
     }
 
     public removeUsernamePasswordIdentity(userId: string, username: string): Observable<string> {

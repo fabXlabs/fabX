@@ -59,6 +59,10 @@ export interface UsernamePasswordIdentityAdditionDetails {
     password: string
 }
 
+export interface ChangePasswordDetails {
+    password: string
+}
+
 export interface UsernamePasswordIdentity {
     type: "cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity",
     username: string

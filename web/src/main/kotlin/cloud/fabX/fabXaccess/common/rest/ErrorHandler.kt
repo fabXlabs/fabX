@@ -75,6 +75,10 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
             HttpStatusCode.UnprocessableEntity,
             error.toRestModel()
         )
+        is Error.UsernamePasswordIdentityNotFound -> respond(
+            HttpStatusCode.UnprocessableEntity,
+            error.toRestModel()
+        )
         is Error.CredentialIdAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.CardIdAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
         is Error.CardIdInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())

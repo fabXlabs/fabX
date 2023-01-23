@@ -69,6 +69,11 @@ data class UsernamePasswordIdentityAdditionDetails(
 )
 
 @Serializable
+data class PasswordChangeDetails(
+    val password: String
+)
+
+@Serializable
 data class WebauthnRegistrationDetails(
     val attestation: String,
     val challenge: ByteArray,

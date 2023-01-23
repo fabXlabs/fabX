@@ -24,10 +24,11 @@ import { UserAddQualificationComponent } from "./user-add-qualification/user-add
 import { UserAddUsernamePasswordIdentityComponent } from "./user-add-username-password-identity/user-add-username-password-identity.component";
 import { UserAddWebauthnIdentityComponent } from "./user-add-webauthn-identity/user-add-webauthn-identity.component";
 import { UserChangeLockStateComponent } from "./user-change-lock-state/user-change-lock-state.component";
+import { UserChangePasswordComponent } from "./user-change-password/user-change-password.component";
 import { UserChangePersonalInfoComponent } from "./user-change-personal-info/user-change-personal-info.component";
 import { UserDetailsComponent } from "./user-details/user-details.component";
-import { UsersComponent } from "./users/users.component";
 import { UserSoftDeletedComponent } from "./user-soft-deleted/user-soft-deleted.component";
+import { UsersComponent } from "./users/users.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -40,6 +41,7 @@ const routes: Routes = [
     { path: 'user/:id/add-phone-nr-identity', component: UserAddPhoneNrIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-username-password-identity', component: UserAddUsernamePasswordIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-pin-identity', component: UserAddPinIdentityComponent, canActivate: [AuthGuard] },
+    { path: 'user/:id/change-password', component: UserChangePasswordComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/add-webauthn-identity', component: UserAddWebauthnIdentityComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/change-personal-info', component: UserChangePersonalInfoComponent, canActivate: [AuthGuard] },
     { path: 'user/:id/lock', component: UserChangeLockStateComponent, canActivate: [AuthGuard] },

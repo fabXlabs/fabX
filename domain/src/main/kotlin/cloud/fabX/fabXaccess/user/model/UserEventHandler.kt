@@ -66,6 +66,22 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
             )
         }
 
+    override fun handle(event: PasswordChanged, user: Option<User>): Option<User> =
+        requireSomeUserWithSameIdAndSome(event, user) { e, u ->
+            u.copy(
+                aggregateVersion = e.aggregateVersion,
+                identities = u.identities.stream()
+                    .map {
+                        if (it is UsernamePasswordIdentity) {
+                            it.copy(hash = e.hash)
+                        } else {
+                            it
+                        }
+                    }
+                    .collect(Collectors.toSet())
+            )
+        }
+
     override fun handle(event: UsernamePasswordIdentityRemoved, user: Option<User>): Option<User> =
         requireSomeUserWithSameIdAndSome(event, user) { e, u ->
             u.copy(
@@ -93,7 +109,7 @@ internal class UserEventHandler : UserSourcingEvent.EventHandler {
                 identities = u.identities.stream()
                     .filter {
                         !(it is WebauthnIdentity
-                                && it.authenticator.attestedCredentialData.credentialId.contentEquals(e.credentialId))
+                            && it.authenticator.attestedCredentialData.credentialId.contentEquals(e.credentialId))
                     }
                     .collect(Collectors.toSet())
             )

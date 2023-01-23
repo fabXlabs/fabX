@@ -28,6 +28,7 @@ sealed class UserSourcingEvent : SourcingEvent {
         fun handle(event: UserLockStateChanged, user: Option<User>): Option<User>
 
         fun handle(event: UsernamePasswordIdentityAdded, user: Option<User>): Option<User>
+        fun handle(event: PasswordChanged, user: Option<User>): Option<User>
         fun handle(event: UsernamePasswordIdentityRemoved, user: Option<User>): Option<User>
         fun handle(event: WebauthnIdentityAdded, user: Option<User>): Option<User>
         fun handle(event: WebauthnIdentityRemoved, user: Option<User>): Option<User>
@@ -105,6 +106,20 @@ data class UsernamePasswordIdentityAdded(
     override val timestamp: Instant,
     override val correlationId: CorrelationId,
     val username: String,
+    val hash: String
+) : UserSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
+        eventHandler.handle(this, user)
+}
+
+@Serializable
+data class PasswordChanged(
+    override val aggregateRootId: UserId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
     val hash: String
 ) : UserSourcingEvent() {
 

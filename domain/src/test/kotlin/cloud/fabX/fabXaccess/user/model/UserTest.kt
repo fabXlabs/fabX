@@ -793,7 +793,112 @@ internal class UserTest {
                     correlationId
                 )
             )
+    }
 
+    @Test
+    fun `when changing password then expected sourcing event is returned`() = runTest {
+        // given
+        val identity = UserIdentityFixture.usernamePassword()
+        val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+
+        val hash = "G3T2Uf9olbUkPV2lFXfgqi61iyCC7i1c2qRTtV1vhNQ="
+
+        val expectedSourcingEvent = PasswordChanged(
+            userId,
+            aggregateVersion + 1,
+            userId,
+            fixedInstant,
+            correlationId,
+            hash = hash
+        )
+
+        // when
+        val result = user.changePassword(user.asMember(), fixedClock, correlationId, hash)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given other actor when changing password then error is returned`() = runTest {
+        // given
+        val identity = UserIdentityFixture.usernamePassword()
+        val user = UserFixture.withIdentity(identity)
+
+        val actor = UserFixture.arbitrary()
+
+        // when
+        val result = user.changePassword(
+            actor.asMember(),
+            fixedClock,
+            correlationId,
+            "G3T2Uf9olbUkPV2lFXfgqi61iyCC7i1c2qRTtV1vhNQ="
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserNotActor(
+                    "User is not actor.",
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `given no username password identity when changing password then error is returned`() = runTest {
+        // given
+        val user = UserFixture.arbitrary(identities = setOf())
+
+        // when
+        val result = user.changePassword(
+            user.asMember(),
+            fixedClock,
+            correlationId,
+            "G3T2Uf9olbUkPV2lFXfgqi61iyCC7i1c2qRTtV1vhNQ="
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UsernamePasswordIdentityNotFound(
+                    "Not able to find username password identity.",
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `given invalid hash when changing password then error is returned`() = runTest {
+        // given
+        val identity = UserIdentityFixture.usernamePassword()
+        val user = UserFixture.withIdentity(identity, userId = userId, aggregateVersion = aggregateVersion)
+
+        val invalidHash = "invalidHash"
+
+        // when
+        val result = user.changePassword(
+            user.asMember(),
+            fixedClock,
+            correlationId,
+            invalidHash
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PasswordHashInvalid(
+                    "Password hash is invalid (has to match ${UsernamePasswordIdentity.hashRegex}).",
+                    invalidHash,
+                    UsernamePasswordIdentity.hashRegex,
+                    correlationId
+                )
+            )
     }
 
     @Test

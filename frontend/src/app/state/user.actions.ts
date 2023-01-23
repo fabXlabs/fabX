@@ -1,6 +1,7 @@
 import { UserSortModel } from "./fabx-state";
 import {
     CardIdentityAdditionDetails,
+    ChangePasswordDetails,
     PhoneNrIdentityAdditionDetails,
     PinIdentityAdditionDetails,
     UserCreationDetails,
@@ -88,6 +89,12 @@ export namespace Users {
         static readonly type = "[fabX Users] Add Username/Password Identity"
 
         constructor(public userId: string, public details: UsernamePasswordIdentityAdditionDetails) {}
+    }
+
+    export class ChangePassword {
+        static readonly type = "[fabX Users] Change Password"
+
+        constructor(public userId: string, public details: ChangePasswordDetails) {}
     }
 
     export class RemoveUsernamePasswordIdentity {

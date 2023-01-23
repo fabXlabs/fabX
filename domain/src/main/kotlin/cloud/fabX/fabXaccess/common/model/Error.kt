@@ -47,6 +47,11 @@ sealed class Error(
         override val correlationId: CorrelationId? = null
     ) : Error(message, mapOf("userId" to userId.serialize()), correlationId)
 
+    data class UsernamePasswordIdentityNotFound(
+        override val message: String,
+        override val correlationId: CorrelationId
+    ) : Error(message)
+
     data class UsernamePasswordIdentityAlreadyFound(
         override val message: String,
         override val correlationId: CorrelationId

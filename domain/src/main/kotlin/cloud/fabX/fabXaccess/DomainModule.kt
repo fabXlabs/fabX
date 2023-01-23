@@ -31,6 +31,7 @@ import cloud.fabX.fabXaccess.user.application.AddingUser
 import cloud.fabX.fabXaccess.user.application.AddingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.AddingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.ChangingIsAdmin
+import cloud.fabX.fabXaccess.user.application.ChangingPassword
 import cloud.fabX.fabXaccess.user.application.ChangingUser
 import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingAuthorizedTools
@@ -87,10 +88,11 @@ val domainModule = DI.Module("domain") {
     bindSingleton { AddingUsernamePasswordIdentity(instance(), instance(), instance(), instance()) }
     bindSingleton { AddingWebauthnIdentity(instance(), instance(), instance(), instance()) }
     bindSingleton { ChangingIsAdmin(instance(), instance(), instance()) }
+    bindSingleton { ChangingPassword(instance(), instance(), instance()) }
     bindSingleton { ChangingUser(instance(), instance(), instance(), instance()) }
-    bindSingleton { GettingSoftDeletedUsers(instance(), instance()) }
     bindSingleton { DeletingUser(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { GettingAuthorizedTools(instance(), instance(), instance()) }
+    bindSingleton { GettingSoftDeletedUsers(instance(), instance()) }
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
     bindSingleton { GettingUserIdByWikiName(instance(), instance()) }

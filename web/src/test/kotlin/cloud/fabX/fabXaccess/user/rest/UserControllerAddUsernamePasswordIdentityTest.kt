@@ -125,7 +125,7 @@ internal class UserControllerAddUsernamePasswordIdentityTest {
         }
 
     @Test
-    fun `given no body when adding username password identity then returns http unprocessable entity`() =
+    fun `given no body when adding username password identity then returns http bad request`() =
         withConfiguredTestApp {
             // given
             whenever(authenticationService.basic(UserPasswordCredential(username, password)))

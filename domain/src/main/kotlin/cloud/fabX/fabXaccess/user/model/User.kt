@@ -225,6 +225,44 @@ data class User internal constructor(
     }
 
     /**
+     * Changes the user's password.
+     */
+    fun changePassword(
+        actor: Member,
+        clock: Clock,
+        correlationId: CorrelationId,
+        hash: String
+    ): Either<Error, UserSourcingEvent> {
+        return requireUserIsActor(actor, correlationId)
+            .flatMap { requireUsernamePasswordIdentity(correlationId) }
+            .flatMap { UsernamePasswordIdentity.fromUnvalidated(it.username, hash, correlationId) }
+            .map {
+                PasswordChanged(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId,
+                    hash
+                )
+            }
+    }
+
+    private fun requireUsernamePasswordIdentity(
+        correlationId: CorrelationId
+    ): Either<Error, UsernamePasswordIdentity> {
+        return identities.firstOrNull { it is UsernamePasswordIdentity }
+            .toOption()
+            .map { it as UsernamePasswordIdentity }
+            .toEither {
+                Error.UsernamePasswordIdentityNotFound(
+                    "Not able to find username password identity.",
+                    correlationId
+                )
+            }
+    }
+
+    /**
      * Removes the user's identity given by the username.
      *
      * @return error if no identity with given username exists, sourcing event otherwise
@@ -282,7 +320,7 @@ data class User internal constructor(
     ): Either<Error, Unit> {
         return identities.firstOrNull {
             it is WebauthnIdentity
-                    && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
+                && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
         }
             .toOption()
             .map {
@@ -314,7 +352,7 @@ data class User internal constructor(
     ): Either<Error, UserSourcingEvent> {
         return identities.firstOrNull {
             it is WebauthnIdentity
-                    && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
+                && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
         }
             .toOption()
             .toEither {

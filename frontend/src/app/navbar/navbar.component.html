@@ -27,8 +27,16 @@
                 <span>{{loggedInUser.firstName}}</span>
             </span>
 
-            <div class="hidden absolute surface-card shadow-2 right-0 p-3 z-5">
-                <button pButton label="Logout" (click)="onLogout()"></button>
+            <div class="hidden absolute surface-card shadow-2 right-0 z-5">
+                <div class="flex flex-column align-items-end">
+                    <div>
+                        <a class="flex align-items-center px-3 py-3 border-bottom-2 border-transparent hover:surface-200 transition-duration-150"
+                           [routerLink]="['/user/' + loggedInUser.id + '/change-password']" routerLinkActive="border-500">Change Password</a>
+                    </div>
+                    <div class="p-3">
+                        <button pButton label="Logout" (click)="onLogout()"></button>
+                    </div>
+                </div>
             </div>
         </div>
     </ng-container>

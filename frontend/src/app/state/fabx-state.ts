@@ -476,6 +476,20 @@ export class FabxState {
         );
     }
 
+    @Action(Users.ChangePassword)
+    changePassword(ctx: StateContext<FabxStateModel>, action: Users.ChangePassword) {
+        return this.userService.changePassword(
+            action.userId,
+            action.details.password
+        ).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Navigate(['user', action.userId]));
+                }
+            })
+        )
+    }
+
     @Action(Users.RemoveUsernamePasswordIdentity)
     removeUsernamePasswordIdentity(ctx: StateContext<FabxStateModel>, action: Users.RemoveUsernamePasswordIdentity) {
         return this.userService.removeUsernamePasswordIdentity(
