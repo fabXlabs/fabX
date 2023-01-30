@@ -20,6 +20,11 @@ import org.testcontainers.utility.DockerImageName
 
 val postgresImageName = DockerImageName.parse("postgres").withTag("13")
 val postgresContainer = PostgreSQLContainer(postgresImageName)
+    .withCommand(
+        "-c", "fsync=off",
+        "-c", "synchronous_commit=off",
+        "-c", "full_page_writes=off",
+    )
 
 var initialised = false
 
@@ -52,10 +57,7 @@ internal fun withTestApp(
     val db: Database by testApp.instance()
 
     transaction(db) {
-        QualificationSourcingEventDAO.deleteAll()
-        DeviceSourcingEventDAO.deleteAll()
-        ToolSourcingEventDAO.deleteAll()
-        UserSourcingEventDAO.deleteAll()
+        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, ToolSourcingEvent, UserSourcingEvent")
     }
 
     runTest {
