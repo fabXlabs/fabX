@@ -28,7 +28,7 @@
     "normalize.css": "^8.0.1",
     "primeflex": "^3.2.1",
     "primeicons": "^6.0.1",
-    "primeng": "^15.0.1",
+    "primeng": "^15.2.0",
     "rxjs": "^7.6.0",
     "tslib": "^2.4.1",
     "zone.js": "^0.11.4",
