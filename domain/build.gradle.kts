@@ -9,7 +9,7 @@ val mockitoJunitVersion: String by project
 plugins {
     kotlin("jvm")
     `java-test-fixtures`
-    kotlin("plugin.serialization") version "1.8.0"
+    kotlin("plugin.serialization") version "1.8.10"
 }
 
 dependencies {
