@@ -48,7 +48,7 @@ class AddingQualification(
             .toEither { }
             .swap()
             .map { sourcingEvent.aggregateRootId }
-            .tap { log.debug("...addQualification done") }
-            .tapLeft { log.error("...addQualification error: $it") }
+            .onRight { log.debug("...addQualification done") }
+            .onLeft { log.error("...addQualification error: $it") }
     }
 }

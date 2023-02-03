@@ -43,7 +43,7 @@ class ChangingPassword(
                     .toEither { }
                     .swap()
             }
-            .tap { log.debug("...changeOwnPassword done") }
-            .tapLeft { log.error("...changeOwnPassword error: $it") }
+            .onRight { log.debug("...changeOwnPassword done") }
+            .onLeft { log.error("...changeOwnPassword error: $it") }
     }
 }

@@ -121,10 +121,8 @@ class AuthenticationService(
     }
 
     private fun requireUnlockedUser(user: User): Either<Error, User> {
-        return Either.conditionally(
-            !user.locked,
-            { Error.UserIsLocked("User is locked.", user.id) },
-            { user }
-        )
+        return if (user.locked) {
+            Error.UserIsLocked("User is locked.", user.id).left()
+        } else { user.right() }
     }
 }

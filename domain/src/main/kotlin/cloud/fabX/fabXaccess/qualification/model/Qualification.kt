@@ -4,6 +4,8 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -117,20 +119,18 @@ data class Qualification internal constructor(
     ): Either<Error, Unit> {
         val tools = gettingToolsByQualificationId.getToolsByQualificationId(id)
 
-        return Either.conditionally(
-            tools.isEmpty(),
-            {
-                val toolIds = tools.joinToString { tool -> tool.id.toString() }
+        return if (tools.isNotEmpty()) {
+            val toolIds = tools.joinToString { tool -> tool.id.toString() }
 
-                Error.QualificationInUse(
-                    "Qualification in use by tools ($toolIds).",
-                    id,
-                    tools.map { tool -> tool.id }.toSet(),
-                    correlationId
-                )
-            },
-            {}
-        )
+            Error.QualificationInUse(
+                "Qualification in use by tools ($toolIds).",
+                id,
+                tools.map { tool -> tool.id }.toSet(),
+                correlationId
+            ).left()
+        } else {
+            Unit.right()
+        }
     }
 
     class EventHistoryDoesNotStartWithQualificationCreated(message: String) : Exception(message)

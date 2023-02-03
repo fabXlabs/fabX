@@ -51,7 +51,7 @@ class AddingDevice(
                 .swap()
                 .map { sourcingEvent.aggregateRootId }
         }
-            .tap { log.debug("...addDevice done") }
-            .tapLeft { log.error("...addDevice error: $it") }
+            .onRight { log.debug("...addDevice done") }
+            .onLeft { log.error("...addDevice error: $it") }
     }
 }

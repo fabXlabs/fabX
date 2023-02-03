@@ -320,7 +320,7 @@ data class User internal constructor(
     ): Either<Error, Unit> {
         return identities.firstOrNull {
             it is WebauthnIdentity
-                && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
+                    && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
         }
             .toOption()
             .map {
@@ -337,11 +337,11 @@ data class User internal constructor(
         actor: Member,
         correlationId: CorrelationId
     ): Either<Error, Unit> {
-        return Either.conditionally(
-            actor.userId == id,
-            { Error.UserNotActor("User is not actor.", correlationId) },
-            {}
-        )
+        return if (actor.userId != id) {
+            Error.UserNotActor("User is not actor.", correlationId).left()
+        } else {
+            Unit.right()
+        }
     }
 
     fun removeWebauthnIdentity(
@@ -352,7 +352,7 @@ data class User internal constructor(
     ): Either<Error, UserSourcingEvent> {
         return identities.firstOrNull {
             it is WebauthnIdentity
-                && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
+                    && it.authenticator.attestedCredentialData.credentialId.contentEquals(credentialId)
         }
             .toOption()
             .toEither {
@@ -637,17 +637,15 @@ data class User internal constructor(
         qualificationId: QualificationId,
         correlationId: CorrelationId
     ): Either<Error, Unit> {
-        return Either.conditionally(
-            actor.hasQualification(qualificationId),
-            {
-                Error.InstructorPermissionNotFound(
-                    "Actor not has instructor permission for qualification $qualificationId.",
-                    qualificationId,
-                    correlationId = correlationId
-                )
-            },
-            {}
-        )
+        return if (!actor.hasQualification(qualificationId)) {
+            Error.InstructorPermissionNotFound(
+                "Actor not has instructor permission for qualification $qualificationId.",
+                qualificationId,
+                correlationId = correlationId
+            ).left()
+        } else {
+            Unit.right()
+        }
     }
 
     /**
@@ -797,13 +795,13 @@ data class User internal constructor(
         correlationId: CorrelationId,
         isAdmin: Boolean
     ): Either<Error, UserSourcingEvent> {
-        return Either.conditionally(this.isAdmin != isAdmin, {
+        return if (this.isAdmin == isAdmin) {
             if (isAdmin) {
-                Error.UserAlreadyAdmin("User already is admin.", correlationId)
+                Error.UserAlreadyAdmin("User already is admin.", correlationId).left()
             } else {
-                Error.UserAlreadyNotAdmin("User already not is admin.", correlationId)
+                Error.UserAlreadyNotAdmin("User already not is admin.", correlationId).left()
             }
-        }, {
+        } else {
             IsAdminChanged(
                 id,
                 aggregateVersion + 1,
@@ -811,8 +809,8 @@ data class User internal constructor(
                 clock.now(),
                 correlationId,
                 isAdmin
-            )
-        })
+            ).right()
+        }
     }
 
     fun delete(
@@ -828,11 +826,11 @@ data class User internal constructor(
         actor: Admin,
         correlationId: CorrelationId
     ): Either<Error, Unit> {
-        return Either.conditionally(
-            actor.userId != id,
-            { Error.UserIsActor("User is actor and cannot delete themselves.", correlationId) },
-            {}
-        )
+        return if (actor.userId == id) {
+            Error.UserIsActor("User is actor and cannot delete themselves.", correlationId).left()
+        } else {
+            Unit.right()
+        }
     }
 
     fun hasIdentity(userIdentity: UserIdentity) = identities.contains(userIdentity)
@@ -850,11 +848,13 @@ data class User internal constructor(
             .map { Instructor(id, name, it) }
             .toEither { Error.UserNotInstructor("User $id is not an instructor.") }
 
-    fun asAdmin(): Either<Error, Admin> = Either.conditionally(
-        isAdmin,
-        { Error.UserNotAdmin("User $id is not an admin.") },
-        { Admin(id, name) }
-    )
+    fun asAdmin(): Either<Error, Admin> =
+        if (!isAdmin) {
+            Error.UserNotAdmin("User $id is not an admin.").left()
+        } else {
+            Admin(id, name).right()
+        }
+
 
     class EventHistoryDoesNotStartWithUserCreated(message: String) : Exception(message)
 }

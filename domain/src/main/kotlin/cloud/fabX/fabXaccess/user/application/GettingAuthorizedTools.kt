@@ -45,7 +45,7 @@ class GettingAuthorizedTools(
                             }
                     }
             }
-            .tap { log.debug("...getAuthorizedTools done") }
-            .tapLeft { log.error("...getAuthorizedTools error: $it") }
+            .onRight { log.debug("...getAuthorizedTools done") }
+            .onLeft { log.error("...getAuthorizedTools error: $it") }
     }
 }

@@ -8,14 +8,14 @@ import io.ktor.server.response.respond
 
 internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHandler(result: Either<Error, T>) {
     result
-        .tap {
+        .onRight {
             if (it == Unit) {
                 respond(HttpStatusCode.NoContent)
             } else {
                 respond(it)
             }
         }
-        .tapLeft { handleError(it) }
+        .onLeft { handleError(it) }
 }
 
 internal suspend fun ApplicationCall.handleError(error: Error) {

@@ -51,7 +51,7 @@ class AddingUser(
                     .toEither { it.aggregateRootId }
                     .swap()
             }
-            .tap { log.debug("...addUser done") }
-            .tapLeft { log.error("...addUser error: $it") }
+            .onRight { log.debug("...addUser done") }
+            .onLeft { log.error("...addUser error: $it") }
     }
 }

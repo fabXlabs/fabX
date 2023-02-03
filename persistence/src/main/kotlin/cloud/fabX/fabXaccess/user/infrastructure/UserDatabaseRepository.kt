@@ -6,6 +6,7 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
+import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.jsonb
 import cloud.fabX.fabXaccess.common.model.Error
@@ -229,16 +230,14 @@ class UserDatabaseRepository(private val db: Database) :
                 aggregateRootId eq id.value
             }
         }
-        return Either.conditionally(
-            deletedRows > 0,
-            {
-                Error.UserNotFound(
-                    "User with id $id not found.",
-                    id
-                )
-            },
-            { deletedRows }
-        )
+        return if (deletedRows <= 0) {
+            Error.UserNotFound(
+                "User with id $id not found.",
+                id
+            ).left()
+        } else {
+            deletedRows.right()
+        }
     }
 
     private suspend fun <T> transaction(statement: Transaction.() -> T): T = withContext(Dispatchers.IO) {

@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.device.model
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Identity
@@ -35,38 +37,32 @@ data class MacSecretIdentity(val mac: String, val secret: String) : DeviceIdenti
             mac: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                mac.matches(macRegex),
-                {
-                    Error.MacInvalid(
-                        "Mac is invalid (has to match $macRegex).",
-                        mac,
-                        macRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!mac.matches(macRegex)) {
+                Error.MacInvalid(
+                    "Mac is invalid (has to match $macRegex).",
+                    mac,
+                    macRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
 
         private fun requireValidSecret(
             secret: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                secret.matches(secretRegex),
-                {
-                    Error.SecretInvalid(
-                        "Secret is invalid (has to match $secretRegex).",
-                        secret,
-                        secretRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!secret.matches(secretRegex)) {
+                Error.SecretInvalid(
+                    "Secret is invalid (has to match $secretRegex).",
+                    secret,
+                    secretRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
     }
-
-
 }

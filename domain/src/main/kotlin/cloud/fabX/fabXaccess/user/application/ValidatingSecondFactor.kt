@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -33,11 +35,11 @@ class ValidatingSecondFactor(
             .flatMap { onBehalfOfId ->
                 userRepository.getById(onBehalfOfId)
                     .flatMap {
-                        Either.conditionally(
-                            it.identities.contains(secondIdentity),
-                            { Error.InvalidSecondFactor("Invalid second factor provided.", correlationId) },
-                            { }
-                        )
+                        if (!it.identities.contains(secondIdentity)) {
+                            Error.InvalidSecondFactor("Invalid second factor provided.", correlationId).left()
+                        } else {
+                            Unit.right()
+                        }
                     }
             }
     }

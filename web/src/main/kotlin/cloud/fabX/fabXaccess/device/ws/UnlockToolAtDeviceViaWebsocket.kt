@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.device.ws
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -31,18 +33,16 @@ class UnlockToolAtDeviceViaWebsocket(
                 deviceWebsocketController.receiveDeviceResponse(deviceId, commandId, correlationId)
             }
             .flatMap {
-                Either.conditionally(
-                    it is ToolUnlockResponse,
-                    {
-                        Error.UnexpectedDeviceResponse(
-                            "Unexpected device response type.",
-                            deviceId,
-                            it.toString(),
-                            correlationId
-                        )
-                    },
-                    {}
-                )
+                if (it !is ToolUnlockResponse) {
+                    Error.UnexpectedDeviceResponse(
+                        "Unexpected device response type.",
+                        deviceId,
+                        it.toString(),
+                        correlationId
+                    ).left()
+                } else {
+                    Unit.right()
+                }
             }
     }
 }

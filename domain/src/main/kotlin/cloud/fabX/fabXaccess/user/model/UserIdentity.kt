@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Identity
@@ -34,33 +36,29 @@ data class UsernamePasswordIdentity(val username: String, val hash: String) : Us
             username: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                username.matches(usernameRegex),
-                {
-                    Error.UsernameInvalid(
-                        "Username is invalid (has to match $usernameRegex).",
-                        username,
-                        usernameRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!username.matches(usernameRegex)) {
+                Error.UsernameInvalid(
+                    "Username is invalid (has to match $usernameRegex).",
+                    username,
+                    usernameRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
 
         private fun requireValidHash(hash: String, correlationId: CorrelationId?): Either<Error, Unit> {
-            return Either.conditionally(
-                hash.matches(hashRegex),
-                {
-                    Error.PasswordHashInvalid(
-                        "Password hash is invalid (has to match $hashRegex).",
-                        hash,
-                        hashRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!hash.matches(hashRegex)) {
+                Error.PasswordHashInvalid(
+                    "Password hash is invalid (has to match $hashRegex).",
+                    hash,
+                    hashRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
     }
 }
@@ -96,36 +94,32 @@ data class CardIdentity(val cardId: String, val cardSecret: String) : UserIdenti
             cardId: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                cardId.matches(cardIdRegex),
-                {
-                    Error.CardIdInvalid(
-                        "Card id is invalid (has to match $cardIdRegex).",
-                        cardId,
-                        cardIdRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!cardId.matches(cardIdRegex)) {
+                Error.CardIdInvalid(
+                    "Card id is invalid (has to match $cardIdRegex).",
+                    cardId,
+                    cardIdRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
 
         private fun requireValidCardSecret(
             cardSecret: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                cardSecret.matches(cardSecretRegex),
-                {
-                    Error.CardSecretInvalid(
-                        "Card secret is invalid (has to match $cardSecretRegex).",
-                        cardSecret,
-                        cardSecretRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!cardSecret.matches(cardSecretRegex)) {
+                Error.CardSecretInvalid(
+                    "Card secret is invalid (has to match $cardSecretRegex).",
+                    cardSecret,
+                    cardSecretRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
     }
 }
@@ -154,18 +148,16 @@ data class PhoneNrIdentity(val phoneNr: String) : UserIdentity {
             phoneNr: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                phoneNr.matches(phoneNrRegex),
-                {
-                    Error.PhoneNrInvalid(
-                        "Phone number is invalid (has to match $phoneNrRegex).",
-                        phoneNr,
-                        phoneNrRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!phoneNr.matches(phoneNrRegex)) {
+                Error.PhoneNrInvalid(
+                    "Phone number is invalid (has to match $phoneNrRegex).",
+                    phoneNr,
+                    phoneNrRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
     }
 }
@@ -188,18 +180,16 @@ data class PinIdentity(val pin: String) : UserIdentity {
             pin: String,
             correlationId: CorrelationId?
         ): Either<Error, Unit> {
-            return Either.conditionally(
-                pin.matches(pinRegex),
-                {
-                    Error.PinInvalid(
-                        "Pin is invalid (has to match $pinRegex).",
-                        pin,
-                        pinRegex,
-                        correlationId
-                    )
-                },
-                {}
-            )
+            return if (!pin.matches(pinRegex)) {
+                Error.PinInvalid(
+                    "Pin is invalid (has to match $pinRegex).",
+                    pin,
+                    pinRegex,
+                    correlationId
+                ).left()
+            } else {
+                Unit.right()
+            }
         }
     }
 }

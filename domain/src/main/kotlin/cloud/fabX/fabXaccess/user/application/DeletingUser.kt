@@ -3,6 +3,8 @@ package cloud.fabX.fabXaccess.user.application
 import arrow.core.Either
 import arrow.core.Option
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -68,23 +70,21 @@ class DeletingUser(
         return requireUserIsSoftDeleted(correlationId, userId)
             .flatMap { hardDeletingUser.hardDelete(userId) }
             .map { }
-            .tap { log.debug("...hardDeleteUser done") }
-            .tapLeft { log.error("...hardDeleteUser error: $it") }
+            .onRight { log.debug("...hardDeleteUser done") }
+            .onLeft { log.error("...hardDeleteUser error: $it") }
     }
 
     private suspend fun requireUserIsSoftDeleted(
         correlationId: CorrelationId,
         userId: UserId
     ): Either<Error, Unit> =
-        Either.conditionally(
-            gettingSoftDeletedUsers.getSoftDeleted().map { it.id }.contains(userId),
-            {
-                Error.SoftDeletedUserNotFound(
-                    "Soft deleted user not found.",
-                    userId,
-                    correlationId
-                )
-            },
-            { }
-        )
+        if (!gettingSoftDeletedUsers.getSoftDeleted().map { it.id }.contains(userId)) {
+            Error.SoftDeletedUserNotFound(
+                "Soft deleted user not found.",
+                userId,
+                correlationId
+            ).left()
+        } else {
+            Unit.right()
+        }
 }

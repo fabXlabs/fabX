@@ -61,7 +61,7 @@ class AddingTool(
                     .toEither { it.aggregateRootId }
                     .swap()
             }
-            .tap { log.debug("...addTool done") }
-            .tapLeft { log.debug("...addTool error: $it") }
+            .onRight { log.debug("...addTool done") }
+            .onLeft { log.debug("...addTool error: $it") }
     }
 }

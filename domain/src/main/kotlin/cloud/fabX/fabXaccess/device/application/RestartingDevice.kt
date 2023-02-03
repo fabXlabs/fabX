@@ -26,7 +26,7 @@ class RestartingDevice(
 
         return deviceRepository.getById(deviceId)
             .flatMap { restartDevice.restartDevice(deviceId, correlationId) }
-            .tap { log.debug("...restartDevice done") }
-            .tapLeft { log.error("...restartDevice error: $it") }
+            .onRight { log.debug("...restartDevice done") }
+            .onLeft { log.error("...restartDevice error: $it") }
     }
 }

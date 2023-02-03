@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.device.ws
 
 import arrow.core.Either
 import arrow.core.flatMap
-import arrow.core.getOrHandle
+import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
@@ -92,7 +92,7 @@ class DeviceWebsocketController(
                                         deserializeDeviceToServerCommand(text)
                                             .map { command ->
                                                 command.handle(deviceActor, commandHandler)
-                                                    .getOrHandle { errorHandler(command.commandId, it) }
+                                                    .getOrElse { errorHandler(command.commandId, it) }
                                                     .let {
                                                         val response = serializeResponse(it)
                                                         logger.debug("Sending response to ${deviceActor.deviceId}: $response")
@@ -101,7 +101,7 @@ class DeviceWebsocketController(
                                             }
                                             .swap()
                                     }
-                                    .tap {
+                                    .onLeft {
                                         logger.warn("Not able to deserialize incoming message from $deviceActor: $text")
                                     }
                             }

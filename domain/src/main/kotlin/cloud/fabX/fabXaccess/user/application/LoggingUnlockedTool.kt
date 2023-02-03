@@ -23,10 +23,10 @@ class LoggingUnlockedTool(loggerFactory: LoggerFactory) {
         return actor.onBehalfOf.toOption()
             .toEither { Error.NotAuthenticated("Required authentication not found.", correlationId) }
             .map { it.userId }
-            .tap {
+            .onRight {
                 log.info("User $it unlocked tool $toolId")
             }
-            .tapLeft { log.error("Error while logging tool unlock ($actor, $toolId): $it") }
+            .onLeft { log.error("Error while logging tool unlock ($actor, $toolId): $it") }
             .map { }
     }
 }

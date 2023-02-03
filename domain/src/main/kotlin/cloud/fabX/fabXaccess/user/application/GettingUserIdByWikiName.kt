@@ -30,7 +30,7 @@ class GettingUserIdByWikiName(
 
         return gettingUserByWikiName.getByWikiName(wikiName)
             .map { it.id }
-            .tap { log.debug("...getUserIdByWikiName done") }
-            .tapLeft { log.error("...getUserIdByWikiName error: $it") }
+            .onRight { log.debug("...getUserIdByWikiName done") }
+            .onLeft { log.error("...getUserIdByWikiName error: $it") }
     }
 }

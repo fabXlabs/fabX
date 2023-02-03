@@ -38,8 +38,8 @@ class GettingConfiguration(
                     .map { entries -> entries.toMap() }
                     .map { pinToTool -> Result(device = it, attachedTools = pinToTool) }
             }
-            .tap { log.debug("...getConfiguration successful") }
-            .tapLeft { log.error("...getConfiguration error: $it") }
+            .onRight { log.debug("...getConfiguration successful") }
+            .onLeft { log.error("...getConfiguration error: $it") }
     }
 
     data class Result(

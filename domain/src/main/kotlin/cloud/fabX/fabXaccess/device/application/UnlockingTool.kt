@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
@@ -39,8 +41,8 @@ class UnlockingTool(
             .flatMap { toolRepository.getToolById(toolId) }
             .flatMap { requireToolTypeUnlock(it, correlationId) }
             .flatMap { unlockingToolAtDevice.unlockTool(deviceId, toolId, correlationId) }
-            .tap { log.debug("...unlockTool done") }
-            .tapLeft { log.error("...unlockTool error: $it") }
+            .onRight { log.debug("...unlockTool done") }
+            .onLeft { log.error("...unlockTool error: $it") }
     }
 
     private fun requireToolAttachedToDevice(
@@ -48,28 +50,29 @@ class UnlockingTool(
         toolId: ToolId,
         correlationId: CorrelationId
     ): Either<Error, Unit> =
-        Either.conditionally(device.hasAttachedTool(toolId),
-            {
-                Error.ToolNotAttachedToDevice(
-                    "Tool $toolId not attached to device ${device.id}.",
-                    device.id,
-                    toolId,
-                    correlationId
-                )
-            },
-            {}
-        )
+        if (!device.hasAttachedTool(toolId)) {
+            Error.ToolNotAttachedToDevice(
+                "Tool $toolId not attached to device ${device.id}.",
+                device.id,
+                toolId,
+                correlationId
+            ).left()
+        } else {
+            Unit.right()
+        }
 
     private fun requireToolTypeUnlock(
         tool: Tool,
         correlationId: CorrelationId
     ): Either<Error, Unit> =
-        Either.conditionally(tool.type == ToolType.UNLOCK, {
+        if (tool.type != ToolType.UNLOCK) {
             Error.ToolTypeNotUnlock(
                 "Cannot remotely unlock: Tool type is not unlock.",
                 tool.id,
                 tool.type,
                 correlationId
-            )
-        }, {})
+            ).left()
+        } else {
+            Unit.right()
+        }
 }
