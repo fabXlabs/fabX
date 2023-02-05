@@ -28,5 +28,6 @@ class LiquibaseMigrationHandler(
         val database = openConnection()
         val liquibase = Liquibase(CHANGELOG_FILE, ClassLoaderResourceAccessor(), database)
         liquibase.update(Contexts(), LabelExpression())
+        database.close()
     }
 }
