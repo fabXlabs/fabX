@@ -101,6 +101,7 @@ class DeviceWebsocketController(
                                             }
                                             .swap()
                                     }
+                                    .swap()
                                     .onLeft {
                                         logger.warn("Not able to deserialize incoming message from $deviceActor: $text")
                                     }
