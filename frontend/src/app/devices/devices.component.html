@@ -24,7 +24,11 @@
         <tr routerLink="/device/{{device.id}}" class="cursor-pointer">
             <td>{{device.name}}</td>
             <td>{{device.attachedTools | attachedToolNames}}</td>
-            <td>{{device.actualFirmwareVersion}}</td>
+            <td
+                [style.color]="device.actualFirmwareVersion !== device.desiredFirmwareVersion ? 'var(--red-500)' : 'var(--surface-900)'"
+            >
+                {{device.actualFirmwareVersion ?? "-"}}
+            </td>
         </tr>
     </ng-template>
 
