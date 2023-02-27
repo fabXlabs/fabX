@@ -50,6 +50,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
+import cloud.fabX.fabXaccess.user.application.UserMetrics
 import cloud.fabX.fabXaccess.user.application.ValidatingSecondFactor
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
@@ -67,7 +68,15 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingConfiguration(instance(), instance(), instance(), instance()) }
     bindSingleton { GettingDevice(instance(), instance()) }
     bindSingleton { RestartingDevice(instance(), instance(), instance()) }
-    bindSingleton { UnlockingTool(instance(), instance(), instance(), instance()) }
+    bindSingleton {
+        UnlockingTool(
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance(tag = "toolUsageCounter")
+        )
+    }
     bindSingleton { UpdatingDeviceFirmware(instance(), instance(), instance()) }
 
     // qualification
@@ -100,7 +109,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
     bindSingleton { GettingUserIdByWikiName(instance(), instance()) }
-    bindSingleton { LoggingUnlockedTool(instance()) }
+    bindSingleton { LoggingUnlockedTool(instance(tag = "toolUsageCounter"), instance(), instance()) }
     bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingMemberQualification(instance(), instance(), instance()) }
@@ -109,6 +118,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingWebauthnIdentity(instance(), instance(), instance()) }
     bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { UserMetrics(instance()) }
     bindSingleton { ValidatingSecondFactor(instance(), instance()) }
 
     bindSingleton { { newDeviceId() } }

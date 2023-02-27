@@ -83,6 +83,8 @@ private fun testSetup(): WebApp {
 
         bindInstance(tag = "firmwareDirectory") { File("/tmp/fabXIntegrationTest") }
 
+        bindInstance(tag = "metricsPassword") { "supersecretmetricspassword" }
+
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
     }

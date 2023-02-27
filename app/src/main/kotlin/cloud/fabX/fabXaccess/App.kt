@@ -34,9 +34,9 @@ val app = DI {
 
     bindConstant(tag = "port") { config.port }
 
-    bindInstance(tag = "dburl") { config.dbUrl }
-    bindInstance(tag = "dbuser") { config.dbUser }
-    bindInstance(tag = "dbpassword") { config.dbPassword }
+    bindConstant(tag = "dburl") { config.dbUrl }
+    bindConstant(tag = "dbuser") { config.dbUser }
+    bindConstant(tag = "dbpassword") { config.dbPassword }
 
     bindConstant(tag = "jwtIssuer") { config.jwtIssuer }
     bindConstant(tag = "jwtAudience") { config.jwtAudience }
@@ -46,9 +46,11 @@ val app = DI {
     bindConstant(tag = "webauthnRpId") { config.webauthnRpId }
     bindConstant(tag = "webauthnRpName") { config.webauthnRpName }
 
-    bindInstance(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
+    bindConstant(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
 
     bindInstance(tag = "firmwareDirectory") { File(config.firmwareDirectory) }
+
+    bindInstance(tag = "metricsPassword") { config.metricsPassword }
 
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }

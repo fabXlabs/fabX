@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.SystemActor
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
@@ -25,6 +26,14 @@ class GettingDevice(
     ): Set<Device> {
         log.debug("getAll (actor: $actor, correlationId: $correlationId)...")
 
+        return deviceRepository.getAll()
+    }
+
+    suspend fun getAll(
+        actor: SystemActor,
+        correlationId: CorrelationId
+    ): Set<Device> {
+        // no logging as it is used by metrics endpoint
         return deviceRepository.getAll()
     }
 

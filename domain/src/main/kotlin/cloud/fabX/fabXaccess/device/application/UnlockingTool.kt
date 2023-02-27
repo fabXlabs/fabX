@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.TaggedCounter
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
@@ -24,7 +25,8 @@ class UnlockingTool(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
     private val toolRepository: GettingToolById,
-    private val unlockingToolAtDevice: UnlockToolAtDevice
+    private val unlockingToolAtDevice: UnlockToolAtDevice,
+    private val toolUsageCounter: TaggedCounter<ToolId>
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
@@ -39,8 +41,16 @@ class UnlockingTool(
         return deviceRepository.getById(deviceId)
             .flatMap { requireToolAttachedToDevice(it, toolId, correlationId) }
             .flatMap { toolRepository.getToolById(toolId) }
-            .flatMap { requireToolTypeUnlock(it, correlationId) }
-            .flatMap { unlockingToolAtDevice.unlockTool(deviceId, toolId, correlationId) }
+            .flatMap { tool -> requireToolTypeUnlock(tool, correlationId).map { tool } }
+            .flatMap { tool -> unlockingToolAtDevice.unlockTool(deviceId, toolId, correlationId).map { tool } }
+            .map {
+                toolUsageCounter.increment(it.id, {
+                    mapOf(
+                        "toolId" to it.id.serialize(),
+                        "toolName" to it.name
+                    )
+                })
+            }
             .onRight { log.debug("...unlockTool done") }
             .onLeft { log.error("...unlockTool error: $it") }
     }

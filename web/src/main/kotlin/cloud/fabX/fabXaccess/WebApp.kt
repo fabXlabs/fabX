@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.common.rest.MetricsController
+import cloud.fabX.fabXaccess.common.rest.MetricsPrincipal
 import cloud.fabX.fabXaccess.common.rest.Slf4jLogger
 import cloud.fabX.fabXaccess.common.rest.extractCause
 import cloud.fabX.fabXaccess.device.rest.DeviceController
@@ -29,6 +31,7 @@ import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.angular
 import io.ktor.server.http.content.singlePageApplication
+import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.callloging.CallLogging
@@ -46,6 +49,7 @@ import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
+import io.micrometer.prometheus.PrometheusMeterRegistry
 import java.time.Duration
 import kotlinx.serialization.json.Json
 import org.slf4j.MDC
@@ -57,6 +61,7 @@ class WebApp(
     private val jwtIssuer: String,
     private val jwtAudience: String,
     private val jwtHMAC256Secret: String,
+    private val metricsPassword: String,
     private val authenticationService: AuthenticationService,
     private val qualificationController: QualificationController,
     private val toolController: ToolController,
@@ -64,7 +69,9 @@ class WebApp(
     private val deviceWebsocketController: DeviceWebsocketController,
     private val deviceFirmwareUpdateController: DeviceFirmwareUpdateController,
     private val userController: UserController,
-    private val loginController: LoginController
+    private val loginController: LoginController,
+    private val metricsController: MetricsController,
+    private val appMicrometerRegistry: PrometheusMeterRegistry,
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
 
@@ -96,6 +103,7 @@ class WebApp(
 
         install(HttpsRedirect) {
             exclude { it.request.origin.serverHost == "localhost" }
+            exclude { it.request.origin.serverHost == "host.containers.internal" }
         }
         install(XForwardedHeaders)
 
@@ -113,6 +121,10 @@ class WebApp(
             exception<BadRequestException> { call, cause ->
                 call.respond(HttpStatusCode.BadRequest, extractCause(cause))
             }
+        }
+
+        install(MicrometerMetrics) {
+            registry = appMicrometerRegistry
         }
 
         install(Authentication) {
@@ -134,6 +146,18 @@ class WebApp(
 
                 validate { jwtCredential ->
                     jwtCredential.subject?.let { authenticationService.jwt(it) }
+                }
+            }
+            basic("metrics-basic") {
+                realm = "fabX metrics"
+                validate { credentials ->
+                    if (credentials.name == "metrics"
+                        && credentials.password == metricsPassword
+                    ) {
+                        MetricsPrincipal()
+                    } else {
+                        null
+                    }
                 }
             }
         }
@@ -163,6 +187,9 @@ class WebApp(
                     else -> "${status as HttpStatusCode} (${delayMillis}ms): ${call.request.toLogStringWithColors()}"
                 }
             }
+            filter { call ->
+                call.request.path().startsWith("/api")
+            }
         }
 
         routing {
@@ -182,11 +209,15 @@ class WebApp(
                 }
                 loginController.routesWebauthn(this)
             }
+            authenticate("metrics-basic") {
+                metricsController.routes(this)
+            }
         }
     }
 
     fun start() {
         log.debug("starting WebApp...")
+
         embeddedServer(Netty, environment = applicationEngineEnvironment {
 
             module {

@@ -47,6 +47,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingPhoneNrIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
+import cloud.fabX.fabXaccess.user.application.UserMetrics
 import cloud.fabX.fabXaccess.user.model.GettingUserById
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.WebauthnRepository
@@ -145,6 +146,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
         bindInstance { Mockito.mock(DeviceNotificationHandler::class.java) }
 
+        bindInstance { Mockito.mock(UserMetrics::class.java) }
         bindInstance { Mockito.mock(WebauthnRepository::class.java) }
 
         bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
@@ -152,6 +154,8 @@ internal fun withTestApp(
         bindConstant(tag = "webauthnRpName") { "fabX" }
 
         bindConstant(tag = "firmwareDirectory") { File("/tmp/fabXtest") }
+
+        bindInstance(tag = "metricsPassword") { "supersecretmetricspassword" }
 
         diSetup()
     }

@@ -178,6 +178,8 @@ class DeviceWebsocketController(
 
     internal fun newCommandId(): Int = Random.nextInt()
 
+    internal fun isConnected(deviceId: DeviceId): Boolean = connections.containsKey(deviceId)
+
     internal suspend fun sendCommand(
         deviceId: DeviceId,
         command: ServerToDeviceCommand,

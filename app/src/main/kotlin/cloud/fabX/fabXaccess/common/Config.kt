@@ -15,7 +15,8 @@ data class Config(
     val webauthnRpId: String,
     val webauthnRpName: String,
     val deviceReceiveTimeoutMillis: Long,
-    val firmwareDirectory: String
+    val firmwareDirectory: String,
+    val metricsPassword: String
 ) {
     companion object {
         fun fromEnv(): Config {
@@ -28,6 +29,7 @@ data class Config(
             val webauthnRpName = readEnvString("WEBAUTHN_RP_NAME", "fabX")
             val deviceReceiveTimeoutMillis = readEnvLong("DEVICE_RECEIVE_TIMEOUT", 5000L)
             val firmwareDirectory = readEnvString("FIRMWARE_DIRECTORY", "/tmp/fabXfirmware")
+            val metricsPassword = readEnvString("METRICS_PASSWORD", Random.nextBytes(32).decodeToString())
 
             return System.getenv("DATABASE_URL").takeUnless { it.isNullOrEmpty() }
                 ?.let {
@@ -49,7 +51,8 @@ data class Config(
                         webauthnRpId,
                         webauthnRpName,
                         deviceReceiveTimeoutMillis,
-                        firmwareDirectory
+                        firmwareDirectory,
+                        metricsPassword
                     )
                 }
                 ?: run {
@@ -69,7 +72,8 @@ data class Config(
                         webauthnRpId,
                         webauthnRpName,
                         deviceReceiveTimeoutMillis,
-                        firmwareDirectory
+                        firmwareDirectory,
+                        metricsPassword
                     )
                 }
         }

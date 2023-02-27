@@ -43,8 +43,9 @@ import io.ktor.util.InternalAPI
 import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.Test
 
-// TODO remove InternalAPI annotation (no longer necessary?)
+// TODO remove InternalAPI annotation (no longer necessary!)
 @InternalAPI
+// TODO remove ExperimentalSerializationApi annotation (no longer necessary?)
 @ExperimentalSerializationApi
 internal class UserIntegrationTest {
 

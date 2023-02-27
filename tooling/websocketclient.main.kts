@@ -2,7 +2,10 @@
 @file:DependsOn("io.ktor:ktor-client-auth-jvm:1.6.7")
 @file:DependsOn("io.ktor:ktor-client-cio-jvm:1.6.7")
 @file:DependsOn("io.ktor:ktor-client-websockets-jvm:1.6.7")
+@file:DependsOn("com.beust:klaxon:5.6")
 
+import com.beust.klaxon.JsonObject
+import com.beust.klaxon.Parser
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.features.auth.Auth
@@ -17,6 +20,7 @@ import io.ktor.http.cio.websocket.readBytes
 import io.ktor.http.cio.websocket.readReason
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.cio.websocket.send
+import java.lang.StringBuilder
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -26,7 +30,7 @@ val client = HttpClient(CIO) {
     install(Auth) {
         basic {
             credentials {
-                BasicAuthCredentials(username = "aabbcc000000", password = "supersecret")
+                BasicAuthCredentials(username = "AABBCC000000", password = "a2a50c75e271104dcbaeda71c2e9a7fc")
             }
         }
     }
@@ -35,16 +39,43 @@ val client = HttpClient(CIO) {
 suspend fun DefaultWebSocketSession.outputMessages() {
     try {
         for (frame in incoming) {
-            when (frame) {
-                is Frame.Binary -> println("Binary: ${frame.readBytes()}")
-                is Frame.Text -> println("Text: ${frame.readText()}")
-                is Frame.Close -> println("Close: ${frame.readReason()}")
-                is Frame.Ping -> println("Ping: ${frame.readBytes()}")
-                is Frame.Pong -> println("Pong: ${frame.readBytes()}")
+            try {
+                when (frame) {
+                    is Frame.Binary -> println("Binary: ${frame.readBytes()}")
+                    is Frame.Text -> {
+                        val text = frame.readText()
+                        println("Text: $text")
+
+                        val parser: Parser = Parser.default()
+                        val json: JsonObject = parser.parse(StringBuilder(text)) as JsonObject
+
+                        if (json.string("type") == "cloud.fabX.fabXaccess.device.ws.UnlockTool") {
+                            val commandId = json.long("commandId")!!
+                            val response = "{" +
+                                    "\"type\":\"cloud.fabX.fabXaccess.device.ws.ToolUnlockResponse\"," +
+                                    "\"commandId\":$commandId" +
+                                    "}"
+                            println("Sending response: $response")
+                            try {
+                                send(response)
+                            } catch (e: Exception) {
+                                println("error while sending response: " + e.localizedMessage)
+                                e.printStackTrace()
+                            }
+                        }
+                    }
+
+                    is Frame.Close -> println("Close: ${frame.readReason()}")
+                    is Frame.Ping -> println("Ping: ${frame.readBytes()}")
+                    is Frame.Pong -> println("Pong: ${frame.readBytes()}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                println("inner error while receiving: " + e.localizedMessage)
             }
         }
     } catch (e: Exception) {
-        println("error while receiving: " + e.localizedMessage)
+        println("outer error while receiving: " + e.localizedMessage)
     }
 }
 
