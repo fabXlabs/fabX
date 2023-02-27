@@ -10,6 +10,8 @@ data class Device(
     val name: String,
     val background: String,
     val backupBackendUrl: String,
+    val actualFirmwareVersion: String?,
+    val desiredFirmwareVersion: String?,
     val attachedTools: Map<Int, String>
 )
 
@@ -19,6 +21,8 @@ fun cloud.fabX.fabXaccess.device.model.Device.toRestModel(): Device = Device(
     name = name,
     background = background,
     backupBackendUrl = backupBackendUrl,
+    actualFirmwareVersion = actualFirmwareVersion,
+    desiredFirmwareVersion = desiredFirmwareVersion,
     attachedTools = attachedTools.mapValues { it.value.serialize() }
 )
 
@@ -36,6 +40,11 @@ data class DeviceDetails(
     val name: ChangeableValue<String>?,
     val background: ChangeableValue<String>?,
     val backupBackendUrl: ChangeableValue<String>?
+)
+
+@Serializable
+data class DesiredFirmwareVersion(
+    val desiredFirmwareVersion: String
 )
 
 @Serializable

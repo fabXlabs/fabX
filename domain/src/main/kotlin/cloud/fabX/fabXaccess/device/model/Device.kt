@@ -6,6 +6,8 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.flatMap
 import arrow.core.getOrNone
+import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -30,6 +32,8 @@ data class Device internal constructor(
     val name: String,
     val background: String,
     val backupBackendUrl: String,
+    val actualFirmwareVersion: String?,
+    val desiredFirmwareVersion: String?,
     val attachedTools: Map<Int, ToolId>,
     internal val identity: MacSecretIdentity
 ) : AggregateRootEntity<DeviceId> {
@@ -102,6 +106,52 @@ data class Device internal constructor(
             background,
             backupBackendUrl
         )
+    }
+
+    fun setActualFirmwareVersion(
+        actor: DeviceActor,
+        clock: Clock,
+        correlationId: CorrelationId,
+        actualFirmwareVersion: String
+    ): Either<Error, DeviceSourcingEvent> {
+        return this.requireSelfActing(actor, correlationId)
+            .map {
+                ActualFirmwareVersionChanged(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId,
+                    actualFirmwareVersion
+                )
+            }
+    }
+
+    fun changeDesiredFirmwareVersion(
+        actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+        desiredFirmwareVersion: String
+    ): DeviceSourcingEvent {
+        return DesiredFirmwareVersionChanged(
+            id,
+            aggregateVersion + 1,
+            actor.id,
+            clock.now(),
+            correlationId,
+            desiredFirmwareVersion
+        )
+    }
+
+    private fun requireSelfActing(
+        actor: DeviceActor,
+        correlationId: CorrelationId
+    ): Either<Error, Unit> {
+        return if (actor.id == this.id) {
+            Unit.right()
+        } else {
+            Error.DeviceNotActor("Device not actor", correlationId).left()
+        }
     }
 
     suspend fun attachTool(

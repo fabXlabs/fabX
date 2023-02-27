@@ -101,6 +101,8 @@ internal class DeviceControllerGetTest {
             "https://backup.example.com",
             "aabbccddee01",
             "secret1",
+            "1.2.3",
+            "4.5.6",
             mapOf(1 to toolId1)
         )
 
@@ -113,6 +115,8 @@ internal class DeviceControllerGetTest {
             "https://backup.example.com",
             "aabbccddee02",
             "secret2",
+            "1.2.3",
+            "42.0.0",
             mapOf(1 to toolId1, 2 to toolId2)
         )
 
@@ -130,6 +134,8 @@ internal class DeviceControllerGetTest {
             "device1",
             "https://example.com/device1",
             "https://backup.example.com",
+            "1.2.3",
+            "4.5.6",
             mapOf(1 to toolId1.serialize())
         )
 
@@ -139,6 +145,8 @@ internal class DeviceControllerGetTest {
             "device2",
             "https://example.com/device2",
             "https://backup.example.com",
+            "1.2.3",
+            "42.0.0",
             mapOf(1 to toolId1.serialize(), 2 to toolId2.serialize())
         )
 
@@ -167,6 +175,8 @@ internal class DeviceControllerGetTest {
             "https://backup.example.com",
             "aabbccddee00",
             "secret00",
+            "1.2.3",
+            "42.0.0",
             mapOf(1 to toolId)
         )
 
@@ -184,6 +194,8 @@ internal class DeviceControllerGetTest {
             "device",
             "https://example.com/device",
             "https://backup.example.com",
+            "1.2.3",
+            "42.0.0",
             mapOf(1 to toolId.serialize())
         )
 

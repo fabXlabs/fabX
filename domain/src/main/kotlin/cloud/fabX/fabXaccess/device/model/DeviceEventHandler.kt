@@ -22,6 +22,8 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
                 name = event.name,
                 background = event.background,
                 backupBackendUrl = event.backupBackendUrl,
+                actualFirmwareVersion = null,
+                desiredFirmwareVersion = null,
                 identity = MacSecretIdentity(event.mac, event.secret),
                 attachedTools = mapOf()
             )
@@ -38,6 +40,30 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
                 name = e.name.valueToChangeTo(d.name),
                 background = e.background.valueToChangeTo(d.background),
                 backupBackendUrl = e.backupBackendUrl.valueToChangeTo(d.backupBackendUrl)
+            )
+        )
+    }
+
+    override fun handle(
+        event: ActualFirmwareVersionChanged,
+        device: Option<Device>
+    ): Option<Device> = requireSomeDeviceWithSameIdAnd(event, device) { e, d ->
+        Some(
+            d.copy(
+                aggregateVersion = e.aggregateVersion,
+                actualFirmwareVersion = e.actualFirmwareVersion
+            )
+        )
+    }
+
+    override fun handle(
+        event: DesiredFirmwareVersionChanged,
+        device: Option<Device>
+    ): Option<Device> = requireSomeDeviceWithSameIdAnd(event, device) { e, d ->
+        Some(
+            d.copy(
+                aggregateVersion = e.aggregateVersion,
+                desiredFirmwareVersion = e.desiredFirmwareVersion
             )
         )
     }

@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.device.rest.DesiredFirmwareVersion
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
 import cloud.fabX.fabXaccess.device.rest.DeviceDetails
@@ -120,6 +121,8 @@ internal class DeviceIntegrationTest {
                     "newDevice",
                     "https://example.com/bg.bmp",
                     "https://backup.example.com",
+                    null,
+                    null,
                     mapOf()
                 )
             )
@@ -202,6 +205,8 @@ internal class DeviceIntegrationTest {
                     "newName",
                     "https://example.com/newbg.bmp",
                     "https://backup.example.com",
+                    null,
+                    null,
                     mapOf()
                 )
             )
@@ -233,6 +238,33 @@ internal class DeviceIntegrationTest {
                 "Device with id DeviceId(value=$invalidDeviceId) not found.",
                 mapOf("deviceId" to invalidDeviceId)
             )
+    }
+
+    @Test
+    fun `when setting desired firmware version then returns http no content`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "AA00BB11CC22")
+
+        val requestBody = DesiredFirmwareVersion("42.0.0")
+
+        // when
+        val response = c().put("/api/v1/device/$deviceId/desired-firmware-version") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        assertThat(response.bodyAsText()).isEmpty()
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+
+        val responseGet = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
+        }
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Device>())
+            .transform { it.desiredFirmwareVersion }
+            .isEqualTo("42.0.0")
     }
 
     @Test
@@ -320,6 +352,8 @@ internal class DeviceIntegrationTest {
                     "device",
                     "https://example.com/bg.bmp",
                     "https://backup.example.com",
+                    null,
+                    null,
                     mapOf(2 to toolId)
                 )
             )

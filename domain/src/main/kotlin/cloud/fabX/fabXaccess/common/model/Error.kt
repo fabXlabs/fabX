@@ -110,6 +110,11 @@ sealed class Error(
     data class UserNotInstructor(override val message: String) : Error(message)
     data class UserNotAdmin(override val message: String) : Error(message)
 
+    data class DeviceNotActor(
+        override val message: String,
+        override val correlationId: CorrelationId
+    ) : Error(message, correlationId = correlationId)
+
     data class MemberQualificationNotFound(
         override val message: String,
         val qualificationId: QualificationId,

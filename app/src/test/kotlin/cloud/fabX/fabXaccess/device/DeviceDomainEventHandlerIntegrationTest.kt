@@ -46,6 +46,8 @@ internal class DeviceDomainEventHandlerIntegrationTest {
                     "device",
                     "https://example.com/bg.bmp",
                     "https://backup.example.com",
+                    null,
+                    null,
                     mapOf()
                 )
             )
