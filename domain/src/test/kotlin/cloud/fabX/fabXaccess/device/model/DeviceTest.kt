@@ -51,6 +51,8 @@ internal class DeviceTest {
             "Woodworking",
             "https://example.com/image.bmp",
             "https://fabx-backup.example.com",
+            null,
+            null,
             mapOf(),
             MacSecretIdentity("aabbccddeeff", "supersecret")
         )
@@ -186,6 +188,8 @@ internal class DeviceTest {
                     "name2",
                     "background1",
                     "backupUrl3",
+                    null,
+                    null,
                     mapOf(),
                     MacSecretIdentity("aabbccddeeff", "supersecret")
                 )
@@ -360,6 +364,83 @@ internal class DeviceTest {
 
         // then
         assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `when setting desired firmware version then expected sourcing event is returned`() {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = DesiredFirmwareVersionChanged(
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
+            "42.0.0"
+        )
+
+        // when
+        val result = device.changeDesiredFirmwareVersion(
+            adminActor,
+            fixedClock,
+            correlationId,
+            desiredFirmwareVersion = "42.0.0"
+        )
+
+        // then
+        assertThat(result).isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `when setting actual firmware version then expected sourcing event is returned`() {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = ActualFirmwareVersionChanged(
+            deviceId,
+            aggregateVersion + 1,
+            deviceId,
+            fixedInstant,
+            correlationId,
+            "42.0.0"
+        )
+
+        // when
+        val result = device.setActualFirmwareVersion(
+            device.asActor(),
+            fixedClock,
+            correlationId,
+            actualFirmwareVersion = "42.0.0"
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given other actor when setting actual firmware version then returns error`() {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
+        val otherDevice = DeviceFixture.arbitrary()
+
+        // when
+        val result = device.setActualFirmwareVersion(
+            otherDevice.asActor(),
+            fixedClock,
+            correlationId,
+            actualFirmwareVersion = "42.0.0"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.DeviceNotActor(
+                "Device not actor",
+                correlationId
+            ))
     }
 
     @Test
@@ -673,6 +754,8 @@ internal class DeviceTest {
             "Woodworking",
             "https://example.com/image.bmp",
             "https://fabx-backup.example.com",
+            "1.2.3",
+            "4.5.6",
             mapOf(3 to ToolIdFixture.static(345)),
             MacSecretIdentity("aabbccddeeff", "supersecret")
         )
@@ -687,6 +770,8 @@ internal class DeviceTest {
                     "name=Woodworking, " +
                     "background=https://example.com/image.bmp, " +
                     "backupBackendUrl=https://fabx-backup.example.com, " +
+                    "actualFirmwareVersion=1.2.3, " +
+                    "desiredFirmwareVersion=4.5.6, " +
                     "attachedTools={3=ToolId(value=b6f53dde-e176-3672-8b65-819b4c168e6f)}, " +
                     "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret))"
         )

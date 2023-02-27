@@ -23,6 +23,8 @@ sealed class DeviceSourcingEvent : SourcingEvent {
     interface EventHandler {
         fun handle(event: DeviceCreated, device: Option<Device>): Option<Device>
         fun handle(event: DeviceDetailsChanged, device: Option<Device>): Option<Device>
+        fun handle(event: ActualFirmwareVersionChanged, device: Option<Device>): Option<Device>
+        fun handle(event: DesiredFirmwareVersionChanged, device: Option<Device>): Option<Device>
         fun handle(event: ToolAttached, device: Option<Device>): Option<Device>
         fun handle(event: ToolDetached, device: Option<Device>): Option<Device>
         fun handle(event: DeviceDeleted, device: Option<Device>): Option<Device>
@@ -57,6 +59,34 @@ data class DeviceDetailsChanged(
     val name: ChangeableValue<String>,
     val background: ChangeableValue<String>,
     val backupBackendUrl: ChangeableValue<String>
+) : DeviceSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, device: Option<Device>): Option<Device> =
+        eventHandler.handle(this, device)
+}
+
+@Serializable
+data class ActualFirmwareVersionChanged(
+    override val aggregateRootId: DeviceId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val actualFirmwareVersion: String
+) : DeviceSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, device: Option<Device>): Option<Device> =
+        eventHandler.handle(this, device)
+}
+
+@Serializable
+data class DesiredFirmwareVersionChanged(
+    override val aggregateRootId: DeviceId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val desiredFirmwareVersion: String
 ) : DeviceSourcingEvent() {
 
     override fun processBy(eventHandler: EventHandler, device: Option<Device>): Option<Device> =

@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
+import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
@@ -30,6 +31,7 @@ class DeviceController(
     private val gettingDevice: GettingDevice,
     private val addingDevice: AddingDevice,
     private val changingDevice: ChangingDevice,
+    private val changingFirmwareVersion: ChangingFirmwareVersion,
     private val deletingDevice: DeletingDevice,
     private val attachingTool: AttachingTool,
     private val detachingTool: DetachingTool,
@@ -110,6 +112,26 @@ class DeviceController(
                                         )
                                             .toEither { }
                                             .swap()
+                                    }
+                            )
+                        }
+                }
+            }
+
+            put("/{id}/desired-firmware-version") {
+                readBody<DesiredFirmwareVersion>()?.let {
+                    readUUIDParameter("id")
+                        ?.let { DeviceId(it) }
+                        ?.let { id ->
+                            call.respondWithErrorHandler(
+                                readAdminAuthentication()
+                                    .flatMap { admin ->
+                                        changingFirmwareVersion.changeDesiredFirmwareVersion(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            it.desiredFirmwareVersion
+                                        )
                                     }
                             )
                         }

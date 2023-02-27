@@ -25,6 +25,8 @@ internal class DeviceTest {
             "https://backup.example.com",
             "aa11bb22cc33",
             "secret123",
+            "1.2.3",
+            "42.0.0",
             mapOf(
                 1 to toolId1,
                 2 to toolId2,
@@ -38,6 +40,8 @@ internal class DeviceTest {
             "device123",
             "https://example.com/background123.bmp",
             "https://backup.example.com",
+            "1.2.3",
+            "42.0.0",
             mapOf(
                 1 to toolId1.serialize(),
                 2 to toolId2.serialize(),

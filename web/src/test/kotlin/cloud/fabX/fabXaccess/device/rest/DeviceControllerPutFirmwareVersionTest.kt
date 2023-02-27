@@ -1,16 +1,15 @@
 package cloud.fabX.fabXaccess.device.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.device.application.ChangingDevice
+import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -36,8 +35,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
 @MockitoSettings
-internal class DeviceControllerPutTest {
-    private lateinit var changingDevice: ChangingDevice
+internal class DeviceControllerPutFirmwareVersionTest {
+    private lateinit var changingFirmwareVersion: ChangingFirmwareVersion
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
@@ -47,45 +46,39 @@ internal class DeviceControllerPutTest {
 
     @BeforeEach
     fun `configure WebModule`(
-        @Mock changingDevice: ChangingDevice,
+        @Mock changingFirmwareVersion: ChangingFirmwareVersion,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.changingDevice = changingDevice
+        this.changingFirmwareVersion = changingFirmwareVersion
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { changingDevice }
+        bindInstance(overrides = true) { changingFirmwareVersion }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when changing device then returns http no content`() = withConfiguredTestApp {
+    fun `when changing desired firmware version then returns http no content`() = withConfiguredTestApp {
         // given
         val id = DeviceIdFixture.arbitrary()
 
-        val requestBody = DeviceDetails(
-            ChangeableValue("newName"),
-            null,
-            ChangeableValue("https://backup.example.com/new")
-        )
+        val requestBody = DesiredFirmwareVersion("42.0.0")
 
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            changingDevice.changeDeviceDetails(
+            changingFirmwareVersion.changeDesiredFirmwareVersion(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(id),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("newName")),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
-                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("https://backup.example.com/new"))
+                eq("42.0.0")
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
-        val response = c().put("/api/v1/device/${id.serialize()}") {
+        val response = c().put("/api/v1/device/${id.serialize()}/desired-firmware-version") {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             setBody(requestBody)
@@ -97,13 +90,9 @@ internal class DeviceControllerPutTest {
     }
 
     @Test
-    fun `given no admin authentication when changing device then returns http forbidden`() = withConfiguredTestApp {
+    fun `given no admin authentication when changing desired firmware version then returns http forbidden`() = withConfiguredTestApp {
         // given
-        val requestBody = DeviceDetails(
-            ChangeableValue("newName"),
-            null,
-            ChangeableValue("https://backup.example.com/new")
-        )
+        val requestBody = DesiredFirmwareVersion("42.0.0")
 
         val message = "abc1234"
         val error = Error.UserNotAdmin(message)
@@ -112,7 +101,7 @@ internal class DeviceControllerPutTest {
             .thenReturn(ErrorPrincipal(error))
 
         // when
-        val response = c().put("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}") {
+        val response = c().put("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/desired-firmware-version") {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             setBody(requestBody)
@@ -128,13 +117,13 @@ internal class DeviceControllerPutTest {
     }
 
     @Test
-    fun `given no body when changing device then returns http bad request`() = withConfiguredTestApp {
+    fun `given no body when changing desired firmware version then returns http bad request`() = withConfiguredTestApp {
         // given
         whenever(authenticationService.basic(UserPasswordCredential(username, password)))
             .thenReturn(UserPrincipal(actingUser))
 
         // when
-        val response = c().put("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}") {
+        val response = c().put("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/desired-firmware-version") {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             // empty body
