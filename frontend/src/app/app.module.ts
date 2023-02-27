@@ -35,15 +35,14 @@ import { DeviceAddComponent } from './device-add/device-add.component';
 import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
 import { DeviceChangeDetailsComponent } from './device-change-details/device-change-details.component';
 import { DeviceDetailsComponent } from './device-details/device-details.component';
+import { DeviceChangeDesiredFirmwareVersionComponent } from './device-change-desired-firmware-version/device-change-desired-firmware-version.component';
 import { FabxState } from "./state/fabx-state";
 import { LoginComponent } from './login/login.component';
 import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-unauthorized-interceptor.service";
 import { NavbarComponent } from './navbar/navbar.component';
 import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { QualificationAddComponent } from './qualification-add/qualification-add.component';
-import {
-    QualificationChangeDetailsComponent
-} from './qualification-change-details/qualification-change-details.component';
+import { QualificationChangeDetailsComponent } from './qualification-change-details/qualification-change-details.component';
 import { QualificationDetailsComponent } from './qualification-details/qualification-details.component';
 import { QualificationsComponent } from './qualifications/qualifications.component';
 import { ToolAddComponent } from './tool-add/tool-add.component';
@@ -53,19 +52,17 @@ import { ToolsComponent } from './tools/tools.component';
 import { UserAddCardIdentityComponent } from './user-add-card-identity/user-add-card-identity.component';
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserAddPhoneNrIdentityComponent } from './user-add-phone-nr-identity/user-add-phone-nr-identity.component';
-import { UserAddQualificationComponent } from './user-add-qualification/user-add-qualification.component';
-import {
-    UserAddUsernamePasswordIdentityComponent
-} from './user-add-username-password-identity/user-add-username-password-identity.component';
 import { UserAddPinIdentityComponent } from './user-add-pin-identity/user-add-pin-identity.component';
+import { UserAddQualificationComponent } from './user-add-qualification/user-add-qualification.component';
+import { UserAddUsernamePasswordIdentityComponent } from './user-add-username-password-identity/user-add-username-password-identity.component';
 import { UserAddWebauthnIdentityComponent } from './user-add-webauthn-identity/user-add-webauthn-identity.component';
 import { UserChangeLockStateComponent } from './user-change-lock-state/user-change-lock-state.component';
+import { UserChangePasswordComponent } from "./user-change-password/user-change-password.component";
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
+import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
 import { UsersComponent } from './users/users.component';
 import { ZXingScannerModule } from "@zxing/ngx-scanner";
-import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
-import { UserChangePasswordComponent } from "./user-change-password/user-change-password.component";
 
 @NgModule({
     declarations: [
@@ -75,6 +72,7 @@ import { UserChangePasswordComponent } from "./user-change-password/user-change-
         DeviceAttachToolComponent,
         DeviceChangeDetailsComponent,
         DeviceDetailsComponent,
+        DeviceChangeDesiredFirmwareVersionComponent,
         DevicesComponent,
         LoginComponent,
         NavbarComponent,
@@ -94,8 +92,8 @@ import { UserChangePasswordComponent } from "./user-change-password/user-change-
         UserAddUsernamePasswordIdentityComponent,
         UserAddWebauthnIdentityComponent,
         UserChangeLockStateComponent,
-        UserChangePersonalInfoComponent,
         UserChangePasswordComponent,
+        UserChangePersonalInfoComponent,
         UserDetailsComponent,
         UserSoftDeletedComponent,
         UsersComponent,

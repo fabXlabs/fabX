@@ -23,6 +23,12 @@ export namespace Devices {
         constructor(public id: string, public details: DeviceDetails) {}
     }
 
+    export class ChangeDesiredFirmwareVersion {
+        static readonly type = "[fabX Devices] Change Desired Firmware Version"
+
+        constructor(public id: string, public desiredFirmwareVersion: string) {}
+    }
+
     export class AttachTool {
         static readonly type = "[fabX Devices] Attach Tool"
 
