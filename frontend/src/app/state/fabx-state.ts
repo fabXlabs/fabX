@@ -758,7 +758,8 @@ export class FabxState {
     static devices(state: FabxStateModel): AugmentedDevice[] {
         const tools: Tool[] = getFinishedValueOrDefault(state.tools, []);
         return getFinishedValueOrDefault(state.devices, [])
-            .map(device => this.augmentDeviceWithTools(device, tools));
+            .map(device => this.augmentDeviceWithTools(device, tools))
+            .sort((a, b) => a.name > b.name ? 1 : -1);
     }
 
     @Selector([RouterState])
