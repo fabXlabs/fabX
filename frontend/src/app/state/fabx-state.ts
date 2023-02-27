@@ -859,6 +859,21 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.ChangeDesiredFirmwareVersion)
+    changeDesiredFirmwareVersion(ctx: StateContext<FabxStateModel>, action: Devices.ChangeDesiredFirmwareVersion) {
+        return this.deviceService.changeDesiredFirmwareVersion(action.id, action.desiredFirmwareVersion).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Devices.GetById(action.id)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['device', action.id]));
+                        }
+                    })
+                }
+            })
+        );
+    }
+
     @Action(Devices.AttachTool)
     attachTool(ctx: StateContext<FabxStateModel>, action: Devices.AttachTool) {
         return this.deviceService.attachTool(action.deviceId, action.pin, action.toolId).pipe(

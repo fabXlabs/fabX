@@ -16,6 +16,7 @@
         <tr>
             <th>Name</th>
             <th>Attached Tools</th>
+            <th>Firmware</th>
         </tr>
     </ng-template>
 
@@ -23,6 +24,7 @@
         <tr routerLink="/device/{{device.id}}" class="cursor-pointer">
             <td>{{device.name}}</td>
             <td>{{device.attachedTools | attachedToolNames}}</td>
+            <td>{{device.actualFirmwareVersion}}</td>
         </tr>
     </ng-template>
 

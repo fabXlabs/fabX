@@ -7,6 +7,8 @@ export interface Device {
     name: string,
     background: string,
     backupBackendUrl: string,
+    actualFirmwareVersion: string | null,
+    desiredFirmwareVersion: string | null,
     attachedTools: Record<number, string>,
 }
 
@@ -16,6 +18,8 @@ export interface AugmentedDevice {
     name: string,
     background: string,
     backupBackendUrl: string,
+    actualFirmwareVersion: string | null,
+    desiredFirmwareVersion: string | null,
     attachedTools: Record<number, Tool>,
 }
 
@@ -31,6 +35,10 @@ export interface DeviceDetails {
     name: ChangeableValue<string> | null
     background: ChangeableValue<string> | null
     backupBackendUrl: ChangeableValue<string> | null
+}
+
+export interface DesiredFirmwareVersion {
+    desiredFirmwareVersion: string
 }
 
 export interface ToolAttachmentDetails {

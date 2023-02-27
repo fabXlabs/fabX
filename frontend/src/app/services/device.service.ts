@@ -4,6 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
 import {
+    DesiredFirmwareVersion,
     Device,
     DeviceCreationDetails,
     DeviceDetails,
@@ -47,6 +48,20 @@ export class DeviceService {
     public changeDetails(id: string, details: DeviceDetails): Observable<string> {
         return this.http.put(
             `${this.baseUrl}/device/${id}`,
+            details,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
+    public changeDesiredFirmwareVersion(id: string, desiredFirmwareVersion: string): Observable<string> {
+        const details: DesiredFirmwareVersion = {
+            desiredFirmwareVersion: desiredFirmwareVersion
+        }
+        return this.http.put(
+            `${this.baseUrl}/device/${id}/desired-firmware-version`,
             details,
             {
                 ...this.authService.getOptions(),
