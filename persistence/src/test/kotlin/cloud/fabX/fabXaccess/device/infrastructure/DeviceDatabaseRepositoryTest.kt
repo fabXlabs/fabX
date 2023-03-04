@@ -307,7 +307,9 @@ internal class DeviceDatabaseRepositoryTest {
                     "https://example.com/3.bmp",
                     "https://backup.example.com",
                     "aabbccddeeff",
-                    "supersecret"
+                    "supersecret",
+                    null,
+                    null
                 ),
                 DeviceFixture.arbitrary(
                     deviceId2,
@@ -316,7 +318,9 @@ internal class DeviceDatabaseRepositoryTest {
                     "https://background.com/device2.bmp",
                     "https://backup42.example.com",
                     "aabbccddee22",
-                    "supersecret2"
+                    "supersecret2",
+                    null,
+                    null
                 )
             )
         }
