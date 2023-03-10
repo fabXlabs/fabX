@@ -1,51 +1,55 @@
 # Domain Description
 
-The following describes the scenario for which fabX is developed.
+The following describes the scenario for which fabX is built.
 
 ## General
 
-A new user comes to a fab lab / makerspace / etc. and wants to use a tool, e.g. a laser cutter. To ensure that the user
-can safely use the tool, the operator of the space offers a course for this tool. Only users who have received the
-qualification, showing that they attended the course, are able to use this tool.
+A new user comes to a fab lab / makerspace / etc. and wants to use a _tool_, e.g. a laser cutter. To ensure that the 
+space _member_ can safely use the tool, the operator of the space offers a course for this tool. Only users who have 
+received the _qualification_, showing that they attended the course, are allowed (and able) to use this _tool_.
 
 The user chooses to book the course and attends it. If the user has done well enough throughout the course, they receive
-a qualification for this tool at the end.
+a _qualification_ for this _tool_.
 
-The instructor of the course enters into the system that the user has received the qualification for the laser cutter.
+The _instructor_ of the course enters into the system that the user has received the _qualification_ for the _tool_.
 
-Now, the user can identify themselves to the tool and unlock/use the tool.
+Now, the user can identify themselves to the _device_ where the _tool_ is attached, using their _card_, and use 
+the _tool_.
 
 ## Terminology
 
-* User: A person who uses tools.
-* Card: A physical card which can be used to personally identify a user, e.g. an NFC tag.
-* Tool: A machine/tool offered to users, e.g. a laser cutter.
-* Device: The controller device that tools can be attached to for access control.
-* Qualification: Proof that a certain course has been taken by a user.
-* Admin: An administrator of the system.
+* _User/Member_: A person who uses _tools_.
+* _Instructor_: A person holding a course for a _tool_ 
+* _Card_: A physical card which can be used to personally identify a user, e.g. an NFC tag.
+* _Tool_: A machine/tool offered to _members_, e.g. a laser cutter.
+* _Device_: The controller device that _tools_ can be attached to for access control.
+* _Qualification_: Proof that a certain course has been taken by a _member_.
+* _Admin_: An administrator of the system.
 
 ## Tools
 
-Different tools are available at the space. This includes laser cutters and woodworking tools.
+Different _tools_ are available at the space. This includes, e.g., laser cutters and woodworking tools.
 
-For some tools, e.g. laser cutters, it has to be ensured that the user is always nearby the tool. The user has to
-continuously or repeatedly identify themselves to the tool.
+For some _tools_, e.g. laser cutters, it has to be ensured that the user is always nearby the tool. The user has to
+continuously or repeatedly identify themselves to the _device_ where the _tool_ is attached.
 
-Other tools, e.g. woodworking tools, are stored in drawers with electronic locks, similar to parcel delivery machines.
-The electronic locks require a short pulse to unlock.
+Other _tools_, e.g. woodworking tools, may be stored in drawers with electronic locks, similar to parcel delivery 
+machines. The electronic locks require a short pulse to unlock.
 
 ## Qualifications
 
-A qualification is given out after a user has attended a course. This course may be longer or shorter, depending on
-which tool(s) the course is for.
+A _qualification_ is given out once a _member_ has attended a course. This course may be longer or shorter, depending on
+the _tool(s)_ the course is about.
 
-A qualification may allow a user to use a single or multiple tools.
+A _qualification_ may allow a user to use a single or multiple _tools_.
 
-Some part of a tool may change in the future, requiring
+Some part of a _tool_ may change in the future, requiring a follow-up course detailing the changes. This can be modelled
+using a secondary _qualification_. Once the change is applied, the secondary _qualification_ can be additionally 
+required for using the _tool_.
 
 ## Devices
 
-To not require too many devices, multiple tools can be attached to a single device.
+To not require too many _devices_, multiple _tools_ can be attached to a single _device_.
 
-When a user identifies to a device, they can choose one of the tools available to them (based on the user's
-qualifications and the qualifications required for the attached tools).
+When a _member_ identifies to a _device_, they can choose one of the _tools_ available to them (based on the _member's_
+_qualifications_ and the _qualifications_ required for the attached _tools_).
