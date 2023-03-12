@@ -117,6 +117,17 @@ export class DeviceService {
         );
     }
 
+    public updateFirmware(deviceId: string): Observable<string> {
+        return this.http.post(
+            `${this.baseUrl}/device/${deviceId}/update-firmware`,
+            null,
+            {
+                ...this.authService.getOptions(),
+                responseType: 'text'
+            }
+        );
+    }
+
     public deleteDevice(id: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/device/${id}`,

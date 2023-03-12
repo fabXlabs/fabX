@@ -189,3 +189,12 @@ data class RestartDevice(override val commandId: Int) : ServerToDeviceCommand()
 
 @Serializable
 data class DeviceRestartResponse(override val commandId: Int) : DeviceResponse()
+
+/**
+ * Command from server -> device to trigger device firmware update process.
+ */
+@Serializable
+data class UpdateDeviceFirmware(override val commandId: Int) : ServerToDeviceCommand()
+
+@Serializable
+data class UpdateFirmwareResponse(override val commandId: Int) : DeviceResponse()

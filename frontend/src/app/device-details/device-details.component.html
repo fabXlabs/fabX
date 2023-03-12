@@ -51,10 +51,18 @@
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">actual firmware version</div>
-                <div class="w-8"
-                     [style.color]="device.actualFirmwareVersion !== device.desiredFirmwareVersion ? 'var(--red-500)' : 'var(--surface-900)'"
-                >
-                    {{device.actualFirmwareVersion ?? "-"}}
+                <div class="text-900 w-8 flex align-items-center">
+                    <div class="flex-grow-1" [style.color]="device.actualFirmwareVersion !== device.desiredFirmwareVersion ? 'var(--red-500)' : 'var(--surface-900)'"
+                    >
+                        {{device.actualFirmwareVersion ?? "-"}}
+                    </div>
+                    <div>
+                        <p-button label="Update Firmware"
+                                  styleClass="p-button-outlined p-button-warning"
+                                  icon="pi pi-cloud-download"
+                                  (onClick)="firmwareUpdate()">
+                        </p-button>
+                    </div>
                 </div>
             </li>
         </ul>

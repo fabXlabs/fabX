@@ -55,7 +55,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
         }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
-            val httpResultDeferred = async {
+            val httpResponseDeferred = async {
                 c().post("/api/v1/device/$deviceId/unlock-tool") {
                     adminAuth()
                     contentType(ContentType.Application.Json)
@@ -69,7 +69,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
             val response = ToolUnlockResponse(command.commandId)
             outgoing.send(Frame.Text(Json.encodeToString<DeviceResponse>(response)))
 
-            val httpResponse = httpResultDeferred.await()
+            val httpResponse = httpResponseDeferred.await()
 
             // then
             assertThat(command)
@@ -98,7 +98,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
         }) {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
-            val httpResultDeferred = async {
+            val httpResponseDeferred = async {
                 c().post("/api/v1/device/$deviceId/unlock-tool") {
                     adminAuth()
                     contentType(ContentType.Application.Json)
@@ -111,7 +111,7 @@ internal class UnlockToolAtDeviceViaWebsocketIntegrationTest {
 
             // no response sent
 
-            val httpResponse = httpResultDeferred.await()
+            val httpResponse = httpResponseDeferred.await()
 
             // then
             assertThat(command)

@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.device.ws.RestartDeviceViaWebsocket
 import cloud.fabX.fabXaccess.device.ws.UnlockToolAtDeviceViaWebsocket
+import cloud.fabX.fabXaccess.device.ws.UpdateDeviceFirmwareViaWebsocket
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
@@ -26,6 +27,7 @@ val webModule = DI.Module("web") {
     bindSingleton { ToolController(instance(), instance(), instance(), instance()) }
     bindSingleton {
         DeviceController(
+            instance(),
             instance(),
             instance(),
             instance(),
@@ -94,6 +96,8 @@ val webModule = DI.Module("web") {
     }
 
     bindSingleton { UnlockToolAtDeviceViaWebsocket(instance()) }
+
+    bindSingleton { UpdateDeviceFirmwareViaWebsocket(instance()) }
 
     bindSingleton { RestartDeviceViaWebsocket(instance()) }
 

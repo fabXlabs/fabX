@@ -120,6 +120,40 @@ export class DeviceDetailsComponent {
         });
     }
 
+    firmwareUpdate() {
+        const currentDevice = this.store.selectSnapshot(FabxState.selectedDevice)!;
+
+        let message = `Are you sure you want to update firmware of device ${currentDevice.name}?`
+
+        this.confirmationService.confirm({
+            header: 'Confirmation',
+            icon: 'pi pi-exclamation-triangle',
+            acceptButtonStyleClass: 'p-button-warning',
+            acceptIcon: 'pi pi-cloud-download',
+            rejectButtonStyleClass: 'p-button-secondary p-button-outlined',
+            message: message,
+            accept: () => {
+                this.store.dispatch(new Devices.UpdateFirmware(
+                    currentDevice.id
+                )).subscribe({
+                    next: _ => {
+                        this.messageService.add({ severity: 'success', summary: 'Updated Firmware', detail: 'Yay!' });
+                    },
+                    error: err => {
+                        const message = this.errorService.format(err);
+                        this.messageService.add({
+                            severity: 'error',
+                            summary: 'Error Updating Device Firmware',
+                            detail: message,
+                            sticky: true
+                        });
+                    }
+                });
+            }
+        });
+
+    }
+
     delete() {
         const currentDevice = this.store.selectSnapshot(FabxState.selectedDevice)!;
 
