@@ -10,7 +10,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.rest.c
 import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
-import cloud.fabX.fabXaccess.device.application.RestartingDevice
+import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -33,8 +33,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
 @MockitoSettings
-internal class DeviceControllerRestartDeviceTest {
-    private lateinit var restartingDevice: RestartingDevice
+internal class DeviceControllerUpdateDeviceFirmwareTest {
+    private lateinit var updatingDeviceFirmware: UpdatingDeviceFirmware
     private lateinit var authenticationService: AuthenticationService
 
     private val username = "some.one"
@@ -44,20 +44,20 @@ internal class DeviceControllerRestartDeviceTest {
 
     @BeforeEach
     fun `configure WebModule`(
-        @Mock restartingDevice: RestartingDevice,
+        @Mock updatingDeviceFirmware: UpdatingDeviceFirmware,
         @Mock authenticationService: AuthenticationService
     ) {
-        this.restartingDevice = restartingDevice
+        this.updatingDeviceFirmware = updatingDeviceFirmware
         this.authenticationService = authenticationService
     }
 
     private fun withConfiguredTestApp(block: suspend ApplicationTestBuilder.() -> Unit) = withTestApp({
-        bindInstance(overrides = true) { restartingDevice }
+        bindInstance(overrides = true) { updatingDeviceFirmware }
         bindInstance(overrides = true) { authenticationService }
     }, block)
 
     @Test
-    fun `when restarting device then returns http no content`() = withConfiguredTestApp {
+    fun `when updating device firmware then returns http no content`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
 
@@ -65,7 +65,7 @@ internal class DeviceControllerRestartDeviceTest {
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            restartingDevice.restartDevice(
+            updatingDeviceFirmware.updateDeviceFirmware(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(deviceId),
@@ -73,7 +73,7 @@ internal class DeviceControllerRestartDeviceTest {
         ).thenReturn(Unit.right())
 
         // when
-        val response = c().post("/api/v1/device/${deviceId.serialize()}/restart") {
+        val response = c().post("/api/v1/device/${deviceId.serialize()}/update-firmware") {
             basicAuth(username, password)
         }
 
@@ -83,7 +83,7 @@ internal class DeviceControllerRestartDeviceTest {
     }
 
     @Test
-    fun `given no admin authentication when restarting device then returns http forbidden`() = withConfiguredTestApp {
+    fun `given no admin authentication when updating device firmware then returns http forbidden`() = withConfiguredTestApp {
         // given
 
         val message = "abc1234"
@@ -93,7 +93,7 @@ internal class DeviceControllerRestartDeviceTest {
             .thenReturn(ErrorPrincipal(error))
 
         // when
-        val response = c().post("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/restart") {
+        val response = c().post("/api/v1/device/${DeviceIdFixture.arbitrary().serialize()}/update-firmware") {
             basicAuth(username, password)
         }
 
@@ -107,7 +107,7 @@ internal class DeviceControllerRestartDeviceTest {
     }
 
     @Test
-    fun `given invalid device id when restarting device then returns http bad request`() = withConfiguredTestApp {
+    fun `given invalid device id when updating device firmware then returns http bad request`() = withConfiguredTestApp {
         // given
         val invalidDeviceId = "invalidDeviceId"
 
@@ -115,7 +115,7 @@ internal class DeviceControllerRestartDeviceTest {
             .thenReturn(UserPrincipal(actingUser))
 
         // when
-        val response = c().post("/api/v1/device/$invalidDeviceId/restart") {
+        val response = c().post("/api/v1/device/$invalidDeviceId/update-firmware") {
             basicAuth(username, password)
         }
 
@@ -125,7 +125,7 @@ internal class DeviceControllerRestartDeviceTest {
     }
 
     @Test
-    fun `given domain error when restarting device then returns mapped domain error`() = withConfiguredTestApp {
+    fun `given domain error when updating device firmware then returns mapped error`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
 
@@ -135,7 +135,7 @@ internal class DeviceControllerRestartDeviceTest {
             .thenReturn(UserPrincipal(actingUser))
 
         whenever(
-            restartingDevice.restartDevice(
+            updatingDeviceFirmware.updateDeviceFirmware(
                 eq(actingUser.asAdmin().getOrElse { throw IllegalStateException() }),
                 any(),
                 eq(deviceId),
@@ -143,7 +143,7 @@ internal class DeviceControllerRestartDeviceTest {
         ).thenReturn(error.left())
 
         // when
-        val response = c().post("/api/v1/device/${deviceId.serialize()}/restart") {
+        val response = c().post("/api/v1/device/${deviceId.serialize()}/update-firmware") {
             basicAuth(username, password)
         }
 

@@ -918,6 +918,13 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.UpdateFirmware)
+    updateDeviceFirmware(ctx: StateContext<FabxStateModel>, action: Devices.UpdateFirmware) {
+        return this.deviceService.updateFirmware(
+            action.deviceId
+        );
+    }
+
     @Action(Devices.Delete)
     deleteDevice(ctx: StateContext<FabxStateModel>, action: Devices.Delete) {
         return this.deviceService.deleteDevice(action.id).pipe(

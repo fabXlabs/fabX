@@ -11,10 +11,10 @@ import cloud.fabX.fabXaccess.common.isJson
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
-import cloud.fabX.fabXaccess.device.ws.DeviceRestartResponse
 import cloud.fabX.fabXaccess.device.ws.ErrorResponse
-import cloud.fabX.fabXaccess.device.ws.RestartDevice
 import cloud.fabX.fabXaccess.device.ws.ServerToDeviceCommand
+import cloud.fabX.fabXaccess.device.ws.UpdateDeviceFirmware
+import cloud.fabX.fabXaccess.device.ws.UpdateFirmwareResponse
 import io.ktor.client.call.body
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.basicAuth
@@ -33,10 +33,10 @@ import org.junit.jupiter.api.Test
 
 @InternalAPI
 @ExperimentalSerializationApi
-internal class RestartDeviceViaWebsocketIntegrationTest {
+internal class UpdateDeviceFirmwareViaWebsocketTest {
 
     @Test
-    fun `when restarting device then sends command, receives answer, returns http no content`() = withTestApp {
+    fun `when updating device firmware then sends command, receives answer, returns http no content`() = withTestApp {
         // given
         val mac = "AABB11CC22DD"
         val secret = "c8760b55353aa7bfc536f2d29499b549"
@@ -49,7 +49,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val httpResponseDeferred = async {
-                c().post("/api/v1/device/$deviceId/restart") {
+                c().post("/api/v1/device/$deviceId/update-firmware") {
                     adminAuth()
                 }
             }
@@ -57,13 +57,13 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
             val commandText = (incoming.receive() as Frame.Text).readText()
             val command = Json.decodeFromString<ServerToDeviceCommand>(commandText)
 
-            val response = DeviceRestartResponse(command.commandId)
+            val response = UpdateFirmwareResponse(command.commandId)
             outgoing.send(Frame.Text(Json.encodeToString<DeviceResponse>(response)))
 
             val httpResponse = httpResponseDeferred.await()
 
             // then
-            assertThat(command).isInstanceOf(RestartDevice::class)
+            assertThat(command).isInstanceOf(UpdateDeviceFirmware::class)
 
             assertThat(httpResponse.status).isEqualTo(HttpStatusCode.NoContent)
             assertThat(httpResponse.bodyAsText()).isEmpty()
@@ -71,7 +71,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
     }
 
     @Test
-    fun `given device does not respond when restarting device then returns http service unavailable`() = withTestApp {
+    fun `given device does not respond when updating device firmware then returns http service unavailable`() = withTestApp {
         // given
         val mac = "AABB11CC22DD"
         val secret = "c8760b55353aa7bfc536f2d29499b549"
@@ -84,7 +84,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val httpResponseDeferred = async {
-                c().post("/api/v1/device/$deviceId/restart") {
+                c().post("/api/v1/device/$deviceId/update-firmware") {
                     adminAuth()
                 }
             }
@@ -97,8 +97,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
             val httpResponse = httpResponseDeferred.await()
 
             // then
-            assertThat(command).isInstanceOf(RestartDevice::class)
-
+            assertThat(command).isInstanceOf(UpdateDeviceFirmware::class)
             assertThat(httpResponse.status).isEqualTo(HttpStatusCode.ServiceUnavailable)
             assertThat(httpResponse.body<Error>())
                 .isError(
@@ -110,7 +109,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
     }
 
     @Test
-    fun `given device responds with error when restarting device returns error`() = withTestApp {
+    fun `given device responds with error when updating device firmware then returns error`() = withTestApp {
         // given
         val mac = "AABB11CC22DD"
         val secret = "c8760b55353aa7bfc536f2d29499b549"
@@ -123,7 +122,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
             (incoming.receive() as Frame.Text).readText() // greeting text
 
             val httpResponseDeferred = async {
-                c().post("/api/v1/device/$deviceId/restart") {
+                c().post("/api/v1/device/$deviceId/update-firmware") {
                     adminAuth()
                 }
             }
@@ -143,7 +142,7 @@ internal class RestartDeviceViaWebsocketIntegrationTest {
             val httpResponse = httpResponseDeferred.await()
 
             // then
-            assertThat(command).isInstanceOf(RestartDevice::class)
+            assertThat(command).isInstanceOf(UpdateDeviceFirmware::class)
 
             assertThat(httpResponse.status).isEqualTo(HttpStatusCode.ServiceUnavailable)
             assertThat(httpResponse.bodyAsText())
