@@ -64,7 +64,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { DeletingDevice(instance(), instance(), instance()) }
     bindSingleton { DetachingTool(instance(), instance(), instance()) }
     bindSingleton { DeviceDomainEventHandler(instance(), instance(), instance()) }
-    bindSingleton { GettingConfiguration(instance(), instance(), instance()) }
+    bindSingleton { GettingConfiguration(instance(), instance(), instance(), instance()) }
     bindSingleton { GettingDevice(instance(), instance()) }
     bindSingleton { RestartingDevice(instance(), instance(), instance()) }
     bindSingleton { UnlockingTool(instance(), instance(), instance(), instance()) }

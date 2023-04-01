@@ -69,7 +69,7 @@ internal class DeviceCommandHandlerTest {
     fun `when handling GetConfiguration then returns ConfigurationResponse`() = runTest {
         // given
         val commandId = 123
-        val command = GetConfiguration(commandId)
+        val command = GetConfiguration(commandId, "42.1.2")
 
         val name = "some device"
         val background = "https://example.com/bg123.bmp"
@@ -140,7 +140,7 @@ internal class DeviceCommandHandlerTest {
             )
         )
 
-        whenever(gettingConfiguration.getConfiguration(eq(actor)))
+        whenever(gettingConfiguration.getConfiguration(eq(actor), any(), eq("42.1.2")))
             .thenReturn(configurationResult.right())
 
         // when
@@ -156,14 +156,14 @@ internal class DeviceCommandHandlerTest {
     fun `given error when handling GetConfiguration then returns error`() = runTest {
         // given
         val commandId = 123
-        val command = GetConfiguration(commandId)
+        val command = GetConfiguration(commandId, "42.1.2")
 
         val device = DeviceFixture.arbitrary()
         val actor = device.asActor()
 
         val error = Error.DeviceNotFound("msg", device.id)
 
-        whenever(gettingConfiguration.getConfiguration(eq(actor)))
+        whenever(gettingConfiguration.getConfiguration(eq(actor), any(), eq("42.1.2")))
             .thenReturn(error.left())
 
         // when

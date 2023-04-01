@@ -20,7 +20,11 @@ class DeviceCommandHandlerImpl(
     private val authenticationService: AuthenticationService
 ) : DeviceCommandHandler {
     override suspend fun handle(actor: DeviceActor, command: GetConfiguration): Either<Error, DeviceResponse> {
-        return gettingConfiguration.getConfiguration(actor).map { configuration ->
+        return gettingConfiguration.getConfiguration(
+            actor,
+            newCorrelationId(),
+            command.actualFirmwareVersion
+        ).map { configuration ->
             ConfigurationResponse(
                 command.commandId,
                 configuration.device.name,

@@ -74,7 +74,10 @@ data class ErrorResponse(
  * Command from device -> server. In the response, the server returns the device's configuration.
  */
 @Serializable
-data class GetConfiguration(override val commandId: Int) : DeviceToServerCommand() {
+data class GetConfiguration(
+    override val commandId: Int,
+    val actualFirmwareVersion: String
+) : DeviceToServerCommand() {
     override suspend fun handle(
         actor: DeviceActor,
         commandHandler: DeviceCommandHandler
