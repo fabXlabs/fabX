@@ -6,8 +6,10 @@ import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isTrue
+import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.device.ws.AuthorizedToolsResponse
 import cloud.fabX.fabXaccess.device.ws.ConfigurationResponse
 import cloud.fabX.fabXaccess.device.ws.DeviceResponse
@@ -28,6 +30,7 @@ import cloud.fabX.fabXaccess.user.givenUser
 import cloud.fabX.fabXaccess.user.givenUserHasQualificationFor
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
+import io.ktor.client.call.body
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.get
@@ -108,7 +111,7 @@ internal class DeviceWebsocketIntegrationTest {
         givenToolAttachedToDevice(deviceId, 2, toolId2)
 
         val commandId = 678
-        val command = GetConfiguration(commandId)
+        val command = GetConfiguration(commandId, "1.42.2")
 
         // when
         c().webSocket("/api/v1/device/ws", {
@@ -148,6 +151,37 @@ internal class DeviceWebsocketIntegrationTest {
                     )
                 )
         }
+    }
+
+    @Test
+    fun `when getting configuration then actual firmware version is updated`() = withTestApp {
+        // given
+        val mac = "AABB11CC22DD"
+        val secret = "bc167ed6fd750441532f6002ec891b73"
+        val deviceId = givenDevice(mac = mac, secret = secret)
+
+        val commandId = 678
+        val command = GetConfiguration(commandId, "1.42.2")
+
+        // when
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
+            (incoming.receive() as Frame.Text).readText() // greeting text
+
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command)))
+            val responseText = (incoming.receive() as Frame.Text).readText()
+            val response = Json.decodeFromString<DeviceResponse>(responseText)
+
+            assertThat(response.commandId).isEqualTo(commandId)
+        }
+
+        // then
+        val responseGet = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
+        }
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Device>().actualFirmwareVersion).isEqualTo("1.42.2")
     }
 
     @Test

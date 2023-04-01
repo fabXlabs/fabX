@@ -135,7 +135,7 @@ internal class DeviceWebsocketControllerTest {
     fun `when receiving command then calls command handler and returns response`() = withConfiguredTestApp {
         // given
         val commandId = 24234
-        val command = GetConfiguration(commandId)
+        val command = GetConfiguration(commandId, "1.42.0")
 
         val expectedResponse = ConfigurationResponse(
             commandId,
@@ -169,7 +169,7 @@ internal class DeviceWebsocketControllerTest {
     fun `given error in command handler when receiving command then returns error`() = withConfiguredTestApp {
         // given
         val commandId = 24234
-        val command = GetConfiguration(commandId)
+        val command = GetConfiguration(commandId, "1.42.0")
 
         val errorResponse = ErrorResponse(
             commandId,
