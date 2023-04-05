@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
+import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
 
@@ -35,5 +36,14 @@ class GettingDevice(
         log.debug("getById (actor: $actor, correlationId: $correlationId)...")
 
         return deviceRepository.getById(deviceId)
+    }
+
+    suspend fun getMe(
+        actor: DeviceActor,
+        correlationId: CorrelationId
+    ): Either<Error, Device> {
+        log.debug("getMe (actor: $actor, correlationId: $correlationId)...")
+
+        return deviceRepository.getById(actor.deviceId)
     }
 }

@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.device.rest.DeviceController
+import cloud.fabX.fabXaccess.device.rest.DeviceFirmwareUpdateController
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
@@ -45,6 +46,13 @@ val webModule = DI.Module("web") {
             instance(),
             instance(),
             instance(tag = "deviceReceiveTimeoutMillis")
+        )
+    }
+    bindSingleton {
+        DeviceFirmwareUpdateController(
+            instance(),
+            instance(),
+            instance(tag = "firmwareDirectory")
         )
     }
     bindSingleton {
@@ -108,6 +116,7 @@ val webModule = DI.Module("web") {
             instance(tag = "jwtIssuer"),
             instance(tag = "jwtAudience"),
             instance(tag = "jwtHMAC256Secret"),
+            instance(),
             instance(),
             instance(),
             instance(),

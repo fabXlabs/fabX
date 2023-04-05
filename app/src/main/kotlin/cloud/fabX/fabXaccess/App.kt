@@ -47,6 +47,8 @@ val app = DI {
 
     bindInstance(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
 
+    bindInstance(tag = "firmwareDirectory") { config.firmwareDirectory }
+
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }
 }

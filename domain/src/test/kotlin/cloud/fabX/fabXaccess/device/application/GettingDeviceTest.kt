@@ -99,4 +99,40 @@ internal class GettingDeviceTest {
             .isLeft()
             .isEqualTo(expectedError)
     }
+
+    @Test
+    fun `given device exists when getting me then returns from repository`() = runTest {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId)
+
+        whenever(deviceRepository.getById(deviceId))
+            .thenReturn(device.right())
+
+        // when
+        val result = testee.getMe(device.asActor(), correlationId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(device)
+    }
+
+    @Test
+    fun `given repository error when getting me then returns error`() = runTest {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId)
+
+        val expectedError = ErrorFixture.arbitrary()
+
+        whenever(deviceRepository.getById(deviceId))
+            .thenReturn(expectedError.left())
+
+        // when
+        val result = testee.getMe(device.asActor(), correlationId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(expectedError)
+    }
 }

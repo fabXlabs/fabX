@@ -51,12 +51,20 @@ internal fun PipelineContext<*, ApplicationCall>.readMemberAuthentication(): Eit
     return Error.NotAuthenticated("Required authentication not found.").left()
 }
 
+internal fun PipelineContext<*, ApplicationCall>.readDeviceAuthentication(): Either<Error, DeviceActor> {
+    return call.readDeviceAuthentication()
+}
+
 internal fun WebSocketServerSession.readDeviceAuthentication(): Either<Error, DeviceActor> {
-    call.principal<DevicePrincipal>()?.let { devicePrincipal ->
+    return call.readDeviceAuthentication()
+}
+
+private fun ApplicationCall.readDeviceAuthentication(): Either<Error, DeviceActor> {
+    this.principal<DevicePrincipal>()?.let { devicePrincipal ->
         return devicePrincipal.right()
             .map { it.device.asActor() }
     }
-    call.principal<ErrorPrincipal>()?.let { errorPrincipal ->
+    this.principal<ErrorPrincipal>()?.let { errorPrincipal ->
         return errorPrincipal.error.left()
     }
     return Error.NotAuthenticated("Required authentication not found.").left()
