@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.rest.Slf4jLogger
 import cloud.fabX.fabXaccess.common.rest.extractCause
 import cloud.fabX.fabXaccess.device.rest.DeviceController
+import cloud.fabX.fabXaccess.device.rest.DeviceFirmwareUpdateController
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
@@ -61,6 +62,7 @@ class WebApp(
     private val toolController: ToolController,
     private val deviceController: DeviceController,
     private val deviceWebsocketController: DeviceWebsocketController,
+    private val deviceFirmwareUpdateController: DeviceFirmwareUpdateController,
     private val userController: UserController,
     private val loginController: LoginController
 ) {
@@ -173,6 +175,7 @@ class WebApp(
                     qualificationController.routes(this)
                     toolController.routes(this)
                     deviceController.routes(this)
+                    deviceFirmwareUpdateController.routes(this)
                     deviceWebsocketController.routes(this)
                     userController.routes(this)
                     loginController.routes(this)

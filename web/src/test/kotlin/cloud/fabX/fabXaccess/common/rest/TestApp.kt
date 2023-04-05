@@ -60,6 +60,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import java.io.File
 import kotlinx.datetime.Clock
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
@@ -149,6 +150,8 @@ internal fun withTestApp(
         bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
         bindConstant(tag = "webauthnRpId") { "localhost" }
         bindConstant(tag = "webauthnRpName") { "fabX" }
+
+        bindConstant(tag = "firmwareDirectory") { File("/tmp/fabXtest") }
 
         diSetup()
     }
