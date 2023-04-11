@@ -56,7 +56,6 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserNotFoundByUsername -> HttpStatusCode.NotFound
         is Error.UserNotFoundByWikiName -> HttpStatusCode.NotFound
         is Error.SoftDeletedUserNotFound -> HttpStatusCode.NotFound
-        is Error.UserCannotLockSelf -> HttpStatusCode.UnprocessableEntity
         is Error.WikiNameAlreadyInUse -> HttpStatusCode.UnprocessableEntity
         is Error.InstructorPermissionNotFound -> HttpStatusCode.Forbidden
         is Error.UserAlreadyAdmin -> HttpStatusCode.UnprocessableEntity

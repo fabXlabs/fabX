@@ -707,9 +707,8 @@ internal class UserTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(
-                Error.UserCannotLockSelf(
-                    "User cannot lock self.",
-                    user.id,
+                Error.UserIsActor(
+                    "User is actor and cannot lock/delete themselves.",
                     correlationId
                 )
             )
@@ -2047,7 +2046,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.UserIsActor("User is actor and cannot delete themselves.", correlationId))
+            .isEqualTo(Error.UserIsActor("User is actor and cannot lock/delete themselves.", correlationId))
     }
 
     @ParameterizedTest
