@@ -126,7 +126,7 @@ internal class DeletingUserTest {
         whenever(userRepository.getById(userId))
             .thenReturn(user.right())
 
-        val expectedDomainError = Error.UserIsActor("User is actor and cannot delete themselves.", correlationId)
+        val expectedDomainError = Error.UserIsActor("User is actor and cannot lock/delete themselves.", correlationId)
 
         // when
         val result = testee.deleteUser(
