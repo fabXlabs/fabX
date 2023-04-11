@@ -14,15 +14,10 @@ import { ErrorService } from "../services/error.service";
 export class LoginComponent {
 
     error = "";
-    errorWebauthn = "";
 
     form = new FormGroup({
         username: new FormControl('', Validators.required),
-        password: new FormControl('', Validators.required)
-    });
-
-    formWebauthn = new FormGroup({
-        username: new FormControl('', Validators.required)
+        password: new FormControl('')
     });
 
     constructor(
@@ -34,27 +29,21 @@ export class LoginComponent {
         let username = this.form.get('username')!.value!;
         let password = this.form.get('password')!.value!;
 
-        this.store.dispatch(new Auth.Login({ username: username, password: password }))
+        if (password) {
+            this.login(new Auth.Login({ username: username, password: password }));
+        } else {
+            this.login(new Auth.LoginWebauthn(username));
+        }
+    }
+
+    private login(action: any) {
+        this.store.dispatch(action)
             .subscribe({
                 next: _ => {
                     this.store.dispatch(new Navigate(['user']));
                 },
                 error: (err: HttpErrorResponse) => {
                     this.error = this.errorHandler.format(err);
-                }
-            });
-    }
-
-    onSubmitWebauthn() {
-        let username = this.formWebauthn.get('username')!.value!;
-
-        this.store.dispatch(new Auth.LoginWebauthn(username))
-            .subscribe({
-                next: _ => {
-                    this.store.dispatch(new Navigate(['user']));
-                },
-                error: (err: HttpErrorResponse) => {
-                    this.errorWebauthn = this.errorHandler.format(err);
                 }
             });
     }
