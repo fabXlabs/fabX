@@ -13,6 +13,7 @@ data class Tool(
     val time: Int,
     val idleState: IdleState,
     val enabled: Boolean,
+    val notes: String?,
     val wikiLink: String,
     val requiredQualifications: Set<String>
 )
@@ -26,6 +27,7 @@ fun cloud.fabX.fabXaccess.tool.model.Tool.toRestModel(): Tool = Tool(
     time = time,
     idleState = idleState.toRestModel(),
     enabled = enabled,
+    notes = notes,
     wikiLink = wikiLink,
     requiredQualifications = requiredQualifications.map { it.serialize() }.toSet()
 )
@@ -87,6 +89,7 @@ data class ToolDetails(
     val time: ChangeableValue<Int>?,
     val idleState: ChangeableValue<IdleState>?,
     val enabled: ChangeableValue<Boolean>?,
+    val notes: ChangeableValue<String?>?,
     val wikiLink: ChangeableValue<String>?,
     val requiredQualifications: ChangeableValue<Set<String>>?
 )

@@ -97,6 +97,7 @@ internal class ToolControllerGetTest {
             567,
             IdleState.IDLE_LOW,
             true,
+            null,
             "https://example.com/tool1",
             setOf(qualificationId1, qualificationId2)
         )
@@ -110,6 +111,7 @@ internal class ToolControllerGetTest {
             567,
             cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_LOW,
             true,
+            null,
             "https://example.com/tool1",
             setOf(qualificationId1.serialize(), qualificationId2.serialize())
         )
@@ -124,6 +126,7 @@ internal class ToolControllerGetTest {
             890,
             IdleState.IDLE_HIGH,
             false,
+            null,
             "https://example.com/tool2",
             setOf(qualificationId2)
         )
@@ -137,6 +140,7 @@ internal class ToolControllerGetTest {
             890,
             cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_HIGH,
             false,
+            null,
             "https://example.com/tool2",
             setOf(qualificationId2.serialize())
         )
@@ -171,6 +175,7 @@ internal class ToolControllerGetTest {
             567,
             IdleState.IDLE_LOW,
             true,
+            null,
             "https://example.com/tool",
             setOf(qualificationId1, qualificationId2)
         )
@@ -184,6 +189,7 @@ internal class ToolControllerGetTest {
             567,
             cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_LOW,
             true,
+            null,
             "https://example.com/tool",
             setOf(qualificationId1.serialize(), qualificationId2.serialize())
         )

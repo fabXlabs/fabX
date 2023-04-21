@@ -36,6 +36,7 @@ class ChangingTool(
         time: ChangeableValue<Int>,
         idleState: ChangeableValue<IdleState>,
         enabled: ChangeableValue<Boolean>,
+        notes: ChangeableValue<String?>,
         wikiLink: ChangeableValue<String>,
         requiredQualifications: ChangeableValue<Set<QualificationId>>
     ): Option<Error> {
@@ -53,6 +54,7 @@ class ChangingTool(
                     time,
                     idleState,
                     enabled,
+                    notes,
                     wikiLink,
                     requiredQualifications,
                     gettingQualificationById
