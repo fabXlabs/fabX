@@ -20,6 +20,26 @@
                         <input id="wikiLink" formControlName="wikiLink" type="text" pInputText>
                     </div>
                     <div class="field col-12">
+                        <label for="requiredQualifications" class="font-medium text-900">Required Qualifications</label>
+                        <p-multiSelect id="requiredQualifications"
+                                       formControlName="requiredQualifications"
+                                       [options]="(qualifications$ | async) || []"
+                                       optionLabel="name"
+                                       optionValue="id"
+                                       placeholder="Select Required Qualifications"
+                        ></p-multiSelect>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 md:col-2 md:pt-3">
+                <div class="pl-2 md:pl-0 text-sm uppercase text-500 font-medium overflow-hidden text-overflow-ellipsis">
+                    Status
+                </div>
+            </div>
+            <div class="col-12 md:col-10">
+                <div class="formgrid p-fluid">
+                    <div class="field col-12">
                         <label for="enabled" class="font-medium text-900">Enabled</label>
                         <div class="inputfield w-full flex align-items-center">
                             <p-checkbox
@@ -31,14 +51,8 @@
                         </div>
                     </div>
                     <div class="field col-12">
-                        <label for="requiredQualifications" class="font-medium text-900">Required Qualifications</label>
-                        <p-multiSelect id="requiredQualifications"
-                                       formControlName="requiredQualifications"
-                                       [options]="(qualifications$ | async) || []"
-                                       optionLabel="name"
-                                       optionValue="id"
-                                       placeholder="Select Required Qualifications"
-                        ></p-multiSelect>
+                        <label for="notes" class="font-medium text-900">Notes</label>
+                        <input id="notes" formControlName="notes" type="text" pInputText>
                     </div>
                 </div>
             </div>
@@ -77,7 +91,6 @@
                         <label for="time" class="font-medium text-900">Time</label>
                         <p-inputNumber id="time"
                                        formControlName="time"
-                                       type="number"
                                        suffix="ms"
                                        [min]="0"
                         ></p-inputNumber>

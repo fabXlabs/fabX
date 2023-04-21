@@ -52,6 +52,7 @@ internal class ToolTest {
             200,
             IdleState.IDLE_HIGH,
             true,
+            null,
             "https://example.com/shopdoor",
             requiredQualifications = setOf(qualificationId)
         )
@@ -191,6 +192,7 @@ internal class ToolTest {
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
 
@@ -237,6 +239,7 @@ internal class ToolTest {
             time = ChangeableValue.ChangeToValueInt(2),
             idleState = ChangeableValue.LeaveAsIs,
             enabled = ChangeableValue.LeaveAsIs,
+            notes = ChangeableValue.ChangeToValueString("hello world"),
             wikiLink = ChangeableValue.LeaveAsIs,
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
                 setOf(
@@ -258,6 +261,7 @@ internal class ToolTest {
             time = ChangeableValue.LeaveAsIs,
             idleState = ChangeableValue.LeaveAsIs,
             enabled = ChangeableValue.ChangeToValueBoolean(false),
+            notes = ChangeableValue.ChangeToValueString("hello world"),
             wikiLink = ChangeableValue.ChangeToValueString("https://example.com/3"),
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
                 setOf(
@@ -283,6 +287,7 @@ internal class ToolTest {
                     2,
                     IdleState.IDLE_LOW,
                     false,
+                    "hello world",
                     "https://example.com/3",
                     setOf(qualificationId1, qualificationId2)
                 )
@@ -321,6 +326,7 @@ internal class ToolTest {
             time = ChangeableValue.ChangeToValueInt(3),
             idleState = ChangeableValue.LeaveAsIs,
             enabled = ChangeableValue.LeaveAsIs,
+            notes = ChangeableValue.LeaveAsIs,
             wikiLink = ChangeableValue.LeaveAsIs,
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
                 setOf(
@@ -342,6 +348,7 @@ internal class ToolTest {
             time = ChangeableValue.LeaveAsIs,
             idleState = ChangeableValue.LeaveAsIs,
             enabled = ChangeableValue.ChangeToValueBoolean(false),
+            notes = ChangeableValue.ChangeToValueString("hello world"),
             wikiLink = ChangeableValue.ChangeToValueString("https://example.com/2"),
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(
                 setOf(
@@ -415,6 +422,7 @@ internal class ToolTest {
             time = ChangeableValue.ChangeToValueInt(9876),
             idleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
+            notes = ChangeableValue.ChangeToValueString("hello world"),
             wikiLink = ChangeableValue.ChangeToValueString("https://example.com/newLink"),
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId))
         )
@@ -430,6 +438,7 @@ internal class ToolTest {
             time = ChangeableValue.ChangeToValueInt(9876),
             idleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
+            notes = ChangeableValue.ChangeToValueString("hello world"),
             wikiLink = ChangeableValue.ChangeToValueString("https://example.com/newLink"),
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId)),
             GettingQualificationById {
@@ -465,6 +474,7 @@ internal class ToolTest {
             time = ChangeableValue.ChangeToValueInt(9876),
             idleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW),
             enabled = ChangeableValue.LeaveAsIs,
+            notes = ChangeableValue.LeaveAsIs,
             wikiLink = ChangeableValue.ChangeToValueString("https://example.com/newLink"),
             requiredQualifications = ChangeableValue.ChangeToValueQualificationSet(setOf(invalidQualificationId)),
             GettingQualificationById {
@@ -519,6 +529,7 @@ internal class ToolTest {
             200,
             IdleState.IDLE_HIGH,
             true,
+            "hello world",
             "https://example.com/shopdoor",
             requiredQualifications = setOf(QualificationIdFixture.static(678))
         )
@@ -536,6 +547,7 @@ internal class ToolTest {
                     "time=200, " +
                     "idleState=IDLE_HIGH, " +
                     "enabled=true, " +
+                    "notes=hello world, " +
                     "wikiLink=https://example.com/shopdoor, " +
                     "requiredQualifications=[QualificationId(value=4bfb3604-f1ae-3404-b651-12239513f529)])"
         )

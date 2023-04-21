@@ -74,6 +74,7 @@ internal class ChangingToolTest {
         val newIdleState = ChangeableValue.ChangeToValueIdleState(IdleState.IDLE_LOW)
         val newEnabled = ChangeableValue.ChangeToValueBoolean(false)
         val newWikiLink = ChangeableValue.LeaveAsIs
+        val newNotes = ChangeableValue.ChangeToValueString("hello world")
         val newRequiredQualifications = ChangeableValue.LeaveAsIs
 
         val expectedSourcingEvent = ToolDetailsChanged(
@@ -88,6 +89,7 @@ internal class ChangingToolTest {
             newTime,
             newIdleState,
             newEnabled,
+            newNotes,
             newWikiLink,
             newRequiredQualifications
         )
@@ -109,6 +111,7 @@ internal class ChangingToolTest {
             newTime,
             newIdleState,
             newEnabled,
+            newNotes,
             newWikiLink,
             newRequiredQualifications
         )
@@ -134,6 +137,7 @@ internal class ChangingToolTest {
             adminActor,
             correlationId,
             toolId,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
@@ -168,6 +172,7 @@ internal class ChangingToolTest {
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs
         )
 
@@ -184,6 +189,7 @@ internal class ChangingToolTest {
             adminActor,
             correlationId,
             toolId,
+            ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,
             ChangeableValue.LeaveAsIs,

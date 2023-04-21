@@ -119,6 +119,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs
             )
             repository.store(event2)
@@ -169,6 +170,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs
             )
 
@@ -197,6 +199,7 @@ internal class ToolDatabaseRepositoryTest {
                     actorId,
                     fixedInstant,
                     correlationId,
+                    ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
                     ChangeableValue.LeaveAsIs,
@@ -261,6 +264,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.ChangeToValueQualificationSet(setOf(qualificationId2))
             )
             repository.store(tool1event2)
@@ -317,6 +321,7 @@ internal class ToolDatabaseRepositoryTest {
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.LeaveAsIs,
                 ChangeableValue.ChangeToValueBoolean(false),
+                ChangeableValue.LeaveAsIs,
                 ChangeableValue.ChangeToValueString("https://wiki.example.com/newtool3"),
                 ChangeableValue.LeaveAsIs
             )
@@ -344,6 +349,7 @@ internal class ToolDatabaseRepositoryTest {
                     1,
                     IdleState.IDLE_HIGH,
                     true,
+                    null,
                     "https://wiki.example.com/tool1",
                     setOf(qualificationId2)
                 ),
@@ -356,6 +362,7 @@ internal class ToolDatabaseRepositoryTest {
                     3,
                     IdleState.IDLE_HIGH,
                     false,
+                    null,
                     "https://wiki.example.com/newtool3",
                     setOf(qualificationId2)
                 )

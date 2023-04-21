@@ -28,6 +28,7 @@ internal class ToolTest {
             789,
             IdleState.IDLE_HIGH,
             true,
+            null,
             "https://example.com/tool1",
             setOf(qualificationId1, qualificationId2, qualificationId3)
         )
@@ -41,6 +42,7 @@ internal class ToolTest {
             789,
             cloud.fabX.fabXaccess.tool.rest.IdleState.IDLE_HIGH,
             true,
+            null,
             "https://example.com/tool1",
             setOf(qualificationId1.serialize(), qualificationId2.serialize(), qualificationId3.serialize())
         )

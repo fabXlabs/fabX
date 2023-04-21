@@ -76,6 +76,7 @@ internal class ToolControllerPutTest {
             ChangeableValue(IdleState.IDLE_HIGH),
             ChangeableValue(false),
             null,
+            null,
             ChangeableValue(setOf(qualificationId1.serialize(), qualificationId2.serialize()))
         )
 
@@ -93,6 +94,7 @@ internal class ToolControllerPutTest {
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueIdleState(cloud.fabX.fabXaccess.tool.model.IdleState.IDLE_HIGH)),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueBoolean(false)),
+                eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
                 eq(
                     cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueQualificationSet(
@@ -118,6 +120,7 @@ internal class ToolControllerPutTest {
     fun `given no admin authentication when changing tool then returns http forbidden`() = withConfiguredTestApp {
         // given
         val requestBody = ToolDetails(
+            null,
             null,
             null,
             null,

@@ -205,6 +205,7 @@ internal class ToolIntegrationTest {
             ChangeableValue(987),
             ChangeableValue(IdleState.IDLE_LOW),
             ChangeableValue(false),
+            ChangeableValue("new note"),
             null,
             ChangeableValue(setOf(qualificationId))
         )
@@ -235,6 +236,7 @@ internal class ToolIntegrationTest {
                     987,
                     IdleState.IDLE_LOW,
                     false,
+                    "new note",
                     "https://example.com/tool",
                     setOf(qualificationId)
                 )
@@ -247,6 +249,7 @@ internal class ToolIntegrationTest {
         val invalidToolId = ToolIdFixture.arbitrary().serialize()
 
         val requestBody = ToolDetails(
+            null,
             null,
             null,
             null,
@@ -283,6 +286,7 @@ internal class ToolIntegrationTest {
             val invalidQualificationId = QualificationIdFixture.arbitrary().serialize()
 
             val requestBody = ToolDetails(
+                null,
                 null,
                 null,
                 null,

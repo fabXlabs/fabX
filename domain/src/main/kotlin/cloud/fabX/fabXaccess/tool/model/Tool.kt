@@ -29,6 +29,7 @@ data class Tool internal constructor(
     val time: Int, // in ms
     val idleState: IdleState,
     val enabled: Boolean,
+    val notes: String?,
     val wikiLink: String,
     val requiredQualifications: Set<QualificationId>
 ) : AggregateRootEntity<ToolId> {
@@ -120,6 +121,7 @@ data class Tool internal constructor(
         time: ChangeableValue<Int>,
         idleState: ChangeableValue<IdleState>,
         enabled: ChangeableValue<Boolean>,
+        notes: ChangeableValue<String?>,
         wikiLink: ChangeableValue<String>,
         requiredQualifications: ChangeableValue<Set<QualificationId>>,
         gettingQualificationById: GettingQualificationById
@@ -145,6 +147,7 @@ data class Tool internal constructor(
                 time,
                 idleState,
                 enabled,
+                notes,
                 wikiLink,
                 requiredQualifications
             )

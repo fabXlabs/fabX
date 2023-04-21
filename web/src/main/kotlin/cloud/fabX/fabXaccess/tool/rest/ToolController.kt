@@ -105,6 +105,7 @@ class ToolController(
                                             it.time.toDomain(),
                                             it.idleState.toDomain { ChangeableValue.ChangeToValueIdleState(it.toDomainModel()) },
                                             it.enabled.toDomain(),
+                                            it.notes.toDomain(),
                                             it.wikiLink.toDomain(),
                                             it.requiredQualifications.toDomain {
                                                 ChangeableValue.ChangeToValueQualificationSet(
