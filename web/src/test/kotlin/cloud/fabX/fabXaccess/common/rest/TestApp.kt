@@ -11,6 +11,7 @@ import cloud.fabX.fabXaccess.device.application.GettingConfiguration
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
+import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandler
 import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandler
 import cloud.fabX.fabXaccess.loggingModule
@@ -59,6 +60,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import java.io.File
 import kotlinx.datetime.Clock
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
@@ -139,6 +141,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingConfiguration::class.java) }
         bindInstance { Mockito.mock(UnlockingTool::class.java) }
         bindInstance { Mockito.mock(RestartingDevice::class.java) }
+        bindInstance { Mockito.mock(UpdatingDeviceFirmware::class.java) }
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
         bindInstance { Mockito.mock(DeviceNotificationHandler::class.java) }
 
@@ -147,6 +150,8 @@ internal fun withTestApp(
         bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
         bindConstant(tag = "webauthnRpId") { "localhost" }
         bindConstant(tag = "webauthnRpName") { "fabX" }
+
+        bindConstant(tag = "firmwareDirectory") { File("/tmp/fabXtest") }
 
         diSetup()
     }

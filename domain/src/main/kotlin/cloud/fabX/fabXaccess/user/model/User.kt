@@ -143,16 +143,19 @@ data class User internal constructor(
         correlationId: CorrelationId,
         locked: ChangeableValue<Boolean> = ChangeableValue.LeaveAsIs,
         notes: ChangeableValue<String?> = ChangeableValue.LeaveAsIs
-    ): UserSourcingEvent {
-        return UserLockStateChanged(
-            id,
-            aggregateVersion + 1,
-            actor.id,
-            clock.now(),
-            correlationId,
-            locked,
-            notes
-        )
+    ): Either<Error, UserSourcingEvent> {
+        return requireUserIsNotActor(actor, correlationId)
+            .map {
+                UserLockStateChanged(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId,
+                    locked,
+                    notes
+                )
+            }
     }
 
     /**
@@ -827,7 +830,7 @@ data class User internal constructor(
         correlationId: CorrelationId
     ): Either<Error, Unit> {
         return if (actor.userId == id) {
-            Error.UserIsActor("User is actor and cannot delete themselves.", correlationId).left()
+            Error.UserIsActor("User is actor and cannot lock/delete themselves.", correlationId).left()
         } else {
             Unit.right()
         }

@@ -6,6 +6,8 @@ fabX is an access system for fab labs, maker spaces, hack spaces, etc. These spa
 members only use tools/machines that they have a qualification for. With fabX, each member gets an NFC card that enables
 them to use the tools they are qualified for.
 
+For more details on the use-case fabX is developed for, read the [domain description](docs/domain-description.md).
+
 ## ✅ Features
 
 * each user has their own access card which personally identifies them
@@ -17,6 +19,9 @@ them to use the tools they are qualified for.
     * keep mode: output as long as card is nearby card reader, e.g. for laser cutters
 * multiple tools can be attached to a single device, the device shows a selection screen for the tool to be used
 * multiple administrators
+* any changes to the system are stored as events, i.e. full auditability
+  * to comply with data protection regulation, user data (personally identifiable information) can be fully 
+    deleted (hard-deleted)
 * (RESTful) API allowing for extension
 
 ## ❌ Limitations
@@ -24,21 +29,16 @@ them to use the tools they are qualified for.
 These are features which can be found in other systems for this use-case but we currently do not intend to implement. If
 you require these or other features and would like to extend fabX, you're welcome to open an issue for discussion.
 
-* no booking system
+* no booking/calendar system
 * no tracking of machine-time
-* no payment
-* While the devices have a (limited) caching mechanism built-in, they work best with connection to the backend. The
-  backend can run on-site (i.e. in the LAN of the space), but e.g. multiple backend instances are currently not
-  supported.
+* no payment system integration
+* devices require a permanent connection to the backend
 
 ## Installation
 
-fabX is provided as a [Docker](https://www.docker.com) image. Additionally, a Postgres database is required.
-See [docker-compose.yml](docker-compose.yml) for reference. Use this file as a base if you want to self-host.
-
-If you do not want to self-host, [Heroku](https://www.heroku.com/pricing) is an option. See their documentation on
-[how to deploy an existing Docker image](https://devcenter.heroku.com/articles/container-registry-and-runtime#pushing-an-existing-image)
-. This process is shown in the [GitHub Action to deploy the DEV stage](.github/workflows/heroku-dev.yml). 
+fabX is provided as a [Docker](https://www.docker.com) image. Additionally, a [Postgres](https://www.postgresql.org)
+database is required. See [docker-compose.yml](docker-compose.yml) for reference. Use this file as a base if you 
+want to self-host.
 
 ## Setup / Documentation
 
@@ -67,6 +67,10 @@ Here is a general overview how to set up a new fabX installation:
     * configure connection of tools to devices
 
 Now each space member is able to use the tools they are qualified for with their personal access card.
+
+### Instructor Documentation
+
+Documentation for instructors (with screenshots) can be found at [docs/instructor](docs/instructor.md).
 
 ## 🛠 Tech Stack
 

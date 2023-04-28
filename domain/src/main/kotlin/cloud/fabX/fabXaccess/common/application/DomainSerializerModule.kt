@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.common.application
 
 import cloud.fabX.fabXaccess.common.model.ActorId
+import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.application.AuthenticatorImpl
@@ -11,6 +12,7 @@ import kotlinx.serialization.modules.subclass
 
 val domainSerializersModule = SerializersModule {
     polymorphic(ActorId::class) {
+        subclass(DeviceId::class)
         subclass(UserId::class)
         subclass(SystemActorId::class)
     }

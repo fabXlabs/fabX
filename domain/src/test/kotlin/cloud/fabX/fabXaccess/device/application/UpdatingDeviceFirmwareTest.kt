@@ -4,13 +4,13 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isSameAs
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.UpdateDeviceFirmware
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
@@ -24,7 +24,7 @@ import org.mockito.kotlin.whenever
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
-internal class GettingDeviceTest {
+internal class UpdatingDeviceFirmwareTest {
 
     private val adminActor = AdminFixture.arbitrary()
     private val deviceId = DeviceIdFixture.arbitrary()
@@ -32,107 +32,79 @@ internal class GettingDeviceTest {
 
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
+    private lateinit var updateDeviceFirmware: UpdateDeviceFirmware
 
-    private lateinit var testee: GettingDevice
+    private lateinit var testee: UpdatingDeviceFirmware
 
     @BeforeEach
     fun `configure DomainModule`(
         @Mock logger: Logger,
-        @Mock deviceRepository: DeviceRepository
+        @Mock deviceRepository: DeviceRepository,
+        @Mock updateDeviceFirmware: UpdateDeviceFirmware
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
+        this.updateDeviceFirmware = updateDeviceFirmware
 
-        testee = GettingDevice({ logger }, deviceRepository)
+        testee = UpdatingDeviceFirmware({ logger }, deviceRepository, updateDeviceFirmware)
     }
 
     @Test
-    fun `when getting all then returns all from repository`() = runTest {
-        // given
-        val device1 = DeviceFixture.arbitrary()
-        val device2 = DeviceFixture.arbitrary()
-        val device3 = DeviceFixture.arbitrary()
-
-        val devices = setOf(device1, device2, device3)
-
-        whenever(deviceRepository.getAll())
-            .thenReturn(devices)
-
-        // when
-        val result = testee.getAll(adminActor, correlationId)
-
-        // then
-        assertThat(result)
-            .isSameAs(devices)
-    }
-
-    @Test
-    fun `given device exists when getting by id then returns from repository`() = runTest {
+    fun `when updating device firmware then updates device firmware`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId)
 
         whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
+        whenever(updateDeviceFirmware.updateDeviceFirmware(deviceId, correlationId))
+            .thenReturn(Unit.right())
+
         // when
-        val result = testee.getById(adminActor, correlationId, deviceId)
+        val result = testee.updateDeviceFirmware(adminActor, correlationId, deviceId)
 
         // then
         assertThat(result)
             .isRight()
-            .isSameAs(device)
+            .isEqualTo(Unit)
     }
 
     @Test
-    fun `given repository error when getting by id then returns error`() = runTest {
+    fun `given invalid device id when updating device firmware then returns error`() = runTest {
         // given
-        val expectedError = ErrorFixture.arbitrary()
+        val error = ErrorFixture.arbitrary()
 
         whenever(deviceRepository.getById(deviceId))
-            .thenReturn(expectedError.left())
+            .thenReturn(error.left())
 
         // when
-        val result = testee.getById(adminActor, correlationId, deviceId)
+        val result = testee.updateDeviceFirmware(adminActor, correlationId, deviceId)
 
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(expectedError)
+            .isEqualTo(error)
     }
 
     @Test
-    fun `given device exists when getting me then returns from repository`() = runTest {
+    fun `given error while updating when updating device firmware then returns error`() = runTest {
         // given
         val device = DeviceFixture.arbitrary(deviceId)
+
+        val error = ErrorFixture.arbitrary()
 
         whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
 
-        // when
-        val result = testee.getMe(device.asActor(), correlationId)
-
-        // then
-        assertThat(result)
-            .isRight()
-            .isEqualTo(device)
-    }
-
-    @Test
-    fun `given repository error when getting me then returns error`() = runTest {
-        // given
-        val device = DeviceFixture.arbitrary(deviceId)
-
-        val expectedError = ErrorFixture.arbitrary()
-
-        whenever(deviceRepository.getById(deviceId))
-            .thenReturn(expectedError.left())
+        whenever(updateDeviceFirmware.updateDeviceFirmware(deviceId, correlationId))
+            .thenReturn(error.left())
 
         // when
-        val result = testee.getMe(device.asActor(), correlationId)
+        val result = testee.updateDeviceFirmware(adminActor, correlationId, deviceId)
 
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(expectedError)
+            .isEqualTo(error)
     }
 }

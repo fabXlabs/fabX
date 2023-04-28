@@ -53,6 +53,12 @@ export namespace Devices {
         constructor(public deviceId: string) {}
     }
 
+    export class UpdateFirmware {
+        static readonly type = "[fabX Devices] Update Firmware"
+
+        constructor(public deviceId: string) {}
+    }
+
     export class Delete {
         static readonly type = "[fabX Devices] Delete"
 

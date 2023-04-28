@@ -19,82 +19,78 @@ internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHa
 }
 
 internal suspend fun ApplicationCall.handleError(error: Error) {
-    @Suppress("UNUSED_VARIABLE")
-    val forceExhaustiveWhen = when (error) {
+    val statusCode = when (error) {
         // authentication, authorization
-        is Error.NotAuthenticated -> respond(HttpStatusCode.Unauthorized)
-        is Error.InvalidAuthentication -> respond(HttpStatusCode.Unauthorized)
-        is Error.UserNotInstructor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
-        is Error.UserNotAdmin -> respond(HttpStatusCode.Forbidden, error.toRestModel())
-        is Error.UserIsLocked -> respond(HttpStatusCode.Forbidden, error.toRestModel())
-        is Error.InvalidSecondFactor -> respond(HttpStatusCode.Forbidden, error.toRestModel())
+        is Error.NotAuthenticated -> HttpStatusCode.Unauthorized
+        is Error.InvalidAuthentication -> HttpStatusCode.Unauthorized
+        is Error.UserNotInstructor -> HttpStatusCode.Forbidden
+        is Error.UserNotAdmin -> HttpStatusCode.Forbidden
+        is Error.UserIsLocked -> HttpStatusCode.Forbidden
+        is Error.InvalidSecondFactor -> HttpStatusCode.Forbidden
         // domain qualification
-        is Error.QualificationNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.ReferencedQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.QualificationInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.QualificationNotFound -> HttpStatusCode.NotFound
+        is Error.ReferencedQualificationNotFound -> HttpStatusCode.UnprocessableEntity
+        is Error.QualificationInUse -> HttpStatusCode.UnprocessableEntity
         // domain tool
-        is Error.ToolNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.ReferencedToolNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.PinNotInUse -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.ToolTypeNotUnlock -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.ToolNotFound -> HttpStatusCode.NotFound
+        is Error.ReferencedToolNotFound -> HttpStatusCode.UnprocessableEntity
+        is Error.PinNotInUse -> HttpStatusCode.NotFound
+        is Error.ToolTypeNotUnlock -> HttpStatusCode.UnprocessableEntity
         // domain device
-        is Error.MacInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.SecretInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.DeviceNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.DeviceNotFoundByIdentity -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.PinInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.ToolNotAttachedToDevice -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.DeviceNotActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.MacInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.SecretInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.DeviceNotFound -> HttpStatusCode.NotFound
+        is Error.DeviceNotFoundByIdentity -> HttpStatusCode.NotFound
+        is Error.PinInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.ToolNotAttachedToDevice -> HttpStatusCode.UnprocessableEntity
+        is Error.DeviceNotActor -> HttpStatusCode.UnprocessableEntity
         // web device
-        is Error.DeviceNotConnected -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
-        is Error.DeviceTimeout -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
-        is Error.DeviceCommunicationSerializationError -> respond(
-            HttpStatusCode.ServiceUnavailable,
-            error.toRestModel()
-        )
-        is Error.UnexpectedDeviceResponse -> respond(HttpStatusCode.ServiceUnavailable, error.toRestModel())
+        is Error.DeviceNotConnected -> HttpStatusCode.ServiceUnavailable
+        is Error.DeviceTimeout -> HttpStatusCode.ServiceUnavailable
+        is Error.DeviceCommunicationSerializationError -> HttpStatusCode.ServiceUnavailable
+        is Error.UnexpectedDeviceResponse -> HttpStatusCode.ServiceUnavailable
         // domain user
-        is Error.UserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.UserNotFoundByIdentity -> respond(HttpStatusCode.Unauthorized)
-        is Error.UserNotFoundByCardId -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.UserNotFoundByUsername -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.UserNotFoundByWikiName -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.SoftDeletedUserNotFound -> respond(HttpStatusCode.NotFound, error.toRestModel())
-        is Error.WikiNameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.InstructorPermissionNotFound -> respond(HttpStatusCode.Forbidden, error.toRestModel())
-        is Error.UserAlreadyAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UserAlreadyNotAdmin -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.InstructorQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.InstructorQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.MemberQualificationAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.MemberQualificationNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UsernameAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UsernameInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UserIdInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.PasswordHashInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UsernamePasswordIdentityAlreadyFound -> respond(
-            HttpStatusCode.UnprocessableEntity,
-            error.toRestModel()
-        )
-        is Error.UsernamePasswordIdentityNotFound -> respond(
-            HttpStatusCode.UnprocessableEntity,
-            error.toRestModel()
-        )
-        is Error.CredentialIdAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.CardIdAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.CardIdInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.CardSecretInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.PhoneNrAlreadyInUse -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.PhoneNrInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.PinIdentityAlreadyFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.PinInvalid -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UserIdentityNotFound -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UserIsActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.UserNotActor -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.UserNotFound -> HttpStatusCode.NotFound
+        is Error.UserNotFoundByIdentity -> HttpStatusCode.Unauthorized
+        is Error.UserNotFoundByCardId -> HttpStatusCode.NotFound
+        is Error.UserNotFoundByUsername -> HttpStatusCode.NotFound
+        is Error.UserNotFoundByWikiName -> HttpStatusCode.NotFound
+        is Error.SoftDeletedUserNotFound -> HttpStatusCode.NotFound
+        is Error.WikiNameAlreadyInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.InstructorPermissionNotFound -> HttpStatusCode.Forbidden
+        is Error.UserAlreadyAdmin -> HttpStatusCode.UnprocessableEntity
+        is Error.UserAlreadyNotAdmin -> HttpStatusCode.UnprocessableEntity
+        is Error.InstructorQualificationAlreadyFound -> HttpStatusCode.UnprocessableEntity
+        is Error.InstructorQualificationNotFound -> HttpStatusCode.UnprocessableEntity
+        is Error.MemberQualificationAlreadyFound -> HttpStatusCode.UnprocessableEntity
+        is Error.MemberQualificationNotFound -> HttpStatusCode.UnprocessableEntity
+        is Error.UsernameAlreadyInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.UsernameInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.UserIdInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.PasswordHashInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.UsernamePasswordIdentityAlreadyFound -> HttpStatusCode.UnprocessableEntity
+        is Error.UsernamePasswordIdentityNotFound -> HttpStatusCode.UnprocessableEntity
+        is Error.CredentialIdAlreadyInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.CardIdAlreadyInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.CardIdInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.CardSecretInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.PhoneNrAlreadyInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.PhoneNrInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.PinIdentityAlreadyFound -> HttpStatusCode.UnprocessableEntity
+        is Error.PinInvalid -> HttpStatusCode.UnprocessableEntity
+        is Error.UserIdentityNotFound -> HttpStatusCode.UnprocessableEntity
+        is Error.UserIsActor -> HttpStatusCode.UnprocessableEntity
+        is Error.UserNotActor -> HttpStatusCode.UnprocessableEntity
         // persistence
-        is Error.VersionConflict -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
+        is Error.VersionConflict -> HttpStatusCode.UnprocessableEntity
         // webauthn
-        is Error.WebauthnError -> respond(HttpStatusCode.UnprocessableEntity, error.toRestModel())
-        is Error.ChallengeNotFound -> respond(HttpStatusCode.Unauthorized, error.toRestModel())
+        is Error.WebauthnError -> HttpStatusCode.UnprocessableEntity
+        is Error.ChallengeNotFound -> HttpStatusCode.Unauthorized
+    }
+
+    if (statusCode == HttpStatusCode.Unauthorized) {
+        respond(statusCode)
+    } else {
+        respond(statusCode, error.toRestModel())
     }
 }

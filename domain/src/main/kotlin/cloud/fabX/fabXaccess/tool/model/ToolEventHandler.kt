@@ -24,6 +24,7 @@ internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
                 time = event.time,
                 idleState = event.idleState,
                 enabled = true,
+                notes = null,
                 wikiLink = event.wikiLink,
                 requiredQualifications = event.requiredQualifications,
             )
@@ -43,6 +44,7 @@ internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
                 time = e.time.valueToChangeTo(t.time),
                 idleState = e.idleState.valueToChangeTo(t.idleState),
                 enabled = e.enabled.valueToChangeTo(t.enabled),
+                notes = e.notes.valueToChangeTo(t.notes),
                 wikiLink = e.wikiLink.valueToChangeTo(t.wikiLink),
                 requiredQualifications = e.requiredQualifications.valueToChangeTo(t.requiredQualifications),
             )

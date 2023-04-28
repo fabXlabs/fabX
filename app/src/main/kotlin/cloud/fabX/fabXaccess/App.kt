@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
+import java.io.File
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.Clock
 import org.kodein.di.DI
@@ -46,6 +47,8 @@ val app = DI {
     bindConstant(tag = "webauthnRpName") { config.webauthnRpName }
 
     bindInstance(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
+
+    bindInstance(tag = "firmwareDirectory") { File(config.firmwareDirectory) }
 
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }

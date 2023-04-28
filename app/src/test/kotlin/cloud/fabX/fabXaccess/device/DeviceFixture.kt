@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
+import cloud.fabX.fabXaccess.device.rest.DesiredFirmwareVersion
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
 import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
 import io.ktor.client.call.body
@@ -47,8 +48,22 @@ internal suspend fun ApplicationTestBuilder.givenToolAttachedToDevice(
 ) {
     val requestBody = ToolAttachmentDetails(toolId)
 
-    // when
     val response = c().put("/api/v1/device/$deviceId/attached-tool/$pin") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+}
+
+internal suspend fun ApplicationTestBuilder.givenDesiredFirmwareVersion(
+    deviceId: String,
+    desiredFirmwareVersion: String
+) {
+    val requestBody = DesiredFirmwareVersion(desiredFirmwareVersion)
+
+    val response = c().put("/api/v1/device/$deviceId/desired-firmware-version") {
         adminAuth()
         contentType(ContentType.Application.Json)
         setBody(requestBody)

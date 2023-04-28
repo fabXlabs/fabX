@@ -74,7 +74,10 @@ data class ErrorResponse(
  * Command from device -> server. In the response, the server returns the device's configuration.
  */
 @Serializable
-data class GetConfiguration(override val commandId: Int) : DeviceToServerCommand() {
+data class GetConfiguration(
+    override val commandId: Int,
+    val actualFirmwareVersion: String
+) : DeviceToServerCommand() {
     override suspend fun handle(
         actor: DeviceActor,
         commandHandler: DeviceCommandHandler
@@ -189,3 +192,12 @@ data class RestartDevice(override val commandId: Int) : ServerToDeviceCommand()
 
 @Serializable
 data class DeviceRestartResponse(override val commandId: Int) : DeviceResponse()
+
+/**
+ * Command from server -> device to trigger device firmware update process.
+ */
+@Serializable
+data class UpdateDeviceFirmware(override val commandId: Int) : ServerToDeviceCommand()
+
+@Serializable
+data class UpdateFirmwareResponse(override val commandId: Int) : DeviceResponse()

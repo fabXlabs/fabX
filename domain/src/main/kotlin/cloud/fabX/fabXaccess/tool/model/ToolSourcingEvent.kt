@@ -60,6 +60,7 @@ data class ToolDetailsChanged(
     val time: ChangeableValue<Int>,
     val idleState: ChangeableValue<IdleState>,
     val enabled: ChangeableValue<Boolean>,
+    val notes: ChangeableValue<String?>,
     val wikiLink: ChangeableValue<String>,
     val requiredQualifications: ChangeableValue<Set<QualificationId>>
 ) : ToolSourcingEvent() {

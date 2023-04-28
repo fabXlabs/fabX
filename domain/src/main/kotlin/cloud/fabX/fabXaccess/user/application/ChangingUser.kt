@@ -67,7 +67,7 @@ class ChangingUser(
         log.debug("changeLockState...")
 
         return userRepository.getById(userId)
-            .map { it.changeLockState(actor, clock, correlationId, locked, notes) }
+            .flatMap { it.changeLockState(actor, clock, correlationId, locked, notes) }
             .flatMap {
                 userRepository.store(it)
                     .toEither { }

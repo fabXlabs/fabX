@@ -1,13 +1,17 @@
 package cloud.fabX.fabXaccess.device.application
 
+import FixedClock
+import arrow.core.None
 import arrow.core.left
 import arrow.core.right
 import assertk.all
 import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.device.model.ActualFirmwareVersionChanged
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
@@ -20,6 +24,7 @@ import isRight
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -31,9 +36,14 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class GettingConfigurationTest {
 
+    private val correlationId = CorrelationIdFixture.arbitrary()
+
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
     private lateinit var toolRepository: GettingToolById
+
+    private val fixedInstant = Clock.System.now()
+    private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var testee: GettingConfiguration
 
@@ -47,7 +57,7 @@ internal class GettingConfigurationTest {
         this.deviceRepository = deviceRepository
         this.toolRepository = gettingToolById
 
-        testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById)
+        testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById, fixedClock)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -67,7 +77,8 @@ internal class GettingConfigurationTest {
                 name = "device42",
                 background = "https://example.com/bg.bmp",
                 backupBackendUrl = "https://backup.example.com",
-                attachedTools = mapOf(pin1 to toolId1, pin2 to toolId2)
+                attachedTools = mapOf(pin1 to toolId1, pin2 to toolId2),
+                actualFirmwareVersion = "0.0.0"
             )
 
             runBlocking {
@@ -105,7 +116,11 @@ internal class GettingConfigurationTest {
             val deviceActor = DeviceActor(deviceId, "aabbccddee42")
 
             // when
-            val result = testee.getConfiguration(deviceActor)
+            val result = testee.getConfiguration(
+                deviceActor,
+                correlationId,
+                "0.0.0"
+            )
 
             // then
             assertThat(result)
@@ -126,6 +141,35 @@ internal class GettingConfigurationTest {
                     transform { it.attachedTools[pin2]!!.time }.isEqualTo(2)
                 }
         }
+
+        @Test
+        fun `when getting configuration then actual firmware version is updated`() = runTest {
+            // given
+            val deviceActor = DeviceActor(deviceId, "aabbccddee42")
+
+            val expectedEvent = ActualFirmwareVersionChanged(
+                deviceId,
+                2,
+                deviceId,
+                fixedInstant,
+                correlationId,
+                "1.42.0"
+            )
+
+            whenever(deviceRepository.store(expectedEvent))
+                .thenReturn(None)
+
+            // when
+            val result = testee.getConfiguration(
+                deviceActor,
+                correlationId,
+                "1.42.0"
+            )
+
+            // then
+            assertThat(result)
+                .isRight()
+        }
     }
 
     @Test
@@ -140,7 +184,11 @@ internal class GettingConfigurationTest {
             .thenReturn(expectedError.left())
 
         // when
-        val result = testee.getConfiguration(unknownDeviceActor)
+        val result = testee.getConfiguration(
+            unknownDeviceActor,
+            correlationId,
+            "42.0.0"
+        )
 
         // then
         assertThat(result)
@@ -159,7 +207,8 @@ internal class GettingConfigurationTest {
             name = "device42",
             background = "https://example.com/bg.bmp",
             backupBackendUrl = "https://backup.example.com",
-            attachedTools = mapOf(0 to toolId)
+            attachedTools = mapOf(0 to toolId),
+            actualFirmwareVersion = "0.0.0"
         )
 
         val error = ErrorFixture.arbitrary()
@@ -173,7 +222,11 @@ internal class GettingConfigurationTest {
             .thenReturn(error.left())
 
         // when
-        val result = testee.getConfiguration(deviceActor)
+        val result = testee.getConfiguration(
+            deviceActor,
+            correlationId,
+            "0.0.0"
+        )
 
         // then
         assertThat(result)

@@ -6,7 +6,7 @@ val testcontainersVersion: String by project
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.8.10"
+    kotlin("plugin.serialization") version "1.8.21"
 }
 
 dependencies {
@@ -19,7 +19,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresDriverVersion")
     implementation("org.liquibase:liquibase-core:$liquibaseVersion")
-    implementation("com.mattbertolini:liquibase-slf4j:4.1.0")
+    implementation("com.mattbertolini:liquibase-slf4j:5.0.0")
     testImplementation(testFixtures(project(":domain")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")

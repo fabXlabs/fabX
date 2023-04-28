@@ -681,7 +681,37 @@ internal class UserTest {
         )
 
         // then
-        assertThat(result).isEqualTo(expectedSourcingEvent)
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given admin locking themselves when changing lock state then returns error`() {
+        // given
+        val user = UserFixture.arbitrary(
+            userId,
+            isAdmin = true
+        )
+
+        // when
+        val result = user.changeLockState(
+            user.asAdmin().getOrNull()!!,
+            fixedClock,
+            correlationId,
+            locked = ChangeableValue.ChangeToValueBoolean(true),
+            notes = ChangeableValue.ChangeToValueOptionalString(null)
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.UserIsActor(
+                    "User is actor and cannot lock/delete themselves.",
+                    correlationId
+                )
+            )
     }
 
     @Test
@@ -2016,7 +2046,7 @@ internal class UserTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.UserIsActor("User is actor and cannot delete themselves.", correlationId))
+            .isEqualTo(Error.UserIsActor("User is actor and cannot lock/delete themselves.", correlationId))
     }
 
     @ParameterizedTest

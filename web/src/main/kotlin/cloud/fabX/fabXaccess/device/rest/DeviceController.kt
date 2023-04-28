@@ -19,6 +19,7 @@ import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
+import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -36,7 +37,8 @@ class DeviceController(
     private val attachingTool: AttachingTool,
     private val detachingTool: DetachingTool,
     private val unlockingTool: UnlockingTool,
-    private val restartingDevice: RestartingDevice
+    private val restartingDevice: RestartingDevice,
+    private val updatingDeviceFirmware: UpdatingDeviceFirmware
 ) {
 
     val routes: Route.() -> Unit = {
@@ -217,6 +219,23 @@ class DeviceController(
                             readAdminAuthentication()
                                 .flatMap { admin ->
                                     restartingDevice.restartDevice(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                                }
+                        )
+                    }
+            }
+
+            post("/{id}/update-firmware") {
+                readUUIDParameter("id")
+                    ?.let { DeviceId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    updatingDeviceFirmware.updateDeviceFirmware(
                                         admin,
                                         newCorrelationId(),
                                         id

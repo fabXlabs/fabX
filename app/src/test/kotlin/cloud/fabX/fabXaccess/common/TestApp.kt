@@ -6,13 +6,9 @@ import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
-import cloud.fabX.fabXaccess.device.infrastructure.DeviceSourcingEventDAO
 import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
-import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
-import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
-import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -29,13 +25,13 @@ import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
+import java.io.File
 import java.util.UUID
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.allInstances
@@ -84,6 +80,8 @@ private fun testSetup(): WebApp {
         bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
         bindConstant(tag = "webauthnRpId") { "localhost" }
         bindConstant(tag = "webauthnRpName") { "fabX" }
+
+        bindInstance(tag = "firmwareDirectory") { File("/tmp/fabXIntegrationTest") }
 
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }

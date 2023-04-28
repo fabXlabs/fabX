@@ -10,6 +10,7 @@ export interface Tool {
     time: number,
     idleState: IdleState,
     enabled: Boolean,
+    notes: string | null,
     wikiLink: string,
     requiredQualifications: string[]
 }
@@ -23,6 +24,7 @@ export interface AugmentedTool {
     time: number,
     idleState: IdleState,
     enabled: Boolean,
+    notes: string | null,
     wikiLink: string,
     requiredQualifications: Qualification[]
 }
@@ -44,6 +46,7 @@ export interface ToolDetails {
     time: ChangeableValue<number> | null,
     idleState: ChangeableValue<IdleState> | null,
     enabled: ChangeableValue<boolean> | null,
+    notes: ChangeableValue<string | null> | null,
     wikiLink: ChangeableValue<string> | null,
     requiredQualifications: ChangeableValue<string[]> | null,
 }
