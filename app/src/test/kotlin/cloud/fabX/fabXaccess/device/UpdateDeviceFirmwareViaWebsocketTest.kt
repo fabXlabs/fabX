@@ -21,18 +21,14 @@ import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.InternalAPI
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.async
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class UpdateDeviceFirmwareViaWebsocketTest {
 
     @Test
@@ -71,42 +67,43 @@ internal class UpdateDeviceFirmwareViaWebsocketTest {
     }
 
     @Test
-    fun `given device does not respond when updating device firmware then returns http service unavailable`() = withTestApp {
-        // given
-        val mac = "AABB11CC22DD"
-        val secret = "c8760b55353aa7bfc536f2d29499b549"
-        val deviceId = givenDevice(mac = mac, secret = secret)
+    fun `given device does not respond when updating device firmware then returns http service unavailable`() =
+        withTestApp {
+            // given
+            val mac = "AABB11CC22DD"
+            val secret = "c8760b55353aa7bfc536f2d29499b549"
+            val deviceId = givenDevice(mac = mac, secret = secret)
 
-        // when
-        c().webSocket("/api/v1/device/ws", {
-            basicAuth(mac, secret)
-        }) {
-            (incoming.receive() as Frame.Text).readText() // greeting text
+            // when
+            c().webSocket("/api/v1/device/ws", {
+                basicAuth(mac, secret)
+            }) {
+                (incoming.receive() as Frame.Text).readText() // greeting text
 
-            val httpResponseDeferred = async {
-                c().post("/api/v1/device/$deviceId/update-firmware") {
-                    adminAuth()
+                val httpResponseDeferred = async {
+                    c().post("/api/v1/device/$deviceId/update-firmware") {
+                        adminAuth()
+                    }
                 }
+
+                val commandText = (incoming.receive() as Frame.Text).readText()
+                val command = Json.decodeFromString<ServerToDeviceCommand>(commandText)
+
+                // no response sent
+
+                val httpResponse = httpResponseDeferred.await()
+
+                // then
+                assertThat(command).isInstanceOf(UpdateDeviceFirmware::class)
+                assertThat(httpResponse.status).isEqualTo(HttpStatusCode.ServiceUnavailable)
+                assertThat(httpResponse.body<Error>())
+                    .isError(
+                        "DeviceTimeout",
+                        "Timeout while waiting for response from device DeviceId(value=$deviceId).",
+                        mapOf("deviceId" to deviceId)
+                    )
             }
-
-            val commandText = (incoming.receive() as Frame.Text).readText()
-            val command = Json.decodeFromString<ServerToDeviceCommand>(commandText)
-
-            // no response sent
-
-            val httpResponse = httpResponseDeferred.await()
-
-            // then
-            assertThat(command).isInstanceOf(UpdateDeviceFirmware::class)
-            assertThat(httpResponse.status).isEqualTo(HttpStatusCode.ServiceUnavailable)
-            assertThat(httpResponse.body<Error>())
-                .isError(
-                    "DeviceTimeout",
-                    "Timeout while waiting for response from device DeviceId(value=$deviceId).",
-                    mapOf("deviceId" to deviceId)
-                )
         }
-    }
 
     @Test
     fun `given device responds with error when updating device firmware then returns error`() = withTestApp {

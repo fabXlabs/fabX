@@ -21,18 +21,14 @@ import io.ktor.client.request.basicAuth
 import io.ktor.client.request.post
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.HttpStatusCode
-import io.ktor.util.InternalAPI
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.async
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class RestartDeviceViaWebsocketIntegrationTest {
 
     @Test

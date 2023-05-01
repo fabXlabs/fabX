@@ -39,14 +39,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.Test
 
-// TODO remove InternalAPI annotation (no longer necessary!)
-@InternalAPI
-// TODO remove ExperimentalSerializationApi annotation (no longer necessary?)
-@ExperimentalSerializationApi
 internal class UserIntegrationTest {
 
     @Test

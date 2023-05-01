@@ -30,12 +30,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.util.InternalAPI
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class DeviceIntegrationTest {
 
     @Test

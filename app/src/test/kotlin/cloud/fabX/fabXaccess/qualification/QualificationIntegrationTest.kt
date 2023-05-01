@@ -30,13 +30,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.util.InternalAPI
 import java.util.UUID
-import kotlinx.serialization.ExperimentalSerializationApi
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class QualificationIntegrationTest {
 
     @Test

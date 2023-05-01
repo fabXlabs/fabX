@@ -2,9 +2,7 @@ package cloud.fabX.fabXaccess.tool
 
 import assertk.assertThat
 import assertk.assertions.contains
-import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
-import assertk.assertions.isInstanceOf
 import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.withTestApp
@@ -16,7 +14,6 @@ import cloud.fabX.fabXaccess.device.ws.DeviceToServerNotification
 import cloud.fabX.fabXaccess.device.ws.ServerToDeviceCommand
 import cloud.fabX.fabXaccess.device.ws.ToolUnlockResponse
 import cloud.fabX.fabXaccess.device.ws.ToolUnlockedNotification
-import cloud.fabX.fabXaccess.device.ws.UnlockTool
 import cloud.fabX.fabXaccess.user.givenCardIdentity
 import cloud.fabX.fabXaccess.user.givenUser
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
@@ -29,19 +26,15 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.util.InternalAPI
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
-@InternalAPI
-@ExperimentalSerializationApi
 internal class ToolMetricsIntegrationTest {
     @Test
     fun `when receives ToolUnlockedNotification then tool usage counter is increased`() = withTestApp {
