@@ -90,4 +90,4 @@ Contributions are welcome. Start by reading the [technical documentation](docs).
 
 ## ⚖️ License
 
-TODO
+GPLv3, see [LICENSE](LICENSE).
