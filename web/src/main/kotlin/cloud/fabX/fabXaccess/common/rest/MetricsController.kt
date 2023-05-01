@@ -54,7 +54,10 @@ class MetricsController(
         val connectedDevices = gettingDevice.getAll(SystemActor, newCorrelationId())
             .map {
                 Row.of(
-                    Tags.of(Tag.of("deviceId", it.id.serialize())),
+                    Tags.of(
+                        Tag.of("deviceId", it.id.serialize()),
+                        Tag.of("deviceName", it.name)
+                    ),
                     if (deviceWebsocketController.isConnected(it.id)) {
                         1
                     } else {
