@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common.infrastructure
 import cloud.fabX.fabXaccess.PersistenceApp
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
+import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -45,6 +46,7 @@ internal fun withTestApp(
 
         // additionally bind non-cached variants for direct tests
         bindSingleton { UserDatabaseRepository(instance()) }
+        bindSingleton { ToolDatabaseRepository(instance(), instance()) }
     }
 
     // only initialise database once

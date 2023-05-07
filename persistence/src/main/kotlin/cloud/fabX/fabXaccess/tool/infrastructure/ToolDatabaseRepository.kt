@@ -38,7 +38,7 @@ object ToolSourcingEventDAO : Table("ToolSourcingEvent") {
     val data = jsonb("data", ToolSourcingEvent.serializer())
 }
 
-class ToolDatabaseRepository(
+open class ToolDatabaseRepository(
     loggerFactory: LoggerFactory,
     private val db: Database
 ) : ToolRepository, GettingToolsByQualificationId {
