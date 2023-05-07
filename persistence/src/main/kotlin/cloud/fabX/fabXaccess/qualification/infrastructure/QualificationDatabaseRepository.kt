@@ -34,7 +34,7 @@ object QualificationSourcingEventDAO : Table("QualificationSourcingEvent") {
     val data = jsonb("data", QualificationSourcingEvent.serializer())
 }
 
-class QualificationDatabaseRepository(private val db: Database) : QualificationRepository {
+open class QualificationDatabaseRepository(private val db: Database) : QualificationRepository {
 
     override suspend fun getAll(): Set<Qualification> {
         return transaction {

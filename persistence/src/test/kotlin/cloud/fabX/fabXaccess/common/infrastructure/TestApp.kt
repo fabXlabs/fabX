@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common.infrastructure
 import cloud.fabX.fabXaccess.PersistenceApp
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
+import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,8 +46,9 @@ internal fun withTestApp(
         bindInstance(tag = "dbpassword") { postgresContainer.password }
 
         // additionally bind non-cached variants for direct tests
-        bindSingleton { UserDatabaseRepository(instance()) }
+        bindSingleton { QualificationDatabaseRepository(instance()) }
         bindSingleton { ToolDatabaseRepository(instance(), instance()) }
+        bindSingleton { UserDatabaseRepository(instance()) }
     }
 
     // only initialise database once
