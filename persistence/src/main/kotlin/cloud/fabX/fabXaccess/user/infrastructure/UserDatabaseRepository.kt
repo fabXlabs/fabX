@@ -49,7 +49,7 @@ object UserSourcingEventDAO : Table("UserSourcingEvent") {
     val data = jsonb("data", UserSourcingEvent.serializer())
 }
 
-class UserDatabaseRepository(private val db: Database) :
+open class UserDatabaseRepository(private val db: Database) :
     UserRepository,
     GettingUserByIdentity,
     GettingUserByUsername,

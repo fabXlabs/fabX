@@ -1,19 +1,16 @@
 package cloud.fabX.fabXaccess.common.infrastructure
 
 import cloud.fabX.fabXaccess.PersistenceApp
-import cloud.fabX.fabXaccess.device.infrastructure.DeviceSourcingEventDAO
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
-import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationSourcingEventDAO
-import cloud.fabX.fabXaccess.tool.infrastructure.ToolSourcingEventDAO
-import cloud.fabX.fabXaccess.user.infrastructure.UserSourcingEventDAO
+import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.deleteAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.bindInstance
+import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
@@ -45,6 +42,9 @@ internal fun withTestApp(
         bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
         bindInstance(tag = "dbuser") { postgresContainer.username }
         bindInstance(tag = "dbpassword") { postgresContainer.password }
+
+        // additionally bind non-cached variants for direct tests
+        bindSingleton { UserDatabaseRepository(instance()) }
     }
 
     // only initialise database once

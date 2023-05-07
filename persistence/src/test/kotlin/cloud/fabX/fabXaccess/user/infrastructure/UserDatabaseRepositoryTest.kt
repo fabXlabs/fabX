@@ -15,12 +15,6 @@ import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.CardIdentityAdded
-import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
-import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
-import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
-import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
-import cloud.fabX.fabXaccess.user.model.GettingUsersByInstructorQualification
-import cloud.fabX.fabXaccess.user.model.GettingUsersByMemberQualification
 import cloud.fabX.fabXaccess.user.model.InstructorQualificationAdded
 import cloud.fabX.fabXaccess.user.model.MemberQualificationAdded
 import cloud.fabX.fabXaccess.user.model.UserCreated
@@ -41,20 +35,23 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import org.kodein.di.DI
 import org.kodein.di.instance
 
-internal class UserDatabaseRepositoryTest {
+internal open class UserDatabaseRepositoryTest {
     private val userId = UserIdFixture.static(1234)
     private val actorId = UserIdFixture.static(1)
     private val correlationId = CorrelationIdFixture.arbitrary()
     private val fixedInstant = Clock.System.now()
 
+    internal open fun withRepository(block: suspend (UserDatabaseRepository) -> Unit) = withTestApp { di ->
+        val repository: UserDatabaseRepository by di.instance()
+        block(repository)
+    }
+
     @Test
     fun `given empty repository when getting user by id then returns user not found error`() =
-        withTestApp { di ->
+        withRepository { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(userId)
@@ -71,30 +68,28 @@ internal class UserDatabaseRepositoryTest {
         }
 
     @Test
-    fun `given empty repository when hard deleting user then returns user not found error`() = withTestApp { di ->
-        // given
-        val repository: UserDatabaseRepository by di.instance()
+    fun `given empty repository when hard deleting user then returns user not found error`() =
+        withRepository { repository ->
+            // given
 
-        // when
-        val result = repository.hardDelete(userId)
+            // when
+            val result = repository.hardDelete(userId)
 
-        // then
-        assertThat(result)
-            .isLeft()
-            .isEqualTo(
-                Error.UserNotFound(
-                    "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
-                    userId
+            // then
+            assertThat(result)
+                .isLeft()
+                .isEqualTo(
+                    Error.UserNotFound(
+                        "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                        userId
+                    )
                 )
-            )
-    }
+        }
 
     @Nested
     internal inner class GivenEventsForUserStoredInRepository {
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: UserDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (UserDatabaseRepository) -> Unit) = withRepository { repository ->
             val event1 = UserCreated(
                 userId,
                 actorId,
@@ -117,13 +112,12 @@ internal class UserDatabaseRepositoryTest {
             )
             repository.store(event2)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting user by id then returns user from events`() = withSetupTestApp { di ->
+        fun `when getting user by id then returns user from events`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(userId)
@@ -143,10 +137,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
-
             val event = UserLockStateChanged(
                 userId,
                 3,
@@ -172,10 +164,8 @@ internal class UserDatabaseRepositoryTest {
         @ValueSource(longs = [-1, 0, 2, 4, 42])
         fun `when storing then not accepts version numbers other than increased by one`(
             version: Long
-        ) = withSetupTestApp { di ->
+        ) = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
-
             val event = UserLockStateChanged(
                 userId,
                 version,
@@ -205,10 +195,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `and deleted user when getting soft deleted users then returns user`() = withSetupTestApp { di ->
+        fun `and deleted user when getting soft deleted users then returns user`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
-
             val userDeleted = UserDeleted(
                 userId,
                 3,
@@ -240,9 +228,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when hard deleting user then no sourcing events left`() = withSetupTestApp { di ->
+        fun `when hard deleting user then no sourcing events left`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.hardDelete(userId)
@@ -262,9 +249,7 @@ internal class UserDatabaseRepositoryTest {
         private val userId2 = UserIdFixture.static(12345)
         private val userId3 = UserIdFixture.static(123456)
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: UserDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (UserDatabaseRepository) -> Unit) = withRepository { repository ->
             val user1event1 = UserCreated(
                 userId,
                 actorId,
@@ -342,13 +327,12 @@ internal class UserDatabaseRepositoryTest {
             )
             repository.store(user3event2)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting all users then returns all users from events`() = withSetupTestApp { di ->
+        fun `when getting all users then returns all users from events`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()
@@ -385,9 +369,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by known wiki name then returns user`() = withSetupTestApp { di ->
+        fun `when getting by known wiki name then returns user`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByWikiName by di.instance()
 
             // when
             val result = repository.getByWikiName("wiki2v2")
@@ -399,9 +382,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown wiki name then returns error`() = withSetupTestApp { di ->
+        fun `when getting by unknown wiki name then returns error`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByWikiName by di.instance()
 
             // when
             val result = repository.getByWikiName("unknownWikiName")
@@ -415,9 +397,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.getSourcingEvents()
@@ -432,9 +413,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting soft deleted users then returns users`() = withSetupTestApp { di ->
+        fun `when getting soft deleted users then returns users`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             val user1Deleted = UserDeleted(
                 userId,
@@ -456,9 +436,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when hard deleting user then sourcing events are deleted`() = withSetupTestApp { di ->
+        fun `when hard deleting user then sourcing events are deleted`() = withSetupTestApp { repository ->
             // given
-            val repository: UserDatabaseRepository by di.instance()
 
             // when
             val result = repository.hardDelete(userId)
@@ -476,9 +455,7 @@ internal class UserDatabaseRepositoryTest {
 
         private val userId2 = UserIdFixture.static(12345)
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: UserDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (UserDatabaseRepository) -> Unit) = withRepository { repository ->
             val user1Created = UserCreated(
                 userId,
                 actorId,
@@ -545,13 +522,12 @@ internal class UserDatabaseRepositoryTest {
             )
             repository.store(user2CardIdentityAdded)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting by known identity then returns user`() = withSetupTestApp { di ->
+        fun `when getting by known identity then returns user`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -565,9 +541,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown identity then returns error`() = withSetupTestApp { di ->
+        fun `when getting by unknown identity then returns error`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -583,9 +558,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by known username then returns user`() = withSetupTestApp { di ->
+        fun `when getting by known username then returns user`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByUsername by di.instance()
 
             // when
             val result = repository.getByUsername("username1")
@@ -597,9 +571,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown username then returns error`() = withSetupTestApp { di ->
+        fun `when getting by unknown username then returns error`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByUsername by di.instance()
 
             // when
             val result = repository.getByUsername("unknownusername")
@@ -613,9 +586,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by known card id then returns user`() = withSetupTestApp { di ->
+        fun `when getting by known card id then returns user`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByCardId by di.instance()
 
             // when
             val result = repository.getByCardId("AA11BB22CC33DD")
@@ -627,9 +599,8 @@ internal class UserDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown card id then returns error`() = withSetupTestApp { di ->
+        fun `when getting by unknown card id then returns error`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingUserByCardId by di.instance()
 
             // when
             val unknownCardId = "00000000000000"
@@ -654,9 +625,7 @@ internal class UserDatabaseRepositoryTest {
         private val qualificationId = QualificationIdFixture.static(456)
         private val qualificationId2 = QualificationIdFixture.static(678)
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: UserDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (UserDatabaseRepository) -> Unit) = withRepository { repository ->
             val user1Created = UserCreated(
                 userId,
                 actorId,
@@ -732,14 +701,13 @@ internal class UserDatabaseRepositoryTest {
             )
             repository.store(user3MemberQualificationAdded)
 
-            block(di)
+            block(repository)
         }
 
         @Test
         fun `when getting users by member qualification then returns users who have member qualification`() =
-            withSetupTestApp { di ->
+            withSetupTestApp { repository ->
                 // given
-                val repository: GettingUsersByMemberQualification by di.instance()
 
                 // when
                 val result = repository.getByMemberQualification(qualificationId)
@@ -752,9 +720,8 @@ internal class UserDatabaseRepositoryTest {
 
         @Test
         fun `when getting users by instructor qualification then returns users who have instructor qualification`() =
-            withSetupTestApp { di ->
+            withSetupTestApp { repository ->
                 // given
-                val repository: GettingUsersByInstructorQualification by di.instance()
 
                 // when
                 val result = repository.getByInstructorQualification(qualificationId2)

@@ -4,7 +4,7 @@ import cloud.fabX.fabXaccess.common.LiquibaseMigrationHandler
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
-import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
+import cloud.fabX.fabXaccess.user.infrastructure.CachedUserDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.WebauthnInMemoryRepository
 import org.jetbrains.exposed.sql.Database
 import org.kodein.di.DI
@@ -15,7 +15,7 @@ val persistenceModule = DI.Module("persistence") {
     bindSingleton { DeviceDatabaseRepository(instance()) }
     bindSingleton { QualificationDatabaseRepository(instance()) }
     bindSingleton { ToolDatabaseRepository(instance(), instance()) }
-    bindSingleton { UserDatabaseRepository(instance()) }
+    bindSingleton { CachedUserDatabaseRepository(instance()) }
     bindSingleton { WebauthnInMemoryRepository() }
 
     bindSingleton {
