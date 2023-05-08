@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.common.infrastructure
 
 import cloud.fabX.fabXaccess.PersistenceApp
+import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
@@ -46,6 +47,7 @@ internal fun withTestApp(
         bindInstance(tag = "dbpassword") { postgresContainer.password }
 
         // additionally bind non-cached variants for direct tests
+        bindSingleton { DeviceDatabaseRepository(instance()) }
         bindSingleton { QualificationDatabaseRepository(instance()) }
         bindSingleton { ToolDatabaseRepository(instance(), instance()) }
         bindSingleton { UserDatabaseRepository(instance()) }
