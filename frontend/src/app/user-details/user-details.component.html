@@ -1,4 +1,10 @@
 <p-toast></p-toast>
+<p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
+                 [style]="{width: '50vw'}"
+                 [baseZIndex]="10000"
+                 [dismissableMask]=true
+                 rejectButtonStyleClass="p-button-text">
+</p-confirmDialog>
 <ng-container *ngIf="user$ | async let user">
     <div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
         <h2 class="mb-0 text-xl">{{user.firstName}} {{user.lastName}}</h2>
@@ -276,12 +282,6 @@
                         {{user.isAdmin}}
                     </div>
                     <div *ngIf="loggedInUser$ | async let loggedInUser">
-                        <p-confirmDialog [breakpoints]="{'960px': '75vw', '640px': '100vw'}"
-                                         [style]="{width: '50vw'}"
-                                         [baseZIndex]="10000"
-                                         [dismissableMask]=true
-                                         rejectButtonStyleClass="p-button-text">
-                        </p-confirmDialog>
                         <p-button label="Make Admin"
                                   icon="pi pi-shield"
                                   *ngIf="!user.isAdmin && loggedInUser.isAdmin"
