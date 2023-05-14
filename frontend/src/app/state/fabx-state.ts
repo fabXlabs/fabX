@@ -34,6 +34,7 @@ export interface FabxStateModel {
     loggedInUserId: string | null,
     users: LoadingState<User[]>,
     usersSort: UserSortModel,
+    usersFilter: string | null,
     qualifications: LoadingState<Qualification[]>,
     devices: LoadingState<Device[]>,
     tools: LoadingState<Tool[]>
@@ -49,6 +50,7 @@ export interface FabxStateModel {
             by: "isAdmin",
             order: "descending",
         },
+        usersFilter: null,
         qualifications: { tag: "LOADING" },
         devices: { tag: "LOADING" },
         tools: { tag: "LOADING" }
@@ -147,28 +149,52 @@ export class FabxState {
 
         const orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
 
-        return users.sort((a: AugmentedUser, b: AugmentedUser) => {
-            let aVal = a[state.usersSort.by] || false;
-            let bVal = b[state.usersSort.by] || false;
+        return users
+            .filter(u => {
+                let filter = state.usersFilter?.toLowerCase();
+                if (filter) {
+                    return u.firstName.toLowerCase().includes(filter)
+                        || u.lastName.toLowerCase().includes(filter)
+                        || u.wikiName.toLowerCase().includes(filter)
+                        || (u.notes && u.notes.toLowerCase().includes(filter))
+                        || u.identities.filter(i => {
+                            switch (i.type) {
+                                case "cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity":
+                                    return i.username.toLowerCase().includes(filter!)
+                                case "cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity":
+                                    return i.phoneNr.includes(filter!)
+                                case "cloud.fabX.fabXaccess.user.rest.CardIdentity":
+                                    return i.cardId.includes(filter!)
+                                default:
+                                    return false
+                            }
+                        }).length > 0
+                } else {
+                    return true;
+                }
+            })
+            .sort((a: AugmentedUser, b: AugmentedUser) => {
+                let aVal = a[state.usersSort.by] || false;
+                let bVal = b[state.usersSort.by] || false;
 
-            if (typeof aVal === "string") {
-                aVal = aVal.toLowerCase();
-            }
-            if (typeof bVal === "string") {
-                bVal = bVal.toLowerCase();
-            }
+                if (typeof aVal === "string") {
+                    aVal = aVal.toLowerCase();
+                }
+                if (typeof bVal === "string") {
+                    bVal = bVal.toLowerCase();
+                }
 
-            let ret: number = 0;
+                let ret: number = 0;
 
-            if (aVal < bVal) {
-                ret = -1;
-            }
-            if (aVal > bVal) {
-                ret = 1;
-            }
+                if (aVal < bVal) {
+                    ret = -1;
+                }
+                if (aVal > bVal) {
+                    ret = 1;
+                }
 
-            return ret * orderMultiplier;
-        });
+                return ret * orderMultiplier;
+            });
     }
 
     @Selector([RouterState])
@@ -282,6 +308,11 @@ export class FabxState {
         }
     }
 
+    @Selector()
+    static userFilter(state: FabxStateModel): string | null {
+        return state.usersFilter;
+    }
+
     @Action(Users.GetAll)
     getAllUsers(ctx: StateContext<FabxStateModel>) {
         ctx.patchState({
@@ -309,6 +340,13 @@ export class FabxState {
     setUserSort(ctx: StateContext<FabxStateModel>, action: Users.SetSort) {
         ctx.patchState({
             usersSort: action.sort
+        });
+    }
+
+    @Action(Users.SetFilter)
+    setUserFilter(ctx: StateContext<FabxStateModel>, action: Users.SetFilter) {
+        ctx.patchState({
+            usersFilter: action.filter
         });
     }
 

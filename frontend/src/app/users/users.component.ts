@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Select, Store } from "@ngxs/store";
 import { Observable } from "rxjs";
-import { User, AugmentedUser } from "../models/user.model";
+import { AugmentedUser, User } from "../models/user.model";
 import { Users } from "../state/user.actions";
 import { FabxState } from "../state/fabx-state";
 import { LoadingStateTag } from "../state/loading-state.model";
 import { LazyLoadEvent } from "primeng/api";
+import { ErrorService } from "../services/error.service";
 
 @Component({
     selector: 'fabx-users',
@@ -18,7 +19,14 @@ export class UsersComponent {
     @Select(FabxState.users) users$!: Observable<AugmentedUser[]>;
     @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
 
-    constructor(private store: Store) {}
+    @Input() filterText: string = ""
+
+    constructor(
+        private store: Store,
+        private errorService: ErrorService
+    ) {
+        this.filterText = this.store.selectSnapshot(FabxState.userFilter) || "";
+    }
 
     lazyLoad(event: LazyLoadEvent) {
         const order = event.sortOrder == 1 ? "ascending" : "descending";
@@ -48,5 +56,28 @@ export class UsersComponent {
                 order: order
             }));
         }
+    }
+
+    onFilterInput(_: Event) {
+        this.store.dispatch(new Users.SetFilter(this.filterText))
+            .subscribe({
+                error: err => {
+                    const message = this.errorService.format(err);
+                    console.error(message);
+                }
+            });
+    }
+
+    onFilterClear() {
+        this.store.dispatch(new Users.SetFilter(null))
+            .subscribe({
+                next: _ => {
+                    this.filterText = "";
+                },
+                error: err => {
+                    const message = this.errorService.format(err);
+                    console.error(message);
+                }
+            });
     }
 }
