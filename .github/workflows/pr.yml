@@ -9,7 +9,7 @@ jobs:
   build:
     name: Build & Test
 
-    runs-on: self-hosted
+    runs-on: mars
     timeout-minutes: 10
 
     steps:
