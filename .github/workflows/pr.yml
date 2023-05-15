@@ -13,7 +13,7 @@ jobs:
     timeout-minutes: 10
 
     container:
-      image: azul/zulu-openjdk-alpine:16
+      image: eclipse-temurin:17-jdk-jammy
       env:
         HELLO: world
 
