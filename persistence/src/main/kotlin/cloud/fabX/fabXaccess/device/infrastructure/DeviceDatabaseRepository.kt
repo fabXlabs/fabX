@@ -39,7 +39,7 @@ object DeviceSourcingEventDAO : Table("DeviceSourcingEvent") {
     val data = jsonb("data", DeviceSourcingEvent.serializer())
 }
 
-class DeviceDatabaseRepository(
+open class DeviceDatabaseRepository(
     private val db: Database
 ) : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {
 

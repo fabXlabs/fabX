@@ -31,6 +31,12 @@ export namespace Users {
         constructor(public sort: UserSortModel) {}
     }
 
+    export class SetFilter {
+        static readonly type = "[fabX Users] Set Filter"
+
+        constructor(public filter: string | null) {}
+    }
+
     export class Add {
         static readonly type = "[fabX Users] Add"
 

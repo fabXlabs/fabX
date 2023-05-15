@@ -19,8 +19,6 @@ import cloud.fabX.fabXaccess.device.model.DeviceDetailsChanged
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
-import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
-import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
 import cloud.fabX.fabXaccess.device.model.ToolAttached
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
@@ -39,10 +37,9 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
-import org.kodein.di.DI
 import org.kodein.di.instance
 
-internal class DeviceDatabaseRepositoryTest {
+internal open class DeviceDatabaseRepositoryTest {
     companion object {
         private val deviceId = DeviceIdFixture.static(4242)
         private val deviceId2 = DeviceIdFixture.static(4343)
@@ -56,11 +53,15 @@ internal class DeviceDatabaseRepositoryTest {
         private val fixedInstant = Clock.System.now()
     }
 
+    internal open fun withRepository(block: suspend (DeviceDatabaseRepository) -> Unit) = withTestApp { di ->
+        val repository: DeviceDatabaseRepository by di.instance()
+        block(repository)
+    }
+
     @Test
     fun `given empty repository when getting device by id then returns device not found error`() =
-        withTestApp { di ->
+        withRepository { repository ->
             // given
-            val repository: DeviceDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(deviceId)
@@ -79,9 +80,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDeviceStoredInRepository {
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: DeviceDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (DeviceDatabaseRepository) -> Unit) = withRepository { repository ->
             val event1 = DeviceCreated(
                 deviceId,
                 actorId,
@@ -107,13 +106,12 @@ internal class DeviceDatabaseRepositoryTest {
             )
             repository.store(event2)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting device by id then returns device from events`() = withSetupTestApp { di ->
+        fun `when getting device by id then returns device from events`() = withSetupTestApp { repository ->
             // given
-            val repository: DeviceDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(deviceId)
@@ -131,10 +129,8 @@ internal class DeviceDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { repository ->
             // given
-            val repository: DeviceDatabaseRepository by di.instance()
-
             val event = DeviceDetailsChanged(
                 deviceId,
                 3,
@@ -160,10 +156,8 @@ internal class DeviceDatabaseRepositoryTest {
         @ParameterizedTest
         @ValueSource(longs = [-1, 0, 1, 2, 4, 1234])
         fun `when storing then not accepts version numbers other than increased by one`(version: Long) =
-            withSetupTestApp { di ->
+            withSetupTestApp { repository ->
                 // given
-                val repository: DeviceDatabaseRepository by di.instance()
-
                 val event = DeviceDetailsChanged(
                     deviceId,
                     version,
@@ -200,9 +194,7 @@ internal class DeviceDatabaseRepositoryTest {
         private val deviceId2 = DeviceIdFixture.static(4343)
         private val deviceId3 = DeviceIdFixture.static(4444)
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: DeviceDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (DeviceDatabaseRepository) -> Unit) = withRepository { repository ->
             val device1event1 = DeviceCreated(
                 deviceId,
                 actorId,
@@ -287,13 +279,12 @@ internal class DeviceDatabaseRepositoryTest {
             )
             repository.store(device2event2)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting all devices then returns all devices from events`() = withSetupTestApp { di ->
+        fun `when getting all devices then returns all devices from events`() = withSetupTestApp { repository ->
             // given
-            val repository: DeviceDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()
@@ -326,9 +317,8 @@ internal class DeviceDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { repository ->
             // given
-            val repository: DeviceDatabaseRepository by di.instance()
 
             // when
             val result = repository.getSourcingEvents()
@@ -348,9 +338,7 @@ internal class DeviceDatabaseRepositoryTest {
 
         private val deviceId2 = DeviceIdFixture.static(4242)
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: DeviceDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (DeviceDatabaseRepository) -> Unit) = withRepository { repository ->
             val device1Created = DeviceCreated(
                 deviceId,
                 actorId,
@@ -377,14 +365,12 @@ internal class DeviceDatabaseRepositoryTest {
             )
             repository.store(device2Created)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting by known identity then returns device`() = withSetupTestApp { di ->
+        fun `when getting by known identity then returns device`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingDeviceByIdentity by di.instance()
-
             // when
             val result = repository.getByIdentity(
                 MacSecretIdentity("aabbccddeeff", "supersecret")
@@ -397,9 +383,8 @@ internal class DeviceDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting by unknown identity then returns error`() = withSetupTestApp { di ->
+        fun `when getting by unknown identity then returns error`() = withSetupTestApp { repository ->
             // given
-            val repository: GettingDeviceByIdentity by di.instance()
 
             // when
             val result = repository.getByIdentity(
@@ -418,9 +403,7 @@ internal class DeviceDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForDevicesWithAttachedToolsStoredInRepository {
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: DeviceDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (DeviceDatabaseRepository) -> Unit) = withRepository { repository ->
             val device1Created = DeviceCreated(
                 deviceId,
                 actorId,
@@ -480,7 +463,7 @@ internal class DeviceDatabaseRepositoryTest {
             )
             repository.store(device2Tool2Attached)
 
-            block(di)
+            block(repository)
         }
 
         @ParameterizedTest
@@ -488,9 +471,8 @@ internal class DeviceDatabaseRepositoryTest {
         fun `when getting by tool then returns expected devices`(
             toolId: ToolId,
             expectedDeviceIds: Set<DeviceId>
-        ) = withSetupTestApp { di ->
+        ) = withSetupTestApp { repository ->
             // given
-            val repository: GettingDevicesByAttachedTool by di.instance()
 
             // when
             val result = repository.getByAttachedTool(toolId)

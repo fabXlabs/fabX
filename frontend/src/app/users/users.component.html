@@ -11,7 +11,28 @@
         <ng-container *ngIf="loggedInUser$ | async as loggedInUser">
             <div class="flex align-items-center justify-content-between" *ngIf="loggedInUser.isAdmin">
                 <button pButton label="Add User" routerLink="/user/add"></button>
-                <button pButton label="Deleted Users" routerLink="/user/soft-deleted" class="p-button-secondary"></button>
+
+                <div>
+                    <span class="p-input-icon-left mx-1">
+                        <i class="pi pi-search"></i>
+                        <input pInputText type="text"
+                               [(ngModel)]="filterText"
+                               (input)="onFilterInput($event)"
+                               placeholder="Search"/>
+                    </span>
+                    <button pButton
+                            label="Clear"
+                            class="p-button-outlined mx-1"
+                            icon="pi pi-filter-slash"
+                            (click)="onFilterClear()">
+                    </button>
+                </div>
+
+                <button pButton
+                        label="Deleted Users"
+                        routerLink="/user/soft-deleted"
+                        class="p-button-secondary">
+                </button>
             </div>
         </ng-container>
     </ng-template>

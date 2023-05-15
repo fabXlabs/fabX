@@ -108,7 +108,9 @@ export interface PinIdentityAdditionDetails {
     pin: string
 }
 
-export interface PinIdentity {}
+export interface PinIdentity {
+    type: "cloud.fabX.fabXaccess.user.rest.PinIdentity",
+}
 
 export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity | PinIdentity
 

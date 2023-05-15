@@ -12,7 +12,6 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
-import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolCreated
 import cloud.fabX.fabXaccess.tool.model.ToolDeleted
@@ -33,10 +32,9 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
-import org.kodein.di.DI
 import org.kodein.di.instance
 
-internal class ToolDatabaseRepositoryTest {
+internal open class ToolDatabaseRepositoryTest {
 
     companion object {
         private val toolId = ToolIdFixture.static(86134)
@@ -65,11 +63,15 @@ internal class ToolDatabaseRepositoryTest {
         }
     }
 
+    internal open fun withRepository(block: suspend (ToolDatabaseRepository) -> Unit) = withTestApp { di ->
+        val repository: ToolDatabaseRepository by di.instance()
+        block(repository)
+    }
+
     @Test
     fun `given empty repository when getting tool by id then returns tool not found error`() =
-        withTestApp { di ->
+        withRepository { repository ->
             // given
-            val repository: ToolDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(toolId)
@@ -88,9 +90,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenEventsForToolStoredInRepository {
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: ToolDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (ToolDatabaseRepository) -> Unit) = withRepository { repository ->
             val event1 = ToolCreated(
                 toolId,
                 actorId,
@@ -124,13 +124,12 @@ internal class ToolDatabaseRepositoryTest {
             )
             repository.store(event2)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting tool by id then returns tool from events`() = withSetupTestApp { di ->
+        fun `when getting tool by id then returns tool from events`() = withSetupTestApp { repository ->
             // given
-            val repository: ToolDatabaseRepository by di.instance()
 
             // when
             val result = repository.getById(toolId)
@@ -153,10 +152,8 @@ internal class ToolDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { di ->
+        fun `when storing then accepts aggregate version number increased by one`() = withSetupTestApp { repository ->
             // given
-            val repository: ToolDatabaseRepository by di.instance()
-
             val event = ToolDetailsChanged(
                 toolId,
                 3,
@@ -189,10 +186,8 @@ internal class ToolDatabaseRepositoryTest {
         @ParameterizedTest
         @ValueSource(longs = [-1, 0, 2, 4, 42])
         fun `when storing then not accepts version numbers other than increased by one`(version: Long) =
-            withSetupTestApp { di ->
+            withSetupTestApp { repository ->
                 // given
-                val repository: ToolDatabaseRepository by di.instance()
-
                 val event = ToolDetailsChanged(
                     toolId,
                     version,
@@ -233,9 +228,7 @@ internal class ToolDatabaseRepositoryTest {
 
         private val qualificationId2 = QualificationIdFixture.static(345)
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: ToolDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (ToolDatabaseRepository) -> Unit) = withRepository { repository ->
             val tool1event1 = ToolCreated(
                 toolId,
                 actorId,
@@ -327,13 +320,12 @@ internal class ToolDatabaseRepositoryTest {
             )
             repository.store(tool3event2)
 
-            block(di)
+            block(repository)
         }
 
         @Test
-        fun `when getting all tools then returns all tools from events`() = withSetupTestApp { di ->
+        fun `when getting all tools then returns all tools from events`() = withSetupTestApp { repository ->
             // given
-            val repository: ToolDatabaseRepository by di.instance()
 
             // when
             val result = repository.getAll()
@@ -370,9 +362,8 @@ internal class ToolDatabaseRepositoryTest {
         }
 
         @Test
-        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { di ->
+        fun `when getting sourcing events then returns sourcing events`() = withSetupTestApp { repository ->
             // given
-            val repository: ToolDatabaseRepository by di.instance()
 
             // when
             val result = repository.getSourcingEvents()
@@ -390,9 +381,7 @@ internal class ToolDatabaseRepositoryTest {
     @Nested
     internal inner class GivenToolsWithQualificationsStoredInRepository {
 
-        private fun withSetupTestApp(block: suspend (DI) -> Unit) = withTestApp { di ->
-            val repository: ToolDatabaseRepository by di.instance()
-
+        private fun withSetupTestApp(block: suspend (ToolDatabaseRepository) -> Unit) = withRepository { repository ->
             val tool1created = ToolCreated(
                 toolId,
                 actorId,
@@ -438,15 +427,14 @@ internal class ToolDatabaseRepositoryTest {
             )
             repository.store(tool3created)
 
-            block(di)
+            block(repository)
         }
 
         @ParameterizedTest
         @MethodSource("cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepositoryTest#toolAndQualificationIds")
         fun `when getting tools by qualification id then returns tools which require qualification`() =
-            withSetupTestApp { di ->
+            withSetupTestApp { repository ->
                 // given
-                val repository: GettingToolsByQualificationId by di.instance()
 
                 // when
                 val result = repository.getToolsByQualificationId(qualificationId)
