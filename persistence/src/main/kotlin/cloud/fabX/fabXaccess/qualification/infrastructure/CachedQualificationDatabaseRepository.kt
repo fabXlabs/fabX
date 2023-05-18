@@ -33,8 +33,9 @@ class CachedQualificationDatabaseRepository(db: Database) : QualificationDatabas
                 cache = super.getAll().associateBy { it.id }.toMutableMap()
             }
             outdated.clear()
+
+            return cache!!.values.toSet()
         }
-        return cache!!.values.toSet()
     }
 
     override suspend fun getById(id: QualificationId): Either<Error, Qualification> {
@@ -46,12 +47,13 @@ class CachedQualificationDatabaseRepository(db: Database) : QualificationDatabas
                     .onRight { cache!![id] = it }
                 outdated.remove(id)
             }
+
+            return cache!![id]?.right()
+                ?: Error.QualificationNotFound(
+                    "Qualification with id $id not found.",
+                    id
+                ).left()
         }
-        return cache!![id]?.right()
-            ?: Error.QualificationNotFound(
-                "Qualification with id $id not found.",
-                id
-            ).left()
     }
 
     override suspend fun store(event: QualificationSourcingEvent): Option<Error> {

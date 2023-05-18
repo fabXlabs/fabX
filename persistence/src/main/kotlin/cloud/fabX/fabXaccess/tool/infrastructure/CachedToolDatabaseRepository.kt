@@ -36,8 +36,9 @@ class CachedToolDatabaseRepository(
                 cache = super.getAll().associateBy { it.id }.toMutableMap()
             }
             outdated.clear()
+
+            return cache!!.values.toSet()
         }
-        return cache!!.values.toSet()
     }
 
     override suspend fun getById(id: ToolId): Either<Error, Tool> {
@@ -49,12 +50,13 @@ class CachedToolDatabaseRepository(
                     .onRight { cache!![id] = it }
                 outdated.remove(id)
             }
+
+            return cache!![id]?.right()
+                ?: Error.ToolNotFound(
+                    "Tool with id $id not found.",
+                    id
+                ).left()
         }
-        return cache!![id]?.right()
-            ?: Error.ToolNotFound(
-                "Tool with id $id not found.",
-                id
-            ).left()
     }
 
     override suspend fun store(event: ToolSourcingEvent): Option<Error> {

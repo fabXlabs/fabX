@@ -33,8 +33,9 @@ class CachedUserDatabaseRepository(db: Database) : UserDatabaseRepository(db) {
                 cache = super.getAll().associateBy { it.id }.toMutableMap()
             }
             outdated.clear()
+
+            return cache!!.values.toSet()
         }
-        return cache!!.values.toSet()
     }
 
     override suspend fun getById(id: UserId): Either<Error, User> {
@@ -46,12 +47,13 @@ class CachedUserDatabaseRepository(db: Database) : UserDatabaseRepository(db) {
                     .onRight { cache!![id] = it }
                 outdated.remove(id)
             }
+
+            return cache!![id]?.right()
+                ?: Error.UserNotFound(
+                    "User with id $id not found.",
+                    id
+                ).left()
         }
-        return cache!![id]?.right()
-            ?: Error.UserNotFound(
-                "User with id $id not found.",
-                id
-            ).left()
     }
 
     override suspend fun store(event: UserSourcingEvent): Option<Error> {
