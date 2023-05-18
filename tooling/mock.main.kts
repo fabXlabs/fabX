@@ -18,6 +18,7 @@ import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.util.date.getTimeMillis
 import kotlin.random.Random
@@ -35,12 +36,14 @@ val client = HttpClient(CIO) {
             credentials {
                 BasicAuthCredentials(username = "admin", password = "password")
             }
+            sendWithoutRequest { _ -> true }
         }
     }
 }
 
 val adminUserId = runBlocking {
     val response = client.get("$baseUrl/user/me")
+    assert(response.status == HttpStatusCode.OK)
     Json.parseToJsonElement(response.bodyAsText()).jsonObject["id"]!!.jsonPrimitive.content
 }
 
@@ -165,6 +168,7 @@ qualifications.forEachIndexed { i, qualificationName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
+        assert(response.status == HttpStatusCode.Created)
         qualificationIds.add(
             Json.parseToJsonElement(response.bodyAsText())
                 .jsonPrimitive
@@ -181,10 +185,11 @@ qualificationIds.forEach { qualificationId ->
     val body = "{\"qualificationId\": \"$qualificationId\"}"
 
     runBlocking {
-        client.post("$baseUrl/user/$adminUserId/instructor-qualification") {
+        val response = client.post("$baseUrl/user/$adminUserId/instructor-qualification") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
+        assert(response.status == HttpStatusCode.OK)
     }
 }
 val makeAdminInstructorDelay = getTimeMillis() - makeAdminInstructorStartTimestamp
@@ -206,6 +211,7 @@ devices.forEachIndexed { i, deviceName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
+        assert(response.status == HttpStatusCode.Created)
         deviceIds.add(
             Json.parseToJsonElement(response.bodyAsText())
                 .jsonPrimitive
@@ -237,6 +243,7 @@ tools.forEachIndexed { i, toolName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
+        assert(response.status == HttpStatusCode.Created)
         toolIds.add(
             Json.parseToJsonElement(response.bodyAsText())
                 .jsonPrimitive
@@ -257,10 +264,11 @@ toolDevices.forEachIndexed { i, device ->
     val body = "{ \"toolId\": \"$toolId\"}"
 
     runBlocking {
-        client.put("$baseUrl/device/$deviceId/attached-tool/$pin") {
+        val response = client.put("$baseUrl/device/$deviceId/attached-tool/$pin") {
             contentType(ContentType.Application.Json)
             setBody(body)
         }
+        assert(response.status == HttpStatusCode.OK)
     }
 }
 val toolAttachmentDelay = getTimeMillis() - toolAttachmentStartTimestamp
@@ -285,6 +293,7 @@ moreUsers.parallelStream().forEach { userName ->
             contentType(ContentType.Application.Json)
             setBody(body)
         }
+        assert(response.status == HttpStatusCode.Created)
         userIds.add(
             Json.parseToJsonElement(response.bodyAsText())
                 .jsonPrimitive
@@ -305,10 +314,11 @@ userIds.parallelStream().forEach { userId ->
             val body = "{\"qualificationId\": \"$qualificationId\"}"
 
             runBlocking {
-                client.post("$baseUrl/user/$userId/member-qualification") {
+                val response = client.post("$baseUrl/user/$userId/member-qualification") {
                     contentType(ContentType.Application.Json)
                     setBody(body)
                 }
+                assert(response.status == HttpStatusCode.OK)
             }
         }
         if (Random.nextDouble() < 0.1) {
@@ -316,10 +326,11 @@ userIds.parallelStream().forEach { userId ->
             val body = "{\"qualificationId\": \"$qualificationId\"}"
 
             runBlocking {
-                client.post("$baseUrl/user/$userId/instructor-qualification") {
+                val response = client.post("$baseUrl/user/$userId/instructor-qualification") {
                     contentType(ContentType.Application.Json)
                     setBody(body)
                 }
+                assert(response.status == HttpStatusCode.OK)
             }
         }
     }
