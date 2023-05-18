@@ -132,7 +132,6 @@
       }
     }
   },
-  "defaultProject": "fabx-dashboard",
   "cli": {
     "schematicCollections": [
       "@angular-eslint/schematics"

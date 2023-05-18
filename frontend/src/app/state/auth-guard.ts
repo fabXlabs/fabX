@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { CanActivate, Router, UrlTree } from "@angular/router";
+import { Router, UrlTree } from "@angular/router";
 import { Store } from "@ngxs/store";
 import { FabxState } from "./fabx-state";
 import { Observable } from "rxjs";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuard  {
     private readonly loginUrl: UrlTree
 
     constructor(private store: Store, private router: Router) {
