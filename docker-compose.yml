@@ -10,7 +10,7 @@ services:
       FABX_DB_PASSWORD: postgrespassword
 
   postgres:
-    image: postgres:13
+    image: postgres:15
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
