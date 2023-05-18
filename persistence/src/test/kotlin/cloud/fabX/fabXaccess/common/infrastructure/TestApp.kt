@@ -7,6 +7,8 @@ import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.Database
@@ -26,6 +28,17 @@ val postgresContainer = PostgreSQLContainer(postgresImageName)
         "-c", "full_page_writes=off",
     )
 
+private fun createDbPool(postgresContainer: PostgreSQLContainer<*>): HikariDataSource {
+    val config = HikariConfig()
+    config.jdbcUrl = postgresContainer.jdbcUrl
+    config.username = postgresContainer.username
+    config.password = postgresContainer.password
+    config.driverClassName = "org.postgresql.Driver"
+    return HikariDataSource(config)
+}
+
+lateinit var dbPool: HikariDataSource
+
 var initialised = false
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -36,11 +49,15 @@ internal fun withTestApp(
         println("starting postgres container...")
         postgresContainer.start()
         println("...started postgres container")
+        dbPool = createDbPool(postgresContainer)
+        println("...created connection pool")
     }
 
     val testApp = DI {
         import(persistenceModule)
         import(loggingModule)
+
+        bindInstance(overrides = true) { dbPool }
 
         bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
         bindInstance(tag = "dbuser") { postgresContainer.username }

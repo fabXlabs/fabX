@@ -4,6 +4,7 @@ val kotlinxCoroutinesVersion: String by project
 val testcontainersVersion: String by project
 
 val exposedVersion: String by project
+val hikariVersion: String by project
 
 plugins {
     kotlin("jvm")
@@ -41,4 +42,5 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:$testcontainersVersion")
     testImplementation("org.testcontainers:postgresql:$testcontainersVersion")
     testImplementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    testImplementation("com.zaxxer:HikariCP:$hikariVersion")
 }

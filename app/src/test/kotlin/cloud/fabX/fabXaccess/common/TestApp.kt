@@ -14,6 +14,8 @@ import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import cloud.fabX.fabXaccess.webModule
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
@@ -50,6 +52,17 @@ val postgresContainer = PostgreSQLContainer(postgresImageName)
         "-c", "full_page_writes=off",
     )
 
+private fun createDbPool(postgresContainer: PostgreSQLContainer<*>): HikariDataSource {
+    val config = HikariConfig()
+    config.jdbcUrl = postgresContainer.jdbcUrl
+    config.username = postgresContainer.username
+    config.password = postgresContainer.password
+    config.driverClassName = "org.postgresql.Driver"
+    return HikariDataSource(config)
+}
+
+lateinit var dbPool: HikariDataSource
+
 var initialised = false
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,6 +71,8 @@ private fun testSetup(): WebApp {
         println("starting postgres container...")
         postgresContainer.start()
         println("...started postgres container")
+        dbPool = createDbPool(postgresContainer)
+        println("...created connection pool")
     }
 
     val testApp = DI {
@@ -65,6 +80,8 @@ private fun testSetup(): WebApp {
         import(webModule)
         import(persistenceModule)
         import(loggingModule)
+
+        bindInstance(overrides = true) { dbPool }
 
         bindConstant(tag = "port") { -1 }
         bindConstant(tag = "deviceReceiveTimeoutMillis") { 2000L }
@@ -81,9 +98,9 @@ private fun testSetup(): WebApp {
         bindConstant(tag = "webauthnRpId") { "localhost" }
         bindConstant(tag = "webauthnRpName") { "fabX" }
 
-        bindInstance(tag = "firmwareDirectory") { File("/tmp/fabXIntegrationTest") }
+        bindConstant(tag = "firmwareDirectory") { File("/tmp/fabXIntegrationTest") }
 
-        bindInstance(tag = "metricsPassword") { "supersecretmetricspassword" }
+        bindConstant(tag = "metricsPassword") { "supersecretmetricspassword" }
 
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
