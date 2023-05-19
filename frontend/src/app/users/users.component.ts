@@ -5,8 +5,8 @@ import { AugmentedUser, User } from "../models/user.model";
 import { Users } from "../state/user.actions";
 import { FabxState } from "../state/fabx-state";
 import { LoadingStateTag } from "../state/loading-state.model";
-import { LazyLoadEvent } from "primeng/api";
 import { ErrorService } from "../services/error.service";
+import { TableLazyLoadEvent } from "primeng/table";
 
 @Component({
     selector: 'fabx-users',
@@ -28,7 +28,7 @@ export class UsersComponent {
         this.filterText = this.store.selectSnapshot(FabxState.userFilter) || "";
     }
 
-    lazyLoad(event: LazyLoadEvent) {
+    lazyLoad(event: TableLazyLoadEvent) {
         const order = event.sortOrder == 1 ? "ascending" : "descending";
 
         if (event.sortField) {
