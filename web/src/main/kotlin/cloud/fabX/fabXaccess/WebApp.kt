@@ -106,6 +106,7 @@ class WebApp(
         install(HttpsRedirect) {
             exclude { it.request.origin.serverHost == "localhost" }
             exclude { it.request.origin.serverHost == "host.containers.internal" }
+            exclude { it.request.path() == "/health" }
         }
         install(XForwardedHeaders)
 
@@ -216,6 +217,7 @@ class WebApp(
             }
             get("/health") {
                 // TODO expand health checks, e.g. connection to database
+                // TODO add tests
                 call.respond(HttpStatusCode.OK)
             }
         }
