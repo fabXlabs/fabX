@@ -2,9 +2,11 @@ package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.common.rest.AppleAppSiteAssociation
 import cloud.fabX.fabXaccess.common.rest.MetricsController
 import cloud.fabX.fabXaccess.common.rest.MetricsPrincipal
 import cloud.fabX.fabXaccess.common.rest.Slf4jLogger
+import cloud.fabX.fabXaccess.common.rest.WebCredentials
 import cloud.fabX.fabXaccess.common.rest.extractCause
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.rest.DeviceFirmwareUpdateController
@@ -219,6 +221,10 @@ class WebApp(
                 // TODO expand health checks, e.g. connection to database
                 // TODO add tests
                 call.respond(HttpStatusCode.OK)
+            }
+            get("/.well-known/apple-app-site-association") {
+                // TODO make configurable
+                call.respond(HttpStatusCode.OK, AppleAppSiteAssociation(WebCredentials(listOf("7V5294RF62.cloud.fabx.fabX"))))
             }
         }
     }
