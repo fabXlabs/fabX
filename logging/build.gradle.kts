@@ -1,5 +1,3 @@
-val logbackVersion: String by rootProject
-
 plugins {
     kotlin("jvm")
 }
@@ -7,5 +5,5 @@ plugins {
 dependencies {
     implementation(project(":domain"))
 
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("ch.qos.logback:logback-classic:1.4.8")
 }

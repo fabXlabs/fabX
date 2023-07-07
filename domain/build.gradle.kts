@@ -1,11 +1,3 @@
-val kotlinxCoroutinesVersion: String by project
-val webauthn4jVersion: String by project
-
-val arrowVersion: String by project
-val assertKVersion: String by project
-val mockitoKotlinVersion: String by project
-val mockitoJunitVersion: String by project
-
 plugins {
     kotlin("jvm")
     `java-test-fixtures`
@@ -13,14 +5,14 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
-    implementation("com.webauthn4j:webauthn4j-core:$webauthn4jVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+    implementation("com.webauthn4j:webauthn4j-core:0.21.3.RELEASE")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinxCoroutinesVersion")
-    testFixturesImplementation("io.arrow-kt:arrow-core:$arrowVersion")
-    testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
-    testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
-    testFixturesImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitVersion")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
+    testFixturesImplementation("io.arrow-kt:arrow-core:1.1.5")
+    testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.26.1")
+    testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
 }
 
 kotlin.target.compilations.getByName("testFixtures") {

@@ -1,15 +1,5 @@
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
-val arrowVersion: String by project
-val kodeinVersion: String by project
-val kotlinxDateTimeVersion: String by project
-val kotlinxSerializationVersion: String by project
-
-val junitVersion: String by project
-val assertKVersion: String by project
-val mockitoKotlinVersion: String by project
-val mockitoJunitVersion: String by project
-
 plugins {
     base
     kotlin("jvm") version "1.8.22"
@@ -64,17 +54,17 @@ allprojects {
     dependencies {
         implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
-        implementation("io.arrow-kt:arrow-core:$arrowVersion")
-        implementation("org.kodein.di:kodein-di:$kodeinVersion")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDateTimeVersion")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
+        implementation("io.arrow-kt:arrow-core:1.1.5")
+        implementation("org.kodein.di:kodein-di:7.20.2")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:$assertKVersion")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:$mockitoKotlinVersion")
-        testImplementation("org.mockito:mockito-junit-jupiter:$mockitoJunitVersion")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.0-M1")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.0-M1")
+        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.26.1")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+        testImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
     }
 }
