@@ -9,7 +9,7 @@ dependencies {
     implementation("com.webauthn4j:webauthn4j-core:0.21.3.RELEASE")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
-    testFixturesImplementation("io.arrow-kt:arrow-core:1.1.5")
+    testFixturesImplementation("io.arrow-kt:arrow-core:1.2.0")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.26.1")
     testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
     testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
