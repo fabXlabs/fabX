@@ -158,10 +158,16 @@ def add_phone_nr_identity(user_id: str, phone_nr: str):
 
 
 def add_member_qualification(user_id: str, qualification_id: str):
-    logger.info(f'adding qualification {q["name"]} ({q["id"]} -> {qualificationIdsNew[q["id"]]})')
+    logger.info(f'adding qualification {qualification_id} to user {user_id}')
     response = requests.post(f'{baseUrlNew}/user/{user_id}/member-qualification', json={
         'qualificationId': qualification_id
     }, auth=basicNew)
+    check_response(response)
+
+
+def remove_member_qualification(user_id: str, qualification_id: str):
+    logger.info(f'removing qualification {qualification_id} from user {user_id}')
+    response = requests.delete(f'{baseUrlNew}/user/{user_id}/member-qualification/{qualification_id}', auth=basicNew)
     check_response(response)
 
 
@@ -247,4 +253,7 @@ for u in usersOld:
     for q in u["qualifications"]:
         if qualificationIdsNew[q['id']] not in new_user["memberQualifications"]:
             add_member_qualification(userIdNew, qualificationIdsNew[q['id']])
-    # TODO remove qualifications not in old user
+
+    for q_id in new_user["memberQualifications"]:
+        if q_id not in {qualificationIdsNew[q_old["id"]] for q_old in u["qualifications"]}:
+            remove_member_qualification(userIdNew, q_id)
