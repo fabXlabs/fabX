@@ -5,10 +5,10 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("com.webauthn4j:webauthn4j-core:0.21.3.RELEASE")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.0")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.26.1")
     testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
