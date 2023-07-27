@@ -2,6 +2,8 @@ package cloud.fabX.fabXaccess.tool.application
 
 import FixedClock
 import arrow.core.None
+import arrow.core.left
+import arrow.core.right
 import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
@@ -9,7 +11,7 @@ import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
-import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.tool.model.IdleState
 import cloud.fabX.fabXaccess.tool.model.ToolCreated
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
@@ -67,7 +69,8 @@ internal class AddingToolTest {
         val time = 200
         val idleState = IdleState.IDLE_HIGH
         val wikiUrl = "https://example.com/shopdoor"
-        val requiredQualifications = setOf(QualificationIdFixture.arbitrary())
+        val qualification = QualificationFixture.arbitrary()
+        val requiredQualifications = setOf(qualification.id)
 
         val expectedSourcingEvent = ToolCreated(
             toolId,
@@ -82,6 +85,9 @@ internal class AddingToolTest {
             wikiUrl,
             requiredQualifications,
         )
+
+        whenever(gettingQualificationById.getQualificationById(qualification.id))
+            .thenReturn(qualification.right())
 
         whenever(toolRepository.store(expectedSourcingEvent))
             .thenReturn(None)
@@ -114,7 +120,8 @@ internal class AddingToolTest {
         val time = 200
         val idleState = IdleState.IDLE_HIGH
         val wikiUrl = "https://example.com/shopdoor"
-        val requiredQualifications = setOf(QualificationIdFixture.arbitrary())
+        val qualification = QualificationFixture.arbitrary()
+        val requiredQualifications = setOf(qualification.id)
 
         val event = ToolCreated(
             toolId,
@@ -132,8 +139,47 @@ internal class AddingToolTest {
 
         val error = ErrorFixture.arbitrary()
 
+        whenever(gettingQualificationById.getQualificationById(qualification.id))
+            .thenReturn(qualification.right())
+
         whenever(toolRepository.store(event))
             .thenReturn(error.some())
+
+        // when
+        val result = testee.addTool(
+            adminActor,
+            correlationId,
+            name,
+            toolType,
+            requires2FA,
+            time,
+            idleState,
+            wikiUrl,
+            requiredQualifications,
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `given domain error when adding tool then returns domain error`() = runTest {
+        // given
+        val name = "Door Shop"
+        val toolType = ToolType.UNLOCK
+        val requires2FA = false
+        val time = 200
+        val idleState = IdleState.IDLE_HIGH
+        val wikiUrl = "https://example.com/shopdoor"
+        val qualification = QualificationFixture.arbitrary()
+        val requiredQualifications = setOf(qualification.id)
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(gettingQualificationById.getQualificationById(qualification.id))
+            .thenReturn(error.left())
 
         // when
         val result = testee.addTool(
