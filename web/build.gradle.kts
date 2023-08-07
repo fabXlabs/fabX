@@ -25,7 +25,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus:1.11.2")
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("ch.qos.logback:logback-classic:1.4.8")
+    implementation("ch.qos.logback:logback-classic:1.4.9")
     implementation("com.webauthn4j:webauthn4j-core:0.21.5.RELEASE")
 
     testImplementation(testFixtures(project(":domain")))
