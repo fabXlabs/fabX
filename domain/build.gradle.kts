@@ -11,7 +11,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.0")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.26.1")
-    testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.4.0")
 }
 
