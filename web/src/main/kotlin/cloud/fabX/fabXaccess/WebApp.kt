@@ -66,6 +66,7 @@ class WebApp(
     private val jwtAudience: String,
     private val jwtHMAC256Secret: String,
     private val metricsPassword: String,
+    private val httpsRedirect: Boolean,
     private val authenticationService: AuthenticationService,
     private val qualificationController: QualificationController,
     private val toolController: ToolController,
@@ -105,10 +106,15 @@ class WebApp(
             allowNonSimpleContentTypes = true
         }
 
-        install(HttpsRedirect) {
-            exclude { it.request.origin.serverHost == "localhost" }
-            exclude { it.request.origin.serverHost == "host.containers.internal" }
-            exclude { it.request.path() == "/health" }
+        if (httpsRedirect) {
+            log.debug("https redirect enabled")
+            install(HttpsRedirect) {
+                exclude { it.request.origin.serverHost == "localhost" }
+                exclude { it.request.origin.serverHost == "host.containers.internal" }
+                exclude { it.request.path() == "/health" }
+            }
+        } else {
+            log.debug("https redirect disabled")
         }
         install(XForwardedHeaders)
 
@@ -230,7 +236,7 @@ class WebApp(
     }
 
     fun start() {
-        log.debug("starting WebApp...")
+        log.info("starting WebApp...")
 
         embeddedServer(Netty, environment = applicationEngineEnvironment {
 

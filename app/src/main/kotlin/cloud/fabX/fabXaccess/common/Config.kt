@@ -16,7 +16,8 @@ data class Config(
     val webauthnRpName: String,
     val deviceReceiveTimeoutMillis: Long,
     val firmwareDirectory: String,
-    val metricsPassword: String
+    val metricsPassword: String,
+    val httpsRedirect: Boolean
 ) {
     companion object {
         fun fromEnv(): Config {
@@ -30,6 +31,7 @@ data class Config(
             val deviceReceiveTimeoutMillis = readEnvLong("DEVICE_RECEIVE_TIMEOUT", 5000L)
             val firmwareDirectory = readEnvString("FIRMWARE_DIRECTORY", "/tmp/fabXfirmware")
             val metricsPassword = readEnvString("METRICS_PASSWORD", Random.nextBytes(32).decodeToString())
+            val httpsRedirect = readEnvBoolean("HTTPS_REDIRECT", true)
 
             return System.getenv("DATABASE_URL").takeUnless { it.isNullOrEmpty() }
                 ?.let {
@@ -52,7 +54,8 @@ data class Config(
                         webauthnRpName,
                         deviceReceiveTimeoutMillis,
                         firmwareDirectory,
-                        metricsPassword
+                        metricsPassword,
+                        httpsRedirect
                     )
                 }
                 ?: run {
@@ -73,7 +76,8 @@ data class Config(
                         webauthnRpName,
                         deviceReceiveTimeoutMillis,
                         firmwareDirectory,
-                        metricsPassword
+                        metricsPassword,
+                        httpsRedirect
                     )
                 }
         }
@@ -88,6 +92,10 @@ data class Config(
 
         private fun readEnvLong(name: String, default: Long): Long {
             return System.getenv(name).takeUnless { it.isNullOrEmpty() }?.toLongOrNull() ?: default
+        }
+
+        private fun readEnvBoolean(name: String, default: Boolean): Boolean {
+            return System.getenv(name).takeUnless { it.isNullOrEmpty() }?.toBoolean() ?: default
         }
     }
 }

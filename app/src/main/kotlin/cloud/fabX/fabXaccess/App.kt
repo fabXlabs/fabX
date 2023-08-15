@@ -52,6 +52,8 @@ val app = DI {
 
     bindInstance(tag = "metricsPassword") { config.metricsPassword }
 
+    bindInstance(tag = "httpsRedirect") { config.httpsRedirect }
+
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }
 }

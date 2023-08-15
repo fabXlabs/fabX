@@ -157,6 +157,8 @@ internal fun withTestApp(
 
         bindInstance(tag = "metricsPassword") { "supersecretmetricspassword" }
 
+        bindConstant(tag = "httpsRedirect") { false }
+
         diSetup()
     }
 

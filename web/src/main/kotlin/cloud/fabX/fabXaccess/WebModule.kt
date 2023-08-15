@@ -142,6 +142,7 @@ val webModule = DI.Module("web") {
             instance(tag = "jwtAudience"),
             instance(tag = "jwtHMAC256Secret"),
             instance(tag = "metricsPassword"),
+            instance(tag = "httpsRedirect"),
             instance(),
             instance(),
             instance(),

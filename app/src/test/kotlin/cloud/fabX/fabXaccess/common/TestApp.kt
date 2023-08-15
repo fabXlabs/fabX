@@ -102,6 +102,8 @@ private fun testSetup(): WebApp {
 
         bindConstant(tag = "metricsPassword") { "supersecretmetricspassword" }
 
+        bindConstant(tag = "httpsRedirect") { false }
+
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
     }
