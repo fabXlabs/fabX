@@ -106,19 +106,21 @@ class DeviceWebsocketController(
                                         logger.warn("Not able to deserialize incoming message from $deviceActor: $text")
                                     }
                             }
-                        } catch (e: Exception) {
+                        } catch (e: Throwable) {
                             logger.warn("Exception during device websocket handling", e)
                         } finally {
                             logger.debug("Closed connection $this of ${deviceActor.name} for reason ${closeReason.await()}")
 
-                            if (connections[deviceActor.deviceId] == this) {
-                                connections.remove(deviceActor.deviceId)
-                                logger.debug("Removed connection $this (is current connection of ${deviceActor.name})")
-                            } else {
-                                logger.debug(
-                                    "Not removing connection, as $this is not current connection " +
-                                            "of ${deviceActor.name} (${connections[deviceActor.deviceId]} is)"
-                                )
+                            synchronized(connections) {
+                                if (connections[deviceActor.deviceId] == this) {
+                                    connections.remove(deviceActor.deviceId)
+                                    logger.debug("Removed connection $this (is current connection of ${deviceActor.name})")
+                                } else {
+                                    logger.debug(
+                                        "Not removing connection, as $this is not current connection " +
+                                                "of ${deviceActor.name} (${connections[deviceActor.deviceId]} is)"
+                                    )
+                                }
                             }
                         }
                     })
@@ -168,11 +170,13 @@ class DeviceWebsocketController(
     }
 
     private fun removeExistingConnectionIfExists(deviceId: DeviceId) {
-        connections.remove(deviceId)?.let {
-            it.coroutineContext.cancel()
-            logger.warn("Removed websocket to device $deviceId as new connection of same device was established.")
-        } ?: run {
-            logger.debug("No existing connection for $deviceId.")
+        synchronized(connections) {
+            connections.remove(deviceId)?.let {
+                it.coroutineContext.cancel()
+                logger.warn("Removed websocket to device $deviceId as new connection of same device was established.")
+            } ?: run {
+                logger.debug("No existing connection for $deviceId.")
+            }
         }
     }
 
