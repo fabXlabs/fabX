@@ -25,7 +25,7 @@ jobs:
 
     - name: Git Semantic Version
       id: version
-      uses: PaulHatch/semantic-version@v5.2.0
+      uses: PaulHatch/semantic-version@v5.2.1
       with:
         search_commit_body: true
         bump_each_commit: true
