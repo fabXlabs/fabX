@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":persistence"))
     implementation(project(":logging"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 
     testImplementation(testFixtures(project(":domain")))
     testImplementation("io.ktor:ktor-serialization:2.3.4")
