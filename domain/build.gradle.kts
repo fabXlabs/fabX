@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("com.webauthn4j:webauthn4j-core:0.21.5.RELEASE")
+    implementation("com.webauthn4j:webauthn4j-core:0.21.6.RELEASE")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.0")
