@@ -4,7 +4,7 @@ plugins {
     base
     kotlin("jvm") version "1.9.10"
     jacoco
-    id("com.github.ben-manes.versions") version "0.47.0"
+    id("com.github.ben-manes.versions") version "0.48.0"
 }
 
 tasks.register<GradleBuild>("stage") {
