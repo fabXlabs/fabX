@@ -21,7 +21,6 @@ import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isRight
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -34,7 +33,6 @@ import org.mockito.Mockito.lenient
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingAuthorizedToolsTest {
     private val correlationId = CorrelationIdFixture.arbitrary()

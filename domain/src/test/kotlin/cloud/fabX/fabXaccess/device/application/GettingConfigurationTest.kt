@@ -21,7 +21,6 @@ import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import isLeft
 import isRight
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
@@ -32,7 +31,6 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingConfigurationTest {
 
@@ -60,7 +58,6 @@ internal class GettingConfigurationTest {
         testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById, fixedClock)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Nested
     internal inner class GivenDeviceAndTools {
 

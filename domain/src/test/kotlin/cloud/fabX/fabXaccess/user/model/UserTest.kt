@@ -22,7 +22,6 @@ import isLeft
 import isNone
 import isRight
 import isSome
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
@@ -32,7 +31,6 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.ValueSource
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class UserTest {
 
     private val adminActor = AdminFixture.arbitrary()

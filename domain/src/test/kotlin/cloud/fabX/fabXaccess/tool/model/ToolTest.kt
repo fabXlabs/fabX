@@ -19,13 +19,11 @@ import isLeft
 import isNone
 import isRight
 import isSome
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ToolTest {
 
     private val adminActor = AdminFixture.arbitrary()

@@ -29,7 +29,6 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import java.io.File
 import java.util.UUID
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -65,7 +64,6 @@ lateinit var dbPool: HikariDataSource
 
 var initialised = false
 
-@OptIn(ExperimentalCoroutinesApi::class)
 private fun testSetup(): WebApp {
     if (!postgresContainer.isRunning) {
         println("starting postgres container...")

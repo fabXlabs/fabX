@@ -12,7 +12,6 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
 import isLeft
 import isRight
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
@@ -21,7 +20,6 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @MockitoSettings
 internal class GettingUserByIdentityTest {
     private val correlationId = CorrelationIdFixture.arbitrary()
@@ -41,7 +39,6 @@ internal class GettingUserByIdentityTest {
         testee = GettingUserByIdentity({ logger }, gettingUserByIdentity)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Nested
     internal inner class GivenCorrelationId {
         @Test

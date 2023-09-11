@@ -9,7 +9,6 @@ import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -41,7 +40,6 @@ lateinit var dbPool: HikariDataSource
 
 var initialised = false
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal fun withTestApp(
     block: suspend (DI) -> Unit
 ) {
