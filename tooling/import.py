@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-from typing import Any, TypeVar, Iterable
-
 import requests
 from loguru import logger
 from requests import Response
 from requests.auth import HTTPBasicAuth
+from typing import Any, TypeVar, Iterable
 
 # SETUP
 baseUrlOld = "https://old.example.com/api/v1"
@@ -121,7 +120,7 @@ def create_tool(old_tool: dict[str, Any]) -> str:
 
 
 def attach_tool(tool_id: str, device_id: str):
-    logger.info(f"attaching tool {tool_id} to device {device_id}")
+    logger.info(f"attaching tool {tool_id} to device {device_id} (pin: {t['pin']})")
     response = requests.put(f'{baseUrlNew}/device/{deviceIdsNew[t["deviceId"]]}/attached-tool/{t["pin"]}', json={
         "toolId": toolIdNew
     }, auth=basicNew)
