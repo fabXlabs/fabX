@@ -25,7 +25,7 @@ jobs:
 
     - name: Git Semantic Version
       id: version
-      uses: PaulHatch/semantic-version@v5.2.1
+      uses: PaulHatch/semantic-version@v5.3.0
       with:
         search_commit_body: true
         bump_each_commit: true
@@ -37,7 +37,7 @@ jobs:
         distribution: 'zulu'
 
     - name: Setup Gradle
-      uses: gradle/gradle-build-action@v2.8.1
+      uses: gradle/gradle-build-action@v2.9.0
 
     - name: Build Backend
       run: ./gradlew classes -x npmInstall -x npmBuild
