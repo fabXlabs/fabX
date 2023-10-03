@@ -31,8 +31,8 @@ dependencies {
     testImplementation("io.ktor:ktor-client-content-negotiation:2.3.4")
     testImplementation("io.ktor:ktor-serialization-kotlinx-json:2.3.4")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("org.testcontainers:testcontainers:1.19.0")
-    testImplementation("org.testcontainers:postgresql:1.19.0")
+    testImplementation("org.testcontainers:testcontainers:1.19.1")
+    testImplementation("org.testcontainers:postgresql:1.19.1")
     testImplementation("org.jetbrains.exposed:exposed-core:0.44.0")
     testImplementation("com.zaxxer:HikariCP:5.0.1")
 }

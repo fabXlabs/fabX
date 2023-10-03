@@ -17,6 +17,6 @@ dependencies {
     implementation("com.mattbertolini:liquibase-slf4j:5.0.0")
     testImplementation(testFixtures(project(":domain")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    testImplementation("org.testcontainers:testcontainers:1.19.0")
-    testImplementation("org.testcontainers:postgresql:1.19.0")
+    testImplementation("org.testcontainers:testcontainers:1.19.1")
+    testImplementation("org.testcontainers:postgresql:1.19.1")
 }
