@@ -13,7 +13,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.44.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.postgresql:postgresql:42.6.0")
-    implementation("org.liquibase:liquibase-core:4.23.2")
+    implementation("org.liquibase:liquibase-core:4.24.0")
     implementation("com.mattbertolini:liquibase-slf4j:5.0.0")
     testImplementation(testFixtures(project(":domain")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
