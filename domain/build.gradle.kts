@@ -12,7 +12,7 @@ dependencies {
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.1")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.27.0")
     testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+    testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.6.0")
 }
 
 kotlin.target.compilations.getByName("testFixtures") {

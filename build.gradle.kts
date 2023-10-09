@@ -4,7 +4,7 @@ plugins {
     base
     kotlin("jvm") version "1.9.10"
     jacoco
-    id("com.github.ben-manes.versions") version "0.48.0"
+    id("com.github.ben-manes.versions") version "0.49.0"
 }
 
 tasks.register<GradleBuild>("stage") {
@@ -65,6 +65,6 @@ allprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0-SNAPSHOT")
         testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.27.0")
         testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-        testImplementation("org.mockito:mockito-junit-jupiter:5.5.0")
+        testImplementation("org.mockito:mockito-junit-jupiter:5.6.0")
     }
 }
