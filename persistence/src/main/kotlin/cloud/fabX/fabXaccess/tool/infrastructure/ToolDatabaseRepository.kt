@@ -7,7 +7,7 @@ import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
-import cloud.fabX.fabXaccess.common.jsonb
+import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.QualificationId
@@ -19,12 +19,14 @@ import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.sql.json.jsonb
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -35,7 +37,7 @@ object ToolSourcingEventDAO : Table("ToolSourcingEvent") {
     val actorId = uuid("actor_id")
     val correlationId = uuid("correlation_id")
     val timestamp = timestamp("timestamp")
-    val data = jsonb("data", ToolSourcingEvent.serializer())
+    val data = jsonb<ToolSourcingEvent>("data", Json { serializersModule = domainSerializersModule })
 }
 
 open class ToolDatabaseRepository(

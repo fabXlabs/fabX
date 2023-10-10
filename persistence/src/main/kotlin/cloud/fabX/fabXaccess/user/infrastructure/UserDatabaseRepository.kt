@@ -8,7 +8,7 @@ import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
-import cloud.fabX.fabXaccess.common.jsonb
+import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
@@ -28,6 +28,7 @@ import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.toJavaInstant
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -36,6 +37,7 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.sql.json.jsonb
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -46,7 +48,7 @@ object UserSourcingEventDAO : Table("UserSourcingEvent") {
     val actorId = uuid("actor_id")
     val correlationId = uuid("correlation_id")
     val timestamp = timestamp("timestamp")
-    val data = jsonb("data", UserSourcingEvent.serializer())
+    val data = jsonb<UserSourcingEvent>("data",  Json { serializersModule = domainSerializersModule })
 }
 
 open class UserDatabaseRepository(private val db: Database) :
