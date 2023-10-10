@@ -1,11 +1,11 @@
-@file:DependsOn("io.ktor:ktor-client-core-jvm:2.0.2")
-@file:DependsOn("io.ktor:ktor-client-cio-jvm:2.0.2")
-@file:DependsOn("io.ktor:ktor-client-content-negotiation-jvm:2.0.2")
-@file:DependsOn("io.ktor:ktor-client-auth-jvm:2.0.2")
-@file:DependsOn("io.ktor:ktor-serialization-kotlinx-json-jvm:2.0.2")
+@file:DependsOn("io.ktor:ktor-client-core-jvm:2.3.5")
+@file:DependsOn("io.ktor:ktor-client-cio-jvm:2.3.5")
+@file:DependsOn("io.ktor:ktor-client-content-negotiation-jvm:2.3.5")
+@file:DependsOn("io.ktor:ktor-client-auth-jvm:2.3.5")
+@file:DependsOn("io.ktor:ktor-serialization-kotlinx-json-jvm:2.3.5")
 
-@file:DependsOn("io.ktor:ktor-client-okhttp:2.0.2")
-@file:DependsOn("io.ktor:ktor-client-gson:2.0.2")
+@file:DependsOn("io.ktor:ktor-client-okhttp:2.3.5")
+@file:DependsOn("io.ktor:ktor-client-gson:2.3.5")
 
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
