@@ -43,7 +43,7 @@ import org.kodein.di.instance
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
 
-val postgresImageName = DockerImageName.parse("postgres").withTag("15")
+val postgresImageName = DockerImageName.parse("postgres").withTag("16")
 val postgresContainer = PostgreSQLContainer(postgresImageName)
     .withCommand(
         "-c", "fsync=off",
