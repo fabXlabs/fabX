@@ -9,7 +9,7 @@ import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
 
     override fun handle(event: DeviceCreated, device: Option<Device>): Option<Device> {
-        if (device.isDefined()) {
+        if (device.isSome()) {
             throw AccumulatorNotEmptyForDeviceCreatedEventHandler(
                 "Handler for DeviceCreated is given $device."
             )

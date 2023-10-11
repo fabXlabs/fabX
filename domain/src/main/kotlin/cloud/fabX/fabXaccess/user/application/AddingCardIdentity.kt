@@ -50,8 +50,8 @@ class AddingCardIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addCardIdentity done") }
-            .tap { log.error("...addCardIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addCardIdentity done") }
+            .onSome { log.error("...addCardIdentity error: $it") }
     }
 }

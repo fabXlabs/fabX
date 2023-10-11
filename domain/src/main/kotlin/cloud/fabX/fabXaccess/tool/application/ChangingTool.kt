@@ -66,8 +66,8 @@ class ChangingTool(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...changeToolDetails done") }
-            .tap { log.error("...changeToolDetails error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...changeToolDetails done") }
+            .onSome { log.error("...changeToolDetails error: $it") }
     }
 }

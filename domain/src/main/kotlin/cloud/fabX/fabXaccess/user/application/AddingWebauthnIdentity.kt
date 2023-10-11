@@ -59,8 +59,8 @@ class AddingWebauthnIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addWebauthnIdentity done") }
-            .tap { log.error("...addWebauthnIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addWebauthnIdentity done") }
+            .onSome { log.error("...addWebauthnIdentity error: $it") }
     }
 }

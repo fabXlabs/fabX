@@ -31,7 +31,7 @@ class UserDomainEventHandler(
                     domainEvent.qualificationId
                 )
             }
-            .mapNotNull { it.orNull() }
+            .mapNotNull { it.getOrNull() }
             .forEach { log.warn("Error while handling domain event ($domainEvent): $it") }
 
         gettingUsersByInstructorQualification.getByInstructorQualification(domainEvent.qualificationId)
@@ -42,7 +42,7 @@ class UserDomainEventHandler(
                     domainEvent.qualificationId
                 )
             }
-            .mapNotNull { it.orNull() }
+            .mapNotNull { it.getOrNull() }
             .forEach { log.warn("Error while handling domain event ($domainEvent): $it") }
     }
 }

@@ -49,7 +49,7 @@ open class QualificationDatabaseRepository(private val db: Database) : Qualifica
                 }
                 .groupBy { it.aggregateRootId }
                 .map { Qualification.fromSourcingEvents(it.value) }
-                .filter { it.isDefined() }
+                .filter { it.isSome() }
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
         }

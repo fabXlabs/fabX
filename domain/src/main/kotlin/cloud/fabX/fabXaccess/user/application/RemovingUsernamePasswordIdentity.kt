@@ -45,8 +45,8 @@ class RemovingUsernamePasswordIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removeUsernamePasswordIdentity done") }
-            .tap { log.error("...removeUsernamePasswordIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removeUsernamePasswordIdentity done") }
+            .onSome { log.error("...removeUsernamePasswordIdentity error: $it") }
     }
 }

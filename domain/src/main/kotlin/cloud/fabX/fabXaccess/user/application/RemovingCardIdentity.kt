@@ -45,8 +45,8 @@ class RemovingCardIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removeCardIdentity done") }
-            .tap { log.error("...removeCardIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removeCardIdentity done") }
+            .onSome { log.error("...removeCardIdentity error: $it") }
     }
 }

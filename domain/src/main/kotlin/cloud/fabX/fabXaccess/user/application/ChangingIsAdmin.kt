@@ -44,8 +44,8 @@ class ChangingIsAdmin(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...changeIsAdmin done") }
-            .tap { log.error("...changeIsAdmin error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...changeIsAdmin done") }
+            .onSome { log.error("...changeIsAdmin error: $it") }
     }
 }

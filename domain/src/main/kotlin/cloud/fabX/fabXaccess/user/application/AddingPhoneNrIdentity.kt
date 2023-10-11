@@ -48,8 +48,8 @@ class AddingPhoneNrIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addPhoneNrIdentity done") }
-            .tap { log.error("...addPhoneNrIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addPhoneNrIdentity done") }
+            .onSome { log.error("...addPhoneNrIdentity error: $it") }
     }
 }

@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.raise.either
 import arrow.core.right
 import arrow.core.sequence
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
@@ -67,7 +68,7 @@ class GettingConfiguration(
                         gettingToolById.getToolById(e.value)
                             .map { tool -> e.key to tool }
                     }
-                    .sequence()
+                    .let { eithers -> either { eithers.bindAll() } }
                     .map { entries -> entries.toMap() }
                     .map { pinToTool -> Result(device = it, attachedTools = pinToTool) }
             }

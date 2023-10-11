@@ -45,8 +45,8 @@ class RemovingWebauthnIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removeWebauthnIdentity done") }
-            .tap { log.error("...removeWebauthnIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removeWebauthnIdentity done") }
+            .onSome { log.error("...removeWebauthnIdentity error: $it") }
     }
 }

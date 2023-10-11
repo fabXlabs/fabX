@@ -37,8 +37,8 @@ class DeletingDevice(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...deleteDevice done") }
-            .tap { log.error("...deleteDevice error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...deleteDevice done") }
+            .onSome { log.error("...deleteDevice error: $it") }
     }
 }

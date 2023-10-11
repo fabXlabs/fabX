@@ -40,9 +40,9 @@ class DeletingTool(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...deleteTool done") }
-            .tapNone {
+            .getOrNone()
+            .onNone { log.debug("...deleteTool done") }
+            .onNone {
                 log.debug("publishing ToolDeleted event...")
                 domainEventPublisher.publish(
                     ToolDeleted(
@@ -53,6 +53,6 @@ class DeletingTool(
                     )
                 )
             }
-            .tap { log.error("...deleteTool error: $it") }
+            .onSome { log.error("...deleteTool error: $it") }
     }
 }

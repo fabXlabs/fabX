@@ -41,8 +41,8 @@ class ChangingDevice(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...changeDeviceDetails done") }
-            .tap { log.error("...changeDeviceDetails error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...changeDeviceDetails done") }
+            .onSome { log.error("...changeDeviceDetails error: $it") }
     }
 }

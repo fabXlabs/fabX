@@ -56,8 +56,8 @@ class RemovingMemberQualification(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removeMemberQualification done") }
-            .tap { log.error("...removeMemberQualification error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removeMemberQualification done") }
+            .onSome { log.error("...removeMemberQualification error: $it") }
     }
 }

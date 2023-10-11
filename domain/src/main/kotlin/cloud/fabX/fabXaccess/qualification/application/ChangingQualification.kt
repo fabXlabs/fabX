@@ -42,8 +42,8 @@ class ChangingQualification(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...changeQualificationDetails done") }
-            .tap { log.error("...changeQualificationDetails error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...changeQualificationDetails done") }
+            .onSome { log.error("...changeQualificationDetails error: $it") }
     }
 }

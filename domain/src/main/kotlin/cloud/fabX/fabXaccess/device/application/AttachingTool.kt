@@ -49,8 +49,8 @@ class AttachingTool(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...attachTool done") }
-            .tap { log.error("...attachTool error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...attachTool done") }
+            .onSome { log.error("...attachTool error: $it") }
     }
 }

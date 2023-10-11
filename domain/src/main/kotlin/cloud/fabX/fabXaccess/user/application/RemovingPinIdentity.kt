@@ -43,8 +43,8 @@ class RemovingPinIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removePinIdentity done") }
-            .tap { log.error("...removePinIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removePinIdentity done") }
+            .onSome { log.error("...removePinIdentity error: $it") }
     }
 }

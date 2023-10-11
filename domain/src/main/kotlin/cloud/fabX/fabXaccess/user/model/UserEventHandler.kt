@@ -10,7 +10,7 @@ import java.util.stream.Collectors
 internal class UserEventHandler : UserSourcingEvent.EventHandler {
 
     override fun handle(event: UserCreated, user: Option<User>): Option<User> {
-        if (user.isDefined()) {
+        if (user.isSome()) {
             throw AccumulatorNotEmptyForUserCreatedEventHandler(
                 "Handler for UserCreated is given $user."
             )

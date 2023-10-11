@@ -52,9 +52,9 @@ class ChangingUser(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...changePersonalInformation done") }
-            .tap { log.error("...changePersonalInformation error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...changePersonalInformation done") }
+            .onSome { log.error("...changePersonalInformation error: $it") }
     }
 
     suspend fun changeLockState(
@@ -74,8 +74,8 @@ class ChangingUser(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...changeLockState done") }
-            .tap { log.debug("...changeLockState error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...changeLockState done") }
+            .onSome { log.debug("...changeLockState error: $it") }
     }
 }

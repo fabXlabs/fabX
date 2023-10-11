@@ -1,13 +1,12 @@
 package cloud.fabX.fabXaccess.common
 
 import java.sql.DriverManager
-import liquibase.Contexts
-import liquibase.LabelExpression
-import liquibase.Liquibase
+import liquibase.command.CommandScope
+import liquibase.command.core.UpdateCommandStep
+import liquibase.command.core.helpers.DbUrlConnectionCommandStep
 import liquibase.database.Database
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
-import liquibase.resource.ClassLoaderResourceAccessor
 
 class LiquibaseMigrationHandler(
     private val url: String,
@@ -26,8 +25,12 @@ class LiquibaseMigrationHandler(
 
     internal fun update() {
         val database = openConnection()
-        val liquibase = Liquibase(CHANGELOG_FILE, ClassLoaderResourceAccessor(), database)
-        liquibase.update(Contexts(), LabelExpression())
+
+        CommandScope(UpdateCommandStep.COMMAND_NAME[0])
+            .addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, CHANGELOG_FILE)
+            .addArgumentValue(DbUrlConnectionCommandStep.DATABASE_ARG, database)
+            .execute()
+
         database.close()
     }
 }

@@ -42,9 +42,9 @@ class DeletingQualification(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...deleteQualification done") }
-            .tapNone {
+            .getOrNone()
+            .onNone { log.debug("...deleteQualification done") }
+            .onNone {
                 domainEventPublisher.publish(
                     QualificationDeleted(
                         actor.id,
@@ -54,6 +54,6 @@ class DeletingQualification(
                     )
                 )
             }
-            .tap { log.error("...deleteQualification error: $it") }
+            .onSome { log.error("...deleteQualification error: $it") }
     }
 }

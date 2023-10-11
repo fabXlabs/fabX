@@ -73,7 +73,7 @@ open class UserDatabaseRepository(private val db: Database) :
                 }
                 .groupBy { it.aggregateRootId }
                 .map { User.fromSourcingEvents(it.value) }
-                .filter { it.isDefined() }
+                .filter { it.isSome() }
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
         }
@@ -220,7 +220,7 @@ open class UserDatabaseRepository(private val db: Database) :
                 // drop last event (= deleted event) to get the user in its final state
                 .mapValues { e -> e.value.dropLast(1) }
                 .map { User.fromSourcingEvents(it.value) }
-                .filter { it.isDefined() }
+                .filter { it.isSome() }
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
         }

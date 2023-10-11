@@ -28,7 +28,7 @@ class DeviceDomainEventHandler(
                         detachingTool.detachTool(domainEvent, device.id, it)
                     }
             }
-            .mapNotNull { it.orNull() }
+            .mapNotNull { it.getOrNull() }
             .forEach { log.warn("Error while handling domain event ($domainEvent): $it") }
     }
 }

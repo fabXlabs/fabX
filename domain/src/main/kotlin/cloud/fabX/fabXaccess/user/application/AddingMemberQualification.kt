@@ -49,8 +49,8 @@ class AddingMemberQualification(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addMemberQualification done") }
-            .tap { log.error("...addMemberQualification error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addMemberQualification done") }
+            .onSome { log.error("...addMemberQualification error: $it") }
     }
 }

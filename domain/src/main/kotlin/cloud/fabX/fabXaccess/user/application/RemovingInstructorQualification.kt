@@ -71,8 +71,8 @@ class RemovingInstructorQualification(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removeInstructorQualification done") }
-            .tap { log.error("...removeInstructorQualification error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removeInstructorQualification done") }
+            .onSome { log.error("...removeInstructorQualification error: $it") }
     }
 }

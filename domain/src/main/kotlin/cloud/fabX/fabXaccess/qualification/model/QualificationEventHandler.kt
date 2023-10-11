@@ -9,7 +9,7 @@ import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 internal class QualificationEventHandler : QualificationSourcingEvent.EventHandler {
 
     override fun handle(event: QualificationCreated, qualification: Option<Qualification>): Option<Qualification> {
-        if (qualification.isDefined()) {
+        if (qualification.isSome()) {
             throw AccumulatorNotEmptyForQualificationCreatedEventHandler(
                 "Handler for QualificationCreated is given $qualification."
             )

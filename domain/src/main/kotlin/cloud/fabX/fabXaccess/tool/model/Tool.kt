@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.raise.either
 import arrow.core.right
 import arrow.core.sequence
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
@@ -92,7 +93,7 @@ data class Tool internal constructor(
         ): Either<Error, Unit> {
             return qualifications
                 .map { gettingQualificationById.getQualificationById(it) }
-                .sequence()
+                .let { eithers -> either { eithers.bindAll() } }
                 .map { }
                 .mapLeft {
                     if (it is Error.QualificationNotFound) {

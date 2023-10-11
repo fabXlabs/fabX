@@ -8,7 +8,7 @@ import cloud.fabX.fabXaccess.common.model.valueToChangeTo
 
 internal class ToolEventHandler : ToolSourcingEvent.EventHandler {
     override fun handle(event: ToolCreated, tool: Option<Tool>): Option<Tool> {
-        if (tool.isDefined()) {
+        if (tool.isSome()) {
             throw AccumulatorNotEmptyForToolCreatedEventHandler(
                 "Handler for ToolCreated is given $tool."
             )

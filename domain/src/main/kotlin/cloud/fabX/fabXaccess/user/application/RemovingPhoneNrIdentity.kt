@@ -45,8 +45,8 @@ class RemovingPhoneNrIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...removePhoneNrIdentity done") }
-            .tap { log.error("...removePhoneNrIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...removePhoneNrIdentity done") }
+            .onSome { log.error("...removePhoneNrIdentity error: $it") }
     }
 }

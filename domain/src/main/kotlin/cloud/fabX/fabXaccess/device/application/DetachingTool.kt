@@ -53,8 +53,8 @@ class DetachingTool(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...detachTool done") }
-            .tap { log.error("...detachTool error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...detachTool done") }
+            .onSome { log.error("...detachTool error: $it") }
     }
 }

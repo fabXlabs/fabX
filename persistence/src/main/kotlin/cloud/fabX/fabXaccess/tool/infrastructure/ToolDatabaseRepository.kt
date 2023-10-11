@@ -60,7 +60,7 @@ open class ToolDatabaseRepository(
                 }
                 .groupBy { it.aggregateRootId }
                 .map { Tool.fromSourcingEvents(it.value) }
-                .filter { it.isDefined() }
+                .filter { it.isSome() }
                 .map { it.getOrElse { throw IllegalStateException("Is filtered for defined elements.") } }
                 .toSet()
 

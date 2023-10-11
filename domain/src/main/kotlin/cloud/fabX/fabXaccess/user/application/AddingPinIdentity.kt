@@ -45,8 +45,8 @@ class AddingPinIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addPinIdentity done") }
-            .tap { log.error("...addPinIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addPinIdentity done") }
+            .onSome { log.error("...addPinIdentity error: $it") }
     }
 }

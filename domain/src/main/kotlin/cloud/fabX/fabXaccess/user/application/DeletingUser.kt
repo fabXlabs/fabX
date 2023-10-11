@@ -50,9 +50,9 @@ class DeletingUser(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...deleteUser done") }
-            .tap { log.error("...deleteUser error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...deleteUser done") }
+            .onSome { log.error("...deleteUser error: $it") }
     }
 
     /**

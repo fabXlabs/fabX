@@ -50,8 +50,8 @@ class AddingUsernamePasswordIdentity(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addUsernamePasswordIdentity done") }
-            .tap { log.error("...addUsernamePasswordIdentity error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addUsernamePasswordIdentity done") }
+            .onSome { log.error("...addUsernamePasswordIdentity error: $it") }
     }
 }

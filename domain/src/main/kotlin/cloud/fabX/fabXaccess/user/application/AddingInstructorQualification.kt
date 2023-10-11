@@ -49,8 +49,8 @@ class AddingInstructorQualification(
                     .swap()
             }
             .swap()
-            .orNone()
-            .tapNone { log.debug("...addInstructorQualification done") }
-            .tap { log.error("...addInstructorQualification error: $it") }
+            .getOrNone()
+            .onNone { log.debug("...addInstructorQualification done") }
+            .onSome { log.error("...addInstructorQualification error: $it") }
     }
 }
