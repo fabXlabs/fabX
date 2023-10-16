@@ -8,7 +8,7 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
-import cloud.fabX.fabXaccess.persistenceModule
+import cloud.fabX.fabXaccess.cachedPersistenceModule
 import cloud.fabX.fabXaccess.user.model.IsAdminChanged
 import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -76,7 +76,7 @@ private fun testSetup(): WebApp {
     val testApp = DI {
         import(domainModule)
         import(webModule)
-        import(persistenceModule)
+        import(cachedPersistenceModule)
         import(loggingModule)
 
         bindInstance(overrides = true) { dbPool }

@@ -8,6 +8,8 @@ services:
       FABX_DB_URL: jdbc:postgresql://postgres/postgres
       FABX_DB_USER: postgres
       FABX_DB_PASSWORD: postgrespassword
+      # must be false when running multiple instances
+      DATABASE_CACHING: true
 
   postgres:
     image: postgres:16

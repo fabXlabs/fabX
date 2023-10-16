@@ -29,8 +29,13 @@ val config = Config.fromEnv()
 val app = DI {
     import(domainModule)
     import(webModule)
-    import(persistenceModule)
     import(loggingModule)
+
+    if (config.dbCaching) {
+        import(cachedPersistenceModule)
+    } else {
+        import(persistenceModule)
+    }
 
     bindConstant(tag = "port") { config.port }
 

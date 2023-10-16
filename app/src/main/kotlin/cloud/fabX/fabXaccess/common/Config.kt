@@ -8,6 +8,7 @@ data class Config(
     val dbUrl: String,
     val dbUser: String,
     val dbPassword: String,
+    val dbCaching: Boolean,
     val jwtIssuer: String,
     val jwtAudience: String,
     val jwtHMAC256Secret: String,
@@ -22,6 +23,7 @@ data class Config(
     companion object {
         fun fromEnv(): Config {
             val port = readEnvInt("PORT", 80)
+            val dbCaching = readEnvBoolean("DATABASE_CACHING", false)
             val jwtIssuer = readEnvString("JWT_ISSUER", "localhost")
             val jwtAudience = readEnvString("JWT_AUDIENCE", "localhost")
             val jwtHMAC256Secret = readEnvString("JWT_HMAC256_SECRET", Random.nextBytes(32).decodeToString())
@@ -46,6 +48,7 @@ data class Config(
                         dbUrl,
                         dbUser,
                         dbPassword,
+                        dbCaching,
                         jwtIssuer,
                         jwtAudience,
                         jwtHMAC256Secret,
@@ -68,6 +71,7 @@ data class Config(
                         dbUrl,
                         dbUser,
                         dbPassword,
+                        dbCaching,
                         jwtIssuer,
                         jwtAudience,
                         jwtHMAC256Secret,
