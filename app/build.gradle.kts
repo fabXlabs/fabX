@@ -34,5 +34,5 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.19.1")
     testImplementation("org.testcontainers:postgresql:1.19.1")
     testImplementation("org.jetbrains.exposed:exposed-core:0.44.1")
-    testImplementation("com.zaxxer:HikariCP:5.0.1")
+    testImplementation("com.zaxxer:HikariCP:5.1.0")
 }
