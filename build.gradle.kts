@@ -4,7 +4,7 @@ plugins {
     base
     kotlin("jvm") version "1.9.20"
     jacoco
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("com.github.ben-manes.versions") version "0.50.0"
 }
 
 tasks.register<GradleBuild>("stage") {
@@ -55,7 +55,7 @@ allprojects {
         implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.20"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:1.2.1")
-        implementation("org.kodein.di:kodein-di:7.20.2")
+        implementation("org.kodein.di:kodein-di:7.21.0")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
 
