@@ -57,7 +57,7 @@ allprojects {
         implementation("io.arrow-kt:arrow-core:1.2.1")
         implementation("org.kodein.di:kodein-di:7.21.0")
         implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.1")
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
