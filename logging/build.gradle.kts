@@ -5,5 +5,5 @@ plugins {
 dependencies {
     implementation(project(":domain"))
 
-    implementation("ch.qos.logback:logback-classic:1.4.13")
+    implementation("ch.qos.logback:logback-classic:1.4.14")
 }
