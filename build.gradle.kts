@@ -55,8 +55,8 @@ allprojects {
         implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.21"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:1.2.1")
-        implementation("org.kodein.di:kodein-di:7.21.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
+        implementation("org.kodein.di:kodein-di:7.21.1")
+        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
         testImplementation("org.jetbrains.kotlin:kotlin-test")
@@ -64,7 +64,7 @@ allprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.0-SNAPSHOT")
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0-SNAPSHOT")
         testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.27.0")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-        testImplementation("org.mockito:mockito-junit-jupiter:5.7.0")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+        testImplementation("org.mockito:mockito-junit-jupiter:5.8.0")
     }
 }
