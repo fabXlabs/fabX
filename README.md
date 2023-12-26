@@ -40,7 +40,7 @@ fabX is provided as a [Docker](https://www.docker.com) image. Additionally, a [P
 database is required. See [docker-compose.yml](docker-compose.yml) for reference. Use this file as a base if you 
 want to self-host.
 
-## Setup / Documentation
+## Setup
 
 Here is a general overview how to set up a new fabX installation:
 
@@ -67,6 +67,13 @@ Here is a general overview how to set up a new fabX installation:
     * configure connection of tools to devices
 
 Now each space member is able to use the tools they are qualified for with their personal access card.
+
+## Documentation
+
+### Roles and access rights
+
+Documentation on the roles (member, instructor, admin) and their associated access rights can be found at
+[docs/roles](docs/roles.md). 
 
 ### Instructor Documentation
 
