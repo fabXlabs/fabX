@@ -1,8 +1,7 @@
-# Compose file for deployment
+# Compose file for local development
 services:
   app:
-    image: ghcr.io/fabxlabs/fabx:latest
-    restart: unless-stopped
+    build: .
     ports:
       - "8000:1234"
     environment:
@@ -10,16 +9,19 @@ services:
       FABX_DB_URL: jdbc:postgresql://postgres/postgres
       FABX_DB_USER: postgres
       FABX_DB_PASSWORD: postgrespassword
+      # must be false when running multiple instances
+      DATABASE_CACHING: true
 
   postgres:
     image: postgres:16
-    restart: unless-stopped
-    volumes:
-      - db:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespassword
 
-volumes:
-  db:
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./tooling/prometheus.yml:/etc/prometheus/prometheus.yml

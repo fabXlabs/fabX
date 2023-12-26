@@ -36,37 +36,53 @@ you require these or other features and would like to extend fabX, you're welcom
 
 ## Installation
 
-fabX is provided as a [Docker](https://www.docker.com) image. Additionally, a [Postgres](https://www.postgresql.org)
-database is required. See [docker-compose.yml](docker-compose.yml) for reference. Use this file as a base if you 
-want to self-host.
+fabX is provided as a container image. Additionally, a [Postgres](https://www.postgresql.org) database is required. 
+See [docker-compose.yml](docker-compose.yml) for reference. Use this file as a base if you want to self-host.
+
+You should be able to get started with the following steps:
+* Install a container runtime (e.g., [Docker](https://docs.docker.com/get-docker/) or [Podman](https://podman.io/get-started))
+  * For Podman, additionally, install a Compose runtime (e.g., https://github.com/containers/podman-compose )
+* download the [docker-compose.yml](docker-compose.yml) file and store it in an appropriate location
+* open a terminal in the location the docker-compose.yml file is stored
+* run `docker compose up -d postgres` (replace `docker compose` by `podman-compose` if you use Podman) to start the database
+* wait a few seconds for the database to be ready to accept connections
+* run `docker compose up -d app` to start fabX
+* open `http://localhost:8000` and continue with the Setup section below
+
+To stop fabX and the database, run `docker compose down`.
+
+To delete the database volume (attention: this deletes all data in the fabX installation), 
+run `docker compose down --volumes`.
 
 ## Setup
 
 Here is a general overview how to set up a new fabX installation:
 
-* Create a personal administrator account.
-    * Login with username "admin" and password "password".
-    * Create a new user with your personal details.
-    * Add a username password identity to your personal account.
-    * Set your personal account as admin.
-    * Delete the original "admin" account.
-* Create other users (e.g. one for each space member).
-    * Create new user with their details.
-    * Add card identities for each of them (and yourself).
-* Create tools: each tool represents a tool in your space (e.g. a laser cutter, a 3D printer, ...)
-* Create qualifications: a qualification represents a course a member has visited / completed that qualifies them to use
-  a set of tools
-    * a set of tools can also just be a single tool
-    * e.g. your space might have a single course to be able to use all 3D printers -> create a single qualification here
-    * now set the qualification as required for the different tools
-    * e.g. set the 3D printing course as a qualification for each 3D printer
-* Setup instructors: each user can be an instructor for a set of qualifications. Being an instructor for a qualification
-  enables giving the qualification to other users.
-* Add devices: devices are the small interfaces that read members' access cards and turn tools on and off
-    * devices register themselves when first turned on
-    * configure connection of tools to devices
+* Login with the default username "admin" and password "password"
+* Create a personal (administrator) User
+    * Create a new User with your personal details
+    * Add a Username Password Identity to your personal User
+    * Set your personal User as Administrator
+    * Logout
+    * Login with your personal User
+    * Delete the original "admin" User
+* Create other Users (i.e., one for each space member)
+    * Create new Users with their details
+    * Add Card Identities for each of them (and yourself)
+* Create Tools: each Tool represents a tool in your space (e.g. a laser cutter, a 3D printer, ...)
+* Create Qualifications: a Qualification represents a course a member has visited / completed that qualifies them to use
+  a set of Tools
+    * a set of Tools can also just be a single Tool
+    * e.g., your space might have a single course to be able to use all 3D printers -> create a single Qualification
+    * now set the Qualification as required for the different Tools
+    * e.g., set the 3D printing course as a Qualification for each 3D printer
+* Setup Instructors: each User can be an instructor for a set of Qualifications. Being an Instructor for a Qualification
+  enables giving the Qualification to other Users/Members.
+* Add Devices: Devices are the small interfaces that read Users'/Members' access cards and turn Tools on and off
+    * Devices register themselves when first turned on
+    * attach Tools to Devices 
 
-Now each space member is able to use the tools they are qualified for with their personal access card.
+Now each space member is able to use the Tools they are qualified for with their personal access card.
 
 ## Documentation
 
