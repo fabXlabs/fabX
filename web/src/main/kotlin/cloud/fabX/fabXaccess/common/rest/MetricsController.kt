@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.common.rest
 import cloud.fabX.fabXaccess.common.model.SystemActor
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.GettingDevicePinStatus
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
 import cloud.fabX.fabXaccess.user.application.UserMetrics
 import io.ktor.server.application.call
@@ -20,9 +21,11 @@ class MetricsController(
     private val appMicrometerRegistry: PrometheusMeterRegistry,
     private val userMetrics: UserMetrics,
     private val gettingDevice: GettingDevice,
+    private val gettingDevicePinStatus: GettingDevicePinStatus,
     private val deviceWebsocketController: DeviceWebsocketController
 ) {
     private lateinit var connectedDevicesMultiGauge: MultiGauge
+    private lateinit var devicePinStatusMultiGauge: MultiGauge
 
     init {
         configureMetrics()
@@ -44,6 +47,10 @@ class MetricsController(
 
         connectedDevicesMultiGauge = MultiGauge.builder("fabx.devices.connected")
             .description("1 if a device is connected, 0 if not")
+            .register(appMicrometerRegistry)
+
+        devicePinStatusMultiGauge = MultiGauge.builder("fabx.device.pins")
+            .description("1 if a pin is high, 0 if a pin is low")
             .register(appMicrometerRegistry)
     }
 
@@ -67,5 +74,22 @@ class MetricsController(
             }
 
         connectedDevicesMultiGauge.register(connectedDevices, true)
+
+        val devicePinStatus = gettingDevicePinStatus.getAll(SystemActor, newCorrelationId())
+            .filter { deviceWebsocketController.isConnected(it.deviceId) }
+            .flatMap { status ->
+                val deviceId = status.deviceId
+                status.inputPins.map {
+                    Row.of(
+                        Tags.of(
+                            Tag.of("deviceId", deviceId.serialize()),
+                            Tag.of("pin", it.key.toString())
+                        ),
+                        if (it.value) { 1 } else { 0 }
+                    )
+                }
+
+            }
+        devicePinStatusMultiGauge.register(devicePinStatus, true)
     }
 }

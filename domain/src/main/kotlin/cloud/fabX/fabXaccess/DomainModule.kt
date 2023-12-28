@@ -13,9 +13,11 @@ import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.DeviceDomainEventHandler
 import cloud.fabX.fabXaccess.device.application.GettingConfiguration
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.GettingDevicePinStatus
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
+import cloud.fabX.fabXaccess.device.application.UpdatingDevicePinStatus
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
@@ -78,6 +80,8 @@ val domainModule = DI.Module("domain") {
         )
     }
     bindSingleton { UpdatingDeviceFirmware(instance(), instance(), instance()) }
+    bindSingleton { GettingDevicePinStatus(instance(), instance()) }
+    bindSingleton { UpdatingDevicePinStatus(instance(), instance()) }
 
     // qualification
     bindSingleton { AddingQualification(instance(), instance(), instance(), instance()) }

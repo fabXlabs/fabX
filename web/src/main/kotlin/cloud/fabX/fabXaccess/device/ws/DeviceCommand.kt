@@ -40,6 +40,7 @@ sealed class DeviceToServerNotification {
 
 interface DeviceNotificationHandler {
     suspend fun handle(actor: DeviceActor, notification: ToolUnlockedNotification): Either<Error, Unit>
+    suspend fun handle(actor: DeviceActor, notification: PinStatusNotification): Either<Error, Unit>
 }
 
 @Serializable
@@ -118,6 +119,20 @@ data class ToolUnlockedNotification(
     val toolId: String,
     val phoneNrIdentity: PhoneNrIdentity?,
     val cardIdentity: CardIdentity?
+) : DeviceToServerNotification() {
+    override suspend fun handle(
+        actor: DeviceActor,
+        deviceNotificationHandler: DeviceNotificationHandler
+    ): Either<Error, Unit> =
+        deviceNotificationHandler.handle(actor, this)
+}
+
+/**
+ * Notification from device -> server sent when a user has selected a tool at a device and the tool was thus unlocked.
+ */
+@Serializable
+data class PinStatusNotification(
+    val inputPins: Map<Int, Boolean>
 ) : DeviceToServerNotification() {
     override suspend fun handle(
         actor: DeviceActor,

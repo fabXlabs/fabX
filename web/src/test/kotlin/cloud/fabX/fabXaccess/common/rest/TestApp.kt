@@ -9,6 +9,7 @@ import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingConfiguration
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.GettingDevicePinStatus
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
@@ -145,6 +146,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(UpdatingDeviceFirmware::class.java) }
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
         bindInstance { Mockito.mock(DeviceNotificationHandler::class.java) }
+        bindInstance { Mockito.mock(GettingDevicePinStatus::class.java) }
 
         bindInstance { Mockito.mock(UserMetrics::class.java) }
         bindInstance { Mockito.mock(WebauthnRepository::class.java) }

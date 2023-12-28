@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.LiquibaseMigrationHandler
 import cloud.fabX.fabXaccess.device.infrastructure.CachedDeviceDatabaseRepository
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
+import cloud.fabX.fabXaccess.device.infrastructure.DevicePinStatusInMemoryRepository
 import cloud.fabX.fabXaccess.qualification.infrastructure.CachedQualificationDatabaseRepository
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.CachedToolDatabaseRepository
@@ -34,6 +35,8 @@ fun makePersistenceModule(cached: Boolean): DI.Module = DI.Module("persistence")
     }
 
     bindSingleton { WebauthnInMemoryRepository() }
+
+    bindSingleton { DevicePinStatusInMemoryRepository() }
 
     bindSingleton {
         LiquibaseMigrationHandler(

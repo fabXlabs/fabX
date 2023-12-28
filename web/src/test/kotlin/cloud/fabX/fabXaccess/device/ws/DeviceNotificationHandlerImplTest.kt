@@ -5,7 +5,9 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
+import cloud.fabX.fabXaccess.device.application.UpdatingDevicePinStatus
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
+import cloud.fabX.fabXaccess.device.model.DevicePinStatus
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.application.LoggingUnlockedTool
 import cloud.fabX.fabXaccess.user.model.UserFixture
@@ -27,6 +29,7 @@ import org.mockito.kotlin.whenever
 @MockitoSettings
 internal class DeviceNotificationHandlerImplTest {
     private lateinit var loggingUnlockedTool: LoggingUnlockedTool
+    private lateinit var updatingDevicePinStatus: UpdatingDevicePinStatus
     private lateinit var authenticationService: AuthenticationService
 
     private lateinit var notificationHandler: DeviceNotificationHandler
@@ -34,11 +37,14 @@ internal class DeviceNotificationHandlerImplTest {
     @BeforeEach
     fun `configure WebModule`(
         @Mock loggingUnlockedTool: LoggingUnlockedTool,
+        @Mock updatingDevicePinStatus: UpdatingDevicePinStatus,
         @Mock authenticationService: AuthenticationService
     ) {
         this.loggingUnlockedTool = loggingUnlockedTool
+        this.updatingDevicePinStatus = updatingDevicePinStatus
         this.authenticationService = authenticationService
-        notificationHandler = DeviceNotificationHandlerImpl(loggingUnlockedTool, authenticationService)
+        notificationHandler =
+            DeviceNotificationHandlerImpl(loggingUnlockedTool, updatingDevicePinStatus, authenticationService)
     }
 
     @Test
@@ -145,6 +151,78 @@ internal class DeviceNotificationHandlerImplTest {
 
         whenever(loggingUnlockedTool.logUnlockedTool(eq(deviceActorOnBehalfOfUser), eq(toolId), any()))
             .thenReturn(error.left())
+
+        // when
+        val result = notificationHandler.handle(device.asActor(), notification)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
+    }
+
+    @Test
+    fun `when handling PinStatusNotification then updates pin status`() = runTest {
+        // given
+        val device = DeviceFixture.arbitrary()
+
+        val inputPins = mapOf(
+            1 to true,
+            2 to false,
+            3 to false,
+            4 to true
+        )
+        val notification = PinStatusNotification(inputPins)
+
+        whenever(
+            updatingDevicePinStatus.updateDevicePinStatus(
+                eq(device.asActor()),
+                any(),
+                eq(
+                    DevicePinStatus(
+                        device.id,
+                        inputPins
+                    )
+                )
+            )
+        ).thenReturn(Unit.right())
+
+        // when
+        val result = notificationHandler.handle(device.asActor(), notification)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
+    }
+
+    @Test
+    fun `given error updating pin status when handling PinStatusNotification then returns error`() = runTest {
+        // given
+        val device = DeviceFixture.arbitrary()
+
+        val inputPins = mapOf(
+            1 to true,
+            2 to false,
+            3 to false,
+            4 to true
+        )
+        val notification = PinStatusNotification(inputPins)
+
+        val error = ErrorFixture.arbitrary()
+
+        whenever(
+            updatingDevicePinStatus.updateDevicePinStatus(
+                eq(device.asActor()),
+                any(),
+                eq(
+                    DevicePinStatus(
+                        device.id,
+                        inputPins
+                    )
+                )
+            )
+        ).thenReturn(error.left())
 
         // when
         val result = notificationHandler.handle(device.asActor(), notification)
