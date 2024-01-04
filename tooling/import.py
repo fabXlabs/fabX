@@ -12,6 +12,8 @@ basicOld = HTTPBasicAuth('admin1', 'demopassword')
 baseUrlNew = "http://new.example.com/api/v1"
 basicNew = HTTPBasicAuth('admin', 'password')
 
+VERIFY_NEW = True
+
 logger.debug("hello world")
 
 T = TypeVar("T")
@@ -40,21 +42,21 @@ usersOld = requests.get(f"{baseUrlOld}/user", auth=basicOld).json()
 usersOld.sort(key=lambda e: e["id"])
 
 # NEW: GET ACTOR INFO
-me = requests.get(f"{baseUrlNew}/user/me", auth=basicNew).json()
+me = requests.get(f"{baseUrlNew}/user/me", auth=basicNew, verify=VERIFY_NEW).json()
 meIdNew = me["id"]
 logger.info(f"meId: {meIdNew}")
 
 # NEW: GET QUALIFICATIONS
-qualificationsNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/qualification", auth=basicNew).json()
+qualificationsNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/qualification", auth=basicNew, verify=VERIFY_NEW).json()
 
 # NEW: GET DEVICES
-devicesNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/device", auth=basicNew).json()
+devicesNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/device", auth=basicNew, verify=VERIFY_NEW).json()
 
 # NEW: GET TOOLS
-toolsNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/tool", auth=basicNew).json()
+toolsNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/tool", auth=basicNew, verify=VERIFY_NEW).json()
 
 # NEW: GET USERS
-usersNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/user", auth=basicNew).json()
+usersNew: list[dict[str, Any]] = requests.get(f"{baseUrlNew}/user", auth=basicNew, verify=VERIFY_NEW).json()
 
 # MAPPING
 qualificationIdsNew = {}  # old id -> new id
@@ -75,9 +77,9 @@ def create_qualification(old_qualification: dict[str, Any]) -> str:
         "description": old_qualification["description"],
         "colour": old_qualification["colour"],
         "orderNr": old_qualification["orderNr"]
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
-    qualificationsNew.append(requests.get(f"{baseUrlNew}/qualification/{response.text}", auth=basicNew).json())
+    qualificationsNew.append(requests.get(f"{baseUrlNew}/qualification/{response.text}", auth=basicNew, verify=VERIFY_NEW).json())
     return response.text
 
 
@@ -85,7 +87,7 @@ def make_actor_instructor(qualification_id: str):
     logger.info(f'make me instructor {q["name"]}')
     response = requests.post(f"{baseUrlNew}/user/{meIdNew}/instructor-qualification", json={
         "qualificationId": qualification_id
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
 
 
@@ -97,9 +99,9 @@ def create_device(old_device: dict[str, Any]) -> str:
         "backupBackendUrl": old_device["backupBackendUrl"],
         "mac": old_device["mac"],
         "secret": old_device["secret"],
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
-    devicesNew.append(requests.get(f"{baseUrlNew}/device/{response.text}", auth=basicNew).json())
+    devicesNew.append(requests.get(f"{baseUrlNew}/device/{response.text}", auth=basicNew, verify=VERIFY_NEW).json())
     return response.text
 
 
@@ -113,9 +115,9 @@ def create_tool(old_tool: dict[str, Any]) -> str:
         "idleState": old_tool["idleState"],
         "wikiLink": old_tool["wikiLink"],
         "requiredQualifications": [qualificationIdsNew[q["id"]] for q in old_tool["qualifications"]],
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
-    toolsNew.append(requests.get(f"{baseUrlNew}/tool/{response.text}", auth=basicNew).json())
+    toolsNew.append(requests.get(f"{baseUrlNew}/tool/{response.text}", auth=basicNew, verify=VERIFY_NEW).json())
     return response.text
 
 
@@ -123,7 +125,7 @@ def attach_tool(tool_id: str, device_id: str):
     logger.info(f"attaching tool {tool_id} to device {device_id} (pin: {t['pin']})")
     response = requests.put(f'{baseUrlNew}/device/{deviceIdsNew[t["deviceId"]]}/attached-tool/{t["pin"]}', json={
         "toolId": toolIdNew
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
 
 
@@ -133,9 +135,9 @@ def create_user(old_user: dict[str, Any]) -> str:
         "firstName": old_user['firstName'],
         "lastName": old_user['lastName'],
         "wikiName": old_user['wikiName']
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
-    usersNew.append(requests.get(f"{baseUrlNew}/user/{response.text}", auth=basicNew).json())
+    usersNew.append(requests.get(f"{baseUrlNew}/user/{response.text}", auth=basicNew, verify=VERIFY_NEW).json())
     return response.text
 
 
@@ -144,7 +146,7 @@ def add_card_identity(user_id: str, card_id: str, card_secret: str):
     response = requests.post(f"{baseUrlNew}/user/{user_id}/identity/card", json={
         "cardId": card_id,
         "cardSecret": card_secret
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
 
 
@@ -152,7 +154,7 @@ def add_phone_nr_identity(user_id: str, phone_nr: str):
     logger.info(f"adding phone nr identity {phone_nr} to {user_id}")
     response = requests.post(f"{baseUrlNew}/user/{user_id}/identity/phone", json={
         "phoneNr": phone_nr
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
 
 
@@ -160,13 +162,13 @@ def add_member_qualification(user_id: str, qualification_id: str):
     logger.info(f'adding qualification {qualification_id} to user {user_id}')
     response = requests.post(f'{baseUrlNew}/user/{user_id}/member-qualification', json={
         'qualificationId': qualification_id
-    }, auth=basicNew)
+    }, auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
 
 
 def remove_member_qualification(user_id: str, qualification_id: str):
     logger.info(f'removing qualification {qualification_id} from user {user_id}')
-    response = requests.delete(f'{baseUrlNew}/user/{user_id}/member-qualification/{qualification_id}', auth=basicNew)
+    response = requests.delete(f'{baseUrlNew}/user/{user_id}/member-qualification/{qualification_id}', auth=basicNew, verify=VERIFY_NEW)
     check_response(response)
 
 
