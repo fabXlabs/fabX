@@ -174,8 +174,8 @@ class WebApp(
         }
 
         install(WebSockets) {
-            pingPeriod = Duration.ofSeconds(15)
-            timeout = Duration.ofSeconds(15)
+            pingPeriod = Duration.ofSeconds(10)
+            timeout = Duration.ofSeconds(10)
             maxFrameSize = Long.MAX_VALUE
             masking = false
         }
