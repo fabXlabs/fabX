@@ -80,6 +80,26 @@ internal class DeviceFirmwareUpdateIntegrationTest {
         assertThat(response.bodyAsText()).isEmpty()
     }
 
+    @Test
+    fun `given non-existent firmware version when firmware update then returns http not found`() =
+        withTestApp {
+            // given
+            val mac = "AABBCCDDEEFF"
+            val secret = "abcdef0123456789abcdef0123456789"
+            val deviceId = givenDevice(mac = mac, secret = secret)
+            givenDesiredFirmwareVersion(deviceId, "0.42.0")
+
+            // when
+            val response = c().get("/api/v1/device/me/firmware-update") {
+                basicAuth(mac, secret)
+                header("X-ESP32-Version", "0.0.1")
+            }
+
+            // then
+            assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+            assertThat(response.bodyAsText()).isEqualTo("Cannot read firmware file from disk (/tmp/fabXIntegrationTest/0.42.0.bin).")
+        }
+
     @Nested
     internal inner class GivenFirmwareFile {
 

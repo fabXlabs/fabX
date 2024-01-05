@@ -43,7 +43,7 @@ class DeviceFirmwareUpdateController(
                             if (firmwareFile.isFile) {
                                 call.respondFile(firmwareFile)
                             } else {
-                                call.respond(HttpStatusCode.InternalServerError, "Cannot read firmware file from disk.")
+                                call.respond(HttpStatusCode.NotFound, "Cannot read firmware file from disk (${firmwareFile.path}).")
                             }
                         } else {
                             call.respond(HttpStatusCode.NoContent)
