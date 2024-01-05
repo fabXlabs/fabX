@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { Select, Store } from "@ngxs/store";
 import { FabxState } from "../state/fabx-state";
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { AugmentedDevice } from "../models/device.model";
 import { ErrorService } from "../services/error.service";
 import { Devices } from "../state/device.actions";
@@ -13,7 +13,7 @@ import { HttpErrorResponse } from "@angular/common/http";
     templateUrl: './device-change-desired-firmware-version.component.html',
     styleUrls: ['./device-change-desired-firmware-version.component.scss']
 })
-export class DeviceChangeDesiredFirmwareVersionComponent {
+export class DeviceChangeDesiredFirmwareVersionComponent implements OnInit, OnDestroy {
 
     error = "";
 
@@ -22,8 +22,21 @@ export class DeviceChangeDesiredFirmwareVersionComponent {
     });
 
     @Select(FabxState.selectedDevice) device$!: Observable<AugmentedDevice>;
+    private selectedDeviceSubscription: Subscription | null = null;
 
     constructor(private store: Store, private errorHandler: ErrorService) {}
+
+    ngOnInit(): void {
+        this.selectedDeviceSubscription = this.device$.subscribe({
+            next: value => {
+                if (value) {
+                    this.form.patchValue({
+                        desiredFirmwareVersion: value.desiredFirmwareVersion
+                    });
+                }
+            }
+        });
+    }
 
     onSubmit() {
         const desiredFirmwareVersion = this.form.get('desiredFirmwareVersion')!.value!;
@@ -38,5 +51,11 @@ export class DeviceChangeDesiredFirmwareVersionComponent {
                 this.error = this.errorHandler.format(err);
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        if (this.selectedDeviceSubscription) {
+            this.selectedDeviceSubscription.unsubscribe();
+        }
     }
 }
