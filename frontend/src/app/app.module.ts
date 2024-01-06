@@ -109,7 +109,7 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
             developmentMode: !environment.production
         }),
         NgxsStoragePluginModule.forRoot({
-            key: ["fabx.auth", "fabx.loggedInUserId"]
+            key: ["fabx.auth", "fabx.loggedInUserId", "fabx.lastAuthenticatedUsername"]
         }),
         NgxsRouterPluginModule.forRoot(),
         NgxsReduxDevtoolsPluginModule.forRoot(),

@@ -4,19 +4,15 @@
     </div>
 
     <div>
-        <p-messages severity="info">
-            <ng-template pTemplate>
-                <div class="ml-2">Enter username only and click on "Login" to use WebAuthn.</div>
-            </ng-template>
-        </p-messages>
-
         <form [formGroup]="form" (ngSubmit)="onSubmit()">
             <label for="username-input" class="block text-900 font-medium mb-2">Username</label>
             <input id="username-input" type="text" formControlName="username" pInputText class="w-full mb-3"
                    autocapitalize="none">
 
-            <label for="password-input" class="block text-900 font-medium mb-2">Password</label>
-            <input id="password-input" type="password" formControlName="password" pInputText class="w-full mb-3">
+            <ng-container *ngIf="showingPassword">
+                <label for="password-input" class="block text-900 font-medium mb-2">Password</label>
+                <input id="password-input" type="password" formControlName="password" pInputText class="w-full mb-3">
+            </ng-container>
 
             <p-messages *ngIf="error" severity="error">
                 <ng-template pTemplate="">
@@ -24,8 +20,12 @@
                 </ng-template>
             </p-messages>
 
-            <button type="submit" pButton label="Login" icon="pi pi-user" class="w-full"
-                    [disabled]="!form.valid"></button>
+            <div class="grid">
+                <button *ngIf="!showingPassword" type="button" pButton label="Login with Password" icon="pi pi-user" class="col mx-2 p-button-secondary" (click)="showingPassword=true"></button>
+                <button type="submit" pButton label="{{showingPassword ? 'Login' : 'Login Passwordless'}}" icon="pi {{showingPassword ? 'pi-user' : 'pi-key'}}" class="col mx-2"
+                        [disabled]="!form.valid"></button>
+            </div>
+
         </form>
     </div>
 </div>
