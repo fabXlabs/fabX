@@ -33,6 +33,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     testImplementation("org.testcontainers:testcontainers:1.19.3")
     testImplementation("org.testcontainers:postgresql:1.19.3")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.45.0")
+    testImplementation("org.jetbrains.exposed:exposed-core:0.46.0")
     testImplementation("com.zaxxer:HikariCP:5.1.0")
 }
