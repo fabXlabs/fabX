@@ -24,14 +24,14 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.3.8")
     implementation("io.micrometer:micrometer-registry-prometheus:1.12.3")
     implementation("org.slf4j:slf4j-api:2.0.12")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("com.webauthn4j:webauthn4j-core:0.22.1.RELEASE")
 
     testImplementation(testFixtures(project(":domain")))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
     testImplementation("io.ktor:ktor-server-test-host:2.3.8")
     testImplementation("io.ktor:ktor-client-content-negotiation:2.3.8")
     testImplementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
 }
