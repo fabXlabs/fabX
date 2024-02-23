@@ -7,7 +7,10 @@ import assertk.assertions.doesNotContain
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.withTestApp
+import cloud.fabX.fabXaccess.device.ws.DeviceResponse
+import cloud.fabX.fabXaccess.device.ws.DeviceToServerCommand
 import cloud.fabX.fabXaccess.device.ws.DeviceToServerNotification
+import cloud.fabX.fabXaccess.device.ws.GetConfiguration
 import cloud.fabX.fabXaccess.device.ws.PinStatusNotification
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.client.request.basicAuth
@@ -17,7 +20,6 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -78,6 +80,48 @@ class DeviceMetricsIntegrationTest {
                 contains("fabx_devices_connected{deviceId=\"${deviceId2}\",deviceName=\"${deviceName2}\",} 0.0")
             }
         }
+    }
+
+    @Test
+    fun `when device gets configuration then counter is increased`() = withTestApp {
+        // given
+        val mac = "AABBCCDDEE01"
+        val secret = "49ecad93aac0bdff2915768bd514678f"
+
+        val deviceName = "Some Device Name"
+        val deviceId = givenDevice(mac = mac, secret = secret, name = deviceName)
+
+        val commandId1 = 4242
+        val command1 = GetConfiguration(commandId1, "1.42.2")
+
+        val commandId2 = 123
+        val command2 = GetConfiguration(commandId2, "1.42.2")
+
+        // when
+        c().webSocket("/api/v1/device/ws", {
+            basicAuth(mac, secret)
+        }) {
+            (incoming.receive() as Frame.Text).readText() // greeting text
+
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command1)))
+            val responseText1 = (incoming.receive() as Frame.Text).readText()
+            val response1 = Json.decodeFromString<DeviceResponse>(responseText1)
+            assertThat(response1.commandId).isEqualTo(commandId1)
+
+            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerCommand>(command2)))
+            val responseText2 = (incoming.receive() as Frame.Text).readText()
+            val response2 = Json.decodeFromString<DeviceResponse>(responseText2)
+            assertThat(response2.commandId).isEqualTo(commandId2)
+        }
+
+        // then
+        val response = c().get("/metrics") {
+            basicAuth("metrics", "supersecretmetricspassword")
+        }
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.bodyAsText()).contains(
+            "fabx_device_get_configuration_count_total{deviceId=\"$deviceId\",deviceName=\"$deviceName\",} 2.0"
+        )
     }
 
     @Test

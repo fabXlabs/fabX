@@ -9,8 +9,11 @@ import assertk.assertThat
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
+import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
+import cloud.fabX.fabXaccess.common.model.TaggedCounter
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.ActualFirmwareVersionChanged
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
@@ -39,6 +42,7 @@ internal class GettingConfigurationTest {
     private lateinit var logger: Logger
     private lateinit var deviceRepository: DeviceRepository
     private lateinit var toolRepository: GettingToolById
+    private lateinit var gettingConfigurationCounter: TaggedCounter<DeviceId>
 
     private val fixedInstant = Clock.System.now()
     private val fixedClock = FixedClock(fixedInstant)
@@ -49,13 +53,14 @@ internal class GettingConfigurationTest {
     fun `configure DomainModule`(
         @Mock logger: Logger,
         @Mock deviceRepository: DeviceRepository,
-        @Mock gettingToolById: GettingToolById
+        @Mock gettingToolById: GettingToolById,
+        @Mock gettingConfigurationCounter: TaggedCounter<DeviceId>
     ) {
         this.logger = logger
         this.deviceRepository = deviceRepository
         this.toolRepository = gettingToolById
 
-        testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById, fixedClock)
+        testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById, gettingConfigurationCounter, fixedClock)
     }
 
     @Nested

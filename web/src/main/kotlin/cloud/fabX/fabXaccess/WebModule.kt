@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess
 
+import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.rest.MetricsController
 import cloud.fabX.fabXaccess.common.rest.MicrometerTaggedCounter
@@ -116,6 +117,14 @@ val webModule = DI.Module("web") {
     bindSingleton { RestartDeviceViaWebsocket(instance()) }
 
     bindSingleton { PrometheusMeterRegistry(PrometheusConfig.DEFAULT) }
+
+    bindEagerSingleton(tag = "gettingConfigurationCounter") {
+        MicrometerTaggedCounter<DeviceId>(
+            instance(),
+            "fabx.device.get_configuration.count",
+            "Incremented for every time a device gets its configuration."
+        )
+    }
 
     bindEagerSingleton(tag = "toolUsageCounter") {
         MicrometerTaggedCounter<ToolId>(

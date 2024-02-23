@@ -7,7 +7,10 @@ import arrow.core.right
 import arrow.core.sequence
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
+import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.TaggedCounter
+import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
@@ -24,6 +27,7 @@ class GettingConfiguration(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
     private val gettingToolById: GettingToolById,
+    private val gettingConfigurationCounter: TaggedCounter<DeviceId>,
     private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
@@ -71,6 +75,14 @@ class GettingConfiguration(
                     .let { eithers -> either { eithers.bindAll() } }
                     .map { entries -> entries.toMap() }
                     .map { pinToTool -> Result(device = it, attachedTools = pinToTool) }
+            }
+            .onRight {
+                gettingConfigurationCounter.increment(it.device.id, {
+                    mapOf(
+                        "deviceId" to it.device.id.serialize(),
+                        "deviceName" to it.device.name
+                    )
+                })
             }
             .onRight { log.debug("...getConfiguration successful") }
             .onLeft { log.error("...getConfiguration error: $it") }

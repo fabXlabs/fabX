@@ -14,14 +14,10 @@ class MicrometerCounter(
     tags: Collection<Tag>
 ) : Counter {
 
-    private val counter: io.micrometer.core.instrument.Counter
-
-    init {
-        counter = io.micrometer.core.instrument.Counter.builder(name)
-            .description(description)
-            .tags(tags)
-            .register(appMicrometerRegistry)
-    }
+    private val counter: io.micrometer.core.instrument.Counter = io.micrometer.core.instrument.Counter.builder(name)
+        .description(description)
+        .tags(tags)
+        .register(appMicrometerRegistry)
 
     override fun increment(double: Double) {
         counter.increment(double)
