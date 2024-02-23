@@ -95,6 +95,11 @@ Documentation on the roles (member, instructor, admin) and their associated acce
 
 Documentation for instructors (with screenshots) can be found at [docs/instructor](docs/instructor.md).
 
+### Monitoring
+
+The backend exposes metrics in Prometheus format at `/metrics`. The endpoint requires basic auth credentials configured
+through environment variables.
+
 ## 🛠 Tech Stack
 
 * [Kotlin](https://kotlinlang.org) on JVM
