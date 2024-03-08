@@ -2,7 +2,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     base
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
     jacoco
     id("com.github.ben-manes.versions") version "0.51.0"
 }
@@ -52,7 +52,7 @@ allprojects {
     }
 
     dependencies {
-        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.22"))
+        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:1.9.23"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib")
         implementation("io.arrow-kt:arrow-core:1.2.3")
         implementation("org.kodein.di:kodein-di:7.21.2")
