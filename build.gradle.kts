@@ -64,7 +64,7 @@ allprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.0-SNAPSHOT")
         testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.0-SNAPSHOT")
         testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.0")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+        testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
         testImplementation("org.mockito:mockito-junit-jupiter:5.11.0")
     }
 }
