@@ -23,9 +23,9 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer:2.3.10")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.3.10")
     implementation("io.micrometer:micrometer-registry-prometheus:1.12.5")
-    implementation("org.slf4j:slf4j-api:2.0.12")
+    implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    implementation("ch.qos.logback:logback-classic:1.5.4")
+    implementation("ch.qos.logback:logback-classic:1.5.5")
     implementation("com.webauthn4j:webauthn4j-core:0.23.0.RELEASE")
 
     testImplementation(testFixtures(project(":domain")))
