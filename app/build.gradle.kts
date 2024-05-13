@@ -22,7 +22,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
 
     testImplementation(testFixtures(project(":domain")))
@@ -30,7 +30,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:2.3.11")
     testImplementation("io.ktor:ktor-client-content-negotiation:2.3.11")
     testImplementation("io.ktor:ktor-serialization-kotlinx-json:2.3.11")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     testImplementation("org.testcontainers:testcontainers:1.19.8")
     testImplementation("org.testcontainers:postgresql:1.19.8")
     testImplementation("org.jetbrains.exposed:exposed-core:0.50.1")
