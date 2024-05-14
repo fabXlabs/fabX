@@ -22,7 +22,7 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:2.3.11")
     implementation("io.ktor:ktor-server-metrics-micrometer:2.3.11")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.3.11")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.12.5")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.13.0")
     implementation("org.slf4j:slf4j-api:2.0.13")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("ch.qos.logback:logback-classic:1.5.6")
