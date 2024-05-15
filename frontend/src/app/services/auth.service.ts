@@ -93,17 +93,13 @@ export class AuthService {
         );
     }
 
-    getOptions() {
+    getToken() {
         let auth = this.store.selectSnapshot(FabxState.auth);
 
         if (auth) {
-            return {
-                headers: new HttpHeaders({
-                    "Authorization": `Bearer ${auth.token}`
-                })
-            };
+            return auth.token;
         } else {
-            return {};
+            return null;
         }
     }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { AuthService } from "./auth.service";
 import { Observable, retry } from "rxjs";
 import {
     DesiredFirmwareVersion,
@@ -20,28 +19,24 @@ export class DeviceService {
     private baseUrl = environment.baseUrl;
 
     constructor(
-        private http: HttpClient,
-        private authService: AuthService
+        private http: HttpClient
     ) { }
 
     public getAllDevices(): Observable<Device[]> {
-        return this.http.get<Device[]>(`${this.baseUrl}/device`, this.authService.getOptions()).pipe(
+        return this.http.get<Device[]>(`${this.baseUrl}/device`).pipe(
             retry(3)
         );
     }
 
     public getById(id: string): Observable<Device> {
-        return this.http.get<Device>(`${this.baseUrl}/device/${id}`, this.authService.getOptions());
+        return this.http.get<Device>(`${this.baseUrl}/device/${id}`);
     }
 
     public addDevice(details: DeviceCreationDetails): Observable<string> {
         return this.http.post(
             `${this.baseUrl}/device`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -49,10 +44,7 @@ export class DeviceService {
         return this.http.put(
             `${this.baseUrl}/device/${id}`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -63,10 +55,7 @@ export class DeviceService {
         return this.http.put(
             `${this.baseUrl}/device/${id}/desired-firmware-version`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -78,20 +67,14 @@ export class DeviceService {
         return this.http.put(
             `${this.baseUrl}/device/${deviceId}/attached-tool/${pin}`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public detachTool(deviceId: string, pin: number): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/device/${deviceId}/attached-tool/${pin}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -99,10 +82,7 @@ export class DeviceService {
         return this.http.post(
             `${this.baseUrl}/device/${deviceId}/unlock-tool`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -110,10 +90,7 @@ export class DeviceService {
         return this.http.post(
             `${this.baseUrl}/device/${deviceId}/restart`,
             null,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -121,10 +98,7 @@ export class DeviceService {
         return this.http.post(
             `${this.baseUrl}/device/${deviceId}/update-firmware`,
             null,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 

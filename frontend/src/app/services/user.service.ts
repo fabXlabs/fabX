@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
-import { AuthService } from "./auth.service";
 import { mergeMap, Observable, retry } from "rxjs";
 import {
     CardIdentityAdditionDetails,
@@ -27,31 +26,27 @@ export class UserService {
     private baseUrl = environment.baseUrl;
 
     constructor(
-        private http: HttpClient,
-        private authService: AuthService
+        private http: HttpClient
     ) { }
 
     public getAllUsers(): Observable<User[]> {
-        return this.http.get<User[]>(`${this.baseUrl}/user`, this.authService.getOptions()).pipe(
+        return this.http.get<User[]>(`${this.baseUrl}/user`).pipe(
             retry(3)
         );
     }
 
     public getById(id: string): Observable<User> {
-        return this.http.get<User>(`${this.baseUrl}/user/${id}`, this.authService.getOptions());
+        return this.http.get<User>(`${this.baseUrl}/user/${id}`);
     }
 
     public getMe(): Observable<User> {
-        return this.http.get<User>(`${this.baseUrl}/user/me`, this.authService.getOptions());
+        return this.http.get<User>(`${this.baseUrl}/user/me`);
     }
 
     public getIdByWikiName(wikiName: string): Observable<string> {
         return this.http.get(
             `${this.baseUrl}/user/id-by-wiki-name?wikiName=${wikiName}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -59,10 +54,7 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -70,10 +62,7 @@ export class UserService {
         return this.http.put(
             `${this.baseUrl}/user/${userId}`,
             personalInformation,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -81,10 +70,7 @@ export class UserService {
         return this.http.put(
             `${this.baseUrl}/user/${userId}/lock`,
             lockDetails,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         )
     }
 
@@ -96,20 +82,14 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/member-qualification`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public removeMemberQualification(userId: string, qualificationId: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/member-qualification/${qualificationId}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -121,20 +101,14 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/instructor-qualification`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public removeInstructorQualification(userId: string, qualificationId: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/instructor-qualification/${qualificationId}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -146,10 +120,7 @@ export class UserService {
         return this.http.put(
             `${this.baseUrl}/user/${userId}/is-admin`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -162,10 +133,7 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/username-password`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -175,20 +143,14 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/username-password/change-password`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         )
     }
 
     public removeUsernamePasswordIdentity(userId: string, username: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/username-password/${username}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -240,8 +202,7 @@ export class UserService {
     private registerWebauthn(userId: string): Observable<WebauthnRegistrationDetails> {
         return this.http.post<WebauthnRegistrationDetails>(
             `${this.baseUrl}/user/${userId}/identity/webauthn/register`,
-            {},
-            this.authService.getOptions()
+            {}
         );
     }
 
@@ -258,10 +219,7 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/webauthn/response`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -270,10 +228,7 @@ export class UserService {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/webauthn/${credentialIdHex}`,
 
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -286,20 +241,14 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/card`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public removeCardIdentity(userId: string, cardId: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/card/${cardId}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -311,20 +260,14 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/phone`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public removePhoneNrIdentity(userId: string, phoneNr: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/phone/${phoneNr}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
@@ -336,35 +279,26 @@ export class UserService {
         return this.http.post(
             `${this.baseUrl}/user/${userId}/identity/pin`,
             details,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public removePinIdentity(userId: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${userId}/identity/pin`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
     }
 
     public deleteUser(id: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/${id}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         )
     }
 
     public getSoftDeletedUsers(): Observable<User[]> {
-        return this.http.get<User[]>(`${this.baseUrl}/user/soft-deleted`, this.authService.getOptions()).pipe(
+        return this.http.get<User[]>(`${this.baseUrl}/user/soft-deleted`).pipe(
             retry(3)
         );
     }
@@ -372,10 +306,7 @@ export class UserService {
     public hardDelete(id: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/user/soft-deleted/${id}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         )
     }
 
