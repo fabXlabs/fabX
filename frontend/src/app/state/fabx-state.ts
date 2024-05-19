@@ -991,6 +991,11 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.ChangeThumbnail)
+    changeDeviceThumbnail(ctx: StateContext<FabxStateModel>, action: Devices.ChangeThumbnail) {
+        return this.deviceService.changeThumbnail(action.id, action.file);
+    }
+
     // TOOLS
 
     @Selector()

@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
+import cloud.fabX.fabXaccess.device.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
@@ -32,6 +33,7 @@ class DeviceController(
     private val gettingDevice: GettingDevice,
     private val addingDevice: AddingDevice,
     private val changingDevice: ChangingDevice,
+    private val changingThumbnail: ChangingThumbnail,
     private val changingFirmwareVersion: ChangingFirmwareVersion,
     private val deletingDevice: DeletingDevice,
     private val attachingTool: AttachingTool,
@@ -263,6 +265,47 @@ class DeviceController(
                                         }
                                 )
                             }
+                    }
+            }
+
+            post("/{id}/thumbnail") {
+                readBody<ByteArray>()
+                    ?.let {
+                        readUUIDParameter("id")
+                            ?.let { DeviceId(it) }
+                            ?.let { id ->
+                                call.respondWithErrorHandler(
+                                    readAdminAuthentication()
+                                        .flatMap { admin ->
+                                            changingThumbnail.changeDeviceThumbnail(
+                                                admin,
+                                                newCorrelationId(),
+                                                id,
+                                                it
+                                            )
+                                                .toEither { }
+                                                .swap()
+                                        }
+                                )
+                            }
+                    }
+            }
+
+            get("{id}/thumbnail") {
+                readUUIDParameter("id")
+                    ?.let { DeviceId(it) }
+                    ?.let { id ->
+                        call.respondWithErrorHandler(
+                            readAdminAuthentication()
+                                .flatMap { admin ->
+                                    gettingDevice
+                                        .getThumbnail(
+                                            admin,
+                                            newCorrelationId(),
+                                            id
+                                        )
+                                }
+                        )
                     }
             }
         }

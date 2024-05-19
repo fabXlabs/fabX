@@ -5,9 +5,12 @@ import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
 import arrow.core.flatMap
+import arrow.core.getOrElse
 import arrow.core.getOrNone
 import arrow.core.left
 import arrow.core.right
+import arrow.core.some
+import cloud.fabX.fabXaccess.common.application.ThumbnailCreator
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -106,6 +109,22 @@ data class Device internal constructor(
             background,
             backupBackendUrl
         )
+    }
+
+    fun changeThumbnail(
+        actor: Admin,
+        correlationId: CorrelationId,
+        image: ByteArray
+    ): Either<Error, ByteArray> {
+        return ThumbnailCreator.create(image, correlationId)
+    }
+
+    fun getThumbnail(
+        actor: Admin,
+        correlationId: CorrelationId,
+        imageFromRepository: Either<Error, ByteArray>
+    ): ByteArray {
+        return imageFromRepository.getOrElse { ThumbnailCreator.default }
     }
 
     fun setActualFirmwareVersion(

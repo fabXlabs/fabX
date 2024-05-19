@@ -77,6 +77,24 @@ internal open class DeviceDatabaseRepositoryTest {
                 )
         }
 
+    @Test
+    fun `given empty repository when getting thumbnail then returns error`() = withRepository { repository ->
+        // given
+
+        // when
+        val result = repository.getThumbnail(deviceId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.DeviceThumbnailNotFound(
+                    "No thumbnail for Device with id $deviceId found.",
+                    deviceId
+                )
+            )
+    }
+
     @Nested
     internal inner class GivenEventsForDeviceStoredInRepository {
 
@@ -481,6 +499,55 @@ internal open class DeviceDatabaseRepositoryTest {
             assertThat(result)
                 .transform { s -> s.map { it.id }.toSet() }
                 .isEqualTo(expectedDeviceIds)
+        }
+    }
+
+    @Nested
+    internal inner class GivenThumbnailsForDeviceStoredInRepository {
+        private val thumbnail1Data = ByteArray(42) { (it * 2).toByte() }
+        private val thumbnail2Data = ByteArray(12) { (it * 3).toByte() }
+
+        private fun withSetupTestApp(block: suspend (DeviceDatabaseRepository) -> Unit) = withRepository { repository ->
+            val device1Created = DeviceCreated(
+                deviceId,
+                actorId,
+                fixedInstant,
+                correlationId,
+                name = "device1",
+                background = "https://example.com/1.bmp",
+                backupBackendUrl = "https://backup.example.com",
+                mac = "aabbccddeeff",
+                secret = "supersecret"
+            )
+            repository.store(device1Created)
+
+            repository.storeThumbnail(deviceId, actorId, thumbnail1Data)
+
+            block(repository)
+        }
+
+        @Test
+        fun `when getting thumbnail then returns thumbnail data`() = withSetupTestApp { repository ->
+            // when
+            val result = repository.getThumbnail(deviceId)
+            // then
+            assertThat(result)
+                .isRight()
+                .isEqualTo(thumbnail1Data)
+        }
+
+        @Test
+        fun `when updating thumbnail then returns updated thumbnail data`() = withSetupTestApp { repository ->
+            // given
+            repository.storeThumbnail(deviceId, actorId, thumbnail2Data)
+
+            // when
+            val result = repository.getThumbnail(deviceId)
+
+            // then
+            assertThat(result)
+                .isRight()
+                .isEqualTo(thumbnail2Data)
         }
     }
 

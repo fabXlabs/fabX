@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
+import cloud.fabX.fabXaccess.device.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingConfiguration
@@ -136,6 +137,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingDevice::class.java) }
         bindInstance { Mockito.mock(AddingDevice::class.java) }
         bindInstance { Mockito.mock(ChangingDevice::class.java) }
+        bindInstance { Mockito.mock(ChangingThumbnail::class.java) }
         bindInstance { Mockito.mock(ChangingFirmwareVersion::class.java) }
         bindInstance { Mockito.mock(DeletingDevice::class.java) }
         bindInstance { Mockito.mock(AttachingTool::class.java) }

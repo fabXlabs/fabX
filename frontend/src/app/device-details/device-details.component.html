@@ -1,9 +1,31 @@
 <p-toast></p-toast>
 <ng-container *ngIf="device$ | async let device">
     <div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
-        <h2 class="mb-0 text-xl">{{device.name}}</h2>
-        <div class="mt-1 mb-3 text-sm text-500">
-            <pre class="mt-0">{{device.id}}</pre>
+
+        <div class="md:flex align-items-center py-3 px-2 flex-wrap">
+            <div class="m-0 md:w-4 font-medium text-center md:text-right pr-3">
+                <img class="border-round shadow-1 h-7rem w-7rem"
+                     [attr.src]="thumbnailUrl(device.id) | secure | async"
+                     alt="Device Thumbnail"
+                     width="600"
+                     height="600"
+                />
+            </div>
+            <div class="md:w-6">
+                <h2 class="mb-0 text-xl">{{device.name}}</h2>
+                <div class="mt-1 mb-3 text-xs text-500">
+                    <pre class="mt-0">{{device.id}}</pre>
+                </div>
+            </div>
+            <div class="w-2 md:text-right">
+                <div>
+                    <p-button label="Edit"
+                              icon="pi pi-image"
+                              styleClass="p-button-outlined"
+                              routerLink="/device/{{device.id}}/change-thumbnail">
+                    </p-button>
+                </div>
+            </div>
         </div>
 
         <div class="flex align-items-end">

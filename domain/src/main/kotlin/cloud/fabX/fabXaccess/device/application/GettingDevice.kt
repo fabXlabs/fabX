@@ -55,4 +55,21 @@ class GettingDevice(
 
         return deviceRepository.getById(actor.deviceId)
     }
+
+    suspend fun getThumbnail(
+        actor: Admin,
+        correlationId: CorrelationId,
+        deviceId: DeviceId
+    ): Either<Error, ByteArray> {
+        log.debug("getThumbnail (actor: $actor, correlationId: $correlationId)...")
+
+        return deviceRepository.getById(deviceId)
+            .map { device ->
+                device.getThumbnail(
+                    actor,
+                    correlationId,
+                    deviceRepository.getThumbnail(deviceId)
+                )
+            }
+    }
 }

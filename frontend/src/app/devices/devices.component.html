@@ -2,7 +2,7 @@
          [loading]="(loading$ | async)! === 'LOADING'"
          [showLoader]="false"
          [lazy]="false"
-         styleClass="p-datatable-m"
+         styleClass="p-datatable-sm"
          responsiveLayout="scroll"
          selectionMode="single"
 >
@@ -14,6 +14,7 @@
 
     <ng-template pTemplate="header">
         <tr>
+            <th></th>
             <th>Name</th>
             <th>Attached Tools</th>
             <th>Firmware</th>
@@ -22,6 +23,14 @@
 
     <ng-template pTemplate="body" let-device>
         <tr routerLink="/device/{{device.id}}" class="cursor-pointer">
+            <td>
+                <img class="border-round shadow-1 h-3rem w-3rem"
+                     [attr.src]="thumbnailUrl(device.id) | secure | async"
+                     alt="Device Thumbnail"
+                     width="600"
+                     height="600"
+                />
+            </td>
             <td>{{device.name}}</td>
             <td>{{device.attachedTools | attachedToolNames}}</td>
             <td

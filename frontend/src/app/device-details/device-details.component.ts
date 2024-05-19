@@ -6,6 +6,7 @@ import { AugmentedDevice } from "../models/device.model";
 import { Devices } from "../state/device.actions";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { ErrorService } from "../services/error.service";
+import { DeviceService } from "../services/device.service";
 
 @Component({
     selector: 'fabx-device-details',
@@ -21,6 +22,7 @@ export class DeviceDetailsComponent {
         private store: Store,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
+        private deviceService: DeviceService,
         private errorService: ErrorService
     ) { }
 
@@ -182,5 +184,9 @@ export class DeviceDetailsComponent {
                 });
             }
         });
+    }
+
+    thumbnailUrl(id: string) {
+        return this.deviceService.thumbnailUrl(id);
     }
 }

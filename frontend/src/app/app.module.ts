@@ -34,13 +34,15 @@ import { AuthGuard } from "./state/auth-guard";
 import { AuthInterceptor } from "./state/auth-interceptor";
 import { DeviceAddComponent } from './device-add/device-add.component';
 import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
-import { DeviceChangeDetailsComponent } from './device-change-details/device-change-details.component';
-import { DeviceDetailsComponent } from './device-details/device-details.component';
 import { DeviceChangeDesiredFirmwareVersionComponent } from './device-change-desired-firmware-version/device-change-desired-firmware-version.component';
+import { DeviceChangeDetailsComponent } from './device-change-details/device-change-details.component';
+import { DeviceChangeThumbnailComponent } from "./device-change-thumbnail/device-change-thumbnail.component";
+import { DeviceDetailsComponent } from './device-details/device-details.component';
 import { FabxState } from "./state/fabx-state";
 import { LoginComponent } from './login/login.component';
 import { LogoutOnUnauthorizedInterceptorService } from "./services/logout-on-unauthorized-interceptor.service";
 import { NavbarComponent } from './navbar/navbar.component';
+import { NgOptimizedImage } from "@angular/common";
 import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { QualificationAddComponent } from './qualification-add/qualification-add.component';
 import { QualificationChangeDetailsComponent } from './qualification-change-details/qualification-change-details.component';
@@ -64,6 +66,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
 import { UsersComponent } from './users/users.component';
 import { ZXingScannerModule } from "@zxing/ngx-scanner";
+import { SecurePipe } from "./state/secure-pipe";
 
 @NgModule({
     declarations: [
@@ -71,9 +74,10 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
         AttachedToolNames,
         DeviceAddComponent,
         DeviceAttachToolComponent,
-        DeviceChangeDetailsComponent,
-        DeviceDetailsComponent,
         DeviceChangeDesiredFirmwareVersionComponent,
+        DeviceChangeDetailsComponent,
+        DeviceChangeThumbnailComponent,
+        DeviceDetailsComponent,
         DevicesComponent,
         LoginComponent,
         NavbarComponent,
@@ -81,6 +85,7 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
         QualificationChangeDetailsComponent,
         QualificationDetailsComponent,
         QualificationsComponent,
+        SecurePipe,
         ToolAddComponent,
         ToolChangeDetailsComponent,
         ToolDetailsComponent,
@@ -136,7 +141,8 @@ import { ZXingScannerModule } from "@zxing/ngx-scanner";
 
         ZXingScannerModule,
 
-        AppRoutingModule
+        AppRoutingModule,
+        NgOptimizedImage
     ],
     providers: [
         AuthGuard,

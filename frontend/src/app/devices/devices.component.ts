@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { LoadingStateTag } from "../state/loading-state.model";
 import { Device } from "../models/device.model";
 import { Tool } from "../models/tool.model";
+import { DeviceService } from "../services/device.service";
 
 @Component({
     selector: 'fabx-devices',
@@ -16,7 +17,11 @@ export class DevicesComponent {
     @Select(FabxState.devicesLoadingState) loading$!: Observable<LoadingStateTag>;
     @Select(FabxState.devices) devices$!: Observable<Device[]>;
 
-    constructor(private store: Store) { }
+    constructor(private store: Store, private deviceService: DeviceService) { }
+
+    thumbnailUrl(id: string) {
+        return this.deviceService.thumbnailUrl(id);
+    }
 }
 
 @Pipe({ name: 'attachedToolNames' })

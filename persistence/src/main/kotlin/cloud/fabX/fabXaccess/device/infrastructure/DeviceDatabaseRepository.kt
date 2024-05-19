@@ -6,8 +6,10 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
+import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
+import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
@@ -30,7 +32,9 @@ import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.json.jsonb
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.upsert
 
 object DeviceSourcingEventDAO : Table("DeviceSourcingEvent") {
     val aggregateRootId = uuid("aggregate_root_id")
@@ -39,6 +43,14 @@ object DeviceSourcingEventDAO : Table("DeviceSourcingEvent") {
     val correlationId = uuid("correlation_id")
     val timestamp = timestamp("timestamp")
     val data = jsonb<DeviceSourcingEvent>("data", Json { serializersModule = domainSerializersModule })
+}
+
+object DeviceThumbnailDAO : Table("DeviceThumbnail") {
+    val aggregateRootId = uuid("aggregate_root_id").uniqueIndex()
+    val actorId = uuid("actor_id")
+    val thumbnailData = blob("thumbnail_data")
+
+    override val primaryKey = PrimaryKey(aggregateRootId, name = "aggregate_root_id_pk")
 }
 
 open class DeviceDatabaseRepository(
@@ -115,6 +127,36 @@ open class DeviceDatabaseRepository(
 
                 None
             }
+        }
+    }
+
+    override suspend fun storeThumbnail(
+        id: DeviceId,
+        actor: ActorId,
+        thumbnail: ByteArray
+    ): Either<Error, Unit> {
+        return transaction {
+            DeviceThumbnailDAO.upsert {
+                it[aggregateRootId] = id.value
+                it[actorId] = actor.value
+                it[thumbnailData] = ExposedBlob(thumbnail)
+            }
+            Unit.right()
+        }
+    }
+
+    override suspend fun getThumbnail(id: DeviceId): Either<Error, ByteArray> {
+        return transaction {
+            DeviceThumbnailDAO.selectAll()
+                .where { DeviceThumbnailDAO.aggregateRootId eq id.value }
+                .map {
+                    it[DeviceThumbnailDAO.thumbnailData].bytes
+                }
+                .firstOrNull()
+                .toOption()
+                .toEither {
+                    Error.DeviceThumbnailNotFound("No thumbnail for Device with id $id found.", id)
+                }
         }
     }
 

@@ -64,4 +64,10 @@ export namespace Devices {
 
         constructor(public id: string) {}
     }
+
+    export class ChangeThumbnail {
+        static readonly type = "[fabX Devices] Change Thumbnail"
+
+        constructor(public id: string, public file: File) {}
+    }
 }

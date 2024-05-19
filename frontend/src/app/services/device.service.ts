@@ -105,10 +105,19 @@ export class DeviceService {
     public deleteDevice(id: string): Observable<string> {
         return this.http.delete(
             `${this.baseUrl}/device/${id}`,
-            {
-                ...this.authService.getOptions(),
-                responseType: 'text'
-            }
+            { responseType: 'text' }
         );
+    }
+
+    public changeThumbnail(id: string, file: File): Observable<string> {
+        return this.http.post(
+            `${this.baseUrl}/device/${id}/thumbnail`,
+            file,
+            { responseType: 'text' }
+        );
+    }
+
+    public thumbnailUrl(id: string): string {
+        return `${this.baseUrl}/device/${id}/thumbnail`;
     }
 }

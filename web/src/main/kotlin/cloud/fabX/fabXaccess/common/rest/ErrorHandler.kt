@@ -27,6 +27,8 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.UserNotAdmin -> HttpStatusCode.Forbidden
         is Error.UserIsLocked -> HttpStatusCode.Forbidden
         is Error.InvalidSecondFactor -> HttpStatusCode.Forbidden
+        // domain shared
+        is Error.ThumbnailInvalid -> HttpStatusCode.UnprocessableEntity
         // domain qualification
         is Error.QualificationNotFound -> HttpStatusCode.NotFound
         is Error.ReferencedQualificationNotFound -> HttpStatusCode.UnprocessableEntity
@@ -40,6 +42,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.MacInvalid -> HttpStatusCode.UnprocessableEntity
         is Error.SecretInvalid -> HttpStatusCode.UnprocessableEntity
         is Error.DeviceNotFound -> HttpStatusCode.NotFound
+        is Error.DeviceThumbnailNotFound -> HttpStatusCode.NotFound
         is Error.DeviceNotFoundByIdentity -> HttpStatusCode.NotFound
         is Error.PinInUse -> HttpStatusCode.UnprocessableEntity
         is Error.ToolNotAttachedToDevice -> HttpStatusCode.UnprocessableEntity

@@ -30,6 +30,7 @@ import { UserChangePersonalInfoComponent } from "./user-change-personal-info/use
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UserSoftDeletedComponent } from "./user-soft-deleted/user-soft-deleted.component";
 import { UsersComponent } from "./users/users.component";
+import { DeviceChangeThumbnailComponent } from "./device-change-thumbnail/device-change-thumbnail.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -54,6 +55,7 @@ const routes: Routes = [
     { path: 'device/add', component: DeviceAddComponent, canActivate: [AuthGuard] },
     { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
     { path: 'device/:id/change-details', component: DeviceChangeDetailsComponent, canActivate: [AuthGuard] },
+    { path: 'device/:id/change-thumbnail', component: DeviceChangeThumbnailComponent, canActivate: [AuthGuard] },
     { path: 'device/:id/change-desired-firmware-version', component: DeviceChangeDesiredFirmwareVersionComponent, canActivate: [AuthGuard] },
     { path: 'device/:id/attach-tool', component: DeviceAttachToolComponent, canActivate: [AuthGuard] },
     { path: 'tool', component: ToolsComponent, canActivate: [AuthGuard] },

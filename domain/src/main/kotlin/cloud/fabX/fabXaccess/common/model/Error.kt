@@ -169,6 +169,11 @@ sealed class Error(
         val deviceId: DeviceId
     ) : Error(message, mapOf("deviceId" to deviceId.serialize()))
 
+    data class DeviceThumbnailNotFound(
+        override val message: String,
+        val deviceId: DeviceId
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize()))
+
     data class DeviceNotFoundByIdentity(
         override val message: String
     ) : Error(message)
@@ -297,6 +302,11 @@ sealed class Error(
         val regex: Regex,
         override val correlationId: CorrelationId?
     ) : Error(message, mapOf("value" to value, "regex" to regex.toString()), correlationId)
+
+    data class ThumbnailInvalid(
+        override val message: String,
+        override val correlationId: CorrelationId?
+    ) : Error(message, correlationId = correlationId)
 
     data class InstructorPermissionNotFound(
         override val message: String,

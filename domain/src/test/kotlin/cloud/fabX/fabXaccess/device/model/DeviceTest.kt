@@ -6,6 +6,7 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.common.application.ThumbnailCreator
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -16,10 +17,13 @@ import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.webp.WebpWriter
 import isLeft
 import isNone
 import isRight
 import isSome
+import java.awt.Color
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
@@ -365,6 +369,63 @@ internal class DeviceTest {
     }
 
     @Test
+    fun `when changing thumbnail then created thumbnail is returned`() {
+        // given
+        val thumbnailData = ImmutableImage.create(600, 600)
+            .fill(Color.GRAY)
+            .bytes(WebpWriter.DEFAULT)
+
+        val device = DeviceFixture.arbitrary(deviceId)
+
+        // when
+        val result = device.changeThumbnail(
+            adminActor,
+            correlationId,
+            thumbnailData
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(thumbnailData)
+    }
+
+    @Test
+    fun `when getting thumbnail then image from repository is returned`() {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId)
+
+        val thumbnailData = ByteArray(42) { it.toByte() }
+
+        // when
+        val result = device.getThumbnail(
+            adminActor,
+            correlationId,
+            thumbnailData.right()
+        )
+
+        // then
+        assertThat(result).isEqualTo(thumbnailData)
+    }
+
+    @Test
+    fun `given no image from repository when getting thumbnail then default thumbnail is returned`() {
+        // given
+        val device = DeviceFixture.arbitrary(deviceId)
+
+        // when
+        val result = device.getThumbnail(
+            adminActor,
+            correlationId,
+            Error.DeviceThumbnailNotFound("a message", deviceId).left()
+        )
+
+        // then
+        assertThat(result)
+            .isEqualTo(ThumbnailCreator.default)
+    }
+
+    @Test
     fun `when setting desired firmware version then expected sourcing event is returned`() {
         // given
         val device = DeviceFixture.arbitrary(deviceId, aggregateVersion = aggregateVersion)
@@ -435,10 +496,12 @@ internal class DeviceTest {
         // then
         assertThat(result)
             .isLeft()
-            .isEqualTo(Error.DeviceNotActor(
-                "Device not actor",
-                correlationId
-            ))
+            .isEqualTo(
+                Error.DeviceNotActor(
+                    "Device not actor",
+                    correlationId
+                )
+            )
     }
 
     @Test

@@ -1,9 +1,9 @@
 package cloud.fabX.fabXaccess.common.infrastructure
 
 import cloud.fabX.fabXaccess.PersistenceApp
+import cloud.fabX.fabXaccess.cachedPersistenceModule
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.loggingModule
-import cloud.fabX.fabXaccess.cachedPersistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
@@ -78,7 +78,7 @@ internal fun withTestApp(
     val db: Database by testApp.instance()
 
     transaction(db) {
-        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, ToolSourcingEvent, UserSourcingEvent")
+        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, DeviceThumbnail, ToolSourcingEvent, UserSourcingEvent")
     }
 
     runTest {
