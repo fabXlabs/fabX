@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.common.rest
 
 import cloud.fabX.fabXaccess.common.model.Counter
 import io.micrometer.core.instrument.Tag
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 
 /**
  * A counter with static tags.

@@ -14,7 +14,7 @@ import io.micrometer.core.instrument.MultiGauge
 import io.micrometer.core.instrument.MultiGauge.Row
 import io.micrometer.core.instrument.Tag
 import io.micrometer.core.instrument.Tags
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import kotlinx.coroutines.runBlocking
 
 class MetricsController(

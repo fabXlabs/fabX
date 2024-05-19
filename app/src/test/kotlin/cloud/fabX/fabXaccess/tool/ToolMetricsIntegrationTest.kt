@@ -70,7 +70,7 @@ internal class ToolMetricsIntegrationTest {
         }
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.bodyAsText()).contains(
-            "fabx_tool_usage_count_total{toolId=\"${toolId}\",toolName=\"$toolName\",} 1.0"
+            "fabx_tool_usage_count_total{toolId=\"${toolId}\",toolName=\"$toolName\"} 1.0"
         )
     }
 
@@ -115,7 +115,7 @@ internal class ToolMetricsIntegrationTest {
         }
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.bodyAsText()).contains(
-            "fabx_tool_usage_count_total{toolId=\"${toolId}\",toolName=\"$toolName\",} 1.0"
+            "fabx_tool_usage_count_total{toolId=\"${toolId}\",toolName=\"$toolName\"} 1.0"
         )
     }
 }

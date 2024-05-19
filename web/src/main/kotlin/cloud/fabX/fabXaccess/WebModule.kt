@@ -18,8 +18,8 @@ import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.LoginController
 import cloud.fabX.fabXaccess.user.rest.UserController
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import org.kodein.di.DI
 import org.kodein.di.bindEagerSingleton
 import org.kodein.di.bindSingleton

@@ -4,7 +4,7 @@ import cloud.fabX.fabXaccess.common.model.TaggedCounter
 import io.ktor.util.collections.ConcurrentMap
 import io.micrometer.core.instrument.Counter
 import io.micrometer.core.instrument.Tag
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 
 /**
  * A (or technically multiple) counter with dynamic tags.

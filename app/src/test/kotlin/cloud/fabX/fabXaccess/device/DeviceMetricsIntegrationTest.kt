@@ -46,9 +46,9 @@ class DeviceMetricsIntegrationTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.bodyAsText()).all {
-            contains("fabx_devices_connected{deviceId=\"${deviceId1}\",deviceName=\"${deviceName1}\",} 0.0")
-            contains("fabx_devices_connected{deviceId=\"${deviceId2}\",deviceName=\"${deviceName2}\",} 0.0")
-            contains("fabx_devices_connected{deviceId=\"${deviceId3}\",deviceName=\"${deviceName3}\",} 0.0")
+            contains("fabx_devices_connected{deviceId=\"${deviceId1}\",deviceName=\"${deviceName1}\"} 0.0")
+            contains("fabx_devices_connected{deviceId=\"${deviceId2}\",deviceName=\"${deviceName2}\"} 0.0")
+            contains("fabx_devices_connected{deviceId=\"${deviceId3}\",deviceName=\"${deviceName3}\"} 0.0")
         }
     }
 
@@ -76,8 +76,8 @@ class DeviceMetricsIntegrationTest {
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             assertThat(response.bodyAsText()).all {
-                contains("fabx_devices_connected{deviceId=\"${deviceId1}\",deviceName=\"${deviceName1}\",} 1.0")
-                contains("fabx_devices_connected{deviceId=\"${deviceId2}\",deviceName=\"${deviceName2}\",} 0.0")
+                contains("fabx_devices_connected{deviceId=\"${deviceId1}\",deviceName=\"${deviceName1}\"} 1.0")
+                contains("fabx_devices_connected{deviceId=\"${deviceId2}\",deviceName=\"${deviceName2}\"} 0.0")
             }
         }
     }
@@ -120,7 +120,7 @@ class DeviceMetricsIntegrationTest {
         }
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.bodyAsText()).contains(
-            "fabx_device_get_configuration_count_total{deviceId=\"$deviceId\",deviceName=\"$deviceName\",} 2.0"
+            "fabx_device_get_configuration_count_total{deviceId=\"$deviceId\",deviceName=\"$deviceName\"} 2.0"
         )
     }
 
@@ -163,14 +163,14 @@ class DeviceMetricsIntegrationTest {
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             println(response.bodyAsText().split("\n").filter { it.contains("fabx") }.joinToString("\n"))
             assertThat(response.bodyAsText()).all {
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\",} 1.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"2\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"3\",} 1.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"4\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"5\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"6\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"7\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"8\",} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"2\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"3\"} 1.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"4\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"5\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"6\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"7\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"8\"} 0.0")
             }
         }
     }
@@ -227,14 +227,14 @@ class DeviceMetricsIntegrationTest {
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
             assertThat(response.bodyAsText()).all {
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"2\",} 1.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"3\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"4\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"5\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"6\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"7\",} 0.0")
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"8\",} 1.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"2\"} 1.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"3\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"4\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"5\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"6\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"7\"} 0.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"8\"} 1.0")
             }
         }
     }
@@ -266,7 +266,7 @@ class DeviceMetricsIntegrationTest {
             // then
             assertThat(initialResponse.status).isEqualTo(HttpStatusCode.OK)
             assertThat(initialResponse.bodyAsText()).all {
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\",} 1.0")
+                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
             }
         }
 
@@ -278,7 +278,7 @@ class DeviceMetricsIntegrationTest {
 
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.bodyAsText()).all {
-            doesNotContain("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\",} 1.0")
+            doesNotContain("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
         }
     }
 }
