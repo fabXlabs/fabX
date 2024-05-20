@@ -14,7 +14,6 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.JpegWriter
-import com.sksamuel.scrimage.webp.WebpWriter
 import isNone
 import isSome
 import java.awt.Color
@@ -59,7 +58,7 @@ internal class ChangingThumbnailTest {
 
         val thumbnailData = ImmutableImage.create(600, 600)
             .fill(Color.LIGHT_GRAY)
-            .bytes(WebpWriter.DEFAULT)
+            .bytes(JpegWriter.Default)
 
         whenever(deviceRepository.getById(deviceId))
             .thenReturn(device.right())
@@ -117,7 +116,7 @@ internal class ChangingThumbnailTest {
 
         val thumbnailData = ImmutableImage.create(600, 600)
             .fill(Color.LIGHT_GRAY)
-            .bytes(WebpWriter.DEFAULT)
+            .bytes(JpegWriter.Default)
 
         val expectedError = Error.DeviceNotFound("some message", deviceId)
 

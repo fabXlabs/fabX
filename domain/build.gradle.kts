@@ -8,7 +8,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("com.webauthn4j:webauthn4j-core:0.24.0.RELEASE")
     implementation("com.sksamuel.scrimage:scrimage-core:4.1.3")
-    implementation("com.sksamuel.scrimage:scrimage-webp:4.1.3")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.4")

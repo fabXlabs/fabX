@@ -18,7 +18,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import com.sksamuel.scrimage.ImmutableImage
-import com.sksamuel.scrimage.webp.WebpWriter
+import com.sksamuel.scrimage.nio.JpegWriter
 import isLeft
 import isNone
 import isRight
@@ -373,7 +373,7 @@ internal class DeviceTest {
         // given
         val thumbnailData = ImmutableImage.create(600, 600)
             .fill(Color.GRAY)
-            .bytes(WebpWriter.DEFAULT)
+            .bytes(JpegWriter.Default)
 
         val device = DeviceFixture.arbitrary(deviceId)
 

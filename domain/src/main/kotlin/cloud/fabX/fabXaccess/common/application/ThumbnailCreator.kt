@@ -7,11 +7,11 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import com.sksamuel.scrimage.ImageParseException
 import com.sksamuel.scrimage.ImmutableImage
-import com.sksamuel.scrimage.webp.WebpWriter
+import com.sksamuel.scrimage.nio.JpegWriter
 import java.awt.Color
 
 object ThumbnailCreator {
-    private val writer = WebpWriter.DEFAULT
+    private val writer = JpegWriter.Default
 
     val default: ByteArray = ImmutableImage.create(600, 600)
         .fill(Color.LIGHT_GRAY)
