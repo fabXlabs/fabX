@@ -7,7 +7,7 @@ import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Identity
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 
 /**
  * Identifying a User.
@@ -66,7 +66,7 @@ data class UsernamePasswordIdentity(val username: String, val hash: String) : Us
 /**
  * Identifying a User by webauthn.
  */
-data class WebauthnIdentity(val authenticator: Authenticator) : UserIdentity
+data class WebauthnIdentity(val authenticator: CredentialRecord) : UserIdentity
 
 /**
  * Identifying a User by card id and card secret.

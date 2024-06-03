@@ -5,7 +5,7 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.application.AuthenticatorImpl
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -16,7 +16,7 @@ val domainSerializersModule = SerializersModule {
         subclass(UserId::class)
         subclass(SystemActorId::class)
     }
-    polymorphic(Authenticator::class) {
+    polymorphic(CredentialRecord::class) {
         subclass(AuthenticatorImpl::class)
     }
 }

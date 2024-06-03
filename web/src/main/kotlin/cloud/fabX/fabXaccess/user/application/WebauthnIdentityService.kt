@@ -17,7 +17,7 @@ import cloud.fabX.fabXaccess.user.model.WebauthnIdentity
 import cloud.fabX.fabXaccess.user.model.WebauthnRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnService
 import com.webauthn4j.WebAuthnManager
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 import com.webauthn4j.data.AuthenticationParameters
 import com.webauthn4j.data.AuthenticationRequest
 import com.webauthn4j.data.PublicKeyCredentialParameters
@@ -76,7 +76,7 @@ class WebauthnIdentityService(
         challenge: ByteArray,
         attestationObject: ByteArray,
         clientDataJSON: ByteArray
-    ): Either<Error, Authenticator> {
+    ): Either<Error, CredentialRecord> {
         val registrationRequest = RegistrationRequest(
             attestationObject,
             clientDataJSON
@@ -105,7 +105,7 @@ class WebauthnIdentityService(
             ).left()
         }
 
-        val authenticator: Authenticator = AuthenticatorImpl.from(
+        val authenticator: CredentialRecord = AuthenticatorImpl.from(
             registrationData.attestationObject!!.authenticatorData.attestedCredentialData!!,
             registrationData.attestationObject!!.authenticatorData.signCount
         )

@@ -23,7 +23,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.biFlatmap
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 import kotlinx.datetime.Clock
 
 data class User internal constructor(
@@ -301,7 +301,7 @@ data class User internal constructor(
         actor: Member,
         clock: Clock,
         correlationId: CorrelationId,
-        authenticator: Authenticator
+        authenticator: CredentialRecord
     ): Either<Error, UserSourcingEvent> {
         return requireUserIsActor(actor, correlationId)
             .flatMap { requireUniqueCredentialId(authenticator.attestedCredentialData.credentialId, correlationId) }

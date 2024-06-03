@@ -8,7 +8,7 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newUserId
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
@@ -148,7 +148,7 @@ data class WebauthnIdentityAdded(
     override val actorId: ActorId,
     override val timestamp: Instant,
     override val correlationId: CorrelationId,
-    val authenticator: Authenticator
+    val authenticator: CredentialRecord
 ) : UserSourcingEvent() {
     override fun processBy(eventHandler: EventHandler, user: Option<User>): Option<User> =
         eventHandler.handle(this, user)

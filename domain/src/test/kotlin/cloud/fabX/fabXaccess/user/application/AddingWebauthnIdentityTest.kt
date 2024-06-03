@@ -17,7 +17,7 @@ import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentityAdded
 import cloud.fabX.fabXaccess.user.model.WebauthnService
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 import isNone
 import isSome
 import kotlinx.coroutines.test.runTest
@@ -122,7 +122,7 @@ internal class AddingWebauthnIdentityTest {
 
     @Test
     fun `given user cannot be found when adding identity then returns error`(
-        @Mock authenticator: Authenticator
+        @Mock authenticator: CredentialRecord
     ) = runTest {
         // given
         val error = Error.UserNotFound("message", userId)
@@ -218,7 +218,7 @@ internal class AddingWebauthnIdentityTest {
 
     @Test
     fun `given domain error when adding identity then returns domain error`(
-        @Mock authenticator: Authenticator
+        @Mock authenticator: CredentialRecord
     ) = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = 1, identities = setOf())
@@ -261,7 +261,7 @@ internal class AddingWebauthnIdentityTest {
 
     @Test
     fun `given error while parsing and validating registration when adding identity then returns error`(
-        @Mock authenticator: Authenticator
+        @Mock authenticator: CredentialRecord
     ) = runTest {
         // given
         val challenge = byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)

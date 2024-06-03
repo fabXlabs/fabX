@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.getOrElse
-import com.webauthn4j.authenticator.Authenticator
+import com.webauthn4j.credential.CredentialRecord
 import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
@@ -41,7 +41,7 @@ object UserIdentityFixture {
     fun webauthn(
         credentialId: ByteArray = byteArrayOf(1, 2, 3, 4)
     ): WebauthnIdentity {
-        val authenticator = mock(Authenticator::class.java)
+        val authenticator = mock(CredentialRecord::class.java)
         val attestedCredentialData = mock(AttestedCredentialData::class.java)
         whenever(authenticator.attestedCredentialData).thenReturn(attestedCredentialData)
         whenever(attestedCredentialData.credentialId).thenReturn(credentialId)
