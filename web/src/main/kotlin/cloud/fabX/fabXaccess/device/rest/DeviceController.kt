@@ -21,6 +21,7 @@ import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
+import io.ktor.http.CacheControl
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -304,7 +305,12 @@ class DeviceController(
                                             newCorrelationId(),
                                             id
                                         )
-                                }
+                                },
+                            cacheControl = CacheControl.MaxAge(
+                                60,
+                                mustRevalidate = true,
+                                visibility = CacheControl.Visibility.Private
+                            )
                         )
                     }
             }

@@ -2,16 +2,24 @@ package cloud.fabX.fabXaccess.common.rest
 
 import arrow.core.Either
 import cloud.fabX.fabXaccess.common.model.Error
+import io.ktor.http.CacheControl
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
+import io.ktor.server.response.cacheControl
 import io.ktor.server.response.respond
 
-internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHandler(result: Either<Error, T>) {
+internal suspend inline fun <reified T : Any> ApplicationCall.respondWithErrorHandler(
+    result: Either<Error, T>,
+    cacheControl: CacheControl? = null,
+) {
     result
         .onRight {
             if (it == Unit) {
                 respond(HttpStatusCode.NoContent)
             } else {
+                cacheControl?.let { cc ->
+                    this.response.cacheControl(cc)
+                }
                 respond(it)
             }
         }

@@ -4,6 +4,7 @@ import arrow.core.None
 import arrow.core.getOrElse
 import arrow.core.right
 import assertk.assertThat
+import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.Error
@@ -24,7 +25,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
+import io.ktor.http.HeaderValue
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.cacheControl
 import io.ktor.http.contentType
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
@@ -90,8 +93,8 @@ internal class DeviceControllerThumbnailTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.body<ByteArray>())
-            .isEqualTo(thumbnailData)
+        assertThat(response.body<ByteArray>()).isEqualTo(thumbnailData)
+        assertThat(response.cacheControl()).containsExactlyInAnyOrder(HeaderValue("max-age=60"), HeaderValue("must-revalidate"), HeaderValue("private"))
     }
 
     @Test
