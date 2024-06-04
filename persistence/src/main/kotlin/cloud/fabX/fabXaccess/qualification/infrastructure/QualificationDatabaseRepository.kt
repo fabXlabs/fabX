@@ -23,7 +23,6 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.json.jsonb
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -58,9 +57,8 @@ open class QualificationDatabaseRepository(private val db: Database) : Qualifica
     override suspend fun getById(id: QualificationId): Either<Error, Qualification> {
         val events = transaction {
             QualificationSourcingEventDAO
-                .select {
-                    QualificationSourcingEventDAO.aggregateRootId.eq(id.value)
-                }
+                .selectAll()
+                .where { QualificationSourcingEventDAO.aggregateRootId.eq(id.value) }
                 .orderBy(QualificationSourcingEventDAO.aggregateVersion)
                 .map {
                     it[QualificationSourcingEventDAO.data]
@@ -122,13 +120,11 @@ open class QualificationDatabaseRepository(private val db: Database) : Qualifica
         }
     }
 
-    @Suppress("unused") // supposed to be executed within Transaction
+    @Suppress("UnusedReceiverParameter") // supposed to be executed within Transaction
     private fun Transaction.getVersionById(id: QualificationId): Long? {
         return QualificationSourcingEventDAO
-            .slice(QualificationSourcingEventDAO.aggregateVersion)
-            .select {
-                QualificationSourcingEventDAO.aggregateRootId.eq(id.value)
-            }
+            .select(QualificationSourcingEventDAO.aggregateVersion)
+            .where { QualificationSourcingEventDAO.aggregateRootId.eq(id.value) }
             .orderBy(QualificationSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
             .limit(1)
             .map { it[QualificationSourcingEventDAO.aggregateVersion] }

@@ -30,7 +30,6 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.json.jsonb
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -77,9 +76,8 @@ open class DeviceDatabaseRepository(
     override suspend fun getById(id: DeviceId): Either<Error, Device> {
         val events = transaction {
             DeviceSourcingEventDAO
-                .select {
-                    DeviceSourcingEventDAO.aggregateRootId.eq(id.value)
-                }
+                .selectAll()
+                .where { DeviceSourcingEventDAO.aggregateRootId.eq(id.value) }
                 .orderBy(DeviceSourcingEventDAO.aggregateVersion)
                 .map {
                     it[DeviceSourcingEventDAO.data]
@@ -171,13 +169,11 @@ open class DeviceDatabaseRepository(
         }
     }
 
-    @Suppress("unused") // supposed to be executed within Transaction
+    @Suppress("UnusedReceiverParameter") // supposed to be executed within Transaction
     private fun Transaction.getVersionById(id: DeviceId): Long? {
         return DeviceSourcingEventDAO
-            .slice(DeviceSourcingEventDAO.aggregateVersion)
-            .select {
-                DeviceSourcingEventDAO.aggregateRootId.eq(id.value)
-            }
+            .select(DeviceSourcingEventDAO.aggregateVersion)
+            .where { DeviceSourcingEventDAO.aggregateRootId.eq(id.value) }
             .orderBy(DeviceSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
             .limit(1)
             .map { it[DeviceSourcingEventDAO.aggregateVersion] }

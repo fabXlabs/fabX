@@ -3,7 +3,7 @@ package cloud.fabX.fabXaccess.common
 import java.sql.DriverManager
 import liquibase.command.CommandScope
 import liquibase.command.core.UpdateCommandStep
-import liquibase.command.core.helpers.DbUrlConnectionCommandStep
+import liquibase.command.core.helpers.DbUrlConnectionArgumentsCommandStep
 import liquibase.database.Database
 import liquibase.database.DatabaseFactory
 import liquibase.database.jvm.JdbcConnection
@@ -28,7 +28,7 @@ class LiquibaseMigrationHandler(
 
         CommandScope(UpdateCommandStep.COMMAND_NAME[0])
             .addArgumentValue(UpdateCommandStep.CHANGELOG_FILE_ARG, CHANGELOG_FILE)
-            .addArgumentValue(DbUrlConnectionCommandStep.DATABASE_ARG, database)
+            .addArgumentValue(DbUrlConnectionArgumentsCommandStep.DATABASE_ARG, database)
             .execute()
 
         database.close()

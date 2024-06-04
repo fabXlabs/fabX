@@ -38,7 +38,6 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.json.jsonb
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -82,9 +81,8 @@ open class UserDatabaseRepository(private val db: Database) :
     override suspend fun getById(id: UserId): Either<Error, User> {
         val events = transaction {
             UserSourcingEventDAO
-                .select {
-                    UserSourcingEventDAO.aggregateRootId.eq(id.value)
-                }
+                .selectAll()
+                .where { UserSourcingEventDAO.aggregateRootId.eq(id.value) }
                 .orderBy(UserSourcingEventDAO.aggregateVersion)
                 .map {
                     it[UserSourcingEventDAO.data]
@@ -149,10 +147,8 @@ open class UserDatabaseRepository(private val db: Database) :
     @Suppress("UnusedReceiverParameter") // supposed to be executed within Transaction
     private fun Transaction.getVersionById(id: UserId): Long? {
         return UserSourcingEventDAO
-            .slice(UserSourcingEventDAO.aggregateVersion)
-            .select {
-                UserSourcingEventDAO.aggregateRootId.eq(id.value)
-            }
+            .select(UserSourcingEventDAO.aggregateVersion)
+            .where { UserSourcingEventDAO.aggregateRootId.eq(id.value) }
             .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
             .limit(1)
             .map { it[UserSourcingEventDAO.aggregateVersion] }
@@ -210,7 +206,8 @@ open class UserDatabaseRepository(private val db: Database) :
                 .toSet()
 
             UserSourcingEventDAO
-                .select { UserSourcingEventDAO.aggregateRootId inList deletedUserIds }
+                .selectAll()
+                .where { UserSourcingEventDAO.aggregateRootId inList deletedUserIds }
                 .orderBy(UserSourcingEventDAO.aggregateVersion, order = SortOrder.ASC)
                 .asSequence()
                 .map {

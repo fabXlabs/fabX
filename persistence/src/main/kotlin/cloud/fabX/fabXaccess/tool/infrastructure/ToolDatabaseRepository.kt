@@ -27,7 +27,6 @@ import org.jetbrains.exposed.sql.Transaction
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.json.jsonb
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -75,9 +74,8 @@ open class ToolDatabaseRepository(
             log.debug("getting tools by id from database...")
 
             val result = ToolSourcingEventDAO
-                .select {
-                    ToolSourcingEventDAO.aggregateRootId.eq(id.value)
-                }
+                .selectAll()
+                .where { ToolSourcingEventDAO.aggregateRootId.eq(id.value) }
                 .orderBy(ToolSourcingEventDAO.aggregateVersion)
                 .map {
                     it[ToolSourcingEventDAO.data]
@@ -152,13 +150,11 @@ open class ToolDatabaseRepository(
         }
     }
 
-    @Suppress("unused") // supposed to be executed within Transaction
+    @Suppress("UnusedReceiverParameter") // supposed to be executed within Transaction
     private fun Transaction.getVersionById(id: ToolId): Long? {
         return ToolSourcingEventDAO
-            .slice(ToolSourcingEventDAO.aggregateVersion)
-            .select {
-                ToolSourcingEventDAO.aggregateRootId.eq(id.value)
-            }
+            .select(ToolSourcingEventDAO.aggregateVersion)
+            .where { ToolSourcingEventDAO.aggregateRootId.eq(id.value) }
             .orderBy(ToolSourcingEventDAO.aggregateVersion, order = SortOrder.DESC)
             .limit(1)
             .map { it[ToolSourcingEventDAO.aggregateVersion] }
