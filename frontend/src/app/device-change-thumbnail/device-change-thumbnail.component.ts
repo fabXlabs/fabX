@@ -22,9 +22,6 @@ export class DeviceChangeThumbnailComponent {
         file: new FormControl('')
     });
 
-    @Select(FabxState.selectedDevice) device$!: Observable<AugmentedDevice>;
-    private selectedDeviceSubscription: Subscription | null = null;
-
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onFileSelected(event: Event) {
