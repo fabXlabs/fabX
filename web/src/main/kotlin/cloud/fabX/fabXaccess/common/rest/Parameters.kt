@@ -46,7 +46,7 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readHexStringParameter(na
             check(it.length % 2 == 0) { "Must have an even length" }
 
             val byteIterator = it.chunkedSequence(2)
-                .map { it.toInt(16).toByte() }
+                .map { chunk -> chunk.toInt(16).toByte() }
                 .iterator()
 
             return ByteArray(it.length / 2) { byteIterator.next() }

@@ -194,7 +194,7 @@ class WebApp(
                     HttpStatusCode.Found -> "${status as HttpStatusCode} (${delayMillis}ms): " +
                             "${call.request.toLogStringWithColors()} -> ${call.response.headers[HttpHeaders.Location]}"
 
-                    "Unhandled" -> "${status} (${delayMillis}ms): ${call.request.toLogStringWithColors()}"
+                    "Unhandled" -> "$status (${delayMillis}ms): ${call.request.toLogStringWithColors()}"
                     else -> "${status as HttpStatusCode} (${delayMillis}ms): ${call.request.toLogStringWithColors()}"
                 }
             }

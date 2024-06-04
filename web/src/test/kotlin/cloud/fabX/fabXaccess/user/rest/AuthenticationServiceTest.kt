@@ -8,7 +8,7 @@ import assertk.assertions.isEqualTo
 import assertk.assertions.isInstanceOf
 import assertk.assertions.isNotEqualTo
 import assertk.assertions.isNull
-import assertk.assertions.isSameAs
+import assertk.assertions.isSameInstanceAs
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
@@ -140,7 +140,7 @@ internal class AuthenticationServiceTest {
         assertThat(result)
             .isInstanceOf(ErrorPrincipal::class)
             .transform { it.error }
-            .isSameAs(error)
+            .isSameInstanceAs(error)
     }
 
     @Test
@@ -245,7 +245,7 @@ internal class AuthenticationServiceTest {
         assertThat(result)
             .isInstanceOf(ErrorPrincipal::class)
             .transform { it.error }
-            .isSameAs(error)
+            .isSameInstanceAs(error)
     }
 
     @Test
