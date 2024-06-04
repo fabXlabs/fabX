@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AuthGuard } from "./state/auth-guard";
+import { authGuard } from "./state/auth-guard";
 import { DeviceAddComponent } from "./device-add/device-add.component";
 import { DeviceAttachToolComponent } from "./device-attach-tool/device-attach-tool.component";
 import { DeviceChangeDesiredFirmwareVersionComponent } from "./device-change-desired-firmware-version/device-change-desired-firmware-version.component";
@@ -35,34 +35,34 @@ import { DeviceChangeThumbnailComponent } from "./device-change-thumbnail/device
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
-    { path: 'user', component: UsersComponent, canActivate: [AuthGuard] },
-    { path: 'user/add', component: UserAddComponent, canActivate: [AuthGuard] },
-    { path: 'user/soft-deleted', component: UserSoftDeletedComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id', component: UserDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/add-card-identity', component: UserAddCardIdentityComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/add-phone-nr-identity', component: UserAddPhoneNrIdentityComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/add-username-password-identity', component: UserAddUsernamePasswordIdentityComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/add-pin-identity', component: UserAddPinIdentityComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/change-password', component: UserChangePasswordComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/add-webauthn-identity', component: UserAddWebauthnIdentityComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/change-personal-info', component: UserChangePersonalInfoComponent, canActivate: [AuthGuard] },
-    { path: 'user/:id/lock', component: UserChangeLockStateComponent, canActivate: [AuthGuard] },
-    { path: 'qualification', component: QualificationsComponent, canActivate: [AuthGuard] },
-    { path: 'qualification/add', component: QualificationAddComponent, canActivate: [AuthGuard] },
-    { path: 'qualification/:id', component: QualificationDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'qualification/:id/change-details', component: QualificationChangeDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'device', component: DevicesComponent, canActivate: [AuthGuard] },
-    { path: 'device/add', component: DeviceAddComponent, canActivate: [AuthGuard] },
-    { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'device/:id/change-details', component: DeviceChangeDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'device/:id/change-thumbnail', component: DeviceChangeThumbnailComponent, canActivate: [AuthGuard] },
-    { path: 'device/:id/change-desired-firmware-version', component: DeviceChangeDesiredFirmwareVersionComponent, canActivate: [AuthGuard] },
-    { path: 'device/:id/attach-tool', component: DeviceAttachToolComponent, canActivate: [AuthGuard] },
-    { path: 'tool', component: ToolsComponent, canActivate: [AuthGuard] },
-    { path: 'tool/add', component: ToolAddComponent, canActivate: [AuthGuard] },
-    { path: 'tool/:id', component: ToolDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'tool/:id/change-details', component: ToolChangeDetailsComponent, canActivate: [AuthGuard] },
-    { path: 'add-qualification', component: UserAddQualificationComponent, canActivate: [AuthGuard] },
+    { path: 'user', component: UsersComponent, canActivate: [authGuard] },
+    { path: 'user/add', component: UserAddComponent, canActivate: [authGuard] },
+    { path: 'user/soft-deleted', component: UserSoftDeletedComponent, canActivate: [authGuard] },
+    { path: 'user/:id', component: UserDetailsComponent, canActivate: [authGuard] },
+    { path: 'user/:id/add-card-identity', component: UserAddCardIdentityComponent, canActivate: [authGuard] },
+    { path: 'user/:id/add-phone-nr-identity', component: UserAddPhoneNrIdentityComponent, canActivate: [authGuard] },
+    { path: 'user/:id/add-username-password-identity', component: UserAddUsernamePasswordIdentityComponent, canActivate: [authGuard] },
+    { path: 'user/:id/add-pin-identity', component: UserAddPinIdentityComponent, canActivate: [authGuard] },
+    { path: 'user/:id/change-password', component: UserChangePasswordComponent, canActivate: [authGuard] },
+    { path: 'user/:id/add-webauthn-identity', component: UserAddWebauthnIdentityComponent, canActivate: [authGuard] },
+    { path: 'user/:id/change-personal-info', component: UserChangePersonalInfoComponent, canActivate: [authGuard] },
+    { path: 'user/:id/lock', component: UserChangeLockStateComponent, canActivate: [authGuard] },
+    { path: 'qualification', component: QualificationsComponent, canActivate: [authGuard] },
+    { path: 'qualification/add', component: QualificationAddComponent, canActivate: [authGuard] },
+    { path: 'qualification/:id', component: QualificationDetailsComponent, canActivate: [authGuard] },
+    { path: 'qualification/:id/change-details', component: QualificationChangeDetailsComponent, canActivate: [authGuard] },
+    { path: 'device', component: DevicesComponent, canActivate: [authGuard] },
+    { path: 'device/add', component: DeviceAddComponent, canActivate: [authGuard] },
+    { path: 'device/:id', component: DeviceDetailsComponent, canActivate: [authGuard] },
+    { path: 'device/:id/change-details', component: DeviceChangeDetailsComponent, canActivate: [authGuard] },
+    { path: 'device/:id/change-thumbnail', component: DeviceChangeThumbnailComponent, canActivate: [authGuard] },
+    { path: 'device/:id/change-desired-firmware-version', component: DeviceChangeDesiredFirmwareVersionComponent, canActivate: [authGuard] },
+    { path: 'device/:id/attach-tool', component: DeviceAttachToolComponent, canActivate: [authGuard] },
+    { path: 'tool', component: ToolsComponent, canActivate: [authGuard] },
+    { path: 'tool/add', component: ToolAddComponent, canActivate: [authGuard] },
+    { path: 'tool/:id', component: ToolDetailsComponent, canActivate: [authGuard] },
+    { path: 'tool/:id/change-details', component: ToolChangeDetailsComponent, canActivate: [authGuard] },
+    { path: 'add-qualification', component: UserAddQualificationComponent, canActivate: [authGuard] },
 ];
 
 @NgModule({

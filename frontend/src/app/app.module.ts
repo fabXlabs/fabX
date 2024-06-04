@@ -30,7 +30,6 @@ import { environment } from "../environments/environment";
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AttachedToolNames, DevicesComponent } from './devices/devices.component';
-import { AuthGuard } from "./state/auth-guard";
 import { AuthInterceptor } from "./state/auth-interceptor";
 import { DeviceAddComponent } from './device-add/device-add.component';
 import { DeviceAttachToolComponent } from './device-attach-tool/device-attach-tool.component';
@@ -145,7 +144,6 @@ import { SecurePipe } from "./state/secure-pipe";
         NgOptimizedImage
     ],
     providers: [
-        AuthGuard,
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         { provide: HTTP_INTERCEPTORS, useClass: LogoutOnUnauthorizedInterceptorService, multi: true }
     ],
