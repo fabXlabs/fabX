@@ -16,7 +16,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed class ChangeableValue<out T> {
     @Serializable
-    object LeaveAsIs : ChangeableValue<Nothing>() {
+    data object LeaveAsIs : ChangeableValue<Nothing>() {
         override fun toString(): String {
             return "LeaveAsIs"
         }

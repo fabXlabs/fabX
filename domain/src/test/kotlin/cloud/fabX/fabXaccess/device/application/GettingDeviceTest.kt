@@ -4,7 +4,7 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isSameAs
+import assertk.assertions.isSameInstanceAs
 import cloud.fabX.fabXaccess.common.application.ThumbnailCreator
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
@@ -63,7 +63,7 @@ internal class GettingDeviceTest {
 
         // then
         assertThat(result)
-            .isSameAs(devices)
+            .isSameInstanceAs(devices)
     }
 
     @Test
@@ -80,7 +80,7 @@ internal class GettingDeviceTest {
         // then
         assertThat(result)
             .isRight()
-            .isSameAs(device)
+            .isSameInstanceAs(device)
     }
 
     @Test

@@ -4,7 +4,7 @@ import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import assertk.assertions.isSameAs
+import assertk.assertions.isSameInstanceAs
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -60,7 +60,7 @@ internal class GettingQualificationTest {
 
         // then
         assertThat(result)
-            .isSameAs(qualifications)
+            .isSameInstanceAs(qualifications)
     }
 
     @Test
@@ -77,7 +77,7 @@ internal class GettingQualificationTest {
         // then
         assertThat(result)
             .isRight()
-            .isSameAs(qualification)
+            .isSameInstanceAs(qualification)
     }
 
     @Test

@@ -3,7 +3,7 @@ package cloud.fabX.fabXaccess.user.application
 import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
-import assertk.assertions.isSameAs
+import assertk.assertions.isSameInstanceAs
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -63,7 +63,7 @@ internal class GettingUserByIdentityTest {
             // then
             assertThat(result)
                 .isRight()
-                .isSameAs(user)
+                .isSameInstanceAs(user)
         }
 
         @Test
@@ -89,7 +89,7 @@ internal class GettingUserByIdentityTest {
             // then
             assertThat(result)
                 .isLeft()
-                .isSameAs(error)
+                .isSameInstanceAs(error)
         }
     }
 
@@ -116,7 +116,7 @@ internal class GettingUserByIdentityTest {
             // then
             assertThat(result)
                 .isRight()
-                .isSameAs(user)
+                .isSameInstanceAs(user)
         }
 
         @Test
@@ -141,7 +141,7 @@ internal class GettingUserByIdentityTest {
             // then
             assertThat(result)
                 .isLeft()
-                .isSameAs(error)
+                .isSameInstanceAs(error)
         }
     }
 }

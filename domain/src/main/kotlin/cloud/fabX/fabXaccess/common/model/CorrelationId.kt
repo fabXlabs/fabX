@@ -22,8 +22,6 @@ data class CorrelationId(
     }
 }
 
-typealias CorrelationIdFactory = () -> CorrelationId
-
 fun newCorrelationId(): CorrelationId {
     return CorrelationId(UUID.randomUUID())
 }

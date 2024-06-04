@@ -11,6 +11,7 @@ interface SourcingEvent {
 }
 
 fun <E : SourcingEvent> Iterable<E>.assertIsNotEmpty() {
+    @Suppress("ReplaceSizeZeroCheckWithIsEmpty") // isEmpty method does not exist on Iterable
     if (count() == 0) {
         throw IterableIsEmpty("No sourcing events contained in iterable.")
     }

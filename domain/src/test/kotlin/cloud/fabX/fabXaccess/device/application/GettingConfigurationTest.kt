@@ -13,7 +13,6 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.TaggedCounter
-import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.ActualFirmwareVersionChanged
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
@@ -59,6 +58,7 @@ internal class GettingConfigurationTest {
         this.logger = logger
         this.deviceRepository = deviceRepository
         this.toolRepository = gettingToolById
+        this.gettingConfigurationCounter = gettingConfigurationCounter
 
         testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById, gettingConfigurationCounter, fixedClock)
     }

@@ -9,7 +9,6 @@ import arrow.core.getOrElse
 import arrow.core.getOrNone
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import cloud.fabX.fabXaccess.common.application.ThumbnailCreator
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity

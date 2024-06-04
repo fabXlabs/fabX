@@ -3,7 +3,7 @@ package cloud.fabX.fabXaccess.tool.application
 import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
-import assertk.assertions.isSameAs
+import assertk.assertions.isSameInstanceAs
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -59,7 +59,7 @@ internal class GettingToolTest {
 
         // then
         assertThat(result)
-            .isSameAs(tools)
+            .isSameInstanceAs(tools)
     }
 
     @Test
@@ -76,7 +76,7 @@ internal class GettingToolTest {
         // then
         assertThat(result)
             .isRight()
-            .isSameAs(tool)
+            .isSameInstanceAs(tool)
     }
 
     @Test
@@ -93,6 +93,6 @@ internal class GettingToolTest {
         // then
         assertThat(result)
             .isLeft()
-            .isSameAs(expectedError)
+            .isSameInstanceAs(expectedError)
     }
 }

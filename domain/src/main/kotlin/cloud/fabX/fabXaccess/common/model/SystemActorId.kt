@@ -5,7 +5,7 @@ import java.util.UUID
 import kotlinx.serialization.Serializable
 
 @Serializable
-object SystemActorId : ActorId {
+data object SystemActorId : ActorId {
     @Serializable(with = UuidSerializer::class)
     override val value: UUID = UUID(0L, 0L)
 }

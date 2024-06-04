@@ -3,7 +3,6 @@ package cloud.fabX.fabXaccess.user.application
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.raise.either
-import arrow.core.sequence
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
