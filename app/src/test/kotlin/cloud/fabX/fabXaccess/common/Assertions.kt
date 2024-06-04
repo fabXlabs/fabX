@@ -4,7 +4,6 @@ import assertk.Assert
 import assertk.all
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.rest.Error
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 internal inline fun <reified T> Assert<String>.isJson() = transform { Json.decodeFromString<T>(it) }
