@@ -4,10 +4,6 @@ import assertk.Assert
 import assertk.all
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-
-inline fun <reified T> Assert<String>.isJson() = transform { Json.decodeFromString<T>(it) }
 
 internal fun Assert<Error>.isError(
     type: String,
