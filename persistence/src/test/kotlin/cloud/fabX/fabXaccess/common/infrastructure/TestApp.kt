@@ -1,9 +1,9 @@
 package cloud.fabX.fabXaccess.common.infrastructure
 
 import cloud.fabX.fabXaccess.PersistenceApp
-import cloud.fabX.fabXaccess.cachedPersistenceModule
 import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.loggingModule
+import cloud.fabX.fabXaccess.persistenceModule
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
@@ -52,7 +52,7 @@ internal fun withTestApp(
     }
 
     val testApp = DI {
-        import(cachedPersistenceModule)
+        import(persistenceModule)
         import(loggingModule)
 
         bindInstance(overrides = true) { dbPool }
@@ -60,12 +60,6 @@ internal fun withTestApp(
         bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
         bindInstance(tag = "dbuser") { postgresContainer.username }
         bindInstance(tag = "dbpassword") { postgresContainer.password }
-
-        // additionally bind non-cached variants for direct tests
-        bindSingleton { DeviceDatabaseRepository(instance()) }
-        bindSingleton { QualificationDatabaseRepository(instance()) }
-        bindSingleton { ToolDatabaseRepository(instance(), instance()) }
-        bindSingleton { UserDatabaseRepository(instance()) }
     }
 
     // only initialise database once

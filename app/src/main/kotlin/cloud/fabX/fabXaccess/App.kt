@@ -30,12 +30,7 @@ val app = DI {
     import(domainModule)
     import(webModule)
     import(loggingModule)
-
-    if (config.dbCaching) {
-        import(cachedPersistenceModule)
-    } else {
-        import(persistenceModule)
-    }
+    import(persistenceModule)
 
     bindConstant(tag = "port") { config.port }
 
