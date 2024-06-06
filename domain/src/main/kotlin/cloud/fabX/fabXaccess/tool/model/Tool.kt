@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.common.model.ToolIdFactory
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
+import cloud.fabX.fabXaccess.common.model.toReferencedQualificationNotFound
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.user.model.Admin
 import kotlinx.datetime.Clock
@@ -96,11 +97,7 @@ data class Tool internal constructor(
                 .map { }
                 .mapLeft {
                     if (it is Error.QualificationNotFound) {
-                        Error.ReferencedQualificationNotFound(
-                            it.message,
-                            it.qualificationId,
-                            correlationId
-                        )
+                        it.toReferencedQualificationNotFound(correlationId)
                     } else {
                         it
                     }

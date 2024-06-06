@@ -1,5 +1,7 @@
 package cloud.fabX.fabXaccess.common.model
 
+import cloud.fabX.fabXaccess.common.model.Error.ReferencedToolNotFound
+import cloud.fabX.fabXaccess.common.model.Error.ToolNotFound
 import cloud.fabX.fabXaccess.tool.model.ToolType
 
 sealed class Error(
@@ -339,4 +341,20 @@ sealed class Error(
         val userId: UserId,
         override val correlationId: CorrelationId? = null
     ) : Error(message, mapOf("userId" to userId.serialize()), correlationId = correlationId)
+}
+
+fun ToolNotFound.toReferencedToolNotFound(correlationId: CorrelationId): ReferencedToolNotFound {
+    return ReferencedToolNotFound(
+        this.message,
+        this.toolId,
+        correlationId
+    )
+}
+
+fun Error.QualificationNotFound.toReferencedQualificationNotFound(correlationId: CorrelationId): Error.ReferencedQualificationNotFound {
+    return Error.ReferencedQualificationNotFound(
+        this.message,
+        this.qualificationId,
+        correlationId
+    )
 }

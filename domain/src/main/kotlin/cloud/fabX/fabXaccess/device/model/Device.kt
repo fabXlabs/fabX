@@ -24,6 +24,7 @@ import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOne
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
+import cloud.fabX.fabXaccess.common.model.toReferencedToolNotFound
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
 import kotlinx.datetime.Clock
@@ -203,11 +204,7 @@ data class Device internal constructor(
             }
             .mapLeft {
                 if (it is Error.ToolNotFound) {
-                    Error.ReferencedToolNotFound(
-                        it.message,
-                        it.toolId,
-                        correlationId
-                    )
+                    it.toReferencedToolNotFound(correlationId)
                 } else {
                     it
                 }
