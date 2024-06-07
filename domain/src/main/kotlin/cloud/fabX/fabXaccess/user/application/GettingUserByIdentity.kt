@@ -23,11 +23,10 @@ class GettingUserByIdentity(
         actor: SystemActor,
         correlationId: CorrelationId,
         identity: UserIdentity
-    ): Either<Error, User> {
-        log.debug("getUserByIdentity (actor: $actor, correlationId: $correlationId)...")
-
-        return gettingUserByIdentity.getByIdentity(identity)
-    }
+    ): Either<Error, User> =
+        log.logError(actor, correlationId, "getUserByIdentity") {
+            gettingUserByIdentity.getByIdentity(identity)
+        }
 
     suspend fun getUserByIdentity(
         actor: SystemActor,

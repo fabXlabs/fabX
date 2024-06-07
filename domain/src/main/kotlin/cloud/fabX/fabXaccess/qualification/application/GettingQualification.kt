@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
+import cloud.fabX.fabXaccess.device.application.logError
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 
@@ -31,9 +32,8 @@ class GettingQualification(
         actor: Actor,
         correlationId: CorrelationId,
         qualificationId: QualificationId
-    ): Either<Error, Qualification> {
-        log.debug("getById  (actor: $actor, correlationId: $correlationId)...")
-
-        return qualificationRepository.getById(qualificationId)
-    }
+    ): Either<Error, Qualification> =
+        log.logError(actor, correlationId, "getById") {
+            qualificationRepository.getById(qualificationId)
+        }
 }

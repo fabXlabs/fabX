@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
-import arrow.core.Option
+import arrow.core.Either
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -23,15 +23,10 @@ class ChangingThumbnail(
         correlationId: CorrelationId,
         deviceId: DeviceId,
         thumbnail: ByteArray
-    ): Option<Error> {
-        log.debug("changeDeviceThumbnail...")
-
-        return deviceRepository.getById(deviceId)
-            .flatMap { it.changeThumbnail(actor, correlationId, thumbnail) }
-            .flatMap { deviceRepository.storeThumbnail(deviceId, actor.id, it) }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...changeDeviceThumbnail done") }
-            .onSome { log.error("...changeDeviceThumbnail error: $it") }
-    }
+    ): Either<Error, Unit> =
+        log.logError(actor, correlationId, "changeDeviceThumbnail") {
+            deviceRepository.getById(deviceId)
+                .flatMap { it.changeThumbnail(actor, correlationId, thumbnail) }
+                .flatMap { deviceRepository.storeThumbnail(deviceId, actor.id, it) }
+        }
 }

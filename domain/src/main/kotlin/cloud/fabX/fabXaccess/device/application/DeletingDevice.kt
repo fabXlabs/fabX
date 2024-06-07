@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
@@ -24,21 +23,8 @@ class DeletingDevice(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId
-    ): Option<Error> {
-        log.debug("deleteDevice...")
-
-        return deviceRepository.getById(deviceId)
-            .map {
-                it.delete(actor, clock, correlationId)
-            }
-            .flatMap {
-                deviceRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...deleteDevice done") }
-            .onSome { log.error("...deleteDevice error: $it") }
-    }
+    ): Either<Error, Unit> =
+        deviceRepository.getAndStoreMap(deviceId, actor, correlationId, log, "deleteDevice") {
+            it.delete(actor, clock, correlationId)
+        }
 }

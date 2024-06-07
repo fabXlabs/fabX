@@ -19,9 +19,7 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
-import isNone
 import isRight
-import isSome
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -132,7 +130,9 @@ internal open class QualificationDatabaseRepositoryTest {
             val result = repository.store(event)
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             assertThat(repository.getById(qualificationId))
                 .isRight()
@@ -161,7 +161,7 @@ internal open class QualificationDatabaseRepositoryTest {
 
                 // then
                 assertThat(result)
-                    .isSome()
+                    .isLeft()
                     .isEqualTo(
                         Error.VersionConflict(
                             "Previous version of qualification QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) is 2, " +

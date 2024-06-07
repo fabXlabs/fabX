@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.tool.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -19,8 +17,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -96,7 +94,7 @@ internal class ChangingToolTest {
             .thenReturn(tool.right())
 
         whenever(toolRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.changeToolDetails(
@@ -115,7 +113,9 @@ internal class ChangingToolTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
 
         val inOrder = inOrder(toolRepository)
         inOrder.verify(toolRepository).getById(toolId)
@@ -148,7 +148,7 @@ internal class ChangingToolTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -180,7 +180,7 @@ internal class ChangingToolTest {
             .thenReturn(tool.right())
 
         whenever(toolRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changeToolDetails(
@@ -200,7 +200,7 @@ internal class ChangingToolTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

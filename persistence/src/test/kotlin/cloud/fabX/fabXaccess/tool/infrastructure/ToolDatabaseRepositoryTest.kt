@@ -22,9 +22,7 @@ import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
-import isNone
 import isRight
-import isSome
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -175,7 +173,9 @@ internal open class ToolDatabaseRepositoryTest {
             val result = repository.store(event)
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             assertThat(repository.getById(toolId))
                 .isRight()
@@ -210,7 +210,7 @@ internal open class ToolDatabaseRepositoryTest {
 
                 // then
                 assertThat(result)
-                    .isSome()
+                    .isLeft()
                     .isEqualTo(
                         Error.VersionConflict(
                             "Previous version of tool ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) is 2, " +

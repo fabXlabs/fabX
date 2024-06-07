@@ -1,8 +1,8 @@
 package cloud.fabX.fabXaccess.device.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
-import arrow.core.some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -81,7 +81,7 @@ internal class DeviceControllerAttachToolTest {
                 eq(pin),
                 eq(toolId)
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().put("/api/v1/device/${deviceId.serialize()}/attached-tool/$pin") {
@@ -212,7 +212,7 @@ internal class DeviceControllerAttachToolTest {
                 eq(pin),
                 eq(toolId)
             )
-        ).thenReturn(error.some())
+        ).thenReturn(error.left())
 
         // when
         val response = c().put("/api/v1/device/${deviceId.serialize()}/attached-tool/$pin") {

@@ -115,8 +115,6 @@ class DeviceController(
                                             it.background.toDomain(),
                                             it.backupBackendUrl.toDomain()
                                         )
-                                            .toEither { }
-                                            .swap()
                                     }
                             )
                         }
@@ -155,8 +153,6 @@ class DeviceController(
                                         newCorrelationId(),
                                         id
                                     )
-                                        .toEither { }
-                                        .swap()
                                 }
                         )
                     }
@@ -181,8 +177,6 @@ class DeviceController(
                                                             pin,
                                                             ToolId.fromString(it.toolId)
                                                         )
-                                                            .toEither { }
-                                                            .swap()
                                                     }
                                             )
                                         }
@@ -205,8 +199,6 @@ class DeviceController(
                                                     id,
                                                     pin
                                                 )
-                                                    .toEither { }
-                                                    .swap()
                                             }
                                     )
                                 }
@@ -284,8 +276,6 @@ class DeviceController(
                                                 id,
                                                 it
                                             )
-                                                .toEither { }
-                                                .swap()
                                         }
                                 )
                             }

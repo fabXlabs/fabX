@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
-import arrow.core.None
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -74,11 +74,11 @@ internal class DeviceDomainEventHandlerTest {
             .thenReturn(setOf(device1, device2))
 
         whenever(detachingTool.detachTool(domainEvent, deviceId1, 2))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
         whenever(detachingTool.detachTool(domainEvent, deviceId2, 3))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
         whenever(detachingTool.detachTool(domainEvent, deviceId2, 4))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         testee.handle(domainEvent)

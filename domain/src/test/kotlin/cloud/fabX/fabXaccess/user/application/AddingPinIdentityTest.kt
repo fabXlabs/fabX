@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.user.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -16,8 +14,8 @@ import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -74,7 +72,7 @@ internal class AddingPinIdentityTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.addPinIdentity(
@@ -85,7 +83,9 @@ internal class AddingPinIdentityTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
 
         val inOrder = inOrder(userRepository)
         inOrder.verify(userRepository).getById(userId)
@@ -110,7 +110,7 @@ internal class AddingPinIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -138,7 +138,7 @@ internal class AddingPinIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedDomainError)
     }
 
@@ -164,7 +164,7 @@ internal class AddingPinIdentityTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.addPinIdentity(
@@ -176,7 +176,7 @@ internal class AddingPinIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

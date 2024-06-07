@@ -1,9 +1,6 @@
 package cloud.fabX.fabXaccess.user.infrastructure
 
 import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
@@ -47,7 +44,7 @@ object UserSourcingEventDAO : Table("UserSourcingEvent") {
     val actorId = uuid("actor_id")
     val correlationId = uuid("correlation_id")
     val timestamp = timestamp("timestamp")
-    val data = jsonb<UserSourcingEvent>("data",  Json { serializersModule = domainSerializersModule })
+    val data = jsonb<UserSourcingEvent>("data", Json { serializersModule = domainSerializersModule })
 }
 
 open class UserDatabaseRepository(private val db: Database) :
@@ -105,19 +102,17 @@ open class UserDatabaseRepository(private val db: Database) :
         }
     }
 
-    override suspend fun store(event: UserSourcingEvent): Option<Error> {
+    override suspend fun store(event: UserSourcingEvent): Either<Error, Unit> {
         return transaction {
             val previousVersion = getVersionById(event.aggregateRootId)
 
             if (previousVersion != null
                 && event.aggregateVersion != previousVersion + 1
             ) {
-                Some(
-                    Error.VersionConflict(
-                        "Previous version of user ${event.aggregateRootId} is $previousVersion, " +
-                                "desired new version is ${event.aggregateVersion}."
-                    )
-                )
+                Error.VersionConflict(
+                    "Previous version of user ${event.aggregateRootId} is $previousVersion, " +
+                            "desired new version is ${event.aggregateVersion}."
+                ).left()
             } else {
                 UserSourcingEventDAO.insert {
                     it[aggregateRootId] = event.aggregateRootId.value
@@ -128,7 +123,7 @@ open class UserDatabaseRepository(private val db: Database) :
                     it[data] = event
                 }
 
-                None
+                Unit.right()
             }
         }
     }

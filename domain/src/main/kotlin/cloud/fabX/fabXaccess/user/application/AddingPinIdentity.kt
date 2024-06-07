@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -27,26 +26,13 @@ class AddingPinIdentity(
         correlationId: CorrelationId,
         userId: UserId,
         pin: String
-    ): Option<Error> {
-        log.debug("addPinIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.addPinIdentity(
-                    actor,
-                    clock,
-                    correlationId,
-                    pin
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...addPinIdentity done") }
-            .onSome { log.error("...addPinIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "addPinIdentity") {
+            it.addPinIdentity(
+                actor,
+                clock,
+                correlationId,
+                pin
+            )
+        }
 }

@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
@@ -20,16 +21,21 @@ class UpdatingDevicePinStatus(
         actor: DeviceActor,
         correlationId: CorrelationId,
         pinStatus: DevicePinStatus
-    ): Either<Error, Unit> {
-        log.debug("updateDevicePinStatus (actor: $actor, correlationId: $correlationId, pinStatus: $pinStatus)...")
+    ): Either<Error, Unit> =
+        log.logError(actor, correlationId, "updateDevicePinStatus") {
+            requireActorMatchDevicePinStatus(correlationId, actor, pinStatus)
+                .flatMap { devicePinStatusRepository.store(pinStatus) }
+        }
 
+    private fun requireActorMatchDevicePinStatus(
+        correlationId: CorrelationId,
+        actor: DeviceActor,
+        pinStatus: DevicePinStatus
+    ): Either<Error, Unit> {
         return if (actor.id != pinStatus.deviceId) {
             Error.DeviceNotActor("Device not actor", correlationId).left()
         } else {
-            devicePinStatusRepository.store(pinStatus)
             Unit.right()
         }
-            .onRight { log.debug("...updateDevicePinStatus done") }
-            .onLeft { log.error("...updateDevicePinStatus error: $it") }
     }
 }

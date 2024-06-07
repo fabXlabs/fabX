@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -26,26 +25,13 @@ class ChangingIsAdmin(
         correlationId: CorrelationId,
         userId: UserId,
         isAdmin: Boolean
-    ): Option<Error> {
-        log.debug("changeIsAdmin...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.changeIsAdmin(
-                    actor,
-                    clock,
-                    correlationId,
-                    isAdmin
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...changeIsAdmin done") }
-            .onSome { log.error("...changeIsAdmin error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "changeIsAdmin") {
+            it.changeIsAdmin(
+                actor,
+                clock,
+                correlationId,
+                isAdmin
+            )
+        }
 }

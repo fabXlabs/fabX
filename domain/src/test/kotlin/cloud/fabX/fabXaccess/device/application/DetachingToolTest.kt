@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.device.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -19,8 +17,8 @@ import cloud.fabX.fabXaccess.device.model.ToolDetached
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -81,7 +79,7 @@ internal class DetachingToolTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.detachTool(
@@ -92,7 +90,9 @@ internal class DetachingToolTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
     }
 
     @Test
@@ -128,7 +128,7 @@ internal class DetachingToolTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.detachTool(
@@ -138,7 +138,9 @@ internal class DetachingToolTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
     }
 
     @Test
@@ -167,7 +169,7 @@ internal class DetachingToolTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedDomainError)
     }
 
@@ -189,7 +191,7 @@ internal class DetachingToolTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -220,7 +222,7 @@ internal class DetachingToolTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.detachTool(
@@ -232,7 +234,7 @@ internal class DetachingToolTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

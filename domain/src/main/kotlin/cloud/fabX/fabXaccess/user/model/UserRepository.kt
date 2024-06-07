@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.model
 
 import arrow.core.Either
-import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
@@ -10,7 +9,7 @@ interface UserRepository : GettingUserById {
     suspend fun getAll(): Set<User>
     suspend fun getById(id: UserId): Either<Error, User>
     suspend fun getSourcingEvents(): List<UserSourcingEvent>
-    suspend fun store(event: UserSourcingEvent): Option<Error>
+    suspend fun store(event: UserSourcingEvent): Either<Error, Unit>
 
     override suspend fun getUserById(id: UserId): Either<Error, User> = getById(id)
 }

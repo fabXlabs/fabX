@@ -1,8 +1,8 @@
 package cloud.fabX.fabXaccess.user.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
-import arrow.core.some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -75,7 +75,7 @@ internal class UserControllerAddInstructorQualificationTest {
                 eq(userId),
                 eq(qualificationId)
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().post("/api/v1/user/${userId.serialize()}/instructor-qualification") {
@@ -159,7 +159,7 @@ internal class UserControllerAddInstructorQualificationTest {
                 eq(userId),
                 eq(qualificationId)
             )
-        ).thenReturn(error.some())
+        ).thenReturn(error.left())
 
         // when
         val response = c().post("/api/v1/user/${userId.serialize()}/instructor-qualification") {

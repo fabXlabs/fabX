@@ -94,8 +94,6 @@ class QualificationController(
                                             it.colour.toDomain(),
                                             it.orderNr.toDomain()
                                         )
-                                            .toEither { }
-                                            .swap()
                                     }
                             )
                         }
@@ -114,8 +112,6 @@ class QualificationController(
                                         newCorrelationId(),
                                         id
                                     )
-                                        .toEither { }
-                                        .swap()
                                 }
                         )
                     }

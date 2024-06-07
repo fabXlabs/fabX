@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.user.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -18,8 +16,8 @@ import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentityAdded
 import cloud.fabX.fabXaccess.user.model.WebauthnService
 import com.webauthn4j.credential.CredentialRecord
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -94,7 +92,7 @@ internal class AddingWebauthnIdentityTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.addWebauthnIdentity(
@@ -106,7 +104,9 @@ internal class AddingWebauthnIdentityTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
 
         val inOrder = inOrder(webauthnService, userRepository)
         inOrder.verify(webauthnService).getChallenge(userId)
@@ -157,7 +157,7 @@ internal class AddingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -199,7 +199,7 @@ internal class AddingWebauthnIdentityTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.addWebauthnIdentity(
@@ -212,7 +212,7 @@ internal class AddingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -255,7 +255,7 @@ internal class AddingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedDomainError)
     }
 
@@ -293,7 +293,7 @@ internal class AddingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -316,7 +316,7 @@ internal class AddingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

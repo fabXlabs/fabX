@@ -25,12 +25,9 @@ class GettingUserIdByWikiName(
         actor: Instructor,
         correlationId: CorrelationId,
         wikiName: String
-    ): Either<Error, UserId> {
-        log.debug("getUserIdByWikiName (actor: $actor, correlationId: $correlationId)...")
-
-        return gettingUserByWikiName.getByWikiName(wikiName)
-            .map { it.id }
-            .onRight { log.debug("...getUserIdByWikiName done") }
-            .onLeft { log.error("...getUserIdByWikiName error: $it") }
-    }
+    ): Either<Error, UserId> =
+        log.logError(actor, correlationId, "getUserIdByWikiName") {
+            gettingUserByWikiName.getByWikiName(wikiName)
+                .map { it.id }
+        }
 }

@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -27,26 +26,13 @@ class RemovingCardIdentity(
         correlationId: CorrelationId,
         userId: UserId,
         cardId: String
-    ): Option<Error> {
-        log.debug("removeCardIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.removeCardIdentity(
-                    actor,
-                    clock,
-                    correlationId,
-                    cardId
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...removeCardIdentity done") }
-            .onSome { log.error("...removeCardIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "removeCardIdentity") {
+            it.removeCardIdentity(
+                actor,
+                clock,
+                correlationId,
+                cardId
+            )
+        }
 }

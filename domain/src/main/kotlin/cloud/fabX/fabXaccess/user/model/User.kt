@@ -800,10 +800,10 @@ data class User internal constructor(
     ): Either<Error, UserSourcingEvent> {
         return if (this.isAdmin == isAdmin) {
             if (isAdmin) {
-                Error.UserAlreadyAdmin("User already is admin.", correlationId).left()
+                Error.UserAlreadyAdmin("User already is admin.", correlationId)
             } else {
-                Error.UserAlreadyNotAdmin("User already not is admin.", correlationId).left()
-            }
+                Error.UserAlreadyNotAdmin("User already not is admin.", correlationId)
+            }.left()
         } else {
             IsAdminChanged(
                 id,

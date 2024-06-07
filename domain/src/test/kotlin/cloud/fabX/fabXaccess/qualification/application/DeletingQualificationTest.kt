@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.qualification.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -20,8 +18,8 @@ import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.ToolFixture
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -90,7 +88,7 @@ internal class DeletingQualificationTest {
                 .thenReturn(setOf())
 
             whenever(qualificationRepository.store(expectedSourcingEvent))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.deleteQualification(
@@ -100,7 +98,9 @@ internal class DeletingQualificationTest {
             )
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
             verify(domainEventPublisher).publish(
                 cloud.fabX.fabXaccess.common.model.QualificationDeleted(
                     adminActor.id,
@@ -128,7 +128,7 @@ internal class DeletingQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -154,7 +154,7 @@ internal class DeletingQualificationTest {
             .thenReturn(setOf())
 
         whenever(qualificationRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.deleteQualification(
@@ -165,7 +165,7 @@ internal class DeletingQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -198,7 +198,7 @@ internal class DeletingQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedError)
     }
 }

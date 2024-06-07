@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -30,28 +29,15 @@ class AddingUsernamePasswordIdentity(
         userId: UserId,
         username: String,
         hash: String
-    ): Option<Error> {
-        log.debug("addUsernamePasswordIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.addUsernamePasswordIdentity(
-                    actor,
-                    clock,
-                    correlationId,
-                    username,
-                    hash,
-                    gettingUserByUsername
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...addUsernamePasswordIdentity done") }
-            .onSome { log.error("...addUsernamePasswordIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "addUsernamePasswordIdentity") {
+            it.addUsernamePasswordIdentity(
+                actor,
+                clock,
+                correlationId,
+                username,
+                hash,
+                gettingUserByUsername
+            )
+        }
 }

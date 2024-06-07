@@ -1,11 +1,9 @@
 package cloud.fabX.fabXaccess.tool.infrastructure
 
 import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.Error
@@ -102,7 +100,7 @@ open class ToolDatabaseRepository(
         }
     }
 
-    override suspend fun store(event: ToolSourcingEvent): Option<Error> {
+    override suspend fun store(event: ToolSourcingEvent): Either<Error, Unit> {
         return transaction {
             log.debug("storing event in database...")
 
@@ -111,12 +109,10 @@ open class ToolDatabaseRepository(
             if (previousVersion != null
                 && event.aggregateVersion != previousVersion + 1
             ) {
-                Some(
-                    Error.VersionConflict(
-                        "Previous version of tool ${event.aggregateRootId} is $previousVersion, " +
-                                "desired new version is ${event.aggregateVersion}."
-                    )
-                )
+                Error.VersionConflict(
+                    "Previous version of tool ${event.aggregateRootId} is $previousVersion, " +
+                            "desired new version is ${event.aggregateVersion}."
+                ).left()
             } else {
                 ToolSourcingEventDAO.insert {
                     it[aggregateRootId] = event.aggregateRootId.value
@@ -128,7 +124,7 @@ open class ToolDatabaseRepository(
                 }
 
                 log.debug("...done storing event in database")
-                None
+                Unit.right()
             }
         }
     }

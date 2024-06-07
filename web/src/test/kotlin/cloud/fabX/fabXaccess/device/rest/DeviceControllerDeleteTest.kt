@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.device.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -68,7 +68,7 @@ internal class DeviceControllerDeleteTest {
                 any(),
                 eq(deviceId)
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().delete("/api/v1/device/${deviceId.serialize()}") {

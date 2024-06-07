@@ -1,6 +1,5 @@
 package cloud.fabX.fabXaccess.device.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
 import arrow.core.right
 import assertk.assertThat
@@ -94,7 +93,11 @@ internal class DeviceControllerThumbnailTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.body<ByteArray>()).isEqualTo(thumbnailData)
-        assertThat(response.cacheControl()).containsExactlyInAnyOrder(HeaderValue("max-age=60"), HeaderValue("must-revalidate"), HeaderValue("private"))
+        assertThat(response.cacheControl()).containsExactlyInAnyOrder(
+            HeaderValue("max-age=60"),
+            HeaderValue("must-revalidate"),
+            HeaderValue("private")
+        )
     }
 
     @Test
@@ -137,7 +140,7 @@ internal class DeviceControllerThumbnailTest {
                 eq(deviceId),
                 eq(requestBody)
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().post("/api/v1/device/${deviceId.serialize()}/thumbnail") {

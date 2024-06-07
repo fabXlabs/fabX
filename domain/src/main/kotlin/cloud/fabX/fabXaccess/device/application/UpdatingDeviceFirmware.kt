@@ -22,11 +22,9 @@ class UpdatingDeviceFirmware(
         correlationId: CorrelationId,
         deviceId: DeviceId
     ): Either<Error, Unit> {
-        log.debug("updateDeviceFirmware (actor: $actor, correlationId: $correlationId)...")
-
-        return deviceRepository.getById(deviceId)
-            .flatMap { updateDeviceFirmware.updateDeviceFirmware(deviceId, correlationId) }
-            .onRight { log.debug("...updateDeviceFirmware done") }
-            .onLeft { log.error("...updateDeviceFirmware error: $it") }
+        return log.logError(actor, correlationId, "updateDeviceFirmware") {
+            deviceRepository.getById(deviceId)
+                .flatMap { updateDeviceFirmware.updateDeviceFirmware(deviceId, correlationId) }
+        }
     }
 }

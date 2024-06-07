@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.user.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -18,8 +16,8 @@ import cloud.fabX.fabXaccess.user.model.MemberQualificationRemoved
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -80,7 +78,7 @@ internal class RemovingMemberQualificationTest {
                 .thenReturn(user.right())
 
             whenever(userRepository.store(expectedSourcingEvent))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.removeMemberQualification(
@@ -91,7 +89,10 @@ internal class RemovingMemberQualificationTest {
             )
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
+
             val inOrder = inOrder(userRepository)
             inOrder.verify(userRepository).getById(userId)
             inOrder.verify(userRepository).store(expectedSourcingEvent)
@@ -130,7 +131,7 @@ internal class RemovingMemberQualificationTest {
                 .thenReturn(user.right())
 
             whenever(userRepository.store(expectedSourcingEvent))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.removeMemberQualification(
@@ -140,7 +141,10 @@ internal class RemovingMemberQualificationTest {
             )
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
+
             val inOrder = inOrder(userRepository)
             inOrder.verify(userRepository).getById(userId)
             inOrder.verify(userRepository).store(expectedSourcingEvent)
@@ -164,7 +168,9 @@ internal class RemovingMemberQualificationTest {
         )
 
         // then
-        assertThat(result).isSome().isEqualTo(error)
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(error)
     }
 
     @Test
@@ -190,7 +196,7 @@ internal class RemovingMemberQualificationTest {
 
             // then
             assertThat(result)
-                .isSome()
+                .isLeft()
                 .isEqualTo(
                     Error.MemberQualificationNotFound(
                         "Not able to find member qualification with id $qualificationId.",
@@ -223,7 +229,7 @@ internal class RemovingMemberQualificationTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         val result = testee.removeMemberQualification(
             adminActor,
@@ -234,7 +240,7 @@ internal class RemovingMemberQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

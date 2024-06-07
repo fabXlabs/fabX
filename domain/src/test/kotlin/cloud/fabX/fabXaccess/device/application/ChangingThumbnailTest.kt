@@ -14,8 +14,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
 import com.sksamuel.scrimage.ImmutableImage
 import com.sksamuel.scrimage.nio.JpegWriter
-import isNone
-import isSome
+import isLeft
+import isRight
 import java.awt.Color
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -70,7 +70,9 @@ internal class ChangingThumbnailTest {
         val result = testee.changeDeviceThumbnail(adminActor, correlationId, deviceId, thumbnailData)
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
     }
 
     @Test
@@ -86,7 +88,7 @@ internal class ChangingThumbnailTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -105,7 +107,7 @@ internal class ChangingThumbnailTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isInstanceOf(Error.ThumbnailInvalid::class)
     }
 
@@ -131,7 +133,7 @@ internal class ChangingThumbnailTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedError)
     }
 }

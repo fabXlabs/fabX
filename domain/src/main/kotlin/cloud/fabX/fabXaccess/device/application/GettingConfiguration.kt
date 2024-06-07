@@ -34,57 +34,65 @@ class GettingConfiguration(
         actor: DeviceActor,
         correlationId: CorrelationId,
         actualFirmwareVersion: String
-    ): Either<Error, Result> {
-        log.debug("getConfiguration...")
-
-        return deviceRepository
-            .getById(actor.deviceId)
-            .flatMap { device ->
-                if (device.actualFirmwareVersion != actualFirmwareVersion) {
-                    device.setActualFirmwareVersion(
+    ): Either<Error, Result> =
+        log.logError(actor, correlationId, "getConfiguration") {
+            deviceRepository
+                .getById(actor.deviceId)
+                .flatMap {
+                    updateActualFirmwareVersionIfRequired(
                         actor,
-                        clock,
                         correlationId,
+                        it,
                         actualFirmwareVersion
-                    ).flatMap { sourcingEvent ->
-                        deviceRepository.store(sourcingEvent)
-                            .toEither {}
-                            .swap()
-                            .flatMap {
-                                device.apply(sourcingEvent)
-                                    .toEither {
-                                        Error.DeviceNotFound(
-                                            "Device with id ${device.id} not found after applying event.",
-                                            device.id
-                                        )
-                                    }
+                    )
+                }
+                .flatMap {
+                    it.attachedTools.entries
+                        .map { e ->
+                            gettingToolById.getToolById(e.value)
+                                .map { tool -> e.key to tool }
+                        }
+                        .let { eithers -> either { eithers.bindAll() } }
+                        .map { entries -> entries.toMap() }
+                        .map { pinToTool -> Result(device = it, attachedTools = pinToTool) }
+                }
+                .onRight {
+                    gettingConfigurationCounter.increment(it.device.id, {
+                        mapOf(
+                            "deviceId" to it.device.id.serialize(),
+                            "deviceName" to it.device.name
+                        )
+                    })
+                }
+        }
+
+    private suspend fun updateActualFirmwareVersionIfRequired(
+        actor: DeviceActor,
+        correlationId: CorrelationId,
+        device: Device,
+        actualFirmwareVersion: String
+    ): Either<Error, Device> =
+        if (device.actualFirmwareVersion != actualFirmwareVersion) {
+            device.setActualFirmwareVersion(
+                actor,
+                clock,
+                correlationId,
+                actualFirmwareVersion
+            ).flatMap { sourcingEvent ->
+                deviceRepository.store(sourcingEvent)
+                    .flatMap {
+                        device.apply(sourcingEvent)
+                            .toEither {
+                                Error.DeviceNotFound(
+                                    "Device with id ${device.id} not found after applying event.",
+                                    device.id
+                                )
                             }
                     }
-                } else {
-                    device.right()
-                }
             }
-            .flatMap {
-                it.attachedTools.entries
-                    .map { e ->
-                        gettingToolById.getToolById(e.value)
-                            .map { tool -> e.key to tool }
-                    }
-                    .let { eithers -> either { eithers.bindAll() } }
-                    .map { entries -> entries.toMap() }
-                    .map { pinToTool -> Result(device = it, attachedTools = pinToTool) }
-            }
-            .onRight {
-                gettingConfigurationCounter.increment(it.device.id, {
-                    mapOf(
-                        "deviceId" to it.device.id.serialize(),
-                        "deviceName" to it.device.name
-                    )
-                })
-            }
-            .onRight { log.debug("...getConfiguration successful") }
-            .onLeft { log.error("...getConfiguration error: $it") }
-    }
+        } else {
+            device.right()
+        }
 
     data class Result(
         val device: Device,

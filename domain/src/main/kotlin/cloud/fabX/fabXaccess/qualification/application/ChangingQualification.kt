@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -29,21 +28,14 @@ class ChangingQualification(
         description: ChangeableValue<String>,
         colour: ChangeableValue<String>,
         orderNr: ChangeableValue<Int>
-    ): Option<Error> {
-        log.debug("changeQualificationDetails...")
-
-        return qualificationRepository.getById(qualificationId)
-            .map {
-                it.changeDetails(actor, clock, correlationId, name, description, colour, orderNr)
-            }
-            .flatMap {
-                qualificationRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...changeQualificationDetails done") }
-            .onSome { log.error("...changeQualificationDetails error: $it") }
-    }
+    ): Either<Error, Unit> =
+        qualificationRepository.getAndStoreMap(
+            qualificationId,
+            actor,
+            correlationId,
+            log,
+            "changeQualificationDetails"
+        ) {
+            it.changeDetails(actor, clock, correlationId, name, description, colour, orderNr)
+        }
 }

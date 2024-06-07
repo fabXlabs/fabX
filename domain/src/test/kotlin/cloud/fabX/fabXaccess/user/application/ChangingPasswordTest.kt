@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.user.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -74,7 +72,7 @@ internal class ChangingPasswordTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.changeOwnPassword(
@@ -139,7 +137,7 @@ internal class ChangingPasswordTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(expectedSourcingEvent))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changeOwnPassword(

@@ -167,8 +167,6 @@ class UserController(
                                             it.lastName.toDomain(),
                                             it.wikiName.toDomain(),
                                         )
-                                            .toEither { }
-                                            .swap()
                                     }
                             )
                         }
@@ -190,8 +188,6 @@ class UserController(
                                             it.locked.toDomain(),
                                             it.notes.toDomain()
                                         )
-                                            .toEither { }
-                                            .swap()
                                     }
                             )
                         }
@@ -210,8 +206,6 @@ class UserController(
                                         newCorrelationId(),
                                         id
                                     )
-                                        .toEither { }
-                                        .swap()
                                 }
                         )
                     }
@@ -232,8 +226,6 @@ class UserController(
                                                 id,
                                                 it.isAdmin
                                             )
-                                                .toEither { }
-                                                .swap()
                                         }
                                 )
                             }
@@ -256,8 +248,6 @@ class UserController(
                                                     id,
                                                     QualificationId.fromString(it.qualificationId)
                                                 )
-                                                    .toEither { }
-                                                    .swap()
                                             }
                                     )
                                 }
@@ -280,8 +270,6 @@ class UserController(
                                                     id,
                                                     qualificationId
                                                 )
-                                                    .toEither { }
-                                                    .swap()
                                             }
                                     )
                                 }
@@ -305,8 +293,6 @@ class UserController(
                                                     id,
                                                     QualificationId.fromString(it.qualificationId)
                                                 )
-                                                    .toEither { }
-                                                    .swap()
                                             }
                                     )
                                 }
@@ -329,8 +315,6 @@ class UserController(
                                                     id,
                                                     qualificationId
                                                 )
-                                                    .toEither { }
-                                                    .swap()
                                             }
                                     )
                                 }
@@ -356,8 +340,6 @@ class UserController(
                                                         it.username,
                                                         hash(it.password)
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -400,8 +382,6 @@ class UserController(
                                                         id,
                                                         username
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -452,8 +432,6 @@ class UserController(
                                                         it.attestationObject,
                                                         it.clientDataJSON
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -474,8 +452,6 @@ class UserController(
                                                         id,
                                                         credentialId
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -500,8 +476,6 @@ class UserController(
                                                         it.cardId,
                                                         it.cardSecret
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -523,8 +497,6 @@ class UserController(
                                                         id,
                                                         cardId
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -548,8 +520,6 @@ class UserController(
                                                         id,
                                                         it.phoneNr
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -571,8 +541,6 @@ class UserController(
                                                         id,
                                                         phoneNr
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -596,8 +564,6 @@ class UserController(
                                                         id,
                                                         it.pin
                                                     )
-                                                        .toEither { }
-                                                        .swap()
                                                 }
                                         )
                                     }
@@ -616,8 +582,6 @@ class UserController(
                                                 newCorrelationId(),
                                                 id
                                             )
-                                                .toEither { }
-                                                .swap()
                                         }
                                 )
                             }

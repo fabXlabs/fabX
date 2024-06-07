@@ -38,30 +38,26 @@ class AddingTool(
         idleState: IdleState,
         wikiLink: String,
         requiredQualifications: Set<QualificationId>
-    ): Either<Error, ToolId> {
-        log.debug("addTool...")
-
-        return Tool
-            .addNew(
-                toolIdFactory,
-                actor,
-                clock,
-                correlationId,
-                name,
-                type,
-                requires2FA,
-                time,
-                idleState,
-                wikiLink,
-                requiredQualifications,
-                gettingQualificationById
-            )
-            .flatMap {
-                toolRepository.store(it)
-                    .toEither { it.aggregateRootId }
-                    .swap()
-            }
-            .onRight { log.debug("...addTool done") }
-            .onLeft { log.debug("...addTool error: $it") }
-    }
+    ): Either<Error, ToolId> =
+        log.logError(actor, correlationId, "addTool") {
+            Tool
+                .addNew(
+                    toolIdFactory,
+                    actor,
+                    clock,
+                    correlationId,
+                    name,
+                    type,
+                    requires2FA,
+                    time,
+                    idleState,
+                    wikiLink,
+                    requiredQualifications,
+                    gettingQualificationById
+                )
+                .flatMap { sourcingEvent ->
+                    toolRepository.store(sourcingEvent)
+                        .map { sourcingEvent.aggregateRootId }
+                }
+        }
 }

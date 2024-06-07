@@ -24,9 +24,7 @@ import cloud.fabX.fabXaccess.device.model.ToolAttached
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
-import isNone
 import isRight
-import isSome
 import java.util.stream.Stream
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
@@ -164,7 +162,9 @@ internal open class DeviceDatabaseRepositoryTest {
             val result = repository.store(event)
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             assertThat(repository.getById(deviceId))
                 .isRight()
@@ -192,7 +192,7 @@ internal open class DeviceDatabaseRepositoryTest {
 
                 // then
                 assertThat(result)
-                    .isSome()
+                    .isLeft()
                     .isEqualTo(
                         Error.VersionConflict(
                             "Previous version of device DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) is 2, " +

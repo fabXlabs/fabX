@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -30,27 +29,14 @@ class AddingMemberQualification(
         correlationId: CorrelationId,
         userId: UserId,
         qualificationId: QualificationId
-    ): Option<Error> {
-        log.debug("addMemberQualification...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.addMemberQualification(
-                    actor,
-                    clock,
-                    correlationId,
-                    qualificationId,
-                    gettingQualificationById
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...addMemberQualification done") }
-            .onSome { log.error("...addMemberQualification error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "addMemberQualification") {
+            it.addMemberQualification(
+                actor,
+                clock,
+                correlationId,
+                qualificationId,
+                gettingQualificationById
+            )
+        }
 }

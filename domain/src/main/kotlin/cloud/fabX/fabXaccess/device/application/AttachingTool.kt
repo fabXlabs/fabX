@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
@@ -29,28 +28,15 @@ class AttachingTool(
         deviceId: DeviceId,
         pin: Int,
         toolId: ToolId
-    ): Option<Error> {
-        log.debug("attachTool...")
-
-        return deviceRepository.getById(deviceId)
-            .flatMap {
-                it.attachTool(
-                    actor,
-                    clock,
-                    correlationId,
-                    pin,
-                    toolId,
-                    gettingToolById
-                )
-            }
-            .flatMap {
-                deviceRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...attachTool done") }
-            .onSome { log.error("...attachTool error: $it") }
-    }
+    ): Either<Error, Unit> =
+        deviceRepository.getAndStoreFlatMap(deviceId, actor, correlationId, log, "attachTool") {
+            it.attachTool(
+                actor,
+                clock,
+                correlationId,
+                pin,
+                toolId,
+                gettingToolById
+            )
+        }
 }

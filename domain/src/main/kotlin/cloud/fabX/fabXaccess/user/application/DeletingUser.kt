@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.Either
-import arrow.core.Option
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
@@ -37,23 +36,10 @@ class DeletingUser(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId
-    ): Option<Error> {
-        log.debug("deleteUser...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.delete(actor, clock, correlationId)
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...deleteUser done") }
-            .onSome { log.error("...deleteUser error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "deleteUser") {
+            it.delete(actor, clock, correlationId)
+        }
 
     /**
      * Hard deletes a user, i.e. deletes all sourcing events which concern the given user from the database.
@@ -64,15 +50,12 @@ class DeletingUser(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId
-    ): Either<Error, Unit> {
-        log.debug("hardDeleteUser (actor: $actor, correlationId: $correlationId)...")
-
-        return requireUserIsSoftDeleted(correlationId, userId)
-            .flatMap { hardDeletingUser.hardDelete(userId) }
-            .map { }
-            .onRight { log.debug("...hardDeleteUser done") }
-            .onLeft { log.error("...hardDeleteUser error: $it") }
-    }
+    ): Either<Error, Unit> =
+        log.logError(actor, correlationId, "hardDeleteUser") {
+            requireUserIsSoftDeleted(correlationId, userId)
+                .flatMap { hardDeletingUser.hardDelete(userId) }
+                .map { }
+        }
 
     private suspend fun requireUserIsSoftDeleted(
         correlationId: CorrelationId,

@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.qualification.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -17,8 +15,8 @@ import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -83,7 +81,7 @@ internal class ChangingQualificationTest {
                 .thenReturn(qualification.right())
 
             whenever(qualificationRepository.store(eq(expectedSourcingEvent)))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.changeQualificationDetails(
@@ -97,10 +95,13 @@ internal class ChangingQualificationTest {
             )
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             val inOrder = inOrder(logger, qualificationRepository)
-            inOrder.verify(logger).debug("changeQualificationDetails...")
+            inOrder.verify(logger)
+                .debug("changeQualificationDetails (actor: $adminActor, correlationId: $correlationId)...")
             inOrder.verify(qualificationRepository).getById(qualificationId)
             inOrder.verify(qualificationRepository).store(expectedSourcingEvent)
             inOrder.verify(logger).debug("...changeQualificationDetails done")
@@ -127,7 +128,7 @@ internal class ChangingQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -154,7 +155,7 @@ internal class ChangingQualificationTest {
             .thenReturn(qualification.right())
 
         whenever(qualificationRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changeQualificationDetails(
@@ -169,7 +170,7 @@ internal class ChangingQualificationTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

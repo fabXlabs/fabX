@@ -1,8 +1,8 @@
 package cloud.fabX.fabXaccess.qualification.application
 
 import FixedClock
-import arrow.core.None
-import arrow.core.some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -69,7 +69,7 @@ internal class AddingQualificationTest {
         )
 
         whenever(qualificationRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.addQualification(
@@ -109,7 +109,7 @@ internal class AddingQualificationTest {
         val error = ErrorFixture.arbitrary()
 
         whenever(qualificationRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.addQualification(

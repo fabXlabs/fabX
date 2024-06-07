@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.qualification.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -84,7 +84,7 @@ internal class QualificationControllerPutTest {
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("#aabbcc")),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueInt(42))
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().put("/api/v1/qualification/${id.serialize()}") {

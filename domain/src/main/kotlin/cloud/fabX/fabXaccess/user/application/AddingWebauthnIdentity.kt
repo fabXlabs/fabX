@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
+import arrow.core.Either
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -30,37 +30,28 @@ class AddingWebauthnIdentity(
         userId: UserId,
         attestationObject: ByteArray,
         clientDataJSON: ByteArray
-    ): Option<Error> {
-        log.debug("addWebauthnIdentity...")
-
-        return webauthnService.getChallenge(userId)
-            .flatMap { challenge ->
-                webauthnService.parseAndValidateRegistration(
-                    correlationId,
-                    challenge,
-                    attestationObject,
-                    clientDataJSON
-                )
-            }
-            .flatMap {
-                userRepository.getById(userId)
-                    .flatMap { user ->
-                        user.addWebauthnIdentity(
-                            actor,
-                            clock,
-                            correlationId,
-                            it
-                        )
-                    }
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...addWebauthnIdentity done") }
-            .onSome { log.error("...addWebauthnIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        log.logError(actor, correlationId, "addWebauthnIdentity") {
+            webauthnService.getChallenge(userId)
+                .flatMap { challenge ->
+                    webauthnService.parseAndValidateRegistration(
+                        correlationId,
+                        challenge,
+                        attestationObject,
+                        clientDataJSON
+                    )
+                }
+                .flatMap {
+                    userRepository.getById(userId)
+                        .flatMap { user ->
+                            user.addWebauthnIdentity(
+                                actor,
+                                clock,
+                                correlationId,
+                                it
+                            )
+                        }
+                }
+                .flatMap { userRepository.store(it) }
+        }
 }

@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -29,27 +28,14 @@ class AddingPhoneNrIdentity(
         correlationId: CorrelationId,
         userId: UserId,
         phoneNr: String
-    ): Option<Error> {
-        log.debug("addPhoneNrIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.addPhoneNrIdentity(
-                    actor,
-                    clock,
-                    correlationId,
-                    phoneNr,
-                    gettingUserByIdentity
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...addPhoneNrIdentity done") }
-            .onSome { log.error("...addPhoneNrIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "addPhoneNrIdentity") {
+            it.addPhoneNrIdentity(
+                actor,
+                clock,
+                correlationId,
+                phoneNr,
+                gettingUserByIdentity
+            )
+        }
 }

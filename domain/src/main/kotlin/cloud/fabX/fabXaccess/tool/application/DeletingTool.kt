@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.tool.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
@@ -27,22 +26,11 @@ class DeletingTool(
         actor: Admin,
         correlationId: CorrelationId,
         toolId: ToolId
-    ): Option<Error> {
-        log.debug("deleteTool...")
-
-        return toolRepository.getById(toolId)
-            .map {
-                it.delete(actor, clock, correlationId)
-            }
-            .flatMap {
-                toolRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...deleteTool done") }
-            .onNone {
+    ): Either<Error, Unit> =
+        toolRepository.getAndStoreMap(toolId, actor, correlationId, log, "deleteTool") {
+            it.delete(actor, clock, correlationId)
+        }
+            .onRight {
                 log.debug("publishing ToolDeleted event...")
                 domainEventPublisher.publish(
                     ToolDeleted(
@@ -53,6 +41,4 @@ class DeletingTool(
                     )
                 )
             }
-            .onSome { log.error("...deleteTool error: $it") }
-    }
 }

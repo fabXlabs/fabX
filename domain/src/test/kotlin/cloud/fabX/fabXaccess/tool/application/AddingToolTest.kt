@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.tool.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -88,7 +86,7 @@ internal class AddingToolTest {
             .thenReturn(qualification.right())
 
         whenever(toolRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.addTool(
@@ -141,7 +139,7 @@ internal class AddingToolTest {
             .thenReturn(qualification.right())
 
         whenever(toolRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.addTool(

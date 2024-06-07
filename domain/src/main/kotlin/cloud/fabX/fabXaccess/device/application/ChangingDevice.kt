@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -28,21 +27,8 @@ class ChangingDevice(
         name: ChangeableValue<String>,
         background: ChangeableValue<String>,
         backupBackendUrl: ChangeableValue<String>
-    ): Option<Error> {
-        log.debug("changeDeviceDetails...")
-
-        return deviceRepository.getById(deviceId)
-            .map {
-                it.changeDetails(actor, clock, correlationId, name, background, backupBackendUrl)
-            }
-            .flatMap {
-                deviceRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...changeDeviceDetails done") }
-            .onSome { log.error("...changeDeviceDetails error: $it") }
-    }
+    ): Either<Error, Unit> =
+        deviceRepository.getAndStoreMap(deviceId, actor, correlationId, log, "changeDeviceDetails") {
+            it.changeDetails(actor, clock, correlationId, name, background, backupBackendUrl)
+        }
 }

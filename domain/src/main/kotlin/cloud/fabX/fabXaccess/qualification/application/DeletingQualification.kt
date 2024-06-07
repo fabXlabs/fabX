@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.qualification.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DomainEventPublisher
@@ -29,22 +28,17 @@ class DeletingQualification(
         actor: Admin,
         correlationId: CorrelationId,
         qualificationId: QualificationId
-    ): Option<Error> {
-        log.debug("deleteQualification...")
-
-        return qualificationRepository.getById(qualificationId)
-            .flatMap {
-                it.delete(actor, clock, correlationId, gettingToolsByQualificationId)
-            }
-            .flatMap {
-                qualificationRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...deleteQualification done") }
-            .onNone {
+    ): Either<Error, Unit> =
+        qualificationRepository.getAndStoreFlatMap(
+            qualificationId,
+            actor,
+            correlationId,
+            log,
+            "deleteQualification"
+        ) {
+            it.delete(actor, clock, correlationId, gettingToolsByQualificationId)
+        }
+            .onRight {
                 domainEventPublisher.publish(
                     QualificationDeleted(
                         actor.id,
@@ -54,6 +48,4 @@ class DeletingQualification(
                     )
                 )
             }
-            .onSome { log.error("...deleteQualification error: $it") }
-    }
 }

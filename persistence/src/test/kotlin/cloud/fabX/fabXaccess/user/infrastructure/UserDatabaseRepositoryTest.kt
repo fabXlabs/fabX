@@ -27,9 +27,7 @@ import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isLeft
-import isNone
 import isRight
-import isSome
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -153,7 +151,9 @@ internal open class UserDatabaseRepositoryTest {
             val result = repository.store(event)
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             assertThat(repository.getById(userId))
                 .isRight()
@@ -181,7 +181,7 @@ internal open class UserDatabaseRepositoryTest {
 
             // then
             assertThat(result)
-                .isSome()
+                .isLeft()
                 .isEqualTo(
                     Error.VersionConflict(
                         "Previous version of user UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) is 2, " +

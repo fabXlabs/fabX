@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -27,26 +26,13 @@ class RemovingWebauthnIdentity(
         correlationId: CorrelationId,
         userId: UserId,
         credentialId: ByteArray
-    ): Option<Error> {
-        log.debug("removeWebauthnIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.removeWebauthnIdentity(
-                    actor,
-                    clock,
-                    correlationId,
-                    credentialId
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...removeWebauthnIdentity done") }
-            .onSome { log.error("...removeWebauthnIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "removeWebauthnIdentity") {
+            it.removeWebauthnIdentity(
+                actor,
+                clock,
+                correlationId,
+                credentialId
+            )
+        }
 }

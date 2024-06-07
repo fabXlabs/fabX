@@ -31,9 +31,8 @@ class GettingTool(
         actor: Actor,
         correlationId: CorrelationId,
         toolId: ToolId
-    ): Either<Error, Tool> {
-        log.debug("getById (actor: $actor, correlationId: $correlationId)...")
-
-        return toolRepository.getById(toolId)
-    }
+    ): Either<Error, Tool> =
+        log.logError(actor, correlationId, "getById") {
+            toolRepository.getById(toolId)
+        }
 }

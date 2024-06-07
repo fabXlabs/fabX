@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.tool.model
 
 import arrow.core.Either
-import arrow.core.Option
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
@@ -9,7 +8,7 @@ import cloud.fabX.fabXaccess.common.model.ToolId
 interface ToolRepository : GettingToolById {
     suspend fun getAll(): Set<Tool>
     suspend fun getById(id: ToolId): Either<Error, Tool>
-    suspend fun store(event: ToolSourcingEvent): Option<Error>
+    suspend fun store(event: ToolSourcingEvent): Either<Error, Unit>
 
     override suspend fun getToolById(id: ToolId): Either<Error, Tool> = getById(id)
 }

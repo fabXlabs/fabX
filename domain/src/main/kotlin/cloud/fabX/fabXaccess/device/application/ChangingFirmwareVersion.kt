@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
 import arrow.core.Either
-import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
@@ -26,44 +25,22 @@ class ChangingFirmwareVersion(
         correlationId: CorrelationId,
         deviceId: DeviceId,
         actualFirmwareVersion: String
-    ): Either<Error, Unit> {
-        log.debug("setActualFirmwareVersion...")
-
-        return deviceRepository.getById(deviceId)
-            .flatMap {
-                it.setActualFirmwareVersion(
-                    actor, clock, correlationId, actualFirmwareVersion
-                )
-            }
-            .flatMap {
-                deviceRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .onRight { log.debug("...setActualFirmwareVersion done") }
-            .onLeft { log.error("...setActualFirmwareVersion error: $it") }
-    }
+    ): Either<Error, Unit> =
+        deviceRepository.getAndStoreFlatMap(deviceId, actor, correlationId, log, "setActualFirmwareVersion") {
+            it.setActualFirmwareVersion(
+                actor, clock, correlationId, actualFirmwareVersion
+            )
+        }
 
     suspend fun changeDesiredFirmwareVersion(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId,
         desireFirmwareVersion: String
-    ): Either<Error, Unit> {
-        log.debug("changeDesiredFirmwareVersion...")
-
-        return deviceRepository.getById(deviceId)
-            .map {
-                it.changeDesiredFirmwareVersion(
-                    actor, clock, correlationId, desireFirmwareVersion
-                )
-            }
-            .flatMap {
-                deviceRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .onRight { log.debug("...changeDesiredFirmwareVersion done") }
-            .onLeft { log.error("...changeDesiredFirmwareVersion error: $it") }
-    }
+    ): Either<Error, Unit> =
+        deviceRepository.getAndStoreMap(deviceId, actor, correlationId, log, "changeDesiredFirmwareVersion") {
+            it.changeDesiredFirmwareVersion(
+                actor, clock, correlationId, desireFirmwareVersion
+            )
+        }
 }

@@ -21,12 +21,9 @@ class RestartingDevice(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId
-    ): Either<Error, Unit> {
-        log.debug("restartDevice (actor: $actor, correlationId: $correlationId)...")
-
-        return deviceRepository.getById(deviceId)
-            .flatMap { restartDevice.restartDevice(deviceId, correlationId) }
-            .onRight { log.debug("...restartDevice done") }
-            .onLeft { log.error("...restartDevice error: $it") }
-    }
+    ): Either<Error, Unit> =
+        log.logError(actor, correlationId, "restartDevice") {
+            deviceRepository.getById(deviceId)
+                .flatMap { restartDevice.restartDevice(deviceId, correlationId) }
+        }
 }

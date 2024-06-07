@@ -113,8 +113,6 @@ class ToolController(
                                                 )
                                             }
                                         )
-                                            .toEither { }
-                                            .swap()
                                     }
                             )
                         }
@@ -133,8 +131,6 @@ class ToolController(
                                         newCorrelationId(),
                                         id
                                     )
-                                        .toEither { }
-                                        .swap()
                                 }
                         )
                     }

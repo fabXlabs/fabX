@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.device.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -82,7 +82,7 @@ internal class DeviceControllerPutTest {
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
                 eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValueString("https://backup.example.com/new"))
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().put("/api/v1/device/${id.serialize()}") {

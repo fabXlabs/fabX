@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.device.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -73,7 +71,7 @@ class ChangingFirmwareVersionTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.setActualFirmwareVersion(
@@ -158,7 +156,7 @@ class ChangingFirmwareVersionTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.setActualFirmwareVersion(
@@ -194,7 +192,7 @@ class ChangingFirmwareVersionTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.changeDesiredFirmwareVersion(
@@ -254,7 +252,7 @@ class ChangingFirmwareVersionTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changeDesiredFirmwareVersion(

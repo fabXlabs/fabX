@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
 import assertk.assertThat
@@ -15,8 +14,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdentityFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentityRemoved
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -79,7 +78,7 @@ internal class RemovingWebauthnIdentityTest {
                 .thenReturn(user.right())
 
             whenever(userRepository.store(expectedSourcingEvent))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.removeWebauthnIdentity(
@@ -90,7 +89,9 @@ internal class RemovingWebauthnIdentityTest {
             )
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             val inOrder = inOrder(userRepository)
             inOrder.verify(userRepository).getById(userId)
@@ -115,7 +116,7 @@ internal class RemovingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -146,7 +147,7 @@ internal class RemovingWebauthnIdentityTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(
                 Error.UserIdentityNotFound(
                     "Not able to find identity with credentialId \"05060708\".",

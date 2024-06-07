@@ -1,8 +1,8 @@
 package cloud.fabX.fabXaccess.user.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
-import arrow.core.some
+import arrow.core.left
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -120,7 +120,7 @@ internal class UserControllerChangeLockStateTest {
                 eq(locked),
                 eq(notes)
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().put("/api/v1/user/${id.serialize()}/lock") {
@@ -235,7 +235,7 @@ internal class UserControllerChangeLockStateTest {
                     eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs),
                     eq(cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs)
                 )
-            ).thenReturn(error.some())
+            ).thenReturn(error.left())
 
             // when
             val response = c().put("/api/v1/user/${id.serialize()}/lock") {

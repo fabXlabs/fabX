@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.user.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -19,8 +17,8 @@ import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserLockStateChanged
 import cloud.fabX.fabXaccess.user.model.UserPersonalInformationChanged
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -89,7 +87,7 @@ internal class ChangingUserTest {
                 .thenReturn(Error.UserNotFoundByWikiName("").left())
 
             whenever(userRepository.store(expectedSourcingEvent))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.changePersonalInformation(
@@ -102,10 +100,13 @@ internal class ChangingUserTest {
             )
 
             // then
-            assertThat(result).isNone()
+            assertThat(result)
+                .isRight()
+                .isEqualTo(Unit)
 
             val inOrder = inOrder(logger, userRepository)
-            inOrder.verify(logger).debug("changePersonalInformation...")
+            inOrder.verify(logger)
+                .debug("changePersonalInformation (actor: $adminActor, correlationId: $correlationId)...")
             inOrder.verify(userRepository).getById(userId)
             inOrder.verify(userRepository).store(expectedSourcingEvent)
             inOrder.verify(logger).debug("...changePersonalInformation done")
@@ -131,7 +132,7 @@ internal class ChangingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -164,7 +165,7 @@ internal class ChangingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(expectedDomainError)
     }
 
@@ -190,7 +191,7 @@ internal class ChangingUserTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changePersonalInformation(
@@ -204,7 +205,7 @@ internal class ChangingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -230,7 +231,7 @@ internal class ChangingUserTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(eq(expectedSourcingEvent)))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.changeLockState(
@@ -242,10 +243,12 @@ internal class ChangingUserTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
 
         val inOrder = inOrder(logger, userRepository)
-        inOrder.verify(logger).debug("changeLockState...")
+        inOrder.verify(logger).debug("changeLockState (actor: $adminActor, correlationId: $correlationId)...")
         inOrder.verify(userRepository).getById(userId)
         inOrder.verify(userRepository).store(eq(expectedSourcingEvent))
         inOrder.verify(logger).debug("...changeLockState done")
@@ -270,7 +273,7 @@ internal class ChangingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -295,7 +298,7 @@ internal class ChangingUserTest {
             .thenReturn(user.right())
 
         whenever(userRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changeLockState(
@@ -308,7 +311,7 @@ internal class ChangingUserTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

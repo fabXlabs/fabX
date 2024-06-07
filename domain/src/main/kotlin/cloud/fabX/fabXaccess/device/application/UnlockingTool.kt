@@ -35,25 +35,22 @@ class UnlockingTool(
         correlationId: CorrelationId,
         deviceId: DeviceId,
         toolId: ToolId
-    ): Either<Error, Unit> {
-        log.debug("unlockTool (actor: $actor, correlationId: $correlationId)...")
-
-        return deviceRepository.getById(deviceId)
-            .flatMap { requireToolAttachedToDevice(it, toolId, correlationId) }
-            .flatMap { toolRepository.getToolById(toolId) }
-            .flatMap { tool -> requireToolTypeUnlock(tool, correlationId).map { tool } }
-            .flatMap { tool -> unlockingToolAtDevice.unlockTool(deviceId, toolId, correlationId).map { tool } }
-            .map {
-                toolUsageCounter.increment(it.id, {
-                    mapOf(
-                        "toolId" to it.id.serialize(),
-                        "toolName" to it.name
-                    )
-                })
-            }
-            .onRight { log.debug("...unlockTool done") }
-            .onLeft { log.error("...unlockTool error: $it") }
-    }
+    ): Either<Error, Unit> =
+        log.logError(actor, correlationId, "unlockTool") {
+            deviceRepository.getById(deviceId)
+                .flatMap { requireToolAttachedToDevice(it, toolId, correlationId) }
+                .flatMap { toolRepository.getToolById(toolId) }
+                .flatMap { tool -> requireToolTypeUnlock(tool, correlationId).map { tool } }
+                .flatMap { tool -> unlockingToolAtDevice.unlockTool(deviceId, toolId, correlationId).map { tool } }
+                .map {
+                    toolUsageCounter.increment(it.id, {
+                        mapOf(
+                            "toolId" to it.id.serialize(),
+                            "toolName" to it.name
+                        )
+                    })
+                }
+        }
 
     private fun requireToolAttachedToDevice(
         device: Device,

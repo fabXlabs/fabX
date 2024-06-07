@@ -1,11 +1,9 @@
 package cloud.fabX.fabXaccess.qualification.infrastructure
 
 import arrow.core.Either
-import arrow.core.None
-import arrow.core.Option
-import arrow.core.Some
 import arrow.core.getOrElse
 import arrow.core.left
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
@@ -81,19 +79,18 @@ open class QualificationDatabaseRepository(private val db: Database) : Qualifica
         }
     }
 
-    override suspend fun store(event: QualificationSourcingEvent): Option<Error> {
+    override suspend fun store(event: QualificationSourcingEvent): Either<Error, Unit> {
         return transaction {
             val previousVersion = getVersionById(event.aggregateRootId)
 
             if (previousVersion != null
                 && event.aggregateVersion != previousVersion + 1
             ) {
-                Some(
-                    Error.VersionConflict(
-                        "Previous version of qualification ${event.aggregateRootId} is $previousVersion, " +
-                                "desired new version is ${event.aggregateVersion}."
-                    )
+                Error.VersionConflict(
+                    "Previous version of qualification ${event.aggregateRootId} is $previousVersion, " +
+                            "desired new version is ${event.aggregateVersion}."
                 )
+                    .left()
             } else {
                 QualificationSourcingEventDAO.insert {
                     it[aggregateRootId] = event.aggregateRootId.value
@@ -104,7 +101,7 @@ open class QualificationDatabaseRepository(private val db: Database) : Qualifica
                     it[data] = event
                 }
 
-                None
+                Unit.right()
             }
         }
     }

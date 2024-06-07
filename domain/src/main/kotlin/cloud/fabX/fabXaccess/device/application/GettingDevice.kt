@@ -41,35 +41,32 @@ class GettingDevice(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId
-    ): Either<Error, Device> {
-        log.debug("getById (actor: $actor, correlationId: $correlationId)...")
-
-        return deviceRepository.getById(deviceId)
-    }
+    ): Either<Error, Device> =
+        log.logError(actor, correlationId, "getById") {
+            deviceRepository.getById(deviceId)
+        }
 
     suspend fun getMe(
         actor: DeviceActor,
         correlationId: CorrelationId
-    ): Either<Error, Device> {
-        log.debug("getMe (actor: $actor, correlationId: $correlationId)...")
-
-        return deviceRepository.getById(actor.deviceId)
-    }
+    ): Either<Error, Device> =
+        log.logError(actor, correlationId, "getMe") {
+            deviceRepository.getById(actor.deviceId)
+        }
 
     suspend fun getThumbnail(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId
-    ): Either<Error, ByteArray> {
-        log.debug("getThumbnail (actor: $actor, correlationId: $correlationId)...")
-
-        return deviceRepository.getById(deviceId)
-            .map { device ->
-                device.getThumbnail(
-                    actor,
-                    correlationId,
-                    deviceRepository.getThumbnail(deviceId)
-                )
-            }
-    }
+    ): Either<Error, ByteArray> =
+        log.logError(actor, correlationId, "getThumbnail") {
+            deviceRepository.getById(deviceId)
+                .map { device ->
+                    device.getThumbnail(
+                        actor,
+                        correlationId,
+                        deviceRepository.getThumbnail(deviceId)
+                    )
+                }
+        }
 }

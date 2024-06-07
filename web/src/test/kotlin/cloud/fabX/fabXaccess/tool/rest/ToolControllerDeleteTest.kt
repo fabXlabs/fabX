@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.tool.rest
 
-import arrow.core.None
 import arrow.core.getOrElse
+import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEmpty
 import assertk.assertions.isEqualTo
@@ -69,7 +69,7 @@ internal class ToolControllerDeleteTest {
                 any(),
                 eq(toolId)
             )
-        ).thenReturn(None)
+        ).thenReturn(Unit.right())
 
         // when
         val response = c().delete("/api/v1/tool/${toolId.serialize()}") {

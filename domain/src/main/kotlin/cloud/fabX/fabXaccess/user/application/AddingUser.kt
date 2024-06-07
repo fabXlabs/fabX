@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.UserIdFactory
+import cloud.fabX.fabXaccess.tool.application.logError
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.User
@@ -32,26 +33,22 @@ class AddingUser(
         firstName: String,
         lastName: String,
         wikiName: String
-    ): Either<Error, UserId> {
-        log.debug("addUser...")
-
-        return User
-            .addNew(
-                userIdFactory,
-                actor,
-                clock,
-                correlationId,
-                firstName,
-                lastName,
-                wikiName,
-                gettingUserByWikiName
-            )
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { it.aggregateRootId }
-                    .swap()
-            }
-            .onRight { log.debug("...addUser done") }
-            .onLeft { log.error("...addUser error: $it") }
-    }
+    ): Either<Error, UserId> =
+        log.logError(actor, correlationId, "addUser") {
+            User
+                .addNew(
+                    userIdFactory,
+                    actor,
+                    clock,
+                    correlationId,
+                    firstName,
+                    lastName,
+                    wikiName,
+                    gettingUserByWikiName
+                )
+                .flatMap { sourcingEvent ->
+                    userRepository.store(sourcingEvent)
+                        .map { sourcingEvent.aggregateRootId }
+                }
+        }
 }

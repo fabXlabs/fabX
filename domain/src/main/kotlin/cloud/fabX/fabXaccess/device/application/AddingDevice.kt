@@ -47,8 +47,6 @@ class AddingDevice(
         ).flatMap { sourcingEvent ->
             deviceRepository
                 .store(sourcingEvent)
-                .toEither { }
-                .swap()
                 .map { sourcingEvent.aggregateRootId }
         }
             .onRight { log.debug("...addDevice done") }

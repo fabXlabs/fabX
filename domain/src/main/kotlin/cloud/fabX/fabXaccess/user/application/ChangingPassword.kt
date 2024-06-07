@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
 import arrow.core.Either
-import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -26,24 +25,13 @@ class ChangingPassword(
         correlationId: CorrelationId,
         userId: UserId,
         hash: String
-    ): Either<Error, Unit> {
-        log.debug("changeOwnPassword...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.changePassword(
-                    actor,
-                    clock,
-                    correlationId,
-                    hash
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .onRight { log.debug("...changeOwnPassword done") }
-            .onLeft { log.error("...changeOwnPassword error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "changeOwnPassword") {
+            it.changePassword(
+                actor,
+                clock,
+                correlationId,
+                hash
+            )
+        }
 }

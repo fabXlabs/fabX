@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.QualificationIdFactory
+import cloud.fabX.fabXaccess.device.application.logError
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
@@ -29,26 +30,21 @@ class AddingQualification(
         description: String,
         colour: String,
         orderNr: Int
-    ): Either<Error, QualificationId> {
-        log.debug("addQualification...")
+    ): Either<Error, QualificationId> =
+        log.logError(actor, correlationId, "addQualification") {
+            val sourcingEvent = Qualification.addNew(
+                qualificationIdFactory,
+                actor,
+                clock,
+                correlationId,
+                name,
+                description,
+                colour,
+                orderNr
+            )
 
-        val sourcingEvent = Qualification.addNew(
-            qualificationIdFactory,
-            actor,
-            clock,
-            correlationId,
-            name,
-            description,
-            colour,
-            orderNr
-        )
-
-        return qualificationRepository
-            .store(sourcingEvent)
-            .toEither { }
-            .swap()
-            .map { sourcingEvent.aggregateRootId }
-            .onRight { log.debug("...addQualification done") }
-            .onLeft { log.error("...addQualification error: $it") }
-    }
+            qualificationRepository
+                .store(sourcingEvent)
+                .map { sourcingEvent.aggregateRootId }
+        }
 }

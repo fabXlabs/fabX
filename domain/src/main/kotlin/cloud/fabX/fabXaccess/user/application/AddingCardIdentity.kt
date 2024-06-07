@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -30,28 +29,15 @@ class AddingCardIdentity(
         userId: UserId,
         cardId: String,
         cardSecret: String
-    ): Option<Error> {
-        log.debug("addCardIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.addCardIdentity(
-                    actor,
-                    clock,
-                    correlationId,
-                    cardId,
-                    cardSecret,
-                    gettingUserByCardId
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...addCardIdentity done") }
-            .onSome { log.error("...addCardIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "addCardIdentity") {
+            it.addCardIdentity(
+                actor,
+                clock,
+                correlationId,
+                cardId,
+                cardSecret,
+                gettingUserByCardId
+            )
+        }
 }

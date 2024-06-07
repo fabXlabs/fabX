@@ -10,6 +10,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.tool.application.logError
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 
@@ -26,26 +27,23 @@ class GettingAuthorizedTools(
     suspend fun getAuthorizedTools(
         actor: DeviceActor,
         correlationId: CorrelationId
-    ): Either<Error, Set<Tool>> {
-        log.debug("getAuthorizedTools (actor: $actor, correlationId: $correlationId)...")
-
-        return actor.onBehalfOf.toOption()
-            .toEither { Error.NotAuthenticated("Required authentication not found.", correlationId) }
-            .map { it.qualifications }
-            .flatMap { memberQualifications ->
-                deviceRepository.getById(actor.deviceId)
-                    .map { it.attachedTools.values }
-                    .flatMap { attachedToolIds ->
-                        attachedToolIds.map { toolId -> toolRepository.getById(toolId) }
-                            .let { eithers -> either { eithers.bindAll() } }
-                            .map { tools ->
-                                tools.filter { it.enabled }
-                                    .filter { memberQualifications.containsAll(it.requiredQualifications) }
-                                    .toSet()
-                            }
-                    }
-            }
-            .onRight { log.debug("...getAuthorizedTools done") }
-            .onLeft { log.error("...getAuthorizedTools error: $it") }
-    }
+    ): Either<Error, Set<Tool>> =
+        log.logError(actor, correlationId, "getAuthorizedTools") {
+            actor.onBehalfOf.toOption()
+                .toEither { Error.NotAuthenticated("Required authentication not found.", correlationId) }
+                .map { it.qualifications }
+                .flatMap { memberQualifications ->
+                    deviceRepository.getById(actor.deviceId)
+                        .map { it.attachedTools.values }
+                        .flatMap { attachedToolIds ->
+                            attachedToolIds.map { toolId -> toolRepository.getById(toolId) }
+                                .let { eithers -> either { eithers.bindAll() } }
+                                .map { tools ->
+                                    tools.filter { it.enabled }
+                                        .filter { memberQualifications.containsAll(it.requiredQualifications) }
+                                        .toSet()
+                                }
+                        }
+                }
+        }
 }

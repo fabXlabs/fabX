@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.user.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
@@ -26,25 +25,12 @@ class RemovingPinIdentity(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId
-    ): Option<Error> {
-        log.debug("removePinIdentity...")
-
-        return userRepository.getById(userId)
-            .flatMap {
-                it.removePinIdentity(
-                    actor,
-                    clock,
-                    correlationId
-                )
-            }
-            .flatMap {
-                userRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...removePinIdentity done") }
-            .onSome { log.error("...removePinIdentity error: $it") }
-    }
+    ): Either<Error, Unit> =
+        userRepository.getAndStoreFlatMap(userId, actor, correlationId, log, "removePinIdentity") {
+            it.removePinIdentity(
+                actor,
+                clock,
+                correlationId
+            )
+        }
 }

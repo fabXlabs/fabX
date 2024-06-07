@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.device.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
 import assertk.all
@@ -60,7 +59,8 @@ internal class GettingConfigurationTest {
         this.toolRepository = gettingToolById
         this.gettingConfigurationCounter = gettingConfigurationCounter
 
-        testee = GettingConfiguration({ logger }, deviceRepository, gettingToolById, gettingConfigurationCounter, fixedClock)
+        testee =
+            GettingConfiguration({ logger }, deviceRepository, gettingToolById, gettingConfigurationCounter, fixedClock)
     }
 
     @Nested
@@ -159,7 +159,7 @@ internal class GettingConfigurationTest {
             )
 
             whenever(deviceRepository.store(expectedEvent))
-                .thenReturn(None)
+                .thenReturn(Unit.right())
 
             // when
             val result = testee.getConfiguration(

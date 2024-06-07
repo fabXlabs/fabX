@@ -1,10 +1,8 @@
 package cloud.fabX.fabXaccess.device.application
 
 import FixedClock
-import arrow.core.None
 import arrow.core.left
 import arrow.core.right
-import arrow.core.some
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -17,8 +15,8 @@ import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.AdminFixture
-import isNone
-import isSome
+import isLeft
+import isRight
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.BeforeEach
@@ -78,7 +76,7 @@ internal class ChangingDeviceTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(expectedSourcingEvent))
-            .thenReturn(None)
+            .thenReturn(Unit.right())
 
         // when
         val result = testee.changeDeviceDetails(
@@ -91,7 +89,9 @@ internal class ChangingDeviceTest {
         )
 
         // then
-        assertThat(result).isNone()
+        assertThat(result)
+            .isRight()
+            .isEqualTo(Unit)
     }
 
     @Test
@@ -114,7 +114,7 @@ internal class ChangingDeviceTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 
@@ -140,7 +140,7 @@ internal class ChangingDeviceTest {
             .thenReturn(device.right())
 
         whenever(deviceRepository.store(event))
-            .thenReturn(error.some())
+            .thenReturn(error.left())
 
         // when
         val result = testee.changeDeviceDetails(
@@ -154,7 +154,7 @@ internal class ChangingDeviceTest {
 
         // then
         assertThat(result)
-            .isSome()
+            .isLeft()
             .isEqualTo(error)
     }
 }

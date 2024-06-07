@@ -33,18 +33,16 @@ class GettingUser(
         actor: Admin,
         correlationId: CorrelationId,
         userId: UserId
-    ): Either<Error, User> {
-        log.debug("getById (actor: $actor, correlationId: $correlationId)...")
-
-        return userRepository.getById(userId)
-    }
+    ): Either<Error, User> =
+        log.logError(actor, correlationId, "getById") {
+            userRepository.getById(userId)
+        }
 
     suspend fun getMe(
         actor: Member,
         correlationId: CorrelationId
-    ): Either<Error, User> {
-        log.debug("getMe (actor: $actor, correlationId: $correlationId)...")
-
-        return userRepository.getById(actor.userId)
-    }
+    ): Either<Error, User> =
+        log.logError(actor, correlationId, "getMe") {
+            userRepository.getById(actor.userId)
+        }
 }

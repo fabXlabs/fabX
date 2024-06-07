@@ -1,7 +1,6 @@
 package cloud.fabX.fabXaccess.tool.application
 
-import arrow.core.Option
-import arrow.core.flatMap
+import arrow.core.Either
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -39,35 +38,22 @@ class ChangingTool(
         notes: ChangeableValue<String?>,
         wikiLink: ChangeableValue<String>,
         requiredQualifications: ChangeableValue<Set<QualificationId>>
-    ): Option<Error> {
-        log.debug("changeToolDetails...")
-
-        return toolRepository.getById(toolId)
-            .flatMap {
-                it.changeDetails(
-                    actor,
-                    clock,
-                    correlationId,
-                    name,
-                    type,
-                    requires2FA,
-                    time,
-                    idleState,
-                    enabled,
-                    notes,
-                    wikiLink,
-                    requiredQualifications,
-                    gettingQualificationById
-                )
-            }
-            .flatMap {
-                toolRepository.store(it)
-                    .toEither { }
-                    .swap()
-            }
-            .swap()
-            .getOrNone()
-            .onNone { log.debug("...changeToolDetails done") }
-            .onSome { log.error("...changeToolDetails error: $it") }
-    }
+    ): Either<Error, Unit> =
+        toolRepository.getAndStoreFlatMap(toolId, actor, correlationId, log, "changingToolDetails") {
+            it.changeDetails(
+                actor,
+                clock,
+                correlationId,
+                name,
+                type,
+                requires2FA,
+                time,
+                idleState,
+                enabled,
+                notes,
+                wikiLink,
+                requiredQualifications,
+                gettingQualificationById
+            )
+        }
 }
