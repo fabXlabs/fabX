@@ -1,20 +1,20 @@
 package cloud.fabX.fabXaccess.user.rest
 
-import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readHexStringParameter
-import cloud.fabX.fabXaccess.common.rest.readInstructorAuthentication
-import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readStringParameter
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.requireStringQueryParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toByteArray
 import cloud.fabX.fabXaccess.common.rest.toDomain
+import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
+import cloud.fabX.fabXaccess.common.rest.withInstructorAuthRespond
+import cloud.fabX.fabXaccess.common.rest.withMemberAuthRespond
 import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
 import cloud.fabX.fabXaccess.user.application.AddingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.AddingMemberQualification
@@ -38,6 +38,7 @@ import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -45,6 +46,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import io.ktor.util.pipeline.PipelineContext
 
 class UserController(
     private val gettingUser: GettingUser,
@@ -89,502 +91,381 @@ class UserController(
             }
 
             get("/{id}") {
-                readUUIDParameter("id")
-                    ?.let { UserId(it) }
-                    ?.let { id ->
-                        call.respondWithErrorHandler(
-                            readAdminAuthentication()
-                                .flatMap { admin ->
-                                    gettingUser
-                                        .getById(
-                                            admin,
-                                            newCorrelationId(),
-                                            id
-                                        )
-                                        .map { it.toRestModel() }
-                                }
-                        )
+                readId { id ->
+                    withAdminAuthRespond { admin ->
+                        gettingUser
+                            .getById(
+                                admin,
+                                newCorrelationId(),
+                                id
+                            )
+                            .map { it.toRestModel() }
                     }
+                }
             }
 
             get("/me") {
-                call.respondWithErrorHandler(
-                    readMemberAuthentication()
-                        .flatMap { member ->
-                            gettingUser.getMe(member, newCorrelationId())
-                                .map { it.toRestModel() }
-                        }
-                )
+                withMemberAuthRespond { member ->
+                    gettingUser.getMe(member, newCorrelationId())
+                        .map { it.toRestModel() }
+                }
             }
 
             get("/id-by-wiki-name") {
                 requireStringQueryParameter("wikiName")?.let {
-                    call.respondWithErrorHandler(
-                        readInstructorAuthentication()
-                            .flatMap { instructor ->
-                                gettingUserIdByWikiName.getUserIdByWikiName(
-                                    instructor,
-                                    newCorrelationId(),
-                                    it
-                                )
-                            }
+                    withInstructorAuthRespond { instructor ->
+                        gettingUserIdByWikiName
+                            .getUserIdByWikiName(
+                                instructor,
+                                newCorrelationId(),
+                                it
+                            )
                             .map { it.serialize() }
-                    )
+                    }
                 }
             }
 
             post("") {
                 readBody<UserCreationDetails>()?.let {
-                    call.respondWithErrorHandler(
-                        readAdminAuthentication()
-                            .flatMap { admin ->
-                                addingUser.addUser(
-                                    admin,
-                                    newCorrelationId(),
-                                    it.firstName,
-                                    it.lastName,
-                                    it.wikiName
-                                )
-                            }
+                    withAdminAuthRespond { admin ->
+                        addingUser
+                            .addUser(
+                                admin,
+                                newCorrelationId(),
+                                it.firstName,
+                                it.lastName,
+                                it.wikiName
+                            )
                             .map { it.serialize() }
-                    )
+                    }
                 }
             }
 
             put("/{id}") {
                 readBody<UserDetails>()?.let {
-                    readUUIDParameter("id")
-                        ?.let { UserId(it) }
-                        ?.let { id ->
-                            call.respondWithErrorHandler(
-                                readAdminAuthentication()
-                                    .flatMap { admin ->
-                                        changingUser.changePersonalInformation(
-                                            admin,
-                                            newCorrelationId(),
-                                            id,
-                                            it.firstName.toDomain(),
-                                            it.lastName.toDomain(),
-                                            it.wikiName.toDomain(),
-                                        )
-                                    }
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            changingUser.changePersonalInformation(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                it.firstName.toDomain(),
+                                it.lastName.toDomain(),
+                                it.wikiName.toDomain(),
                             )
                         }
+                    }
                 }
             }
 
             put("/{id}/lock") {
                 readBody<UserLockDetails>()?.let {
-                    readUUIDParameter("id")
-                        ?.let { UserId(it) }
-                        ?.let { id ->
-                            call.respondWithErrorHandler(
-                                readAdminAuthentication()
-                                    .flatMap { admin ->
-                                        changingUser.changeLockState(
-                                            admin,
-                                            newCorrelationId(),
-                                            id,
-                                            it.locked.toDomain(),
-                                            it.notes.toDomain()
-                                        )
-                                    }
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            changingUser.changeLockState(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                it.locked.toDomain(),
+                                it.notes.toDomain()
                             )
                         }
+                    }
                 }
             }
 
             delete("/{id}") {
-                readUUIDParameter("id")
-                    ?.let { UserId(it) }
-                    ?.let { id ->
-                        call.respondWithErrorHandler(
-                            readAdminAuthentication()
-                                .flatMap { admin ->
-                                    deletingUser.deleteUser(
-                                        admin,
-                                        newCorrelationId(),
-                                        id
-                                    )
-                                }
+                readId { id ->
+                    withAdminAuthRespond { admin ->
+                        deletingUser.deleteUser(
+                            admin,
+                            newCorrelationId(),
+                            id
                         )
                     }
+                }
             }
 
             put("/{id}/is-admin") {
-                readBody<IsAdminDetails>()
-                    ?.let {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                call.respondWithErrorHandler(
-                                    readAdminAuthentication()
-                                        .flatMap { admin ->
-                                            changingIsAdmin.changeIsAdmin(
-                                                admin,
-                                                newCorrelationId(),
-                                                id,
-                                                it.isAdmin
-                                            )
-                                        }
-                                )
-                            }
+                readBody<IsAdminDetails>()?.let {
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            changingIsAdmin.changeIsAdmin(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                it.isAdmin
+                            )
+                        }
                     }
+                }
             }
 
             route("/{id}/instructor-qualification") {
                 post("") {
-                    readBody<QualificationAdditionDetails>()
-                        ?.let {
-                            readUUIDParameter("id")
-                                ?.let { UserId(it) }
-                                ?.let { id ->
-                                    call.respondWithErrorHandler(
-                                        readAdminAuthentication()
-                                            .flatMap { admin ->
-                                                addingInstructorQualification.addInstructorQualification(
-                                                    admin,
-                                                    newCorrelationId(),
-                                                    id,
-                                                    QualificationId.fromString(it.qualificationId)
-                                                )
-                                            }
-                                    )
-                                }
+                    readBody<QualificationAdditionDetails>()?.let {
+                        readId { id ->
+                            withAdminAuthRespond { admin ->
+                                addingInstructorQualification.addInstructorQualification(
+                                    admin,
+                                    newCorrelationId(),
+                                    id,
+                                    QualificationId.fromString(it.qualificationId)
+                                )
+                            }
                         }
+                    }
                 }
 
                 delete("/{qualificationId}") {
-                    readUUIDParameter("id")
-                        ?.let { UserId(it) }
-                        ?.let { id ->
-                            readUUIDParameter("qualificationId")
-                                ?.let { QualificationId(it) }
-                                ?.let { qualificationId ->
-                                    call.respondWithErrorHandler(
-                                        readAdminAuthentication()
-                                            .flatMap { admin ->
-                                                removingInstructorQualification.removeInstructorQualification(
-                                                    admin,
-                                                    newCorrelationId(),
-                                                    id,
-                                                    qualificationId
-                                                )
-                                            }
+                    readId { id ->
+                        readUUIDParameter("qualificationId")
+                            ?.let { QualificationId(it) }
+                            ?.let { qualificationId ->
+                                withAdminAuthRespond { admin ->
+                                    removingInstructorQualification.removeInstructorQualification(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        qualificationId
                                     )
                                 }
-                        }
+                            }
+                    }
                 }
             }
 
             route("/{id}/member-qualification") {
                 post("") {
-                    readBody<QualificationAdditionDetails>()
-                        ?.let {
-                            readUUIDParameter("id")
-                                ?.let { UserId(it) }
-                                ?.let { id ->
-                                    call.respondWithErrorHandler(
-                                        readInstructorAuthentication()
-                                            .flatMap { instructor ->
-                                                addingMemberQualification.addMemberQualification(
-                                                    instructor,
-                                                    newCorrelationId(),
-                                                    id,
-                                                    QualificationId.fromString(it.qualificationId)
-                                                )
-                                            }
-                                    )
-                                }
+                    readBody<QualificationAdditionDetails>()?.let {
+                        readId { id ->
+                            withInstructorAuthRespond { instructor ->
+                                addingMemberQualification.addMemberQualification(
+                                    instructor,
+                                    newCorrelationId(),
+                                    id,
+                                    QualificationId.fromString(it.qualificationId)
+                                )
+                            }
                         }
+                    }
                 }
 
                 delete("/{qualificationId}") {
-                    readUUIDParameter("id")
-                        ?.let { UserId(it) }
-                        ?.let { id ->
-                            readUUIDParameter("qualificationId")
-                                ?.let { QualificationId(it) }
-                                ?.let { qualificationId ->
-                                    call.respondWithErrorHandler(
-                                        readAdminAuthentication()
-                                            .flatMap { admin ->
-                                                removingMemberQualification.removeMemberQualification(
-                                                    admin,
-                                                    newCorrelationId(),
-                                                    id,
-                                                    qualificationId
-                                                )
-                                            }
+                    readId { id ->
+                        readUUIDParameter("qualificationId")
+                            ?.let { QualificationId(it) }
+                            ?.let { qualificationId ->
+                                withAdminAuthRespond { admin ->
+                                    removingMemberQualification.removeMemberQualification(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        qualificationId
                                     )
                                 }
-                        }
+                            }
+                    }
                 }
             }
 
             route("/{id}/identity") {
                 route("/username-password") {
                     post("") {
-                        readBody<UsernamePasswordIdentityAdditionDetails>()
-                            ?.let {
-                                readUUIDParameter("id")
-                                    ?.let { UserId(it) }
-                                    ?.let { id ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    addingUsernamePasswordIdentity.addUsernamePasswordIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        it.username,
-                                                        hash(it.password)
-                                                    )
-                                                }
-                                        )
-                                    }
+                        readBody<UsernamePasswordIdentityAdditionDetails>()?.let {
+                            readId { id ->
+                                withAdminAuthRespond { admin ->
+                                    addingUsernamePasswordIdentity.addUsernamePasswordIdentity(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        it.username,
+                                        hash(it.password)
+                                    )
+                                }
                             }
+                        }
                     }
 
                     post("/change-password") {
-                        readBody<PasswordChangeDetails>()
-                            ?.let {
-                                readUUIDParameter("id")
-                                    ?.let { UserId(it) }
-                                    ?.let { id ->
-                                        call.respondWithErrorHandler(
-                                            readMemberAuthentication()
-                                                .flatMap { member ->
-                                                    changingPassword.changeOwnPassword(
-                                                        member,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        hash(it.password)
-                                                    )
-                                                }
-                                        )
-                                    }
+                        readBody<PasswordChangeDetails>()?.let {
+                            readId { id ->
+                                withMemberAuthRespond { member ->
+                                    changingPassword.changeOwnPassword(
+                                        member,
+                                        newCorrelationId(),
+                                        id,
+                                        hash(it.password)
+                                    )
+                                }
                             }
+                        }
                     }
 
                     delete("/{username}") {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                readStringParameter("username")
-                                    ?.let { username ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    removingUsernamePasswordIdentity.removeUsernamePasswordIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        username
-                                                    )
-                                                }
+                        readId { id ->
+                            readStringParameter("username")
+                                ?.let { username ->
+                                    withAdminAuthRespond { admin ->
+                                        removingUsernamePasswordIdentity.removeUsernamePasswordIdentity(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            username
                                         )
                                     }
-                            }
+                                }
+                        }
                     }
                 }
 
                 route("/webauthn") {
                     post("/register") {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                call.respondWithErrorHandler(
-                                    readMemberAuthentication()
-                                        .flatMap { member ->
-                                            webauthnService.getNewChallenge(id)
-                                                .map { challenge ->
-                                                    WebauthnRegistrationDetails(
-                                                        "direct",
-                                                        challenge,
-                                                        webauthnService.rpId,
-                                                        webauthnService.rpName,
-                                                        member.userId.value.toByteArray(),
-                                                        member.name,
-                                                        member.name,
-                                                        webauthnService.pubKeyCredParams.map {
-                                                            PubKeyCredParamEntry(it.type.value, it.alg.value)
-                                                        }
-                                                    )
-                                                }
-                                        }
-                                )
+                        readId { id ->
+                            withAdminAuthRespond { member ->
+                                webauthnService.getNewChallenge(id)
+                                    .map { challenge ->
+                                        WebauthnRegistrationDetails(
+                                            "direct",
+                                            challenge,
+                                            webauthnService.rpId,
+                                            webauthnService.rpName,
+                                            member.userId.value.toByteArray(),
+                                            member.name,
+                                            member.name,
+                                            webauthnService.pubKeyCredParams.map {
+                                                PubKeyCredParamEntry(it.type.value, it.alg.value)
+                                            }
+                                        )
+                                    }
                             }
+                        }
                     }
                     post("/response") {
-                        readBody<WebauthnIdentityAdditionDetails>()
-                            ?.let {
-                                readUUIDParameter("id")
-                                    ?.let { UserId(it) }
-                                    ?.let { id ->
-                                        call.respondWithErrorHandler(
-                                            readMemberAuthentication()
-                                                .flatMap { member ->
-                                                    addingWebauthnIdentity.addWebauthnIdentity(
-                                                        member,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        it.attestationObject,
-                                                        it.clientDataJSON
-                                                    )
-                                                }
-                                        )
-                                    }
+                        readBody<WebauthnIdentityAdditionDetails>()?.let {
+                            readId { id ->
+                                withMemberAuthRespond { member ->
+                                    addingWebauthnIdentity.addWebauthnIdentity(
+                                        member,
+                                        newCorrelationId(),
+                                        id,
+                                        it.attestationObject,
+                                        it.clientDataJSON
+                                    )
+                                }
                             }
+                        }
                     }
                     delete("/{credentialId}") {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                readHexStringParameter("credentialId")
-                                    ?.let { credentialId ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    removingWebauthnIdentity.removeWebauthnIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        credentialId
-                                                    )
-                                                }
+                        readId { id ->
+                            readHexStringParameter("credentialId")
+                                ?.let { credentialId ->
+                                    withAdminAuthRespond { admin ->
+                                        removingWebauthnIdentity.removeWebauthnIdentity(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            credentialId
                                         )
                                     }
-                            }
+                                }
+                        }
                     }
                 }
 
                 route("/card") {
                     post("") {
-                        readBody<CardIdentity>()
-                            ?.let {
-                                readUUIDParameter("id")
-                                    ?.let { UserId(it) }
-                                    ?.let { id ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    addingCardIdentity.addCardIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        it.cardId,
-                                                        it.cardSecret
-                                                    )
-                                                }
-                                        )
-                                    }
+                        readBody<CardIdentity>()?.let {
+                            readId { id ->
+                                withAdminAuthRespond { admin ->
+                                    addingCardIdentity.addCardIdentity(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        it.cardId,
+                                        it.cardSecret
+                                    )
+                                }
                             }
+                        }
                     }
 
                     delete("/{cardId}") {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                readStringParameter("cardId")
-                                    ?.let { cardId ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    removingCardIdentity.removeCardIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        cardId
-                                                    )
-                                                }
+                        readId { id ->
+                            readStringParameter("cardId")
+                                ?.let { cardId ->
+                                    withAdminAuthRespond { admin ->
+                                        removingCardIdentity.removeCardIdentity(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            cardId
                                         )
                                     }
-                            }
+                                }
+                        }
                     }
                 }
 
                 route("/phone") {
                     post("") {
-                        readBody<PhoneNrIdentity>()
-                            ?.let {
-                                readUUIDParameter("id")
-                                    ?.let { UserId(it) }
-                                    ?.let { id ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    addingPhoneNrIdentity.addPhoneNrIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        it.phoneNr
-                                                    )
-                                                }
-                                        )
-                                    }
+                        readBody<PhoneNrIdentity>()?.let {
+                            readId { id ->
+                                withAdminAuthRespond { admin ->
+                                    addingPhoneNrIdentity.addPhoneNrIdentity(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        it.phoneNr
+                                    )
+                                }
                             }
+                        }
                     }
 
                     delete("/{phoneNr}") {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                readStringParameter("phoneNr")
-                                    ?.let { phoneNr ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    removingPhoneNrIdentity.removePhoneNrIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        phoneNr
-                                                    )
-                                                }
+                        readId { id ->
+                            readStringParameter("phoneNr")
+                                ?.let { phoneNr ->
+                                    withAdminAuthRespond { admin ->
+                                        removingPhoneNrIdentity.removePhoneNrIdentity(
+                                            admin,
+                                            newCorrelationId(),
+                                            id,
+                                            phoneNr
                                         )
                                     }
-                            }
+                                }
+                        }
                     }
                 }
 
                 route("/pin") {
                     post("") {
-                        readBody<PinIdentityDetails>()
-                            ?.let {
-                                readUUIDParameter("id")
-                                    ?.let { UserId(it) }
-                                    ?.let { id ->
-                                        call.respondWithErrorHandler(
-                                            readAdminAuthentication()
-                                                .flatMap { admin ->
-                                                    addingPinIdentity.addPinIdentity(
-                                                        admin,
-                                                        newCorrelationId(),
-                                                        id,
-                                                        it.pin
-                                                    )
-                                                }
-                                        )
-                                    }
+                        readBody<PinIdentityDetails>()?.let {
+                            readId { id ->
+                                withAdminAuthRespond { admin ->
+                                    addingPinIdentity.addPinIdentity(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        it.pin
+                                    )
+                                }
                             }
+                        }
                     }
 
                     delete("") {
-                        readUUIDParameter("id")
-                            ?.let { UserId(it) }
-                            ?.let { id ->
-                                call.respondWithErrorHandler(
-                                    readAdminAuthentication()
-                                        .flatMap { admin ->
-                                            removingPinIdentity.removePinIdentity(
-                                                admin,
-                                                newCorrelationId(),
-                                                id
-                                            )
-                                        }
+                        readId { id ->
+                            withAdminAuthRespond { admin ->
+                                removingPinIdentity.removePinIdentity(
+                                    admin,
+                                    newCorrelationId(),
+                                    id
                                 )
                             }
+                        }
                     }
                 }
             }
@@ -605,22 +486,27 @@ class UserController(
                 }
 
                 delete("/{id}") {
-                    readUUIDParameter("id")
-                        ?.let { UserId(it) }
-                        ?.let { id ->
-                            call.respondWithErrorHandler(
-                                readAdminAuthentication()
-                                    .flatMap { admin ->
-                                        deletingUser.hardDeleteUser(
-                                            admin,
-                                            newCorrelationId(),
-                                            id
-                                        )
-                                    }
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            deletingUser.hardDeleteUser(
+                                admin,
+                                newCorrelationId(),
+                                id
                             )
                         }
+                    }
                 }
             }
         }
+    }
+
+    private suspend inline fun PipelineContext<*, ApplicationCall>.readId(
+        function: (UserId) -> Unit
+    ) {
+        readUUIDParameter("id")
+            ?.let { UserId(it) }
+            ?.let { id ->
+                function(id)
+            }
     }
 }

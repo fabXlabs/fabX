@@ -9,10 +9,13 @@ import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
+import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
+import cloud.fabX.fabXaccess.common.rest.withMemberAuthRespond
 import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -20,6 +23,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
+import io.ktor.util.pipeline.PipelineContext
 
 class QualificationController(
     private val gettingQualification: GettingQualification,
@@ -45,77 +49,73 @@ class QualificationController(
             }
 
             get("/{id}") {
-                readUUIDParameter("id")
-                    ?.let { QualificationId(it) }
-                    ?.let { id ->
-                        call.respondWithErrorHandler(
-                            readMemberAuthentication()
-                                .flatMap { member ->
-                                    gettingQualification.getById(member, newCorrelationId(), id)
-                                        .map { it.toRestModel() }
-                                }
-                        )
+                readId { id ->
+                    withMemberAuthRespond { member ->
+                        gettingQualification.getById(member, newCorrelationId(), id)
+                            .map { it.toRestModel() }
                     }
+                }
             }
 
             post("") {
                 readBody<QualificationCreationDetails>()?.let {
-                    call.respondWithErrorHandler(
-                        readAdminAuthentication()
-                            .flatMap { admin ->
-                                addingQualification.addQualification(
-                                    admin,
-                                    newCorrelationId(),
-                                    it.name,
-                                    it.description,
-                                    it.colour,
-                                    it.orderNr
-                                )
-                            }
+                    withAdminAuthRespond { admin ->
+                        addingQualification
+                            .addQualification(
+                                admin,
+                                newCorrelationId(),
+                                it.name,
+                                it.description,
+                                it.colour,
+                                it.orderNr
+                            )
                             .map { it.serialize() }
-                    )
+                    }
                 }
             }
 
             put("/{id}") {
                 readBody<QualificationDetails>()?.let {
-                    readUUIDParameter("id")
-                        ?.let { QualificationId(it) }
-                        ?.let { id ->
-                            call.respondWithErrorHandler(
-                                readAdminAuthentication()
-                                    .flatMap { admin ->
-                                        changingQualification.changeQualificationDetails(
-                                            admin,
-                                            newCorrelationId(),
-                                            id,
-                                            it.name.toDomain(),
-                                            it.description.toDomain(),
-                                            it.colour.toDomain(),
-                                            it.orderNr.toDomain()
-                                        )
-                                    }
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            changingQualification.changeQualificationDetails(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                it.name.toDomain(),
+                                it.description.toDomain(),
+                                it.colour.toDomain(),
+                                it.orderNr.toDomain()
                             )
                         }
+                    }
                 }
             }
 
             delete("/{id}") {
-                readUUIDParameter("id")
-                    ?.let { QualificationId(it) }
-                    ?.let { id ->
-                        call.respondWithErrorHandler(
-                            readAdminAuthentication()
-                                .flatMap { admin ->
-                                    deletingQualification.deleteQualification(
-                                        admin,
-                                        newCorrelationId(),
-                                        id
-                                    )
-                                }
-                        )
-                    }
+                readId { id ->
+                    call.respondWithErrorHandler(
+                        readAdminAuthentication()
+                            .flatMap { admin ->
+                                deletingQualification.deleteQualification(
+                                    admin,
+                                    newCorrelationId(),
+                                    id
+                                )
+                            }
+                    )
+                }
             }
         }
+    }
+
+    private suspend inline fun PipelineContext<*, ApplicationCall>.readId(
+        function: (QualificationId) -> Unit
+    ) {
+        readUUIDParameter("id")
+            ?.let { QualificationId(it) }
+            ?.let { id ->
+                function(id)
+            }
     }
 }
