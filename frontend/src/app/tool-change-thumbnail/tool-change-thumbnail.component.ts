@@ -14,7 +14,6 @@ import { FormControl, FormGroup } from "@angular/forms";
 export class ToolChangeThumbnailComponent {
 
     error = "";
-    success = false;
 
     form = new FormGroup({
         file: new FormControl('')
@@ -23,8 +22,6 @@ export class ToolChangeThumbnailComponent {
     constructor(private store: Store, private errorHandler: ErrorService) { }
 
     onFileSelected(event: Event) {
-        this.success = false;
-
         const target = event.target as HTMLInputElement;
         const files = target.files as FileList;
         const file = files[0];
@@ -36,10 +33,6 @@ export class ToolChangeThumbnailComponent {
 
             this.store.dispatch(new Tools.ChangeThumbnail(currentTool.id, file))
                 .subscribe({
-                    next: _ => {
-                        this.form.reset();
-                        this.success = true;
-                    },
                     error: (err: HttpErrorResponse) => {
                         this.error = this.errorHandler.format(err);
                     }

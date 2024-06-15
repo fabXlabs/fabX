@@ -993,7 +993,13 @@ export class FabxState {
 
     @Action(Devices.ChangeThumbnail)
     changeDeviceThumbnail(ctx: StateContext<FabxStateModel>, action: Devices.ChangeThumbnail) {
-        return this.deviceService.changeThumbnail(action.id, action.file);
+        return this.deviceService.changeThumbnail(action.id, action.file).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Navigate(['device', action.id]));
+                }
+            })
+        );
     }
 
     // TOOLS
@@ -1118,7 +1124,13 @@ export class FabxState {
 
     @Action(Tools.ChangeThumbnail)
     changeToolThumbnail(ctx: StateContext<FabxStateModel>, action: Tools.ChangeThumbnail) {
-        return this.toolService.changeThumbnail(action.id, action.file);
+        return this.toolService.changeThumbnail(action.id, action.file).pipe(
+            tap({
+                next: _ => {
+                    ctx.dispatch(new Navigate(['tool', action.id]));
+                }
+            })
+        );
     }
 
     private static augmentToolWithQualifications(tool: Tool, qualifications: Qualification[]): AugmentedTool {
