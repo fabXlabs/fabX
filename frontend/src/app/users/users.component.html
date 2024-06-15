@@ -62,18 +62,10 @@
             <td>{{user.firstName}}</td>
             <td>{{user.lastName}}</td>
             <td>
-                <div *ngFor="let q of user.memberQualifications"
-                     class="inline-block p-2 m-1 border-round text-300 text-hidden md:text-sm md:p-1"
-                     [style.background-color]="q.colour">
-                    {{q.name}}
-                </div>
+                <fabx-qualification-tag *ngFor="let q of user.memberQualifications" [qualification]="q" />
             </td>
             <td>
-                <div *ngFor="let q of user.instructorQualifications"
-                     class="inline-block p-2 m-1 border-round text-300 text-hidden md:text-sm md:p-1"
-                     [style.background-color]="q.colour">
-                    {{q.name}}
-                </div>
+                <fabx-qualification-tag *ngFor="let q of user.instructorQualifications" [qualification]="q" />
             </td>
         </tr>
     </ng-template>

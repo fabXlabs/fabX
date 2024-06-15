@@ -47,6 +47,7 @@ import { NgxsRouterPluginModule } from "@ngxs/router-plugin";
 import { QualificationAddComponent } from './qualification-add/qualification-add.component';
 import { QualificationChangeDetailsComponent } from './qualification-change-details/qualification-change-details.component';
 import { QualificationDetailsComponent } from './qualification-details/qualification-details.component';
+import { QualificationTagComponent } from './qualification-tag/qualification-tag.component';
 import { QualificationsComponent } from './qualifications/qualifications.component';
 import { SecurePipe } from "./state/secure-pipe";
 import { ToolAddComponent } from './tool-add/tool-add.component';
@@ -105,6 +106,7 @@ import { UsersComponent } from './users/users.component';
         UserDetailsComponent,
         UserSoftDeletedComponent,
         UsersComponent,
+        QualificationTagComponent,
     ],
     imports: [
         BrowserAnimationsModule,

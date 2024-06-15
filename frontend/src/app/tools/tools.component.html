@@ -53,11 +53,7 @@
             </td>
             <td>
                 <ul class="m-0">
-                    <div *ngFor="let q of tool.requiredQualifications"
-                         class="inline-block p-2 m-1 border-round text-300 text-hidden md:text-sm md:p-1"
-                         [style.background-color]="q.colour">
-                        {{q.name}}
-                    </div>
+                    <fabx-qualification-tag *ngFor="let q of tool.requiredQualifications" [qualification]="q" />
                 </ul>
             </td>
         </tr>

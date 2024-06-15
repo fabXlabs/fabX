@@ -23,12 +23,7 @@
 
     <ng-template pTemplate="body" let-qualification>
         <tr routerLink="/qualification/{{qualification.id}}" class="cursor-pointer">
-            <td>
-                <div class="inline-block p-1 m-1 border-round text-300 text-m"
-                     [style.background-color]="qualification.colour">
-                    {{qualification.name}}
-                </div>
-            </td>
+            <td><fabx-qualification-tag [qualification]="qualification" /></td>
             <td>{{qualification.description}}</td>
         </tr>
     </ng-template>

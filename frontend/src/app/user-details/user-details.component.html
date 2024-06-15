@@ -235,12 +235,10 @@
                 </div>
                 <div class="text-900 w-8 flex align-items-center">
                     <div class="flex-grow-1">
-                        <div *ngFor="let q of user.memberQualifications"
-                             class="inline-block p-1 m-1 border-round text-300 text-sm"
-                             [style.background-color]="q.colour">
-                            {{q.name}}
-                            <i class="pi pi-times cursor-pointer" (click)="removeMemberQualification(q.id)"></i>
-                        </div>
+                        <fabx-qualification-tag *ngFor="let q of user.memberQualifications"
+                                                [qualification]="q"
+                                                [showRemoveIcon]="true"
+                                                (removeEventEmitter)="removeMemberQualification(q.id)" />
                     </div>
                     <div>
                         <p-splitButton label="Add"
@@ -256,12 +254,10 @@
                 </div>
                 <div class="text-900 w-8 flex align-items-center">
                     <div class="flex-grow-1">
-                        <div *ngFor="let q of user.instructorQualifications"
-                             class="inline-block p-1 m-1 border-round text-300 text-sm"
-                             [style.background-color]="q.colour">
-                            {{q.name}}
-                            <i class="pi pi-times cursor-pointer" (click)="removeInstructorQualification(q.id)"></i>
-                        </div>
+                        <fabx-qualification-tag *ngFor="let q of user.instructorQualifications"
+                                                [qualification]="q"
+                                                [showRemoveIcon]="true"
+                                                (removeEventEmitter)="removeInstructorQualification(q.id)" />
                     </div>
                     <div *ngIf="loggedInUser$ | async let loggedInUser">
                         <p-splitButton label="Add"

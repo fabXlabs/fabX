@@ -54,11 +54,7 @@
                     required qualifications
                 </div>
                 <div class="text-900 w-8">
-                    <div *ngFor="let q of tool.requiredQualifications"
-                         class="inline-block p-1 m-1 border-round text-300 text-sm"
-                         [style.background-color]="q.colour">
-                        {{q.name}}
-                    </div>
+                    <fabx-qualification-tag *ngFor="let q of tool.requiredQualifications" [qualification]="q" />
                 </div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
