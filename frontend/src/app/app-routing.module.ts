@@ -6,6 +6,7 @@ import { DeviceAddComponent } from "./device-add/device-add.component";
 import { DeviceAttachToolComponent } from "./device-attach-tool/device-attach-tool.component";
 import { DeviceChangeDesiredFirmwareVersionComponent } from "./device-change-desired-firmware-version/device-change-desired-firmware-version.component";
 import { DeviceChangeDetailsComponent } from "./device-change-details/device-change-details.component";
+import { DeviceChangeThumbnailComponent } from "./device-change-thumbnail/device-change-thumbnail.component";
 import { DeviceDetailsComponent } from "./device-details/device-details.component";
 import { DevicesComponent } from "./devices/devices.component";
 import { LoginComponent } from "./login/login.component";
@@ -15,6 +16,7 @@ import { QualificationDetailsComponent } from "./qualification-details/qualifica
 import { QualificationsComponent } from "./qualifications/qualifications.component";
 import { ToolAddComponent } from "./tool-add/tool-add.component";
 import { ToolChangeDetailsComponent } from "./tool-change-details/tool-change-details.component";
+import { ToolChangeThumbnailComponent } from "./tool-change-thumbnail/tool-change-thumbnail.component";
 import { ToolDetailsComponent } from "./tool-details/tool-details.component";
 import { ToolsComponent } from "./tools/tools.component";
 import { UserAddCardIdentityComponent } from "./user-add-card-identity/user-add-card-identity.component";
@@ -30,7 +32,6 @@ import { UserChangePersonalInfoComponent } from "./user-change-personal-info/use
 import { UserDetailsComponent } from "./user-details/user-details.component";
 import { UserSoftDeletedComponent } from "./user-soft-deleted/user-soft-deleted.component";
 import { UsersComponent } from "./users/users.component";
-import { DeviceChangeThumbnailComponent } from "./device-change-thumbnail/device-change-thumbnail.component";
 
 const routes: Routes = [
     { path: '', redirectTo: '/user', pathMatch: 'full' },
@@ -62,6 +63,7 @@ const routes: Routes = [
     { path: 'tool/add', component: ToolAddComponent, canActivate: [authGuard] },
     { path: 'tool/:id', component: ToolDetailsComponent, canActivate: [authGuard] },
     { path: 'tool/:id/change-details', component: ToolChangeDetailsComponent, canActivate: [authGuard] },
+    { path: 'tool/:id/change-thumbnail', component: ToolChangeThumbnailComponent, canActivate: [authGuard] },
     { path: 'add-qualification', component: UserAddQualificationComponent, canActivate: [authGuard] },
 ];
 

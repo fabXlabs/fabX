@@ -1,9 +1,11 @@
 package cloud.fabX.fabXaccess.tool.rest
 
+import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
@@ -12,9 +14,11 @@ import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
 import cloud.fabX.fabXaccess.common.rest.withMemberAuthRespond
 import cloud.fabX.fabXaccess.tool.application.AddingTool
+import cloud.fabX.fabXaccess.tool.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.DeletingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
+import io.ktor.http.CacheControl
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.routing.Route
@@ -29,6 +33,7 @@ class ToolController(
     private val gettingTool: GettingTool,
     private val addingTool: AddingTool,
     private val changingTool: ChangingTool,
+    private val changingThumbnail: ChangingThumbnail,
     private val deletingTool: DeletingTool
 ) {
 
@@ -106,6 +111,42 @@ class ToolController(
                             )
                         }
                     }
+                }
+            }
+
+            post("/{id}/thumbnail") {
+                readBody<ByteArray>()?.let {
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            changingThumbnail.changeToolThumbnail(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                it
+                            )
+                        }
+                    }
+                }
+            }
+
+            get("/{id}/thumbnail") {
+                readId { id ->
+                    call.respondWithErrorHandler(
+                        readAdminAuthentication()
+                            .flatMap { admin ->
+                                gettingTool
+                                    .getThumbnail(
+                                        admin,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                            },
+                        cacheControl = CacheControl.MaxAge(
+                            60,
+                            mustRevalidate = true,
+                            visibility = CacheControl.Visibility.Private
+                        )
+                    )
                 }
             }
 

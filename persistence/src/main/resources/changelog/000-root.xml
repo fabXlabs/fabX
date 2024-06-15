@@ -7,5 +7,6 @@
 
     <include file="changelog/001-initial-setup.xml"/>
     <include file="changelog/002-add-device-thumbnail.xml"/>
+    <include file="changelog/003-add-tool-thumbnail.xml"/>
 
 </databaseChangeLog>

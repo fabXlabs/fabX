@@ -1116,6 +1116,11 @@ export class FabxState {
         );
     }
 
+    @Action(Tools.ChangeThumbnail)
+    changeToolThumbnail(ctx: StateContext<FabxStateModel>, action: Tools.ChangeThumbnail) {
+        return this.toolService.changeThumbnail(action.id, action.file);
+    }
+
     private static augmentToolWithQualifications(tool: Tool, qualifications: Qualification[]): AugmentedTool {
         const requiredQualifications = tool.requiredQualifications
             .map(qualificationId => qualifications.find(qualification => qualification.id == qualificationId))

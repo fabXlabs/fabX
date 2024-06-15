@@ -4,8 +4,10 @@ import arrow.core.Either
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
+import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
+import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.QualificationId
@@ -26,7 +28,9 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.javatime.timestamp
 import org.jetbrains.exposed.sql.json.jsonb
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.statements.api.ExposedBlob
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.upsert
 
 object ToolSourcingEventDAO : Table("ToolSourcingEvent") {
     val aggregateRootId = uuid("aggregate_root_id")
@@ -35,6 +39,14 @@ object ToolSourcingEventDAO : Table("ToolSourcingEvent") {
     val correlationId = uuid("correlation_id")
     val timestamp = timestamp("timestamp")
     val data = jsonb<ToolSourcingEvent>("data", Json { serializersModule = domainSerializersModule })
+}
+
+object ToolThumbnailDAO : Table("ToolThumbnail") {
+    val aggregateRootId = uuid("aggregate_root_id").uniqueIndex()
+    val actorId = uuid("actor_id")
+    val thumbnailData = blob("thumbnail_data")
+
+    override val primaryKey = PrimaryKey(aggregateRootId, name = "aggregate_root_id_pk")
 }
 
 open class ToolDatabaseRepository(
@@ -126,6 +138,32 @@ open class ToolDatabaseRepository(
                 log.debug("...done storing event in database")
                 Unit.right()
             }
+        }
+    }
+
+    override suspend fun storeThumbnail(id: ToolId, actor: ActorId, thumbnail: ByteArray): Either<Error, Unit> {
+        return transaction {
+            ToolThumbnailDAO.upsert {
+                it[aggregateRootId] = id.value
+                it[actorId] = actor.value
+                it[thumbnailData] = ExposedBlob(thumbnail)
+            }
+            Unit.right()
+        }
+    }
+
+    override suspend fun getThumbnail(id: ToolId): Either<Error, ByteArray> {
+        return transaction {
+            ToolThumbnailDAO.select(ToolThumbnailDAO.thumbnailData)
+                .where { ToolThumbnailDAO.aggregateRootId eq id.value }
+                .map {
+                    it[ToolThumbnailDAO.thumbnailData].bytes
+                }
+                .firstOrNull()
+                .toOption()
+                .toEither {
+                    Error.ToolThumbnailNotFound("No thumbnail for Tool with id $id found.", id)
+                }
         }
     }
 

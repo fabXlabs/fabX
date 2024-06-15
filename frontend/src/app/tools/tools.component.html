@@ -16,6 +16,7 @@
 
     <ng-template pTemplate="header">
         <tr>
+            <th></th>
             <th>Name</th>
             <th>Type</th>
             <th>Enabled</th>
@@ -26,6 +27,14 @@
 
     <ng-template pTemplate="body" let-tool>
         <tr routerLink="/tool/{{tool.id}}" class="cursor-pointer">
+            <td>
+                <img class="border-round shadow-1 h-3rem w-3rem"
+                     [attr.src]="thumbnailUrl(tool.id) | secure | async"
+                     alt="Tool Thumbnail"
+                     width="600"
+                     height="600"
+                />
+            </td>
             <td>{{tool.name}}</td>
             <td>
                 <i *ngIf="tool.type === 'UNLOCK'" class="pi pi-unlock mx-1"></i>

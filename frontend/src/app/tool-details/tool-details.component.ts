@@ -7,6 +7,7 @@ import { ConfirmationService, MessageService } from "primeng/api";
 import { Tools } from "../state/tool.actions";
 import { ErrorService } from "../services/error.service";
 import { User } from "../models/user.model";
+import { ToolService } from "../services/tool.service";
 
 @Component({
     selector: 'fabx-tool-details',
@@ -23,6 +24,7 @@ export class ToolDetailsComponent {
         private store: Store,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
+        private toolService: ToolService,
         private errorService: ErrorService
     ) { }
 
@@ -54,5 +56,9 @@ export class ToolDetailsComponent {
                 });
             }
         });
+    }
+
+    thumbnailUrl(id: string) {
+        return this.toolService.thumbnailUrl(id);
     }
 }

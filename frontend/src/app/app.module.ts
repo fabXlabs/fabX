@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgxsModule } from "@ngxs/store";
 import { NgxsStoragePluginModule } from "@ngxs/storage-plugin";
 import { NgxsReduxDevtoolsPluginModule } from "@ngxs/devtools-plugin";
+import { ZXingScannerModule } from "@zxing/ngx-scanner";
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from "primeng/card";
@@ -47,8 +48,10 @@ import { QualificationAddComponent } from './qualification-add/qualification-add
 import { QualificationChangeDetailsComponent } from './qualification-change-details/qualification-change-details.component';
 import { QualificationDetailsComponent } from './qualification-details/qualification-details.component';
 import { QualificationsComponent } from './qualifications/qualifications.component';
+import { SecurePipe } from "./state/secure-pipe";
 import { ToolAddComponent } from './tool-add/tool-add.component';
 import { ToolChangeDetailsComponent } from './tool-change-details/tool-change-details.component';
+import { ToolChangeThumbnailComponent } from "./tool-change-thumbnail/tool-change-thumbnail.component";
 import { ToolDetailsComponent } from './tool-details/tool-details.component';
 import { ToolsComponent } from './tools/tools.component';
 import { UserAddCardIdentityComponent } from './user-add-card-identity/user-add-card-identity.component';
@@ -64,8 +67,7 @@ import { UserChangePersonalInfoComponent } from './user-change-personal-info/use
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
 import { UsersComponent } from './users/users.component';
-import { ZXingScannerModule } from "@zxing/ngx-scanner";
-import { SecurePipe } from "./state/secure-pipe";
+
 
 @NgModule({
     declarations: [
@@ -87,6 +89,7 @@ import { SecurePipe } from "./state/secure-pipe";
         SecurePipe,
         ToolAddComponent,
         ToolChangeDetailsComponent,
+        ToolChangeThumbnailComponent,
         ToolDetailsComponent,
         ToolsComponent,
         UserAddCardIdentityComponent,

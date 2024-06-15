@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.user.model.Admin
 
 /**
  * Service to get tools.
@@ -34,5 +35,21 @@ class GettingTool(
     ): Either<Error, Tool> =
         log.logError(actor, correlationId, "getById") {
             toolRepository.getById(toolId)
+        }
+
+    suspend fun getThumbnail(
+        actor: Admin,
+        correlationId: CorrelationId,
+        toolId: ToolId
+    ): Either<Error, ByteArray> =
+        log.logError(actor, correlationId, "getThumbnail") {
+            toolRepository.getById(toolId)
+                .map { tool ->
+                    tool.getThumbnail(
+                        actor,
+                        correlationId,
+                        toolRepository.getThumbnail(toolId)
+                    )
+                }
         }
 }

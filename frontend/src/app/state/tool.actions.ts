@@ -28,4 +28,10 @@ export namespace Tools {
 
         constructor(public id: string) {}
     }
+
+    export class ChangeThumbnail {
+        static readonly type = "[fabX Tools] Change Thumbnail"
+
+        constructor(public id: string, public file: File) {}
+    }
 }

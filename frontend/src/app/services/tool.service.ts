@@ -47,4 +47,16 @@ export class ToolService {
             { responseType: 'text' }
         );
     }
+
+    public changeThumbnail(id: string, file: File): Observable<string> {
+        return this.http.post(
+            `${this.baseUrl}/tool/${id}/thumbnail`,
+            file,
+            { responseType: 'text' }
+        );
+    }
+
+    public thumbnailUrl(id: string): string {
+        return `${this.baseUrl}/tool/${id}/thumbnail`;
+    }
 }

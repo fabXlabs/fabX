@@ -4,8 +4,10 @@ import arrow.core.Either
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import arrow.core.getOrElse
 import arrow.core.raise.either
 import arrow.core.right
+import cloud.fabX.fabXaccess.common.application.ThumbnailCreator
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
@@ -150,6 +152,20 @@ data class Tool internal constructor(
             )
         }
     }
+
+    fun changeThumbnail(
+        actor: Admin,
+        correlationId: CorrelationId,
+        image: ByteArray
+    ): Either<Error, ByteArray> =
+        ThumbnailCreator.create(image, correlationId)
+
+    fun getThumbnail(
+        actor: Admin,
+        correlationId: CorrelationId,
+        imageFromRepository: Either<Error, ByteArray>
+    ): ByteArray =
+        imageFromRepository.getOrElse { ThumbnailCreator.default }
 
     fun delete(
         actor: Admin,

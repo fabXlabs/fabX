@@ -140,38 +140,35 @@ class DeviceController(
 
             route("/{id}/attached-tool") {
                 put("/{pin}") {
-                    readBody<ToolAttachmentDetails>()
-                        ?.let {
-                            readId { id ->
-                                readIntParameter("pin")
-                                    ?.let { pin ->
-                                        withAdminAuthRespond { admin ->
-                                            attachingTool.attachTool(
-                                                admin,
-                                                newCorrelationId(),
-                                                id,
-                                                pin,
-                                                ToolId.fromString(it.toolId)
-                                            )
-                                        }
-                                    }
+                    readBody<ToolAttachmentDetails>()?.let {
+                        readId { id ->
+                            readIntParameter("pin")?.let { pin ->
+                                withAdminAuthRespond { admin ->
+                                    attachingTool.attachTool(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        pin,
+                                        ToolId.fromString(it.toolId)
+                                    )
+                                }
                             }
                         }
+                    }
                 }
 
                 delete("/{pin}") {
                     readId { id ->
-                        readIntParameter("pin")
-                            ?.let { pin ->
-                                withAdminAuthRespond { admin ->
-                                    detachingTool.detachTool(
-                                        admin,
-                                        newCorrelationId(),
-                                        id,
-                                        pin
-                                    )
-                                }
+                        readIntParameter("pin")?.let { pin ->
+                            withAdminAuthRespond { admin ->
+                                detachingTool.detachTool(
+                                    admin,
+                                    newCorrelationId(),
+                                    id,
+                                    pin
+                                )
                             }
+                        }
                     }
                 }
             }
@@ -201,35 +198,33 @@ class DeviceController(
             }
 
             post("/{id}/unlock-tool") {
-                readBody<ToolUnlockDetails>()
-                    ?.let {
-                        readId { id ->
-                            withAdminAuthRespond { admin ->
-                                unlockingTool.unlockTool(
-                                    admin,
-                                    newCorrelationId(),
-                                    id,
-                                    ToolId.fromString(it.toolId)
-                                )
-                            }
+                readBody<ToolUnlockDetails>()?.let {
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            unlockingTool.unlockTool(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                ToolId.fromString(it.toolId)
+                            )
                         }
                     }
+                }
             }
 
             post("/{id}/thumbnail") {
-                readBody<ByteArray>()
-                    ?.let {
-                        readId { id ->
-                            withAdminAuthRespond { admin ->
-                                changingThumbnail.changeDeviceThumbnail(
-                                    admin,
-                                    newCorrelationId(),
-                                    id,
-                                    it
-                                )
-                            }
+                readBody<ByteArray>()?.let {
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            changingThumbnail.changeDeviceThumbnail(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                it
+                            )
                         }
                     }
+                }
             }
 
             get("{id}/thumbnail") {

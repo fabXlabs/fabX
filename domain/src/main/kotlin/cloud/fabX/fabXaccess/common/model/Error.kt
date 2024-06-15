@@ -215,6 +215,11 @@ sealed class Error(
         val toolId: ToolId
     ) : Error(message, mapOf("toolId" to toolId.serialize()))
 
+    data class ToolThumbnailNotFound(
+        override val message: String,
+        val toolId: ToolId
+    ) : Error(message, mapOf("toolId" to toolId.serialize()))
+
     data class ReferencedToolNotFound(
         override val message: String,
         val toolId: ToolId,

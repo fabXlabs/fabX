@@ -32,7 +32,7 @@ val webModule = DI.Module("web") {
     bindSingleton { DeviceNotificationHandlerImpl(instance(), instance(), instance()) }
 
     bindSingleton { QualificationController(instance(), instance(), instance(), instance()) }
-    bindSingleton { ToolController(instance(), instance(), instance(), instance()) }
+    bindSingleton { ToolController(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton {
         DeviceController(
             instance(),

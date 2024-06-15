@@ -58,6 +58,7 @@ import cloud.fabX.fabXaccess.user.application.ValidatingSecondFactor
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
+import cloud.fabX.fabXaccess.tool.application.ChangingThumbnail as ChangingToolThumbnail
 
 val domainModule = DI.Module("domain") {
     // device
@@ -102,6 +103,7 @@ val domainModule = DI.Module("domain") {
     // tool
     bindSingleton { AddingTool(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { ChangingTool(instance(), instance(), instance(), instance()) }
+    bindSingleton { ChangingToolThumbnail(instance(), instance()) }
     bindSingleton { DeletingTool(instance(), instance(), instance(), instance()) }
     bindSingleton { GettingTool(instance(), instance()) }
 

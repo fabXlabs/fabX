@@ -115,17 +115,15 @@ data class Device internal constructor(
         actor: Admin,
         correlationId: CorrelationId,
         image: ByteArray
-    ): Either<Error, ByteArray> {
-        return ThumbnailCreator.create(image, correlationId)
-    }
+    ): Either<Error, ByteArray> =
+        ThumbnailCreator.create(image, correlationId)
 
     fun getThumbnail(
         actor: Admin,
         correlationId: CorrelationId,
         imageFromRepository: Either<Error, ByteArray>
-    ): ByteArray {
-        return imageFromRepository.getOrElse { ThumbnailCreator.default }
-    }
+    ): ByteArray =
+        imageFromRepository.getOrElse { ThumbnailCreator.default }
 
     fun setActualFirmwareVersion(
         actor: DeviceActor,

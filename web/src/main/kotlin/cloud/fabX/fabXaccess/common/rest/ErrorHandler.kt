@@ -46,6 +46,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.ReferencedToolNotFound -> HttpStatusCode.UnprocessableEntity
         is Error.PinNotInUse -> HttpStatusCode.NotFound
         is Error.ToolTypeNotUnlock -> HttpStatusCode.UnprocessableEntity
+        is Error.ToolThumbnailNotFound -> HttpStatusCode.NotFound
         // domain device
         is Error.MacInvalid -> HttpStatusCode.UnprocessableEntity
         is Error.SecretInvalid -> HttpStatusCode.UnprocessableEntity

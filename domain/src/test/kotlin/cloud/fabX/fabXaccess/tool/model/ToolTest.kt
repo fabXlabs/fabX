@@ -6,6 +6,7 @@ import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isNotNull
+import cloud.fabX.fabXaccess.common.application.ThumbnailCreator
 import cloud.fabX.fabXaccess.common.model.AggregateVersionDoesNotIncreaseOneByOne
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
@@ -15,10 +16,13 @@ import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.nio.JpegWriter
 import isLeft
 import isNone
 import isRight
 import isSome
+import java.awt.Color
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import org.junit.jupiter.api.Test
@@ -493,6 +497,63 @@ internal class ToolTest {
                     correlationId
                 )
             )
+    }
+
+    @Test
+    fun `when changing thumbnail then created thumbnail is returned`() {
+        // given
+        val thumbnailData = ImmutableImage.create(600, 600)
+            .fill(Color.GRAY)
+            .bytes(JpegWriter.Default)
+
+        val tool = ToolFixture.arbitrary(toolId)
+
+        // when
+        val result = tool.changeThumbnail(
+            adminActor,
+            correlationId,
+            thumbnailData
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(thumbnailData)
+    }
+
+    @Test
+    fun `when getting thumbnail then image from repository is returned`() {
+        // given
+        val tool = ToolFixture.arbitrary(toolId)
+
+        val thumbnailData = ByteArray(42) { it.toByte() }
+
+        // when
+        val result = tool.getThumbnail(
+            adminActor,
+            correlationId,
+            thumbnailData.right()
+        )
+
+        // then
+        assertThat(result).isEqualTo(thumbnailData)
+    }
+
+    @Test
+    fun `given no image from repository when getting thumbnail then default thumbnail is returnded`() {
+        // given
+        val tool = ToolFixture.arbitrary(toolId)
+
+        // when
+        val result = tool.getThumbnail(
+            adminActor,
+            correlationId,
+            Error.ToolThumbnailNotFound("a message", toolId).left()
+        )
+
+        // then
+        assertThat(result)
+            .isEqualTo(ThumbnailCreator.default)
     }
 
     @Test

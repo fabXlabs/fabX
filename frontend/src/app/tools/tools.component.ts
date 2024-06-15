@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { LoadingStateTag } from "../state/loading-state.model";
 import { AugmentedTool } from "../models/tool.model";
 import { User } from "../models/user.model";
+import { ToolService } from "../services/tool.service";
 
 @Component({
     selector: 'fabx-tools',
@@ -17,5 +18,9 @@ export class ToolsComponent {
     @Select(FabxState.tools) tools$!: Observable<AugmentedTool[]>;
     @Select(FabxState.loggedInUser) loggedInUser$!: Observable<User>;
 
-    constructor(private store: Store) { }
+    constructor(private store: Store, private toolService: ToolService) { }
+
+    thumbnailUrl(id: string) {
+        return this.toolService.thumbnailUrl(id);
+    }
 }

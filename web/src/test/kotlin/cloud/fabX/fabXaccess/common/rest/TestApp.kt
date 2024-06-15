@@ -71,6 +71,7 @@ import org.kodein.di.bindInstance
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.mockito.Mockito
+import cloud.fabX.fabXaccess.tool.application.ChangingThumbnail as ChangingToolThumbnail
 
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
@@ -132,6 +133,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingTool::class.java) }
         bindInstance { Mockito.mock(AddingTool::class.java) }
         bindInstance { Mockito.mock(ChangingTool::class.java) }
+        bindInstance { Mockito.mock(ChangingToolThumbnail::class.java) }
         bindInstance { Mockito.mock(DeletingTool::class.java) }
 
         bindInstance { Mockito.mock(GettingDevice::class.java) }

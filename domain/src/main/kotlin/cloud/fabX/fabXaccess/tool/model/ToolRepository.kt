@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.tool.model
 
 import arrow.core.Either
+import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.ToolId
@@ -9,6 +10,9 @@ interface ToolRepository : GettingToolById {
     suspend fun getAll(): Set<Tool>
     suspend fun getById(id: ToolId): Either<Error, Tool>
     suspend fun store(event: ToolSourcingEvent): Either<Error, Unit>
+
+    suspend fun storeThumbnail(id: ToolId, actor: ActorId, thumbnail: ByteArray): Either<Error, Unit>
+    suspend fun getThumbnail(id: ToolId): Either<Error, ByteArray>
 
     override suspend fun getToolById(id: ToolId): Either<Error, Tool> = getById(id)
 }

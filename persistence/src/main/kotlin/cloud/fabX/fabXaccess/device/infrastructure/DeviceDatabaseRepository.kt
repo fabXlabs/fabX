@@ -140,7 +140,7 @@ open class DeviceDatabaseRepository(
 
     override suspend fun getThumbnail(id: DeviceId): Either<Error, ByteArray> {
         return transaction {
-            DeviceThumbnailDAO.selectAll()
+            DeviceThumbnailDAO.select(DeviceThumbnailDAO.thumbnailData)
                 .where { DeviceThumbnailDAO.aggregateRootId eq id.value }
                 .map {
                     it[DeviceThumbnailDAO.thumbnailData].bytes

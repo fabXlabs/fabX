@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
+
+    <changeSet id="003-add-tool-thumbnail" author="sschaeffner">
+        <createTable tableName="toolthumbnail">
+            <column name="aggregate_root_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="actor_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="thumbnail_data" type="bytea">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <addPrimaryKey tableName="toolthumbnail"
+                       columnNames="aggregate_root_id"
+                       constraintName="toolthumbnail_pk"/>
+    </changeSet>
+</databaseChangeLog>
