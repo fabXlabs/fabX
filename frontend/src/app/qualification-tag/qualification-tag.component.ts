@@ -9,6 +9,7 @@ import { Qualification } from "../models/qualification.model";
 export class QualificationTagComponent {
     @Input() qualification: Qualification | undefined;
     @Input() showRemoveIcon: boolean = false;
+    @Input() allowShrinking: boolean = true;
     @Output() removeEventEmitter: EventEmitter<any> = new EventEmitter();
 
     removeClicked() {

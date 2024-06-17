@@ -238,6 +238,7 @@
                         <fabx-qualification-tag *ngFor="let q of user.memberQualifications"
                                                 [qualification]="q"
                                                 [showRemoveIcon]="true"
+                                                [allowShrinking]="false"
                                                 (removeEventEmitter)="removeMemberQualification(q.id)" />
                     </div>
                     <div>
@@ -257,6 +258,7 @@
                         <fabx-qualification-tag *ngFor="let q of user.instructorQualifications"
                                                 [qualification]="q"
                                                 [showRemoveIcon]="true"
+                                                [allowShrinking]="false"
                                                 (removeEventEmitter)="removeInstructorQualification(q.id)" />
                     </div>
                     <div *ngIf="loggedInUser$ | async let loggedInUser">
