@@ -18,6 +18,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from "primeng/inputtext";
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from "primeng/messages";
+import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { PasswordModule } from "primeng/password";
 import { SkeletonModule } from "primeng/skeleton";
@@ -132,6 +133,7 @@ import { UsersComponent } from './users/users.component';
         DropdownModule,
         InputNumberModule,
         InputTextModule,
+        MenuModule,
         MessageModule,
         MessagesModule,
         MultiSelectModule,

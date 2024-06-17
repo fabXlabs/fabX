@@ -242,10 +242,16 @@
                                                 (removeEventEmitter)="removeMemberQualification(q.id)" />
                     </div>
                     <div>
-                        <p-splitButton label="Add"
-                                       styleClass="p-button-outlined"
-                                       [model]="memberQualificationItems">
-                        </p-splitButton>
+                        <p-menu #addMemberQualificationMenu
+                            [popup]="true"
+                            [model]="memberQualificationItems">
+                        </p-menu>
+                        <p-button
+                            (click)="addMemberQualificationMenu.toggle($event)"
+                            icon="pi pi-plus"
+                            styleClass="p-button-outlined"
+                        />
+
                     </div>
                 </div>
             </li>
@@ -262,11 +268,16 @@
                                                 (removeEventEmitter)="removeInstructorQualification(q.id)" />
                     </div>
                     <div *ngIf="loggedInUser$ | async let loggedInUser">
-                        <p-splitButton label="Add"
-                                       styleClass="p-button-outlined"
-                                       [model]="instructorQualificationItems"
-                                       *ngIf="loggedInUser.isAdmin">
-                        </p-splitButton>
+                        <p-menu #addInstructorQualificationMenu
+                                [popup]="true"
+                                [model]="instructorQualificationItems">
+                        </p-menu>
+                        <p-button
+                            (click)="addInstructorQualificationMenu.toggle($event)"
+                            icon="pi pi-plus"
+                            styleClass="p-button-outlined"
+                            *ngIf="loggedInUser.isAdmin"
+                        />
                     </div>
                 </div>
             </li>
