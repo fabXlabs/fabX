@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess
 
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
+import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.rest.AppleAppSiteAssociation
 import cloud.fabX.fabXaccess.common.rest.MetricsController
@@ -122,6 +123,7 @@ class WebApp(
             json(Json {
                 prettyPrint = false
                 isLenient = false
+                serializersModule = domainSerializersModule
             })
         }
 
@@ -230,7 +232,10 @@ class WebApp(
             }
             get("/.well-known/apple-app-site-association") {
                 // TODO make configurable
-                call.respond(HttpStatusCode.OK, AppleAppSiteAssociation(WebCredentials(listOf("7V5294RF62.cloud.fabx.fabX"))))
+                call.respond(
+                    HttpStatusCode.OK,
+                    AppleAppSiteAssociation(WebCredentials(listOf("7V5294RF62.cloud.fabx.fabX")))
+                )
             }
         }
     }

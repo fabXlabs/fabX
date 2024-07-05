@@ -1,5 +1,6 @@
 package cloud.fabX.fabXaccess.user.rest
 
+import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
@@ -30,6 +31,7 @@ import cloud.fabX.fabXaccess.user.application.DeletingUser
 import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
+import cloud.fabX.fabXaccess.user.application.GettingUserSourcingEvents
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
 import cloud.fabX.fabXaccess.user.application.RemovingMemberQualification
@@ -51,6 +53,7 @@ import io.ktor.util.pipeline.PipelineContext
 class UserController(
     private val gettingUser: GettingUser,
     private val gettingUserIdByWikiName: GettingUserIdByWikiName,
+    private val gettingUserSourcingEvents: GettingUserSourcingEvents,
     private val addingUser: AddingUser,
     private val changingUser: ChangingUser,
     private val deletingUser: DeletingUser,
@@ -121,6 +124,23 @@ class UserController(
                                 it
                             )
                             .map { it.serialize() }
+                    }
+                }
+            }
+
+            get("/sourcing-event") {
+                withAdminAuthRespond { admin ->
+                    gettingUserSourcingEvents
+                        .getAll(admin, newCorrelationId())
+                        .right()
+                }
+            }
+
+            get("/{id}/sourcing-event") {
+                readId { id ->
+                    withAdminAuthRespond { admin ->
+                        gettingUserSourcingEvents
+                            .getById(admin, newCorrelationId(), id)
                     }
                 }
             }

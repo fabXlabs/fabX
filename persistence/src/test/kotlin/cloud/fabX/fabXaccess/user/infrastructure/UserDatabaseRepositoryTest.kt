@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.user.infrastructure
 
 import assertk.all
 import assertk.assertThat
+import assertk.assertions.containsExactly
 import assertk.assertions.containsExactlyInAnyOrder
 import assertk.assertions.each
 import assertk.assertions.hasSize
@@ -249,82 +250,83 @@ internal open class UserDatabaseRepositoryTest {
         private val userId2 = UserIdFixture.static(12345)
         private val userId3 = UserIdFixture.static(123456)
 
+        private val user1event1 = UserCreated(
+            userId,
+            actorId,
+            fixedInstant,
+            correlationId,
+            firstName = "first1",
+            lastName = "last1",
+            wikiName = "wiki1"
+        )
+
+        private val user1event2 = UserLockStateChanged(
+            userId,
+            2,
+            actorId,
+            fixedInstant,
+            correlationId,
+            locked = ChangeableValue.ChangeToValueBoolean(true),
+            notes = ChangeableValue.ChangeToValueOptionalString("some notes")
+        )
+
+        private val user2event1 = UserCreated(
+            userId2,
+            actorId,
+            fixedInstant,
+            correlationId,
+            firstName = "first2",
+            lastName = "last2",
+            wikiName = "wiki2"
+        )
+
+        private val user1event3 = UserPersonalInformationChanged(
+            userId,
+            3,
+            actorId,
+            fixedInstant,
+            correlationId,
+            firstName = ChangeableValue.ChangeToValueString("first1v3"),
+            lastName = ChangeableValue.LeaveAsIs,
+            wikiName = ChangeableValue.LeaveAsIs
+        )
+
+        private val user3event1 = UserCreated(
+            userId3,
+            actorId,
+            fixedInstant,
+            correlationId,
+            firstName = "first3",
+            lastName = "last3",
+            wikiName = "wiki3"
+        )
+
+        private val user2event2 = UserPersonalInformationChanged(
+            userId2,
+            2,
+            actorId,
+            fixedInstant,
+            correlationId,
+            firstName = ChangeableValue.ChangeToValueString("first2v2"),
+            lastName = ChangeableValue.ChangeToValueString("last2v2"),
+            wikiName = ChangeableValue.ChangeToValueString("wiki2v2")
+        )
+
+        private val user3event2 = UserDeleted(
+            userId3,
+            2,
+            actorId,
+            fixedInstant,
+            correlationId
+        )
+
         private fun withSetupTestApp(block: suspend (UserDatabaseRepository) -> Unit) = withRepository { repository ->
-            val user1event1 = UserCreated(
-                userId,
-                actorId,
-                fixedInstant,
-                correlationId,
-                firstName = "first1",
-                lastName = "last1",
-                wikiName = "wiki1"
-            )
             repository.store(user1event1)
-
-            val user1event2 = UserLockStateChanged(
-                userId,
-                2,
-                actorId,
-                fixedInstant,
-                correlationId,
-                locked = ChangeableValue.ChangeToValueBoolean(true),
-                notes = ChangeableValue.ChangeToValueOptionalString("some notes")
-            )
             repository.store(user1event2)
-
-            val user2event1 = UserCreated(
-                userId2,
-                actorId,
-                fixedInstant,
-                correlationId,
-                firstName = "first2",
-                lastName = "last2",
-                wikiName = "wiki2"
-            )
             repository.store(user2event1)
-
-            val user1event3 = UserPersonalInformationChanged(
-                userId,
-                3,
-                actorId,
-                fixedInstant,
-                correlationId,
-                firstName = ChangeableValue.ChangeToValueString("first1v3"),
-                lastName = ChangeableValue.LeaveAsIs,
-                wikiName = ChangeableValue.LeaveAsIs
-            )
             repository.store(user1event3)
-
-            val user3event1 = UserCreated(
-                userId3,
-                actorId,
-                fixedInstant,
-                correlationId,
-                firstName = "first3",
-                lastName = "last3",
-                wikiName = "wiki3"
-            )
             repository.store(user3event1)
-
-            val user2event2 = UserPersonalInformationChanged(
-                userId2,
-                2,
-                actorId,
-                fixedInstant,
-                correlationId,
-                firstName = ChangeableValue.ChangeToValueString("first2v2"),
-                lastName = ChangeableValue.ChangeToValueString("last2v2"),
-                wikiName = ChangeableValue.ChangeToValueString("wiki2v2")
-            )
             repository.store(user2event2)
-
-            val user3event2 = UserDeleted(
-                userId3,
-                2,
-                actorId,
-                fixedInstant,
-                correlationId
-            )
             repository.store(user3event2)
 
             block(repository)
@@ -413,9 +415,36 @@ internal open class UserDatabaseRepositoryTest {
         }
 
         @Test
+        fun `when getting sourcing events by id then returns ordered sourcing events`() =
+            withSetupTestApp { repository ->
+                // given
+
+                // when
+                val result = repository.getSourcingEventsById(userId)
+
+                // then
+                assertThat(result)
+                    .isRight()
+                    .containsExactly(user1event1, user1event2, user1event3)
+            }
+
+        @Test
+        fun `when getting sourcing events for deleted user by id then returns ordered sourcing events`() =
+            withSetupTestApp { repository ->
+                // given
+
+                // when
+                val result = repository.getSourcingEventsById(userId3)
+
+                // then
+                assertThat(result)
+                    .isRight()
+                    .containsExactly(user3event1, user3event2)
+            }
+
+        @Test
         fun `when getting soft deleted users then returns users`() = withSetupTestApp { repository ->
             // given
-
             val user1Deleted = UserDeleted(
                 userId,
                 4,

@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.user.infrastructure
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.getOrElse
 import arrow.core.left
 import arrow.core.right
@@ -75,32 +76,17 @@ open class UserDatabaseRepository(private val db: Database) :
         }
     }
 
-    override suspend fun getById(id: UserId): Either<Error, User> {
-        val events = transaction {
-            UserSourcingEventDAO
-                .selectAll()
-                .where { UserSourcingEventDAO.aggregateRootId.eq(id.value) }
-                .orderBy(UserSourcingEventDAO.aggregateVersion)
-                .map {
-                    it[UserSourcingEventDAO.data]
-                }
-        }
-
-        return if (events.isNotEmpty()) {
-            User.fromSourcingEvents(events)
-                .toEither {
-                    Error.UserNotFound(
-                        "User with id $id not found.",
-                        id
-                    )
-                }
-        } else {
-            Error.UserNotFound(
-                "User with id $id not found.",
-                id
-            ).left()
-        }
-    }
+    override suspend fun getById(id: UserId): Either<Error, User> =
+        getSourcingEventsById(id)
+            .flatMap {
+                User.fromSourcingEvents(it)
+                    .toEither {
+                        Error.UserNotFound(
+                            "User with id $id not found.",
+                            id
+                        )
+                    }
+            }
 
     override suspend fun store(event: UserSourcingEvent): Either<Error, Unit> {
         return transaction {
@@ -136,6 +122,27 @@ open class UserDatabaseRepository(private val db: Database) :
                 .map {
                     it[UserSourcingEventDAO.data]
                 }
+        }
+    }
+
+    override suspend fun getSourcingEventsById(id: UserId): Either<Error, List<UserSourcingEvent>> {
+        val events = transaction {
+            UserSourcingEventDAO
+                .selectAll()
+                .where { UserSourcingEventDAO.aggregateRootId.eq(id.value) }
+                .orderBy(UserSourcingEventDAO.aggregateVersion)
+                .map {
+                    it[UserSourcingEventDAO.data]
+                }
+        }
+
+        return if (events.isNotEmpty()) {
+            events.right()
+        } else {
+            Error.UserNotFound(
+                "User with id $id not found.",
+                id
+            ).left()
         }
     }
 

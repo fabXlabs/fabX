@@ -9,6 +9,7 @@ interface UserRepository : GettingUserById {
     suspend fun getAll(): Set<User>
     suspend fun getById(id: UserId): Either<Error, User>
     suspend fun getSourcingEvents(): List<UserSourcingEvent>
+    suspend fun getSourcingEventsById(id: UserId): Either<Error, List<UserSourcingEvent>>
     suspend fun store(event: UserSourcingEvent): Either<Error, Unit>
 
     override suspend fun getUserById(id: UserId): Either<Error, User> = getById(id)

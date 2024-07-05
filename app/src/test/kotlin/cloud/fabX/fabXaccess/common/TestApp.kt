@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common
 
 import cloud.fabX.fabXaccess.PersistenceApp
 import cloud.fabX.fabXaccess.WebApp
+import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
@@ -32,6 +33,7 @@ import java.util.UUID
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
@@ -215,7 +217,9 @@ internal fun withTestApp(
 internal fun ApplicationTestBuilder.c(): HttpClient {
     return createClient {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                serializersModule = domainSerializersModule
+            })
         }
         install(WebSockets)
         defaultRequest {

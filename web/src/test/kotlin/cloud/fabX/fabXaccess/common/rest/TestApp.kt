@@ -1,6 +1,7 @@
 package cloud.fabX.fabXaccess.common.rest
 
 import cloud.fabX.fabXaccess.WebApp
+import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
@@ -41,6 +42,7 @@ import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
+import cloud.fabX.fabXaccess.user.application.GettingUserSourcingEvents
 import cloud.fabX.fabXaccess.user.application.LoggingUnlockedTool
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
@@ -65,6 +67,7 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import java.io.File
 import kotlinx.datetime.Clock
+import kotlinx.serialization.json.Json
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
 import org.kodein.di.bindInstance
@@ -102,6 +105,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(GettingUserByIdentity::class.java) }
         bindInstance { Mockito.mock(GettingUserByUsername::class.java) }
         bindInstance { Mockito.mock(GettingUserIdByWikiName::class.java) }
+        bindInstance { Mockito.mock(GettingUserSourcingEvents::class.java) }
         bindInstance { Mockito.mock(GettingUser::class.java) }
         bindInstance { Mockito.mock(AddingUser::class.java) }
         bindInstance { Mockito.mock(ChangingUser::class.java) }
@@ -186,7 +190,9 @@ internal fun withTestApp(
 internal fun ApplicationTestBuilder.c(): HttpClient {
     return createClient {
         install(ContentNegotiation) {
-            json()
+            json(Json {
+                serializersModule = domainSerializersModule
+            })
         }
         install(WebSockets)
         defaultRequest {

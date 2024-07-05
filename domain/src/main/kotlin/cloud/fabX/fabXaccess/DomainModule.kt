@@ -44,6 +44,7 @@ import cloud.fabX.fabXaccess.user.application.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.application.GettingUser
 import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.application.GettingUserIdByWikiName
+import cloud.fabX.fabXaccess.user.application.GettingUserSourcingEvents
 import cloud.fabX.fabXaccess.user.application.LoggingUnlockedTool
 import cloud.fabX.fabXaccess.user.application.RemovingCardIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingInstructorQualification
@@ -125,6 +126,7 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingUser(instance(), instance()) }
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
     bindSingleton { GettingUserIdByWikiName(instance(), instance()) }
+    bindSingleton { GettingUserSourcingEvents(instance(), instance()) }
     bindSingleton { LoggingUnlockedTool(instance(tag = "toolUsageCounter"), instance(), instance()) }
     bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }

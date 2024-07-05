@@ -10,12 +10,14 @@ import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.common.isError
 import cloud.fabX.fabXaccess.common.memberAuth
+import cloud.fabX.fabXaccess.common.model.newUserId
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
+import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
 import cloud.fabX.fabXaccess.user.rest.PasswordChangeDetails
@@ -241,8 +243,118 @@ internal class UserIntegrationTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        println(response.bodyAsText())
         assertThat(response.body<String>()).isEqualTo(userId)
+    }
+
+    @Test
+    fun `given admin authentication when getting all sourcing events then returns events`() = withTestApp {
+        // given
+        givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+
+        // when
+        val response = c().get("/api/v1/user/sourcing-event") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        // 5 sourcing events are created in the test setup, the 6th in this test's given block
+        assertThat(response.body<List<UserSourcingEvent>>()).hasSize(6)
+    }
+
+    @Test
+    fun `given non-admin authentication when getting all sourcing events then returns forbidden`() = withTestApp {
+        // given
+
+        // when
+        val response = c().get("/api/v1/user/sourcing-event") {
+            memberAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+    }
+
+    @Test
+    fun `given admin authentication when getting sourcing events by id then returns events`() = withTestApp {
+        // given
+        val userId = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+
+        // when
+        val response = c().get("/api/v1/user/$userId/sourcing-event") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<List<UserSourcingEvent>>()).hasSize(1)
+    }
+
+    @Test
+    fun `given soft-deleted user when getting sourcing events by id then returns events`() = withTestApp {
+        // given
+        val userId = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+
+        givenUserIsSoftDeleted(userId)
+
+        // when
+        val response = c().get("/api/v1/user/$userId/sourcing-event") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<List<UserSourcingEvent>>()).hasSize(2)
+    }
+
+    @Test
+    fun `given unknown user when getting sourcing events by id then returns http not found`() = withTestApp {
+        // given
+        val unknownUserId = newUserId()
+
+        // when
+        val response = c().get("/api/v1/user/${unknownUserId.serialize()}/sourcing-event") {
+            adminAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NotFound)
+        assertThat(response.body<Error>())
+            .isError(
+                "UserNotFound",
+                "User with id $unknownUserId not found.",
+                mapOf("userId" to unknownUserId.serialize())
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when getting sourcing events by id then returns http forbidden`() = withTestApp {
+        // given
+        val userId = givenUser(
+            "Alan",
+            "Turing",
+            "turing"
+        )
+
+        // when
+        val response = c().get("/api/v1/user/$userId/sourcing-event") {
+            memberAuth()
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
     }
 
     @Test
