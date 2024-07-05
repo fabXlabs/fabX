@@ -227,7 +227,6 @@ class WebApp(
             }
             get("/health") {
                 // TODO expand health checks, e.g. connection to database
-                // TODO add tests
                 call.respond(HttpStatusCode.OK)
             }
             get("/.well-known/apple-app-site-association") {
