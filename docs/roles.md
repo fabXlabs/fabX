@@ -1,12 +1,11 @@
 # Roles / access rights
 
+> [!IMPORTANT]
+> Using the REST API requires adding some _Identity_ to the user to authenticate to the backend, first.
+
 ## Member
 
-A _User's_ default role is _member_. The member role itself allows to read Devices, Qualifications, Tools and their own 
-User configuration via the REST API. It also allows editing the own user.
-
-Note, that using the REST API requires adding some _Identity_ to the user to authenticate to 
-the backend, first.
+A _User's_ default role is _member_. The member role itself allows to read Qualifications and Tools.
 
 Additionally, a member is allowed to unlock the tools that are associated with the Qualifications they have as Member 
 Qualifications (through the Device the Tool is attached to).
@@ -23,11 +22,13 @@ The _Administrator_ role allows for the following:
 * hard deleting Users
 * attaching and detaching Tools to/from Devices
 * remotely restarting a Device
+* upgrading Device firmware
 * adding and removing Identities to/from Users
 * adding and removing an Instructor Qualification to/from a User (promoting/demoting a User as an Instructor for a Qualification)
 
-Note, that the Administrator role does **not** allow for adding a Member Qualification to a User. However, a User with 
-Administrator role can still achieve this: They first use their Administrator privileges to add the desired Qualification
-as Instructor Qualification to themselves. Now, they are an Instructor for that Qualification and can give out the 
-Qualification as Member Qualification. Finally, they can remove the Qualification as Instructor Qualification from
-themselves.
+> [!IMPORTANT]
+> The Administrator role does **not** allow for adding a Member Qualification to a User. However, a User with 
+> Administrator role can still achieve this: They first use their Administrator privileges to add the desired Qualification
+> as Instructor Qualification to themselves. Now, they are an Instructor for that Qualification and can give out the 
+> Qualification as Member Qualification. Finally, they can remove the Qualification as Instructor Qualification from
+> themselves.

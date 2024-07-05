@@ -6,7 +6,8 @@ fabX is an access system for fab labs, maker spaces, hack spaces, etc. These spa
 members only use tools/machines that they have a qualification for. With fabX, each member gets an NFC card that enables
 them to use the tools they are qualified for.
 
-For more details on the use-case fabX is developed for, read the [domain description](docs/domain-description.md).
+> [!TIP]
+> For more details on the use-case fabX is developed for, read the [domain description](docs/domain-description.md).
 
 ## ✅ Features
 
@@ -26,8 +27,10 @@ For more details on the use-case fabX is developed for, read the [domain descrip
 
 ## ❌ Limitations
 
-These are features which can be found in other systems for this use-case but we currently do not intend to implement. If
-you require these or other features and would like to extend fabX, you're welcome to open an issue for discussion.
+These are features which can be found in other systems for this use-case but we currently do not intend to implement. 
+
+> [!NOTE]
+> If you require these or other features and would like to extend fabX, you're welcome to open an issue for discussion.
 
 * no booking/calendar system
 * no tracking of machine-time
