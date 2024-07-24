@@ -29,7 +29,7 @@ import com.webauthn4j.data.client.Origin
 import com.webauthn4j.data.client.challenge.Challenge
 import com.webauthn4j.data.client.challenge.DefaultChallenge
 import com.webauthn4j.server.ServerProperty
-import com.webauthn4j.validator.exception.ValidationException
+import com.webauthn4j.verifier.exception.VerificationException
 
 /**
  * Service to handle webauthn details.
@@ -97,8 +97,8 @@ class WebauthnIdentityService(
         val registrationData = webauthnManager.parse(registrationRequest)
 
         try {
-            webauthnManager.validate(registrationData, registrationParameters)
-        } catch (e: ValidationException) {
+            webauthnManager.verify(registrationData, registrationParameters)
+        } catch (e: VerificationException) {
             return Error.WebauthnError(
                 e.message.toString(),
                 correlationId
@@ -181,7 +181,7 @@ class WebauthnIdentityService(
                                 log.debug("new counter value: $counter")
 
                                 user.id.right()
-                            } catch (e: ValidationException) {
+                            } catch (e: VerificationException) {
                                 Error.NotAuthenticated("Invalid authentication.", correlationId).left()
                             }
                         }
