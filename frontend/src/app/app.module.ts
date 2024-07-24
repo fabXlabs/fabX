@@ -16,9 +16,9 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DropdownModule } from "primeng/dropdown";
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from "primeng/inputtext";
+import { MenuModule } from "primeng/menu";
 import { MessageModule } from 'primeng/message';
 import { MessagesModule } from "primeng/messages";
-import { MenuModule } from "primeng/menu";
 import { MultiSelectModule } from "primeng/multiselect";
 import { PasswordModule } from "primeng/password";
 import { SkeletonModule } from "primeng/skeleton";
@@ -26,6 +26,7 @@ import { SplitButtonModule } from "primeng/splitbutton";
 import { StyleClassModule } from "primeng/styleclass";
 import { TableModule } from "primeng/table";
 import { TagModule } from "primeng/tag";
+import { TimelineModule } from 'primeng/timeline';
 import { ToastModule } from 'primeng/toast';
 
 import { environment } from "../environments/environment";
@@ -68,8 +69,8 @@ import { UserChangePasswordComponent } from "./user-change-password/user-change-
 import { UserChangePersonalInfoComponent } from './user-change-personal-info/user-change-personal-info.component';
 import { UserDetailsComponent } from './user-details/user-details.component';
 import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
+import { UserSourcingEventsComponent } from "./user-sourcing-events/user-sourcing-events.component";
 import { UsersComponent } from './users/users.component';
-
 
 @NgModule({
     declarations: [
@@ -87,6 +88,7 @@ import { UsersComponent } from './users/users.component';
         QualificationAddComponent,
         QualificationChangeDetailsComponent,
         QualificationDetailsComponent,
+        QualificationTagComponent,
         QualificationsComponent,
         SecurePipe,
         ToolAddComponent,
@@ -106,8 +108,8 @@ import { UsersComponent } from './users/users.component';
         UserChangePersonalInfoComponent,
         UserDetailsComponent,
         UserSoftDeletedComponent,
+        UserSourcingEventsComponent,
         UsersComponent,
-        QualificationTagComponent,
     ],
     imports: [
         BrowserAnimationsModule,
@@ -143,6 +145,7 @@ import { UsersComponent } from './users/users.component';
         StyleClassModule,
         TableModule,
         TagModule,
+        TimelineModule,
         ToastModule,
 
         ZXingScannerModule,

@@ -273,11 +273,7 @@ export class UserDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        if (this.availableMemberQualificationsSubscription) {
-            this.availableMemberQualificationsSubscription.unsubscribe();
-        }
-        if (this.availableInstructorQualificationsSubscription) {
-            this.availableInstructorQualificationsSubscription.unsubscribe();
-        }
+        this.availableMemberQualificationsSubscription?.unsubscribe();
+        this.availableInstructorQualificationsSubscription?.unsubscribe();
     }
 }

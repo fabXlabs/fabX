@@ -54,8 +54,6 @@ export class DeviceChangeDesiredFirmwareVersionComponent implements OnInit, OnDe
     }
 
     ngOnDestroy(): void {
-        if (this.selectedDeviceSubscription) {
-            this.selectedDeviceSubscription.unsubscribe();
-        }
+        this.selectedDeviceSubscription?.unsubscribe();
     }
 }

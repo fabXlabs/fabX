@@ -14,6 +14,7 @@ import {
     UserDetails,
     UserLockDetails,
     UsernamePasswordIdentityAdditionDetails,
+    UserSourcingEvent,
     WebauthnIdentityAdditionDetails,
     WebauthnRegistrationDetails
 } from '../models/user.model';
@@ -47,6 +48,18 @@ export class UserService {
         return this.http.get(
             `${this.baseUrl}/user/id-by-wiki-name?wikiName=${wikiName}`,
             { responseType: 'text' }
+        );
+    }
+
+    public getSourcingEvents(): Observable<UserSourcingEvent[]> {
+        return this.http.get<UserSourcingEvent[]>(`${this.baseUrl}/user/sourcing-event`).pipe(
+            retry(3)
+        );
+    }
+
+    public getSourcingEventsById(id: string): Observable<UserSourcingEvent[]> {
+        return this.http.get<UserSourcingEvent[]>(`${this.baseUrl}/user/${id}/sourcing-event`).pipe(
+            retry(3)
         );
     }
 

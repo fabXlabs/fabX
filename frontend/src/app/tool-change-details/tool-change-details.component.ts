@@ -176,8 +176,6 @@ export class ToolChangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.selectedToolSubscription) {
-            this.selectedToolSubscription.unsubscribe();
-        }
+        this.selectedToolSubscription?.unsubscribe();
     }
 }

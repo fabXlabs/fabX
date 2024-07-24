@@ -330,4 +330,10 @@
             </li>
         </ul>
     </div>
+    <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
+        <div *ngIf="loggedInUser.isAdmin"
+            class="w-full md:w-9 my-5 mx-auto p-4">
+            <fabx-user-sourcing-events />
+        </div>
+    </ng-container>
 </ng-container>

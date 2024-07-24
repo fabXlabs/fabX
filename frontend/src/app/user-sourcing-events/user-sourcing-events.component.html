@@ -1,0 +1,40 @@
+<div class="m-5" *ngIf="sourcingEvents$ | async let sourcingEvents">
+    <p-timeline [value]="getSourcingFirstOrAllEvents(sourcingEvents, onlyShowFirst)" align="right">
+        <ng-template pTemplate="marker" let-event>
+            <span
+                *ngIf="!isMarker(event)"
+                class="flex w-2rem h-2rem align-items-center justify-content-center border-circle z-1 shadow-3">{{ event.aggregateVersion || 1 }}</span>
+            <span
+                *ngIf="isMarker(event)"
+                class="flex w-2rem h-2rem align-items-center justify-content-center border-circle z-1 shadow-3">...</span>
+        </ng-template>
+
+        <ng-template pTemplate="content" let-event>
+            <small *ngIf="!isMarker(event)" class="p-text-secondary">{{ extractTimestamp(event) }}</small>
+        </ng-template>
+
+        <ng-template pTemplate="opposite" let-event>
+            <p-card *ngIf="!isMarker(event)" [header]="extractType(event)" [subheader]="extractActor(event)">
+                <ng-container *ngIf="extractQualification(event)">
+                    <fabx-qualification-tag [qualification]="extractQualification(event)!" [allowShrinking]="false" />
+                </ng-container>
+                <ng-container *ngIf="!extractQualification(event)">
+                    <table>
+                        <tr *ngFor="let entry of extractOther(event)">
+                            <td class="p-0">{{ entry[0] }}:</td>
+                            <td>{{ entry[1] }}</td>
+                        </tr>
+                    </table>
+                </ng-container>
+            </p-card>
+            <p-button
+                *ngIf="isMarker(event)"
+                (onClick)="onlyShowFirst = false"
+                styleClass="p-button-secondary p-button-text"
+            >
+                Show all...
+            </p-button>
+            <p></p>
+        </ng-template>
+    </p-timeline>
+</div>

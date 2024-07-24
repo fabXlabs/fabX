@@ -148,12 +148,16 @@ export class FabxState {
         return state.users.tag;
     }
 
+    @Selector()
+    static allUsers(state: FabxStateModel): AugmentedUser[] {
+        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
+        return [...getFinishedValueOrDefault(state.users, [])]
+            .map(user => this.augmentUserWithQualifications(user, qualifications));
+    }
 
     @Selector()
     static users(state: FabxStateModel): AugmentedUser[] {
-        const qualifications: Qualification[] = getFinishedValueOrDefault(state.qualifications, []);
-        const users: AugmentedUser[] = [...getFinishedValueOrDefault(state.users, [])]
-            .map(user => this.augmentUserWithQualifications(user, qualifications));
+        const users = this.allUsers(state);
 
         const orderMultiplier = state.usersSort.order == "ascending" ? 1 : -1;
 

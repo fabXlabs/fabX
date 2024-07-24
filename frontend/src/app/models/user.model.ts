@@ -117,3 +117,37 @@ export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIden
 export interface TokenResponse {
     token: string
 }
+
+export interface UserSourcingEvent {
+    type: string
+    aggregateRootId: string
+    aggregateVersion: number
+    actorId: ActorId
+    correlationId: string
+    timestamp: string
+}
+
+export interface AugmentedUserSourcingEvent {
+    type: string
+    aggregateRootId: string
+    aggregateVersion: number
+    actor: SystemActorId | DeviceActorId | UserActorId | AugmentedUser
+    correlationId: string
+    timestamp: string
+}
+
+export interface SystemActorId {
+    "type": "cloud.fabX.fabXaccess.common.model.SystemActorId"
+}
+
+export interface DeviceActorId {
+    "type": "cloud.fabX.fabXaccess.common.model.DeviceId"
+    value: string
+}
+
+export interface UserActorId {
+    "type": "cloud.fabX.fabXaccess.common.model.UserId"
+    value: string
+}
+
+export type ActorId = SystemActorId | DeviceActorId | UserActorId

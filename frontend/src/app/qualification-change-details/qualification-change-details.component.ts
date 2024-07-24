@@ -97,8 +97,6 @@ export class QualificationChangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.selectedQualificationSubscription) {
-            this.selectedQualificationSubscription.unsubscribe();
-        }
+        this.selectedQualificationSubscription?.unsubscribe();
     }
 }

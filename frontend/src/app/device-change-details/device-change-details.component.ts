@@ -86,8 +86,6 @@ export class DeviceChangeDetailsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.selectedDeviceSubscription) {
-            this.selectedDeviceSubscription.unsubscribe();
-        }
+        this.selectedDeviceSubscription?.unsubscribe();
     }
 }

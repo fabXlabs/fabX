@@ -84,8 +84,6 @@ export class UserChangeLockStateComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        if (this.selectedUserSubscription) {
-            this.selectedUserSubscription.unsubscribe();
-        }
+        this.selectedUserSubscription?.unsubscribe();
     }
 }
