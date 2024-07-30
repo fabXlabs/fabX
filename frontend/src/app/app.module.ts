@@ -71,6 +71,7 @@ import { UserDetailsComponent } from './user-details/user-details.component';
 import { UserSoftDeletedComponent } from './user-soft-deleted/user-soft-deleted.component';
 import { UserSourcingEventsComponent } from "./user-sourcing-events/user-sourcing-events.component";
 import { UsersComponent } from './users/users.component';
+import { HiddenPinComponent } from './hidden-pin/hidden-pin.component';
 
 @NgModule({
     declarations: [
@@ -110,6 +111,7 @@ import { UsersComponent } from './users/users.component';
         UserSoftDeletedComponent,
         UserSourcingEventsComponent,
         UsersComponent,
+        HiddenPinComponent,
     ],
     imports: [
         BrowserAnimationsModule,

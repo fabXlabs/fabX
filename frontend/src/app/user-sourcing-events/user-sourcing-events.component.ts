@@ -136,6 +136,14 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
         }
     }
 
+    extractPin(userSourcingEvent: AugmentedUserSourcingEvent): string | null {
+        if ("pin" in userSourcingEvent) {
+            return userSourcingEvent.pin as string;
+        } else {
+            return null;
+        }
+    }
+
     extractOther(userSourcingEvent: UserSourcingEvent): [string, object][] {
         const reducedEvent = {
             ...userSourcingEvent,
@@ -146,7 +154,8 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
             correlationId: undefined,
             timestamp: undefined,
             authenticator: undefined,
-            hash: undefined
+            hash: undefined,
+            pin: undefined
         }
 
         return Object.entries(reducedEvent).filter(entry => entry[1]) as [string, object][]

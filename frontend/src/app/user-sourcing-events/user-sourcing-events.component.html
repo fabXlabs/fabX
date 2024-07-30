@@ -6,7 +6,9 @@
                 class="flex w-2rem h-2rem align-items-center justify-content-center border-circle z-1 shadow-3">{{ event.aggregateVersion || 1 }}</span>
             <span
                 *ngIf="isMarker(event)"
-                class="flex w-2rem h-2rem align-items-center justify-content-center border-circle z-1 shadow-3">...</span>
+                class="flex w-2rem h-2rem align-items-center justify-content-center border-circle z-1 shadow-3"
+                style="cursor: pointer;"
+                (click)="onlyShowFirst = false;">...</span>
         </ng-template>
 
         <ng-template pTemplate="content" let-event>
@@ -18,7 +20,15 @@
                 <ng-container *ngIf="extractQualification(event)">
                     <fabx-qualification-tag [qualification]="extractQualification(event)!" [allowShrinking]="false" />
                 </ng-container>
-                <ng-container *ngIf="!extractQualification(event)">
+                <ng-container *ngIf="extractPin(event)">
+                    <table>
+                        <tr>
+                            <td>Pin:</td>
+                            <td><fabx-hidden-pin pin="{{ extractPin(event) }}"/></td>
+                        </tr>
+                    </table>
+                </ng-container>
+                <ng-container *ngIf="!extractQualification(event) && !extractPin(event)">
                     <table>
                         <tr *ngFor="let entry of extractOther(event)">
                             <td class="p-0">{{ entry[0] }}:</td>
