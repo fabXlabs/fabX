@@ -93,7 +93,7 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
     }
 
     getSourcingFirstOrAllEvents(events: UserSourcingEventEntry[] , onlyFirst: boolean): UserSourcingEventEntry[] {
-        if (onlyFirst) {
+        if (onlyFirst && events.length > 4) {
             const marker: ShowAllEntriesMarker[] = [{marker: "ShowAllEntriesMarker"}]
             return events.slice(0, 3).concat(marker);
         } else {
