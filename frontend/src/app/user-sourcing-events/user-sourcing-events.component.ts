@@ -69,7 +69,6 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
                             if ("qualificationId" in event) {
                                 const qualificationId = event.qualificationId as {value: string}
                                 const qualification = qualifications.find(q => q.id == qualificationId.value) || null;
-                                console.log("qualifications", qualifications);
                                 return { ...event, qualification: qualification, qualificationId: undefined};
                             } else {
                                 return event;
@@ -144,7 +143,20 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
         }
     }
 
-    extractOther(userSourcingEvent: UserSourcingEvent): [string, object][] {
+    private newValueToString(value: object): string {
+        try {
+            if ("type" in value) {
+                if (value.type == "cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs") {
+                    return "";
+                } else if ((value.type as string).startsWith("cloud.fabX.fabXaccess.common.model.ChangeableValue.ChangeToValue") && "value" in value) {
+                    return value.value as string;
+                }
+            }
+        } catch (e) { }
+        return JSON.stringify(value);
+    }
+
+    extractOther(userSourcingEvent: UserSourcingEvent): [string, string][] {
         const reducedEvent = {
             ...userSourcingEvent,
             type: undefined,
@@ -158,7 +170,10 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
             pin: undefined
         }
 
-        return Object.entries(reducedEvent).filter(entry => entry[1]) as [string, object][]
+        return Object.entries(reducedEvent)
+            .filter(entry => entry[1])
+            .map(entry => [entry[0], this.newValueToString(entry[1] as object)])
+            .filter(entry => entry[1]) as [string, string][]
     }
 
     isMarker(entry: UserSourcingEventEntry) {
