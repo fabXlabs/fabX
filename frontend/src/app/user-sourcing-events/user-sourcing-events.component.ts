@@ -167,7 +167,8 @@ export class UserSourcingEventsComponent implements OnInit, OnDestroy {
             timestamp: undefined,
             authenticator: undefined,
             hash: undefined,
-            pin: undefined
+            pin: undefined,
+            cardSecret: undefined
         }
 
         return Object.entries(reducedEvent)
