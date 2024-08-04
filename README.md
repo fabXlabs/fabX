@@ -23,6 +23,7 @@ them to use the tools they are qualified for.
 * any changes to the system are stored as events, i.e. full auditability
   * to comply with data protection regulation, user data (personally identifiable information) can be fully 
     deleted (hard-deleted)
+  * changes to users are displayed on the user's detail page
 * (RESTful) API allowing for extension
 
 ## ❌ Limitations
