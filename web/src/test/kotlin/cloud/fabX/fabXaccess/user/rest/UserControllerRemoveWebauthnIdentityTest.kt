@@ -85,6 +85,37 @@ internal class UserControllerRemoveWebauthnIdentityTest {
     }
 
     @Test
+    fun `given member authentication when removing webauthn identity then returns http no content`() =
+        withConfiguredTestApp {
+            // given
+            val userId = UserIdFixture.arbitrary()
+            val user = UserFixture.arbitrary(userId)
+            val credentialId = byteArrayOf(1, 2, 3, 4, 5)
+            val credentialIdHex = credentialId.toHex()
+
+            whenever(authenticationService.basic(UserPasswordCredential(username, password)))
+                .thenReturn(UserPrincipal(user))
+
+            whenever(
+                removingWebauthnIdentity.removeWebauthnIdentity(
+                    eq(user.asMember()),
+                    any(),
+                    eq(userId),
+                    eq(credentialId)
+                )
+            ).thenReturn(Unit.right())
+
+            // when
+            val response = c().delete("/api/v1/user/${userId.serialize()}/identity/webauthn/$credentialIdHex") {
+                basicAuth(username, password)
+            }
+
+            //  then
+            assertThat(response.bodyAsText()).isEmpty()
+            assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        }
+
+    @Test
     fun `given invalid user id when removing webauthn identity then returns http bad request`() =
         withConfiguredTestApp {
             // given

@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toByteArray
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
+import cloud.fabX.fabXaccess.common.rest.withAdminOrMemberAuthRespond
 import cloud.fabX.fabXaccess.common.rest.withInstructorAuthRespond
 import cloud.fabX.fabXaccess.common.rest.withMemberAuthRespond
 import cloud.fabX.fabXaccess.user.application.AddingCardIdentity
@@ -377,17 +378,28 @@ class UserController(
                         }
                     }
                     delete("/{credentialId}") {
+                        val correlationId = newCorrelationId()
                         readId { id ->
                             readHexStringParameter("credentialId")
                                 ?.let { credentialId ->
-                                    withAdminAuthRespond { admin ->
-                                        removingWebauthnIdentity.removeWebauthnIdentity(
-                                            admin,
-                                            newCorrelationId(),
-                                            id,
-                                            credentialId
-                                        )
-                                    }
+                                    withAdminOrMemberAuthRespond(
+                                        { admin ->
+                                            removingWebauthnIdentity.removeWebauthnIdentity(
+                                                admin,
+                                                correlationId,
+                                                id,
+                                                credentialId
+                                            )
+                                        },
+                                        { member ->
+                                            removingWebauthnIdentity.removeWebauthnIdentity(
+                                                member,
+                                                correlationId,
+                                                id,
+                                                credentialId
+                                            )
+                                        }
+                                    )
                                 }
                         }
                     }

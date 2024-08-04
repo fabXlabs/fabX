@@ -348,7 +348,38 @@ data class User internal constructor(
     }
 
     fun removeWebauthnIdentity(
+        actor: Member,
+        clock: Clock,
+        correlationId: CorrelationId,
+        credentialId: ByteArray
+    ): Either<Error, UserSourcingEvent> {
+        return requireUserIsActor(actor, correlationId)
+            .flatMap {
+                removeWebauthnIdentity(
+                    actor.id,
+                    clock,
+                    correlationId,
+                    credentialId
+                )
+            }
+    }
+
+    fun removeWebauthnIdentity(
         actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+        credentialId: ByteArray
+    ): Either<Error, UserSourcingEvent> {
+        return removeWebauthnIdentity(
+            actor.id,
+            clock,
+            correlationId,
+            credentialId
+        )
+    }
+
+    private fun removeWebauthnIdentity(
+        actorId: ActorId,
         clock: Clock,
         correlationId: CorrelationId,
         credentialId: ByteArray
@@ -369,7 +400,7 @@ data class User internal constructor(
                 WebauthnIdentityRemoved(
                     id,
                     aggregateVersion + 1,
-                    actor.id,
+                    actorId,
                     clock.now(),
                     correlationId,
                     credentialId

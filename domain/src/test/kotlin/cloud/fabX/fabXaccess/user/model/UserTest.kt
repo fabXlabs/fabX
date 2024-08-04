@@ -1316,6 +1316,49 @@ internal class UserTest {
     }
 
     @Test
+    fun `given member as actor when removing own webauthn identity then returns sourcing event`() {
+        // given
+        val credentialId = byteArrayOf(1, 2, 3)
+        val identity = UserIdentityFixture.webauthn(credentialId)
+        val user = UserFixture.arbitrary(userId, identities = setOf(identity), aggregateVersion = aggregateVersion)
+
+        val expectedSourcingEvent = WebauthnIdentityRemoved(
+            userId,
+            aggregateVersion + 1,
+            user.id,
+            fixedInstant,
+            correlationId,
+            credentialId
+        )
+
+        // when
+        val result = user.removeWebauthnIdentity(user.asMember(), fixedClock, correlationId, credentialId)
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given other member as actor when removing webauthn identity then returns error`() {
+        // given
+        val credentialId = byteArrayOf(1, 2, 3)
+        val identity = UserIdentityFixture.webauthn(credentialId)
+        val user = UserFixture.arbitrary(userId, identities = setOf(identity), aggregateVersion = aggregateVersion)
+
+        val otherUser = UserFixture.arbitrary()
+
+        // when
+        val result = user.removeWebauthnIdentity(otherUser.asMember(), fixedClock, correlationId, credentialId)
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(Error.UserNotActor("User is not actor.", correlationId))
+    }
+
+    @Test
     fun `when adding phone number identity then expected sourcing event is returned`() = runTest {
         // given
         val user = UserFixture.arbitrary(userId, aggregateVersion = aggregateVersion)

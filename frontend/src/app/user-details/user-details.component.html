@@ -7,9 +7,9 @@
 </p-confirmDialog>
 <ng-container *ngIf="user$ | async let user">
     <div class="surface-card shadow-2 w-full md:w-9 my-5 mx-auto p-4 border-round">
-        <h2 class="mb-0 text-xl">{{user.firstName}} {{user.lastName}}</h2>
+        <h2 class="mb-0 text-xl">{{ user.firstName }} {{ user.lastName }}</h2>
         <div class="mt-1 mb-3 text-sm text-500">
-            <pre class="mt-0">{{user.id}}</pre>
+            <pre class="mt-0">{{ user.id }}</pre>
         </div>
 
         <div class="flex align-items-end">
@@ -28,19 +28,19 @@
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
                     first name
                 </div>
-                <div class="text-900 w-8">{{user.firstName}}</div>
+                <div class="text-900 w-8">{{ user.firstName }}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
                     last name
                 </div>
-                <div class="text-900 w-8">{{user.lastName}}</div>
+                <div class="text-900 w-8">{{ user.lastName }}</div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap surface-50">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
                     wiki name
                 </div>
-                <div class="text-900 w-8">{{user.wikiName}}</div>
+                <div class="text-900 w-8">{{ user.wikiName }}</div>
             </li>
         </ul>
 
@@ -63,14 +63,14 @@
                 <div class="text-900 w-8">
                     <i class="pi pi-lock mr-2" *ngIf="user.locked"></i>
                     <i class="pi pi-lock-open mr-2" *ngIf="!user.locked"></i>
-                    {{user.locked}}
+                    {{ user.locked }}
                 </div>
             </li>
             <li class="flex align-items-center py-3 px-2 flex-wrap">
                 <div class="text-500 w-4 font-medium overflow-hidden text-overflow-ellipsis text-right pr-3">
                     notes
                 </div>
-                <div class="text-900 w-8">{{user.notes}}</div>
+                <div class="text-900 w-8">{{ user.notes }}</div>
             </li>
         </ul>
 
@@ -133,9 +133,7 @@
                             <tr>
                                 <th style="width: 42%">Type</th>
                                 <th style="width: 42%">Identity</th>
-                                <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
-                                    <th style="width: 15%" class="text-center" *ngIf="loggedInUser.isAdmin">Delete</th>
-                                </ng-container>
+                                <th style="width: 15%" class="text-center"></th>
                             </tr>
                         </ng-template>
 
@@ -163,22 +161,22 @@
                                     <span
                                         class="overflow-hidden"
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'">
-                                        {{identity.username}}
+                                        {{ identity.username }}
                                      </span>
                                     <span
                                         class="overflow-hidden"
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'">
-                                        {{identity.cardId}}
+                                        {{ identity.cardId }}
                                     </span>
                                     <span
                                         class="overflow-hidden"
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'">
-                                        {{identity.phoneNr}}
+                                        {{ identity.phoneNr }}
                                     </span>
                                     <span
                                         class="overflow-hidden"
                                         *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'">
-                                        {{userService.toHexString(identity.credentialId)}}
+                                        {{ userService.toHexString(identity.credentialId) }}
                                     </span>
                                     <span
                                         class="overflow-hidden"
@@ -187,33 +185,33 @@
                                     </span>
                                 </td>
                                 <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
-                                    <td class="text-center" *ngIf="loggedInUser.isAdmin">
+                                    <td class="text-center">
                                         <p-button
-                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'"
+                                            *ngIf="loggedInUser.isAdmin && identity.type === 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'"
                                             icon="pi pi-trash"
                                             styleClass="p-button-danger"
                                             (onClick)="removeUsernamePasswordIdentity(identity.username)">
                                         </p-button>
                                         <p-button
-                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'"
+                                            *ngIf="loggedInUser.isAdmin && identity.type === 'cloud.fabX.fabXaccess.user.rest.CardIdentity'"
                                             icon="pi pi-trash"
                                             styleClass="p-button-danger"
                                             (onClick)="removeCardIdentity(identity.cardId)">
                                         </p-button>
                                         <p-button
-                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'"
+                                            *ngIf="loggedInUser.isAdmin && identity.type === 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity'"
                                             icon="pi pi-trash"
                                             styleClass="p-button-danger"
                                             (onClick)="removePhoneNrIdentity(identity.phoneNr)">
                                         </p-button>
                                         <p-button
-                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'"
+                                            *ngIf="(loggedInUser.isAdmin || loggedInUser.id === user.id) && identity.type === 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'"
                                             icon="pi pi-trash"
                                             styleClass="p-button-danger"
                                             (onClick)="removeWebauthnIdentity(identity.credentialId)">
                                         </p-button>
                                         <p-button
-                                            *ngIf="identity.type === 'cloud.fabX.fabXaccess.user.rest.PinIdentity'"
+                                            *ngIf="loggedInUser.isAdmin && identity.type === 'cloud.fabX.fabXaccess.user.rest.PinIdentity'"
                                             icon="pi pi-trash"
                                             styleClass="p-button-danger"
                                             (onClick)="removePinIdentity()">
@@ -239,12 +237,12 @@
                                                 [qualification]="q"
                                                 [showRemoveIcon]="true"
                                                 [allowShrinking]="false"
-                                                (removeEventEmitter)="removeMemberQualification(q.id)" />
+                                                (removeEventEmitter)="removeMemberQualification(q.id)"/>
                     </div>
                     <div>
                         <p-menu #addMemberQualificationMenu
-                            [popup]="true"
-                            [model]="memberQualificationItems">
+                                [popup]="true"
+                                [model]="memberQualificationItems">
                         </p-menu>
                         <p-button
                             (click)="addMemberQualificationMenu.toggle($event)"
@@ -265,7 +263,7 @@
                                                 [qualification]="q"
                                                 [showRemoveIcon]="true"
                                                 [allowShrinking]="false"
-                                                (removeEventEmitter)="removeInstructorQualification(q.id)" />
+                                                (removeEventEmitter)="removeInstructorQualification(q.id)"/>
                     </div>
                     <div *ngIf="loggedInUser$ | async let loggedInUser">
                         <p-menu #addInstructorQualificationMenu
@@ -288,7 +286,7 @@
                 <div class="text-900 w-8 flex align-items-center">
                     <div class="flex-grow-1">
                         <i *ngIf="user.isAdmin" class="pi pi-shield mr-2"></i>
-                        {{user.isAdmin}}
+                        {{ user.isAdmin }}
                     </div>
                     <div *ngIf="loggedInUser$ | async let loggedInUser">
                         <p-button label="Make Admin"
@@ -332,8 +330,8 @@
     </div>
     <ng-container *ngIf="loggedInUser$ | async let loggedInUser">
         <div *ngIf="loggedInUser.isAdmin"
-            class="w-full md:w-9 my-5 mx-auto p-4">
-            <fabx-user-sourcing-events />
+             class="w-full md:w-9 my-5 mx-auto p-4">
+            <fabx-user-sourcing-events/>
         </div>
     </ng-container>
 </ng-container>

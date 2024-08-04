@@ -584,7 +584,13 @@ export class FabxState {
             action.credentialId
         ).pipe(
             tap({
-                next: _ => ctx.dispatch(new Users.GetById(action.userId))
+                next: _ => {
+                    if (action.userId == ctx.getState().loggedInUserId) {
+                        ctx.dispatch(new Users.GetMe)
+                    } else {
+                        ctx.dispatch(new Users.GetById(action.userId))
+                    }
+                }
             })
         );
     }
