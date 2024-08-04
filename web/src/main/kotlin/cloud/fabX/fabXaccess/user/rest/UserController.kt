@@ -342,7 +342,7 @@ class UserController(
                 route("/webauthn") {
                     post("/register") {
                         readId { id ->
-                            withAdminAuthRespond { member ->
+                            withMemberAuthRespond { member ->
                                 webauthnService.getNewChallenge(id)
                                     .map { challenge ->
                                         WebauthnRegistrationDetails(

@@ -558,11 +558,21 @@ export class FabxState {
             action.userId,
         ).pipe(
             tap({
-                next: _ => ctx.dispatch(new Users.GetById(action.userId)).subscribe({
-                    next: () => {
-                        ctx.dispatch(new Navigate(['user', action.userId]));
+                next: _ => {
+                    if (action.userId == ctx.getState().loggedInUserId) {
+                        ctx.dispatch(new Users.GetMe).subscribe({
+                            next: () => {
+                                ctx.dispatch(new Navigate(['user', action.userId]));
+                            }
+                        })
+                    } else {
+                        ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                            next: () => {
+                                ctx.dispatch(new Navigate(['user', action.userId]));
+                            }
+                        })
                     }
-                })
+                }
             })
         );
     }
