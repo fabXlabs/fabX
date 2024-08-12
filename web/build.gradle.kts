@@ -23,7 +23,7 @@ dependencies {
     implementation("io.ktor:ktor-server-metrics-micrometer:2.3.12")
     implementation("io.ktor:ktor-server-metrics-micrometer-jvm:2.3.12")
     implementation("io.micrometer:micrometer-registry-prometheus:1.13.2")
-    implementation("org.slf4j:slf4j-api:2.0.15")
+    implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("com.webauthn4j:webauthn4j-core:0.25.0.RELEASE")
