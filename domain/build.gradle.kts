@@ -10,6 +10,8 @@ dependencies {
     implementation("com.sksamuel.scrimage:scrimage-core:4.2.0")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testFixturesImplementation("com.webauthn4j:webauthn4j-core:0.25.1.RELEASE")
+    testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.4")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
     testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
