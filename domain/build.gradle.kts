@@ -6,11 +6,11 @@ plugins {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
-    implementation("com.webauthn4j:webauthn4j-core:0.25.1.RELEASE")
+    implementation("com.webauthn4j:webauthn4j-core:0.26.0.RELEASE")
     implementation("com.sksamuel.scrimage:scrimage-core:4.2.0")
 
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
-    testFixturesImplementation("com.webauthn4j:webauthn4j-core:0.25.1.RELEASE")
+    testFixturesImplementation("com.webauthn4j:webauthn4j-core:0.26.0.RELEASE")
     testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     testFixturesImplementation("io.arrow-kt:arrow-core:1.2.4")
     testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
