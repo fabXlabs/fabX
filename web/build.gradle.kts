@@ -26,7 +26,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
     implementation("ch.qos.logback:logback-classic:1.5.7")
-    implementation("com.webauthn4j:webauthn4j-core:0.25.1.RELEASE")
+    implementation("com.webauthn4j:webauthn4j-core:0.26.0.RELEASE")
 
     testImplementation(testFixtures(project(":domain")))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
