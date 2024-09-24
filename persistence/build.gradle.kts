@@ -12,7 +12,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-json:0.54.0")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.54.0")
     implementation("org.jetbrains.exposed:exposed-java-time:0.54.0")
-    implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("com.zaxxer:HikariCP:6.0.0")
     implementation("org.postgresql:postgresql:42.7.4")
     implementation("org.liquibase:liquibase-core:4.29.2")
     implementation("com.mattbertolini:liquibase-slf4j:5.0.0")
