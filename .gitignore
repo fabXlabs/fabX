@@ -10,3 +10,6 @@ build
 
 # macOS
 .DS_Store
+
+# tooling
+tooling/wikiusers.html
