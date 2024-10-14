@@ -1,9 +1,9 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 dependencies {
     implementation(project(":domain"))
 
-    implementation("ch.qos.logback:logback-classic:1.5.8")
+    implementation(rootProject.libs.logback)
 }

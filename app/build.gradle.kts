@@ -1,7 +1,7 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     application
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    alias(libs.plugins.shadow)
 }
 
 application {
@@ -22,17 +22,19 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+    implementation(rootProject.libs.kotlinx.coroutines.core)
+    implementation(rootProject.libs.kotlinx.datetime)
 
     testImplementation(testFixtures(project(":domain")))
-    testImplementation("io.ktor:ktor-serialization:2.3.12")
-    testImplementation("io.ktor:ktor-server-test-host:2.3.12")
-    testImplementation("io.ktor:ktor-client-content-negotiation:2.3.12")
-    testImplementation("io.ktor:ktor-serialization-kotlinx-json:2.3.12")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
-    testImplementation("org.testcontainers:testcontainers:1.20.2")
-    testImplementation("org.testcontainers:postgresql:1.20.2")
-    testImplementation("org.jetbrains.exposed:exposed-core:0.55.0")
-    testImplementation("com.zaxxer:HikariCP:6.0.0")
+    // TODO REMOVE
+    // testImplementation(rootProject.libs.ktor.serialization)
+    testImplementation(rootProject.libs.ktor.server.test.host)
+    testImplementation(rootProject.libs.ktor.client.content.negotiation)
+    testImplementation(rootProject.libs.ktor.serialization.kotlinx.json)
+    testImplementation(rootProject.libs.wiremock)
+    testImplementation(rootProject.libs.kotlinx.coroutines.test)
+    testImplementation(rootProject.libs.testcontainers)
+    testImplementation(rootProject.libs.testcontainers.postgres)
+    testImplementation(rootProject.libs.exposed.core)
+    testImplementation(rootProject.libs.hikaricp)
 }

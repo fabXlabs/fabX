@@ -1,0 +1,83 @@
+[versions]
+kotlin = "2.0.20"
+arrow = "1.2.4"
+kodein = "7.22.0"
+ktor = "2.3.12"
+micrometer = "1.13.4"
+kotlinx-coroutines = "1.9.0"
+kotlinx-datetime = "0.6.1"
+kotlinx-serialization-json = "1.7.3"
+exposed = "0.55.0"
+hikari = "6.0.0"
+postgresql = "42.7.4"
+liquibase = "4.29.2"
+liquibase-slf4j = "5.0.0"
+webauthn4j = "0.26.0.RELEASE"
+scrimage = "4.2.0"
+logback = "1.5.8"
+slf4j = "2.0.16"
+
+junit = "5.11.1"
+assertk = "0.28.1"
+mockito-kotlin = "5.4.0"
+mockito-junit5 = "5.14.0"
+kotlin-wiremock = "2.1.1"
+testcontainers = "1.20.2"
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+kodein = { module = "org.kodein.di:kodein-di", version.ref = "kodein" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-core-jvm = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-auth = { module = "io.ktor:ktor-server-auth", version.ref = "ktor" }
+ktor-server-auth-jwt = { module = "io.ktor:ktor-server-auth-jwt", version.ref = "ktor" }
+ktor-server-forwarded-header = { module = "io.ktor:ktor-server-forwarded-header", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-http-redirect = { module = "io.ktor:ktor-server-http-redirect", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-server-metrics-micrometer = { module = "io.ktor:ktor-server-metrics-micrometer", version.ref = "ktor" }
+ktor-server-metrics-micrometer-jvm = { module = "io.ktor:ktor-server-metrics-micrometer-jvm", version.ref = "ktor" }
+micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
+
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
+exposed-json = { module = "org.jetbrains.exposed:exposed-json", version.ref = "exposed" }
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
+exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" }
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
+liquibase = { module = "org.liquibase:liquibase-core", version.ref = "liquibase" }
+liquibase-slf4j = { module = "com.mattbertolini:liquibase-slf4j", version.ref = "liquibase-slf4j" }
+webauthn4j-core = { module = "com.webauthn4j:webauthn4j-core", version.ref = "webauthn4j" }
+scrimage-core = { module = "com.sksamuel.scrimage:scrimage-core", version.ref = "scrimage" }
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+junit-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
+assertk-jvm = { module = "com.willowtreeapps.assertk:assertk-jvm", version.ref = "assertk" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito-kotlin" }
+mockito-junit5 = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito-junit5" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+wiremock = { module = "com.marcinziolo:kotlin-wiremock", version.ref="kotlin-wiremock" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-postgres = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
+node = { id = "com.github.node-gradle.node", version = "7.1.0" }

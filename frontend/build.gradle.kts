@@ -1,6 +1,7 @@
 plugins {
     java
-    id("com.github.node-gradle.node") version "7.1.0"
+    alias(libs.plugins.node)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 node {
