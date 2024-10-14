@@ -2,9 +2,9 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
     base
-    kotlin("jvm") version "2.0.20"
+    alias(libs.plugins.kotlin.jvm)
     jacoco
-    id("com.github.ben-manes.versions") version "0.51.0"
+    alias(libs.plugins.versions)
 }
 
 tasks.register<GradleBuild>("stage") {
@@ -21,15 +21,11 @@ allprojects {
     repositories {
         mavenCentral()
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
-        maven {
-            url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
-        }
     }
 
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions {
-            jvmTarget = "17"
-            freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
         }
     }
 
@@ -52,19 +48,18 @@ allprojects {
     }
 
     dependencies {
-        implementation(enforcedPlatform("org.jetbrains.kotlin:kotlin-bom:2.0.20"))
-        implementation("org.jetbrains.kotlin:kotlin-stdlib")
-        implementation("io.arrow-kt:arrow-core:1.2.4")
-        implementation("org.kodein.di:kodein-di:7.22.0")
-        implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-        implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+        implementation(rootProject.libs.kotlin.stdlib)
+        implementation(rootProject.libs.arrow.core)
+        implementation(rootProject.libs.kodein)
+        implementation(rootProject.libs.kotlinx.datetime)
+        implementation(rootProject.libs.kotlinx.serialization.json)
 
-        testImplementation("org.jetbrains.kotlin:kotlin-test")
-        testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.1")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.1")
-        testImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
-        testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-        testImplementation("org.mockito:mockito-junit-jupiter:5.14.1")
+        testImplementation(rootProject.libs.kotlin.test)
+        testImplementation(rootProject.libs.kotlin.test.junit5)
+        testImplementation(rootProject.libs.junit.engine)
+        testImplementation(rootProject.libs.junit.params)
+        testImplementation(rootProject.libs.assertk.jvm)
+        testImplementation(rootProject.libs.mockito.kotlin)
+        testImplementation(rootProject.libs.mockito.junit5)
     }
 }

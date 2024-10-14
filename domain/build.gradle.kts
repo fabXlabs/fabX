@@ -1,21 +1,22 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
     `java-test-fixtures`
-    kotlin("plugin.serialization") version "2.0.20"
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
-    implementation("com.webauthn4j:webauthn4j-core:0.26.0.RELEASE")
-    implementation("com.sksamuel.scrimage:scrimage-core:4.2.0")
+    implementation(rootProject.libs.kotlinx.coroutines.core)
+    implementation(rootProject.libs.webauthn4j.core)
+    implementation(rootProject.libs.scrimage.core)
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
-    testFixturesImplementation("com.webauthn4j:webauthn4j-core:0.26.0.RELEASE")
-    testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
-    testFixturesImplementation("io.arrow-kt:arrow-core:1.2.4")
-    testFixturesImplementation("com.willowtreeapps.assertk:assertk-jvm:0.28.1")
-    testFixturesImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-    testFixturesImplementation("org.mockito:mockito-junit-jupiter:5.14.1")
+    testImplementation(rootProject.libs.kotlinx.coroutines.test)
+
+    testFixturesImplementation(rootProject.libs.webauthn4j.core)
+    testFixturesImplementation(rootProject.libs.kotlinx.datetime)
+    testFixturesImplementation(rootProject.libs.arrow.core)
+    testFixturesImplementation(rootProject.libs.assertk.jvm)
+    testFixturesImplementation(rootProject.libs.mockito.kotlin)
+    testFixturesImplementation(rootProject.libs.mockito.junit5)
 }
 
 kotlin.target.compilations.getByName("testFixtures") {
