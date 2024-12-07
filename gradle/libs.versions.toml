@@ -1,28 +1,28 @@
 [versions]
-kotlin = "2.0.20"
-arrow = "1.2.4"
-kodein = "7.22.0"
-ktor = "2.3.12"
-micrometer = "1.13.4"
+kotlin = "2.1.0"
+arrow = "2.0.0"
+kodein = "7.23.1"
+ktor = "3.0.2"
+micrometer = "1.14.1"
 kotlinx-coroutines = "1.9.0"
 kotlinx-datetime = "0.6.1"
 kotlinx-serialization-json = "1.7.3"
-exposed = "0.55.0"
-hikari = "6.0.0"
+exposed = "0.57.0"
+hikari = "6.2.1"
 postgresql = "42.7.4"
-liquibase = "4.29.2"
-liquibase-slf4j = "5.0.0"
-webauthn4j = "0.26.0.RELEASE"
-scrimage = "4.2.0"
-logback = "1.5.8"
+liquibase = "4.30.0"
+liquibase-slf4j = "5.1.0"
+webauthn4j = "0.28.3.RELEASE"
+scrimage = "4.3.0"
+logback = "1.5.12"
 slf4j = "2.0.16"
 
-junit = "5.11.1"
+junit = "5.11.3"
 assertk = "0.28.1"
 mockito-kotlin = "5.4.0"
-mockito-junit5 = "5.14.0"
+mockito-junit5 = "5.14.2"
 kotlin-wiremock = "2.1.1"
-testcontainers = "1.20.2"
+testcontainers = "1.20.4"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
@@ -78,6 +78,6 @@ testcontainers-postgres = { module = "org.testcontainers:postgresql", version.re
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+shadow = { id = "com.gradleup.shadow", version = "8.3.5" }
 versions = { id = "com.github.ben-manes.versions", version = "0.51.0" }
 node = { id = "com.github.node-gradle.node", version = "7.1.0" }
