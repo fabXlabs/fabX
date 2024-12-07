@@ -1,12 +1,10 @@
 package cloud.fabX.fabXaccess.common.rest
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.response.respond
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 
-suspend inline fun PipelineContext<*, ApplicationCall>.requireStringQueryParameter(name: String): String? {
+suspend inline fun RoutingContext.requireStringQueryParameter(name: String): String? {
     call.request.queryParameters[name]?.let {
         return it
     }

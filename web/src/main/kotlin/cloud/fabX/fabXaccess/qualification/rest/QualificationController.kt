@@ -15,15 +15,13 @@ import cloud.fabX.fabXaccess.qualification.application.AddingQualification
 import cloud.fabX.fabXaccess.qualification.application.ChangingQualification
 import cloud.fabX.fabXaccess.qualification.application.DeletingQualification
 import cloud.fabX.fabXaccess.qualification.application.GettingQualification
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.ktor.util.pipeline.PipelineContext
 
 class QualificationController(
     private val gettingQualification: GettingQualification,
@@ -109,7 +107,7 @@ class QualificationController(
         }
     }
 
-    private suspend inline fun PipelineContext<*, ApplicationCall>.readId(
+    private suspend inline fun RoutingContext.readId(
         function: (QualificationId) -> Unit
     ) {
         readUUIDParameter("id")

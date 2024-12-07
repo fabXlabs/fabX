@@ -177,9 +177,6 @@ internal fun withTestApp(
     diGetter(testApp)
 
     testApplication {
-        environment {
-            developmentMode = false
-        }
         application {
             webApp.moduleConfiguration(this)
         }

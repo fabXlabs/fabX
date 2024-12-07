@@ -7,12 +7,10 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.Member
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 
 
-internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.withAdminAuthRespond(
+internal suspend inline fun <reified T : Any> RoutingContext.withAdminAuthRespond(
     function: (Admin) -> Either<Error, T>
 ) {
     return call.respondWithErrorHandler(
@@ -23,7 +21,7 @@ internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall
     )
 }
 
-internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.withMemberAuthRespond(
+internal suspend inline fun <reified T : Any> RoutingContext.withMemberAuthRespond(
     function: (Member) -> Either<Error, T>
 ) {
     return call.respondWithErrorHandler(
@@ -34,7 +32,7 @@ internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall
     )
 }
 
-internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.withAdminOrMemberAuthRespond(
+internal suspend inline fun <reified T : Any> RoutingContext.withAdminOrMemberAuthRespond(
     asAdminFunction: (Admin) -> Either<Error, T>,
     asMemberFunction: (Member) -> Either<Error, T>
 ) {
@@ -59,7 +57,7 @@ internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall
     )
 }
 
-internal suspend inline fun <reified T : Any> PipelineContext<*, ApplicationCall>.withInstructorAuthRespond(
+internal suspend inline fun <reified T : Any> RoutingContext.withInstructorAuthRespond(
     function: (Instructor) -> Either<Error, T>
 ) {
     return call.respondWithErrorHandler(

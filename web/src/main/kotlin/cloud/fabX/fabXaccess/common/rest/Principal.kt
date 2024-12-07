@@ -1,3 +1,3 @@
 package cloud.fabX.fabXaccess.common.rest
 
-class MetricsPrincipal
+interface Principal

@@ -24,21 +24,18 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.basic
 import io.ktor.server.auth.jwt.jwt
-import io.ktor.server.engine.applicationEngineEnvironment
-import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.http.content.angular
 import io.ktor.server.http.content.singlePageApplication
 import io.ktor.server.metrics.micrometer.MicrometerMetrics
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
-import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
 import io.ktor.server.plugins.httpsredirect.HttpsRedirect
@@ -55,7 +52,7 @@ import io.ktor.server.websocket.WebSockets
 import io.ktor.server.websocket.pingPeriod
 import io.ktor.server.websocket.timeout
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
-import java.time.Duration
+import kotlin.time.Duration
 import kotlinx.serialization.json.Json
 import org.slf4j.MDC
 import org.slf4j.event.Level
@@ -176,8 +173,8 @@ class WebApp(
         }
 
         install(WebSockets) {
-            pingPeriod = Duration.ofSeconds(10)
-            timeout = Duration.ofSeconds(10)
+            pingPeriod = Duration.parse("10s")
+            timeout = Duration.parse("10s")
             maxFrameSize = Long.MAX_VALUE
             masking = false
         }
@@ -242,16 +239,8 @@ class WebApp(
     fun start() {
         log.info("starting WebApp...")
 
-        embeddedServer(Netty, environment = applicationEngineEnvironment {
-
-            module {
-                moduleConfiguration()
-            }
-
-            connector {
-                port = publicPort
-            }
-
-        }).start(wait = true)
+        embeddedServer(Netty, port = publicPort) {
+            moduleConfiguration()
+        }.start(wait = true)
     }
 }
