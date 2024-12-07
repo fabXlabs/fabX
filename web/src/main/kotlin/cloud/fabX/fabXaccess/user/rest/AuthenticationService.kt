@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.SystemActor
 import cloud.fabX.fabXaccess.common.model.UserId
+import cloud.fabX.fabXaccess.common.rest.Principal
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.MacSecretIdentity
@@ -16,7 +17,6 @@ import cloud.fabX.fabXaccess.user.application.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserById
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import io.ktor.server.auth.Principal
 import io.ktor.server.auth.UserPasswordCredential
 
 class AuthenticationService(
@@ -123,6 +123,8 @@ class AuthenticationService(
     private fun requireUnlockedUser(user: User): Either<Error, User> {
         return if (user.locked) {
             Error.UserIsLocked("User is locked.", user.id).left()
-        } else { user.right() }
+        } else {
+            user.right()
+        }
     }
 }

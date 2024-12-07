@@ -23,15 +23,13 @@ import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
 import io.ktor.http.CacheControl
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.ktor.util.pipeline.PipelineContext
 
 class DeviceController(
     private val gettingDevice: GettingDevice,
@@ -250,7 +248,7 @@ class DeviceController(
         }
     }
 
-    private suspend inline fun PipelineContext<*, ApplicationCall>.readId(
+    private suspend inline fun RoutingContext.readId(
         function: (DeviceId) -> Unit
     ) {
         readUUIDParameter("id")

@@ -1,13 +1,11 @@
 package cloud.fabX.fabXaccess.common.rest
 
 import io.ktor.http.HttpStatusCode
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.response.respond
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.routing.RoutingContext
 import java.util.UUID
 
-suspend inline fun PipelineContext<*, ApplicationCall>.readUUIDParameter(name: String): UUID? {
+suspend inline fun RoutingContext.readUUIDParameter(name: String): UUID? {
     call.parameters[name]?.let {
         try {
             UUID.fromString(it)
@@ -22,7 +20,7 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readUUIDParameter(name: S
     return null
 }
 
-suspend inline fun PipelineContext<*, ApplicationCall>.readIntParameter(name: String): Int? {
+suspend inline fun RoutingContext.readIntParameter(name: String): Int? {
     call.parameters[name]?.toIntOrNull()?.let {
         return it
     }
@@ -31,7 +29,7 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readIntParameter(name: St
     return null
 }
 
-suspend inline fun PipelineContext<*, ApplicationCall>.readStringParameter(name: String): String? {
+suspend inline fun RoutingContext.readStringParameter(name: String): String? {
     call.parameters[name]?.let {
         return it
     }
@@ -40,7 +38,7 @@ suspend inline fun PipelineContext<*, ApplicationCall>.readStringParameter(name:
     return null
 }
 
-suspend inline fun PipelineContext<*, ApplicationCall>.readHexStringParameter(name: String): ByteArray? {
+suspend inline fun RoutingContext.readHexStringParameter(name: String): ByteArray? {
     call.parameters[name]?.let {
         try {
             check(it.length % 2 == 0) { "Must have an even length" }

@@ -19,15 +19,13 @@ import cloud.fabX.fabXaccess.tool.application.ChangingTool
 import cloud.fabX.fabXaccess.tool.application.DeletingTool
 import cloud.fabX.fabXaccess.tool.application.GettingTool
 import io.ktor.http.CacheControl
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.ktor.util.pipeline.PipelineContext
 
 class ToolController(
     private val gettingTool: GettingTool,
@@ -164,7 +162,7 @@ class ToolController(
         }
     }
 
-    private suspend inline fun PipelineContext<*, ApplicationCall>.readId(
+    private suspend inline fun RoutingContext.readId(
         function: (ToolId) -> Unit
     ) {
         readUUIDParameter("id")

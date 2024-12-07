@@ -13,12 +13,11 @@ import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.rest.ErrorPrincipal
 import cloud.fabX.fabXaccess.user.rest.UserPrincipal
 import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.auth.principal
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.websocket.WebSocketServerSession
-import io.ktor.util.pipeline.PipelineContext
 
-internal fun PipelineContext<*, ApplicationCall>.readAdminAuthentication(): Either<Error, Admin> {
+internal fun RoutingContext.readAdminAuthentication(): Either<Error, Admin> {
     call.principal<UserPrincipal>()?.let { userPrincipal ->
         return userPrincipal.right()
             .flatMap { it.asAdmin() }
@@ -29,7 +28,7 @@ internal fun PipelineContext<*, ApplicationCall>.readAdminAuthentication(): Eith
     return Error.NotAuthenticated("Required authentication not found.").left()
 }
 
-internal fun PipelineContext<*, ApplicationCall>.readInstructorAuthentication(): Either<Error, Instructor> {
+internal fun RoutingContext.readInstructorAuthentication(): Either<Error, Instructor> {
     call.principal<UserPrincipal>()?.let { userPrincipal ->
         return userPrincipal.right()
             .flatMap { it.asInstructor() }
@@ -40,7 +39,7 @@ internal fun PipelineContext<*, ApplicationCall>.readInstructorAuthentication():
     return Error.NotAuthenticated("Required authentication not found.").left()
 }
 
-internal fun PipelineContext<*, ApplicationCall>.readMemberAuthentication(): Either<Error, Member> {
+internal fun RoutingContext.readMemberAuthentication(): Either<Error, Member> {
     call.principal<UserPrincipal>()?.let { userPrincipal ->
         return userPrincipal.right()
             .map { it.asMember() }
@@ -51,7 +50,7 @@ internal fun PipelineContext<*, ApplicationCall>.readMemberAuthentication(): Eit
     return Error.NotAuthenticated("Required authentication not found.").left()
 }
 
-internal fun PipelineContext<*, ApplicationCall>.readDeviceAuthentication(): Either<Error, DeviceActor> {
+internal fun RoutingContext.readDeviceAuthentication(): Either<Error, DeviceActor> {
     return call.readDeviceAuthentication()
 }
 

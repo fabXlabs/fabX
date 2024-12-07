@@ -2,11 +2,11 @@ package cloud.fabX.fabXaccess.user.rest
 
 import arrow.core.Either
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.rest.Principal
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.User
-import io.ktor.server.auth.Principal
 
 data class UserPrincipal(
     private val user: User,

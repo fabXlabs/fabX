@@ -204,9 +204,6 @@ internal fun withTestApp(
     val webApp = testSetup()
 
     testApplication {
-        environment {
-            developmentMode = false
-        }
         application {
             webApp.moduleConfiguration(this)
         }

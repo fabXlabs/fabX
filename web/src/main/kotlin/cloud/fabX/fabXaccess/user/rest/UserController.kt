@@ -41,15 +41,13 @@ import cloud.fabX.fabXaccess.user.application.RemovingPinIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingUsernamePasswordIdentity
 import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.application.call
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.ktor.util.pipeline.PipelineContext
 
 class UserController(
     private val gettingUser: GettingUser,
@@ -532,7 +530,7 @@ class UserController(
         }
     }
 
-    private suspend inline fun PipelineContext<*, ApplicationCall>.readId(
+    private suspend inline fun RoutingContext.readId(
         function: (UserId) -> Unit
     ) {
         readUUIDParameter("id")
