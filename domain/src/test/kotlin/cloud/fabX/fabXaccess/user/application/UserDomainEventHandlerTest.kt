@@ -152,7 +152,7 @@ internal class UserDomainEventHandlerTest {
             cardSecret
         )
 
-        whenever(gettingUserById.getUserById(userId))
+        whenever(gettingUserById.getUserById(actorId))
             .thenReturn(actor.right())
 
         whenever(
