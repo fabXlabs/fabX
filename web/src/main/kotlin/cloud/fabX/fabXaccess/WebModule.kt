@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.rest.MetricsController
 import cloud.fabX.fabXaccess.common.rest.MicrometerTaggedCounter
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.rest.DeviceFirmwareUpdateController
+import cloud.fabX.fabXaccess.device.ws.AddCardIdentityAtDeviceViaWebsocket
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandlerImpl
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
@@ -35,6 +36,7 @@ val webModule = DI.Module("web") {
     bindSingleton { ToolController(instance(), instance(), instance(), instance(), instance()) }
     bindSingleton {
         DeviceController(
+            instance(),
             instance(),
             instance(),
             instance(),
@@ -113,6 +115,8 @@ val webModule = DI.Module("web") {
     }
 
     bindSingleton { UnlockToolAtDeviceViaWebsocket(instance()) }
+
+    bindSingleton { AddCardIdentityAtDeviceViaWebsocket(instance()) }
 
     bindSingleton { UpdateDeviceFirmwareViaWebsocket(instance()) }
 

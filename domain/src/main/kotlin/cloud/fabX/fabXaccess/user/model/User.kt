@@ -9,6 +9,7 @@ import arrow.core.left
 import arrow.core.right
 import arrow.core.toOption
 import cloud.fabX.fabXaccess.common.application.toHex
+import cloud.fabX.fabXaccess.common.model.Actor
 import cloud.fabX.fabXaccess.common.model.ActorId
 import cloud.fabX.fabXaccess.common.model.AggregateRootEntity
 import cloud.fabX.fabXaccess.common.model.ChangeableValue
@@ -22,6 +23,7 @@ import cloud.fabX.fabXaccess.common.model.assertAggregateVersionIncreasesOneByOn
 import cloud.fabX.fabXaccess.common.model.assertAggregateVersionStartsWithOne
 import cloud.fabX.fabXaccess.common.model.assertIsNotEmpty
 import cloud.fabX.fabXaccess.common.model.biFlatmap
+import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import com.webauthn4j.credential.CredentialRecord
 import kotlinx.datetime.Clock

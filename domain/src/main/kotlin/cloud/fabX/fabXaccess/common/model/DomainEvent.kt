@@ -19,6 +19,7 @@ interface DomainEventHandler {
     suspend fun handle(domainEvent: DomainEvent)
     suspend fun handle(domainEvent: QualificationDeleted) = handle(domainEvent as DomainEvent)
     suspend fun handle(domainEvent: ToolDeleted) = handle(domainEvent as DomainEvent)
+    suspend fun handle(domainEvent: CardCreatedAtDevice) = handle(domainEvent as DomainEvent)
 }
 
 data class QualificationDeleted(
@@ -37,6 +38,19 @@ data class ToolDeleted(
     override val timestamp: Instant = Clock.System.now(),
     override val correlationId: CorrelationId,
     val toolId: ToolId
+) : DomainEvent {
+    override suspend fun handleBy(eventHandler: DomainEventHandler) {
+        eventHandler.handle(this)
+    }
+}
+
+data class CardCreatedAtDevice(
+    override val actorId: ActorId,
+    override val timestamp: Instant = Clock.System.now(),
+    override val correlationId: CorrelationId,
+    val userId: UserId,
+    val cardId: String,
+    val cardSecret: String
 ) : DomainEvent {
     override suspend fun handleBy(eventHandler: DomainEventHandler) {
         eventHandler.handle(this)

@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.IterableIsEmpty
 import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.common.model.newUserId
+import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationFixture
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import isLeft

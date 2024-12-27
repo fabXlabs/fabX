@@ -2,6 +2,7 @@ package cloud.fabX.fabXaccess.common.rest
 
 import cloud.fabX.fabXaccess.WebApp
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
+import cloud.fabX.fabXaccess.device.application.AddingCardIdentityAtDevice
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
@@ -152,6 +153,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(UnlockingTool::class.java) }
         bindInstance { Mockito.mock(RestartingDevice::class.java) }
         bindInstance { Mockito.mock(UpdatingDeviceFirmware::class.java) }
+        bindInstance { Mockito.mock(AddingCardIdentityAtDevice::class.java) }
         bindInstance { Mockito.mock(DeviceCommandHandler::class.java) }
         bindInstance { Mockito.mock(DeviceNotificationHandler::class.java) }
         bindInstance { Mockito.mock(GettingDevicePinStatus::class.java) }
