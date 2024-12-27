@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.device.rest
 import arrow.core.flatMap
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.ToolId
+import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
@@ -11,6 +12,7 @@ import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
+import cloud.fabX.fabXaccess.device.application.AddingCardIdentityAtDevice
 import cloud.fabX.fabXaccess.device.application.AddingDevice
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
@@ -42,6 +44,7 @@ class DeviceController(
     private val detachingTool: DetachingTool,
     private val unlockingTool: UnlockingTool,
     private val restartingDevice: RestartingDevice,
+    private val addingCardIdentityAtDevice: AddingCardIdentityAtDevice,
     private val updatingDeviceFirmware: UpdatingDeviceFirmware
 ) {
 
@@ -204,6 +207,21 @@ class DeviceController(
                                 newCorrelationId(),
                                 id,
                                 ToolId.fromString(it.toolId)
+                            )
+                        }
+                    }
+                }
+            }
+
+            post("/{id}/add-user-card-identity") {
+                readBody<AtDeviceCardCreationDetails>()?.let {
+                    readId { id ->
+                        withAdminAuthRespond { admin ->
+                            addingCardIdentityAtDevice.addCardIdentityAtDevice(
+                                admin,
+                                newCorrelationId(),
+                                id,
+                                UserId.fromString(it.userId)
                             )
                         }
                     }

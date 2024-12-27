@@ -200,6 +200,19 @@ data class UnlockTool(
 data class ToolUnlockResponse(override val commandId: Int) : DeviceResponse()
 
 /**
+ * Command from server -> device to create a card which is then added as a card identity to a user.
+ */
+@Serializable
+data class CreateCard(
+    override val commandId: Int,
+    val userName: String,
+    val cardSecret: String
+) : ServerToDeviceCommand()
+
+@Serializable
+data class CardCreationResponse(override val commandId: Int, val cardId: String) : DeviceResponse()
+
+/**
  * Command from server -> device to restart the device.
  */
 @Serializable
