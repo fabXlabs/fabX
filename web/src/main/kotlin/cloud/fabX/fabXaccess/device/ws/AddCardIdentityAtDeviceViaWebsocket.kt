@@ -29,7 +29,7 @@ class AddCardIdentityAtDeviceViaWebsocket(
                 )
             }
             .flatMap {
-                deviceWebsocketController.receiveDeviceResponse(deviceId, commandId, correlationId)
+                deviceWebsocketController.receiveDeviceResponse(deviceId, commandId, correlationId, timeoutMs = 15_000)
             }
             .flatMap {
                 if (it !is CardCreationResponse) {

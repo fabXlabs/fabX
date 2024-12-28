@@ -226,7 +226,8 @@ class DeviceWebsocketController(
     internal suspend fun receiveDeviceResponse(
         deviceId: DeviceId,
         commandId: Int,
-        correlationId: CorrelationId
+        correlationId: CorrelationId,
+        timeoutMs: Long = deviceReceiveTimeoutMillis
     ): Either<Error, DeviceResponse> {
         val channel = responseChannels[commandId]
             ?: throw IllegalStateException("Channel for receiving not found. Was setup called?")
@@ -241,7 +242,7 @@ class DeviceWebsocketController(
 
             // parallel job to cancel waiting job after timeout
             val timeoutJob = launch {
-                delay(deviceReceiveTimeoutMillis)
+                delay(timeoutMs)
                 if (!result.isCompleted) {
                     result.cancel()
                 }

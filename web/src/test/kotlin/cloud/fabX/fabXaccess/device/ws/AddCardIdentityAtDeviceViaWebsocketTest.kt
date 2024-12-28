@@ -76,7 +76,8 @@ internal class AddCardIdentityAtDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                timeoutMs = eq(15_000L)
             )
         ).thenReturn(deviceResponse.right())
 
@@ -92,7 +93,7 @@ internal class AddCardIdentityAtDeviceViaWebsocketTest {
         assertThat(commandCaptor.value.userName).isEqualTo(userName)
         assertThat(commandCaptor.value.cardSecret).isEqualTo(cardSecret)
 
-        verify(deviceWebsocketController).receiveDeviceResponse(any(), capture(responseCommandIdCaptor), any())
+        verify(deviceWebsocketController).receiveDeviceResponse(any(), capture(responseCommandIdCaptor), any(), eq(15_000L))
         assertThat(responseCommandIdCaptor.value).isEqualTo(commandCaptor.value.commandId)
     }
 
@@ -157,9 +158,6 @@ internal class AddCardIdentityAtDeviceViaWebsocketTest {
     @Test
     fun `given error while receiving response when adding card identity then returns error`() = runTest {
         // given
-        val userName = "some body"
-        val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
-
         val error = Error.DeviceTimeout("msg", deviceId, correlationId)
 
         whenever(
@@ -182,7 +180,8 @@ internal class AddCardIdentityAtDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                eq(15_000L)
             )
         ).thenReturn(error.left())
 
@@ -200,7 +199,6 @@ internal class AddCardIdentityAtDeviceViaWebsocketTest {
         // given
         val commandId = 1234
         val userName = "some body"
-        val cardId = "AABBCC11223344"
         val cardSecret = "EE334F5E740985180C9EDAA6B5A9EB159CFB4F19427C68336D6D23D5015547CE"
         val deviceResponse = ErrorResponse(commandId, "msg", mapOf(), null)
 
@@ -224,7 +222,8 @@ internal class AddCardIdentityAtDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                eq(15_000L)
             )
         ).thenReturn(deviceResponse.right())
 

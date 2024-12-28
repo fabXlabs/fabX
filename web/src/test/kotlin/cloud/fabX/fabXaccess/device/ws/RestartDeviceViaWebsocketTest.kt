@@ -71,7 +71,8 @@ internal class RestartDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                any()
             )
         ).thenReturn(deviceResponse.right())
 
@@ -84,7 +85,7 @@ internal class RestartDeviceViaWebsocketTest {
             .isEqualTo(Unit)
 
         verify(deviceWebsocketController).sendCommand(any(), capture(commandCaptor), any())
-        verify(deviceWebsocketController).receiveDeviceResponse(any(), capture(responseCommandIdCaptor), any())
+        verify(deviceWebsocketController).receiveDeviceResponse(any(), capture(responseCommandIdCaptor), any(), any())
         assertThat(responseCommandIdCaptor.value).isEqualTo(commandCaptor.value.commandId)
     }
 
@@ -165,7 +166,8 @@ internal class RestartDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                any()
             )
         ).thenReturn(error.left())
 
@@ -203,7 +205,8 @@ internal class RestartDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                any()
             )
         ).thenReturn(deviceResponse.right())
 

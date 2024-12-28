@@ -74,7 +74,8 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                any()
             )
         ).thenReturn(deviceResponse.right())
 
@@ -89,7 +90,7 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
         verify(deviceWebsocketController).sendCommand(any(), capture(commandCaptor), any())
         assertThat(commandCaptor.value.toolId).isEqualTo(toolId.serialize())
 
-        verify(deviceWebsocketController).receiveDeviceResponse(any(), capture(responseCommandIdCaptor), any())
+        verify(deviceWebsocketController).receiveDeviceResponse(any(), capture(responseCommandIdCaptor), any(), any())
         assertThat(responseCommandIdCaptor.value).isEqualTo(commandCaptor.value.commandId)
     }
 
@@ -178,7 +179,8 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                any()
             )
         ).thenReturn(error.left())
 
@@ -220,7 +222,8 @@ internal class UnlockToolAtDeviceViaWebsocketTest {
             deviceWebsocketController.receiveDeviceResponse(
                 eq(deviceId),
                 any(),
-                eq(correlationId)
+                eq(correlationId),
+                any()
             )
         ).thenReturn(deviceResponse.right())
 
