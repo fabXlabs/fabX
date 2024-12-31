@@ -1011,6 +1011,21 @@ export class FabxState {
         );
     }
 
+    @Action(Devices.AddUserCardIdentity)
+    addUserCardIdentityAtDevice(ctx: StateContext<FabxStateModel>, action: Devices.AddUserCardIdentity) {
+        return this.deviceService.addUserCardIdentity(action.id, action.userId).pipe(
+            tap({
+                next: value => {
+                    ctx.dispatch(new Users.GetById(action.userId)).subscribe({
+                        next: () => {
+                            ctx.dispatch(new Navigate(['user', action.userId]));
+                        }
+                    });
+                }
+            })
+        )
+    }
+
     @Action(Devices.ChangeThumbnail)
     changeDeviceThumbnail(ctx: StateContext<FabxStateModel>, action: Devices.ChangeThumbnail) {
         return this.deviceService.changeThumbnail(action.id, action.file).pipe(

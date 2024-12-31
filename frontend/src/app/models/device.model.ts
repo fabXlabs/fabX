@@ -48,3 +48,7 @@ export interface ToolAttachmentDetails {
 export interface ToolUnlockDetails {
     toolId: string
 }
+
+export interface AtDeviceCardCreationDetails {
+    userId: string
+}

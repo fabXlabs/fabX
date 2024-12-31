@@ -20,6 +20,7 @@ import { ToolChangeThumbnailComponent } from "./tool-change-thumbnail/tool-chang
 import { ToolDetailsComponent } from "./tool-details/tool-details.component";
 import { ToolsComponent } from "./tools/tools.component";
 import { UserAddCardIdentityComponent } from "./user-add-card-identity/user-add-card-identity.component";
+import { UserAddCardIdentityAtDeviceComponent } from "./user-add-card-identity-at-device/user-add-card-identity-at-device.component";
 import { UserAddComponent } from "./user-add/user-add.component";
 import { UserAddPhoneNrIdentityComponent } from "./user-add-phone-nr-identity/user-add-phone-nr-identity.component";
 import { UserAddPinIdentityComponent } from "./user-add-pin-identity/user-add-pin-identity.component";
@@ -41,6 +42,7 @@ const routes: Routes = [
     { path: 'user/soft-deleted', component: UserSoftDeletedComponent, canActivate: [authGuard] },
     { path: 'user/:id', component: UserDetailsComponent, canActivate: [authGuard] },
     { path: 'user/:id/add-card-identity', component: UserAddCardIdentityComponent, canActivate: [authGuard] },
+    { path: 'user/:id/add-card-identity-at-device', component: UserAddCardIdentityAtDeviceComponent, canActivate: [authGuard] },
     { path: 'user/:id/add-phone-nr-identity', component: UserAddPhoneNrIdentityComponent, canActivate: [authGuard] },
     { path: 'user/:id/add-username-password-identity', component: UserAddUsernamePasswordIdentityComponent, canActivate: [authGuard] },
     { path: 'user/:id/add-pin-identity', component: UserAddPinIdentityComponent, canActivate: [authGuard] },

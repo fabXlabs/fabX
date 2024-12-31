@@ -58,6 +58,7 @@ import { ToolChangeThumbnailComponent } from "./tool-change-thumbnail/tool-chang
 import { ToolDetailsComponent } from './tool-details/tool-details.component';
 import { ToolsComponent } from './tools/tools.component';
 import { UserAddCardIdentityComponent } from './user-add-card-identity/user-add-card-identity.component';
+import { UserAddCardIdentityAtDeviceComponent } from "./user-add-card-identity-at-device/user-add-card-identity-at-device.component";
 import { UserAddComponent } from './user-add/user-add.component';
 import { UserAddPhoneNrIdentityComponent } from './user-add-phone-nr-identity/user-add-phone-nr-identity.component';
 import { UserAddPinIdentityComponent } from './user-add-pin-identity/user-add-pin-identity.component';
@@ -98,6 +99,7 @@ import { HiddenPinComponent } from './hidden-pin/hidden-pin.component';
         ToolDetailsComponent,
         ToolsComponent,
         UserAddCardIdentityComponent,
+        UserAddCardIdentityAtDeviceComponent,
         UserAddComponent,
         UserAddPhoneNrIdentityComponent,
         UserAddPinIdentityComponent,

@@ -65,6 +65,12 @@ export namespace Devices {
         constructor(public id: string) {}
     }
 
+    export class AddUserCardIdentity {
+        static readonly type = "[fabX Devices] Add User CardIdentity"
+
+        constructor(public id: string, public userId: string) {}
+    }
+
     export class ChangeThumbnail {
         static readonly type = "[fabX Devices] Change Thumbnail"
 

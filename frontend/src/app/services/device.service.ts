@@ -3,6 +3,7 @@ import { environment } from "../../environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Observable, retry } from "rxjs";
 import {
+    AtDeviceCardCreationDetails,
     DesiredFirmwareVersion,
     Device,
     DeviceCreationDetails,
@@ -107,6 +108,18 @@ export class DeviceService {
             `${this.baseUrl}/device/${id}`,
             { responseType: 'text' }
         );
+    }
+
+    public addUserCardIdentity(id: string, userId: string): Observable<string> {
+        const details: AtDeviceCardCreationDetails = {
+            userId: userId
+        }
+
+        return this.http.post(
+            `${this.baseUrl}/device/${id}/add-user-card-identity`,
+            details,
+            { responseType: 'text' }
+        )
     }
 
     public changeThumbnail(id: string, file: File): Observable<string> {

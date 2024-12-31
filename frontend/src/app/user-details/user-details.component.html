@@ -119,6 +119,14 @@
                                     </p-button>
                                 </div>
                                 <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
+                                    <p-button label="Add Card At Device"
+                                              icon="pi pi-plus"
+                                              styleClass="p-button-outlined"
+                                              routerLink="/user/{{user.id}}/add-card-identity-at-device"
+                                              *ngIf="loggedInUser.isAdmin">
+                                    </p-button>
+                                </div>
+                                <div class="ml-3" *ngIf="loggedInUser$ | async let loggedInUser">
                                     <p-button label="Add Phone Nr."
                                               icon="pi pi-plus"
                                               styleClass="p-button-outlined"
