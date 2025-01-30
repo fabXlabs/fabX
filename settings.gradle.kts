@@ -8,4 +8,5 @@
  */
 
 rootProject.name = "fabX"
-include("app", "web", "domain", "persistence", "logging", "frontend")
+// TODO re-add frontend submodule
+include("app", "web", "domain", "persistence", "logging")

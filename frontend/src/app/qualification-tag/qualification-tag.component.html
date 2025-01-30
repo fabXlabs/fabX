@@ -1,8 +1,0 @@
-<div
-     class="inline-flex flex-row align-items-center p-1 m-1 border-round-3xl border-2 md:text-sm"
-     [ngClass]="{'text-hidden': allowShrinking}"
-     [style.border-color]="qualification?.colour"
-     [style.box-shadow]="'0 0 5px ' + qualification?.colour">
-    <span class="block align-items-center">{{qualification?.name}}</span>
-    <i *ngIf="showRemoveIcon" class="pi pi-times cursor-pointer block ml-1 align-items-center text-m" (click)="removeClicked()"></i>
-</div>
