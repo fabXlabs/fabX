@@ -11,9 +11,12 @@ import cloud.fabX.fabXaccess.user.rest.TokenResponse
 import io.ktor.client.call.body
 import io.ktor.client.request.basicAuth
 import io.ktor.client.request.bearerAuth
+import io.ktor.client.request.cookie
 import io.ktor.client.request.delete
 import io.ktor.client.request.get
+import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import org.junit.jupiter.api.Test
 
@@ -137,6 +140,31 @@ internal class UserAuthenticationIntegrationTest {
         // when
         val response = c().get("/api/v1/tool") {
             bearerAuth(token)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+    }
+
+    @Test
+    fun `given cookie jwt auth when http request then can authenticate`() = withTestApp {
+        // given
+        val userId = givenUser()
+        val username = "username123"
+        val password = "password123"
+        givenUsernamePasswordIdentity(userId, username, password)
+
+        val loginResponse = c().get("/api/v1/login") {
+            parameter("cookie", "true")
+            basicAuth(username, password)
+        }
+
+        assertThat(loginResponse.status).isEqualTo(HttpStatusCode.NoContent)
+        val token = loginResponse.headers[HttpHeaders.SetCookie]!!.split(";")[0].split("=")[1]
+
+        // when
+        val response = c().get("/api/v1/tool") {
+            cookie("FABX_AUTH", token)
         }
 
         // then

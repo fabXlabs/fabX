@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.device.application.GettingDevicePinStatus
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
+import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.ws.DeviceCommandHandler
 import cloud.fabX.fabXaccess.device.ws.DeviceNotificationHandler
 import cloud.fabX.fabXaccess.loggingModule
@@ -100,6 +101,11 @@ internal fun withTestApp(
         bindConstant(tag = "jwtAudience") { "http://localhost/" }
         bindConstant(tag = "jwtHMAC256Secret") { "secret123" }
 
+        bindConstant(tag = "cookieDomain") { "localhost" }
+        bindConstant(tag = "cookiePath") { "/" }
+
+        bindConstant(tag = "corsHost") { "" }
+
         bindSingleton<Clock> { Clock.System }
 
         bindInstance { Mockito.mock(GettingUserById::class.java) }
@@ -142,6 +148,7 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(DeletingTool::class.java) }
 
         bindInstance { Mockito.mock(GettingDevice::class.java) }
+        bindInstance { Mockito.mock(GettingDeviceByIdentity::class.java) }
         bindInstance { Mockito.mock(AddingDevice::class.java) }
         bindInstance { Mockito.mock(ChangingDevice::class.java) }
         bindInstance { Mockito.mock(ChangingThumbnail::class.java) }

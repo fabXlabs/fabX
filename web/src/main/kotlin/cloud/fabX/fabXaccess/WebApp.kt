@@ -16,12 +16,15 @@ import cloud.fabX.fabXaccess.qualification.rest.QualificationController
 import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.LoginController
+import cloud.fabX.fabXaccess.user.rest.LogoutController
 import cloud.fabX.fabXaccess.user.rest.UserController
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.auth.AuthScheme
+import io.ktor.http.auth.HttpAuthHeader
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -63,6 +66,7 @@ class WebApp(
     private val jwtIssuer: String,
     private val jwtAudience: String,
     private val jwtHMAC256Secret: String,
+    private val corsHost: String,
     private val metricsPassword: String,
     private val httpsRedirect: Boolean,
     private val authenticationService: AuthenticationService,
@@ -73,6 +77,7 @@ class WebApp(
     private val deviceFirmwareUpdateController: DeviceFirmwareUpdateController,
     private val userController: UserController,
     private val loginController: LoginController,
+    private val logoutController: LogoutController,
     private val metricsController: MetricsController,
     private val appMicrometerRegistry: PrometheusMeterRegistry,
 ) {
@@ -99,8 +104,11 @@ class WebApp(
             allowHeader(HttpHeaders.UserAgent)
             allowHeader(HttpHeaders.Authorization)
 
-            anyHost()
+            if (corsHost.isNotBlank()) {
+                allowHost(corsHost)
+            }
 
+            allowCredentials = true
             allowNonSimpleContentTypes = true
         }
 
@@ -131,6 +139,10 @@ class WebApp(
             exception<BadRequestException> { call, cause ->
                 call.respond(HttpStatusCode.BadRequest, extractCause(cause))
             }
+            status(HttpStatusCode.Unauthorized) { call, _ ->
+                // do not include WWW-Authenticate header to not show pop-up in browser
+                call.respond(HttpStatusCode.Unauthorized)
+            }
         }
 
         install(MicrometerMetrics) {
@@ -139,13 +151,13 @@ class WebApp(
 
         install(Authentication) {
             basic("api-basic") {
-                realm = "fabX"
+                realm = "fabX Basic"
                 validate { credentials ->
                     authenticationService.basic(credentials)
                 }
             }
             jwt("api-jwt") {
-                realm = "fabX"
+                realm = "fabX jwt"
 
                 verifier(
                     JWT.require(Algorithm.HMAC256(jwtHMAC256Secret))
@@ -158,6 +170,31 @@ class WebApp(
                     jwtCredential.subject?.let { authenticationService.jwt(it) }
                 }
             }
+
+            jwt("api-jwt-cookie") {
+                realm = "fabX cookie"
+
+                authHeader {
+                    val authCookieValue = it.request.cookies["FABX_AUTH"]
+                    if (authCookieValue != null) {
+                        HttpAuthHeader.Single(AuthScheme.Bearer, authCookieValue)
+                    } else {
+                        null
+                    }
+                }
+
+                verifier(
+                    JWT.require(Algorithm.HMAC256(jwtHMAC256Secret))
+                        .withIssuer(jwtIssuer)
+                        .withAudience(jwtAudience)
+                        .build()
+                )
+
+                validate { jwtCredential ->
+                    jwtCredential.subject?.let { authenticationService.jwt(it) }
+                }
+            }
+
             basic("metrics-basic") {
                 realm = "fabX metrics"
                 validate { credentials ->
@@ -208,7 +245,7 @@ class WebApp(
                 useResources = true
             }
             route("/api/v1") {
-                authenticate("api-basic", "api-jwt") {
+                authenticate("api-jwt-cookie", "api-basic", "api-jwt") {
                     qualificationController.routes(this)
                     toolController.routes(this)
                     deviceController.routes(this)
@@ -218,6 +255,7 @@ class WebApp(
                     loginController.routes(this)
                 }
                 loginController.routesWebauthn(this)
+                logoutController.routes(this)
             }
             authenticate("metrics-basic") {
                 metricsController.routes(this)

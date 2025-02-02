@@ -46,6 +46,11 @@ val app = DI {
     bindConstant(tag = "webauthnRpId") { config.webauthnRpId }
     bindConstant(tag = "webauthnRpName") { config.webauthnRpName }
 
+    bindConstant(tag = "cookieDomain") { config.cookieDomain }
+    bindConstant(tag = "cookiePath") { config.cookiePath }
+
+    bindConstant(tag = "corsHost") { config.corsHost }
+
     bindConstant(tag = "deviceReceiveTimeoutMillis") { config.deviceReceiveTimeoutMillis }
 
     bindInstance(tag = "firmwareDirectory") { File(config.firmwareDirectory) }

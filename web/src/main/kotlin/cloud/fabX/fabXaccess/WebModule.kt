@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.tool.rest.ToolController
 import cloud.fabX.fabXaccess.user.application.WebauthnIdentityService
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
 import cloud.fabX.fabXaccess.user.rest.LoginController
+import cloud.fabX.fabXaccess.user.rest.LogoutController
 import cloud.fabX.fabXaccess.user.rest.UserController
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
@@ -99,7 +100,15 @@ val webModule = DI.Module("web") {
             instance(),
             instance(tag = "jwtIssuer"),
             instance(tag = "jwtAudience"),
-            instance(tag = "jwtHMAC256Secret")
+            instance(tag = "jwtHMAC256Secret"),
+            instance(tag = "cookieDomain"),
+            instance(tag = "cookiePath")
+        )
+    }
+    bindSingleton {
+        LogoutController(
+            instance(tag = "cookieDomain"),
+            instance(tag = "cookiePath")
         )
     }
     bindSingleton {
@@ -157,8 +166,10 @@ val webModule = DI.Module("web") {
             instance(tag = "jwtIssuer"),
             instance(tag = "jwtAudience"),
             instance(tag = "jwtHMAC256Secret"),
+            instance(tag = "corsHost"),
             instance(tag = "metricsPassword"),
             instance(tag = "httpsRedirect"),
+            instance(),
             instance(),
             instance(),
             instance(),

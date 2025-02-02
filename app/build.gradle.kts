@@ -18,7 +18,7 @@ tasks{
 
 dependencies {
     implementation(project(":web"))
-    implementation(project(":frontend"))
+    // implementation(project(":frontend"))
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))

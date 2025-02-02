@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.config
 import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
@@ -97,6 +98,11 @@ private fun testSetup(): WebApp {
         bindConstant(tag = "webauthnOrigin") { "http://localhost/" }
         bindConstant(tag = "webauthnRpId") { "localhost" }
         bindConstant(tag = "webauthnRpName") { "fabX" }
+
+        bindConstant(tag = "cookieDomain") { "localhost" }
+        bindConstant(tag = "cookiePath") { "/" }
+
+        bindConstant(tag = "corsHost") { "" }
 
         bindConstant(tag = "firmwareDirectory") { File("/tmp/fabXIntegrationTest") }
 

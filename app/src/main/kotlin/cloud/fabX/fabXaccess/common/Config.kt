@@ -14,6 +14,9 @@ data class Config(
     val webauthnOrigin: String,
     val webauthnRpId: String,
     val webauthnRpName: String,
+    val cookieDomain: String,
+    val cookiePath: String,
+    val corsHost: String,
     val deviceReceiveTimeoutMillis: Long,
     val firmwareDirectory: String,
     val metricsPassword: String,
@@ -28,11 +31,15 @@ data class Config(
             val webauthnOrigin = readEnvString("WEBAUTHN_ORIGIN", "http://localhost:4200")
             val webauthnRpId = readEnvString("WEBAUTHN_RP_ID", "localhost")
             val webauthnRpName = readEnvString("WEBAUTHN_RP_NAME", "fabX")
+            val cookieDomain = readEnvString("COOKIE_DOMAIN", "")
+            val cookiePath = readEnvString("COOKIE_PATH", "/")
+            val corsHost = readEnvString("CORS_HOST", "localhost:5173")
             val deviceReceiveTimeoutMillis = readEnvLong("DEVICE_RECEIVE_TIMEOUT", 5000L)
             val firmwareDirectory = readEnvString("FIRMWARE_DIRECTORY", "/tmp/fabXfirmware")
             val metricsPassword = readEnvString("METRICS_PASSWORD", Random.nextBytes(32).decodeToString())
             val httpsRedirect = readEnvBoolean("HTTPS_REDIRECT", true)
 
+            // TODO remove DATABASE_URL parsing (no longer used)
             return System.getenv("DATABASE_URL").takeUnless { it.isNullOrEmpty() }
                 ?.let {
                     val dbUri = URI(it)
@@ -52,6 +59,9 @@ data class Config(
                         webauthnOrigin,
                         webauthnRpId,
                         webauthnRpName,
+                        cookieDomain,
+                        cookiePath,
+                        corsHost,
                         deviceReceiveTimeoutMillis,
                         firmwareDirectory,
                         metricsPassword,
@@ -74,6 +84,9 @@ data class Config(
                         webauthnOrigin,
                         webauthnRpId,
                         webauthnRpName,
+                        cookieDomain,
+                        cookiePath,
+                        corsHost,
                         deviceReceiveTimeoutMillis,
                         firmwareDirectory,
                         metricsPassword,
