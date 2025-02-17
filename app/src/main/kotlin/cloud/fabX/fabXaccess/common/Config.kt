@@ -1,6 +1,5 @@
 package cloud.fabX.fabXaccess.common
 
-import java.net.URI
 import kotlin.random.Random
 
 data class Config(
@@ -39,60 +38,29 @@ data class Config(
             val metricsPassword = readEnvString("METRICS_PASSWORD", Random.nextBytes(32).decodeToString())
             val httpsRedirect = readEnvBoolean("HTTPS_REDIRECT", true)
 
-            // TODO remove DATABASE_URL parsing (no longer used)
-            return System.getenv("DATABASE_URL").takeUnless { it.isNullOrEmpty() }
-                ?.let {
-                    val dbUri = URI(it)
+            val dbUrl = readEnvString("FABX_DB_URL", "jdbc:postgresql://localhost/postgres")
+            val dbUser = readEnvString("FABX_DB_USER", "postgres")
+            val dbPassword = readEnvString("FABX_DB_PASSWORD", "postgrespassword")
 
-                    val dbUrl = "jdbc:postgresql://" + dbUri.host + ':' + dbUri.port + dbUri.path + "?sslmode=require"
-                    val dbUser = dbUri.userInfo.split(":")[0]
-                    val dbPassword = dbUri.userInfo.split(":")[1]
-
-                    Config(
-                        port,
-                        dbUrl,
-                        dbUser,
-                        dbPassword,
-                        jwtIssuer,
-                        jwtAudience,
-                        jwtHMAC256Secret,
-                        webauthnOrigin,
-                        webauthnRpId,
-                        webauthnRpName,
-                        cookieDomain,
-                        cookiePath,
-                        corsHost,
-                        deviceReceiveTimeoutMillis,
-                        firmwareDirectory,
-                        metricsPassword,
-                        httpsRedirect
-                    )
-                }
-                ?: run {
-                    val dbUrl = readEnvString("FABX_DB_URL", "jdbc:postgresql://localhost/postgres")
-                    val dbUser = readEnvString("FABX_DB_USER", "postgres")
-                    val dbPassword = readEnvString("FABX_DB_PASSWORD", "postgrespassword")
-
-                    Config(
-                        port,
-                        dbUrl,
-                        dbUser,
-                        dbPassword,
-                        jwtIssuer,
-                        jwtAudience,
-                        jwtHMAC256Secret,
-                        webauthnOrigin,
-                        webauthnRpId,
-                        webauthnRpName,
-                        cookieDomain,
-                        cookiePath,
-                        corsHost,
-                        deviceReceiveTimeoutMillis,
-                        firmwareDirectory,
-                        metricsPassword,
-                        httpsRedirect
-                    )
-                }
+            return Config(
+                port,
+                dbUrl,
+                dbUser,
+                dbPassword,
+                jwtIssuer,
+                jwtAudience,
+                jwtHMAC256Secret,
+                webauthnOrigin,
+                webauthnRpId,
+                webauthnRpName,
+                cookieDomain,
+                cookiePath,
+                corsHost,
+                deviceReceiveTimeoutMillis,
+                firmwareDirectory,
+                metricsPassword,
+                httpsRedirect
+            )
         }
 
         private fun readEnvString(name: String, default: String): String {

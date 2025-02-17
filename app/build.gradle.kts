@@ -18,7 +18,7 @@ tasks{
 
 dependencies {
     implementation(project(":web"))
-    // implementation(project(":frontend"))
+    implementation(project(":frontend"))
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))
@@ -26,8 +26,6 @@ dependencies {
     implementation(rootProject.libs.kotlinx.datetime)
 
     testImplementation(testFixtures(project(":domain")))
-    // TODO REMOVE
-    // testImplementation(rootProject.libs.ktor.serialization)
     testImplementation(rootProject.libs.ktor.server.test.host)
     testImplementation(rootProject.libs.ktor.client.content.negotiation)
     testImplementation(rootProject.libs.ktor.serialization.kotlinx.json)
