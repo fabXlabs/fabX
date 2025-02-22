@@ -1,4 +1,4 @@
-import type { PageLoad } from './$types';
+import type { PageLoad } from '../../../../.svelte-kit/types/src/routes/admin/qualification/$types';
 import { getAllQualifications, type Qualification } from '$lib/qualifications';
 import { redirect } from '@sveltejs/kit';
 import { UnauthorizedError } from '$lib/deserialize';

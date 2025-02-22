@@ -1,12 +1,21 @@
 <script lang="ts">
 	import '../app.css';
+
 	let { children } = $props();
 
 	function onerror(e: any) {
-		console.error("global error boundary", e);
+		console.error('global error boundary', e);
 	}
 </script>
 
-<svelte:boundary {onerror}>
-	{@render children()}
-</svelte:boundary>
+<svelte:head>
+	<title>fabX</title>
+</svelte:head>
+
+<div class="bg-background relative flex min-h-screen flex-col" id="page">
+	<svelte:boundary {onerror}>
+		{@render children()}
+	</svelte:boundary>
+</div>
+<!-- TODO show version -->
+<div class="text-center m-5 bg-background text-foreground/60 font-mono text-xs">fabX vTODO</div>

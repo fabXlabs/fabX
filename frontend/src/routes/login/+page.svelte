@@ -21,7 +21,7 @@
 		error = '';
 		await loginBasicAuth(username, password)
 			.then(() => {
-				goto('/qualification');
+				goto('/admin');
 			})
 			.catch(e => {
 				error = JSON.stringify(e);

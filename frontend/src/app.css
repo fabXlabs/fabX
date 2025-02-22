@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* TODO make violet-800 */
 @layer base {
   :root {
     --background: 0 0% 100%;
