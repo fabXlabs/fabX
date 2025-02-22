@@ -7,6 +7,11 @@
 	import { Input } from '$lib/components/ui/input';
 	import { goto } from '$app/navigation';
 
+	// TODO use https://svelte.dev/docs/kit/images#sveltejs-enhanced-img
+	import bgImg1 from '$lib/assets/bg/1.jpeg';
+	import bgImg2 from '$lib/assets/bg/2.jpeg';
+	import bgImg3 from '$lib/assets/bg/3.jpeg';
+
 	let username = $state('');
 	let password = $state('');
 
@@ -25,7 +30,8 @@
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">
-	<Card.Root class="min-w-72">
+	<div class="absolute inset-0 bg-cover bg-center" style="background-image: url({bgImg3})"></div>
+	<Card.Root class="min-w-72 z-50">
 		<Card.Header>
 			<Card.Title class="text-2xl">fabX Login</Card.Title>
 		</Card.Header>
