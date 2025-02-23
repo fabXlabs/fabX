@@ -33,7 +33,7 @@
 	<div class="absolute inset-0 bg-cover bg-center" style="background-image: url({bgImg3})"></div>
 	<Card.Root class="min-w-72 z-50">
 		<Card.Header>
-			<Card.Title class="text-2xl">fabX Login</Card.Title>
+			<Card.Title class="text-4xl text-center font-accent italic">fabX</Card.Title>
 		</Card.Header>
 		<Card.Content>
 			<form>

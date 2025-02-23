@@ -73,4 +73,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  @font-face{
+    font-family: 'RoutedGothic';
+    src: url('/fonts/routed-gothic.ttf') format("truetype");
+    font-style: normal;
+  }
+  @font-face{
+    font-family: 'RoutedGothic';
+    src: url('/fonts/routed-gothic-half-italic.ttf') format("truetype");
+    font-style: italic;
+  }
 }
