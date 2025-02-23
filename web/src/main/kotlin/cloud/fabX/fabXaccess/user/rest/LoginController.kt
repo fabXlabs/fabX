@@ -50,7 +50,8 @@ class LoginController(
                                 maxAge = 55.minutes.inWholeSeconds,
                                 domain = cookieDomain,
                                 path = cookiePath,
-                                secure = true,
+                                // sets secure to true when not developing on localhost
+                                secure = cookieDomain.isNotEmpty(),
                                 httpOnly = true
                             )
                             call.respond(HttpStatusCode.NoContent)

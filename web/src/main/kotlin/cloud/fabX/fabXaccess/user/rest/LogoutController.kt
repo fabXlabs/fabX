@@ -15,11 +15,11 @@ class LogoutController(
             get("") {
                 call.response.cookies.append(
                     "FABX_AUTH",
-                    "",
+                    value = "",
                     maxAge = -1,
                     domain = cookieDomain,
                     path = cookiePath,
-                    secure = true,
+                    secure = cookieDomain.isNotEmpty(),
                     httpOnly = true
                 )
                 call.respond(HttpStatusCode.NoContent)
