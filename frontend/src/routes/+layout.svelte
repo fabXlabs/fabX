@@ -10,6 +10,8 @@
 
 <svelte:head>
 	<title>fabX</title>
+	<link rel="preload" as="font" href="/fonts/routed-gothic.ttf" type="font/ttf" crossorigin="anonymous">
+	<link rel="preload" as="font" href="/fonts/routed-gothic-half-italic.ttf" type="font/ttf" crossorigin="anonymous">
 </svelte:head>
 
 <div class="bg-background relative flex min-h-screen flex-col" id="page">
