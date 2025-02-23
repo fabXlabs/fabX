@@ -6,6 +6,6 @@
 </script>
 
 <div class="container relative prose max-w-screen-2xl mt-7">
-	<h2>Qualifications</h2>
+	<h2 class="font-accent">Qualifications</h2>
 	<QualificationList qualifications={data.qualifications} />
 </div>

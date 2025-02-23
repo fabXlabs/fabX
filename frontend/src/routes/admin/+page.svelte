@@ -3,7 +3,7 @@
 </svelte:head>
 
 <div class="container relative max-w-screen-2xl prose mt-7">
-	<h1>Admin</h1>
+	<h2 class="font-accent">Admin</h2>
 	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque sit amet dictum justo. Praesent felis ex, congue finibus eros vel, interdum varius erat. Aliquam erat volutpat. Nulla ac massa eu turpis sagittis vulputate eget vel erat. In et sapien vitae turpis pellentesque condimentum quis id massa. Vivamus dictum, libero vitae pretium gravida, sem lacus porta justo, at dictum arcu augue vitae enim. Fusce in nisi tempor, consectetur nulla a, porta odio. Donec molestie suscipit est, quis auctor velit consequat tincidunt.</p>
 	<p>Nam et enim vitae justo rutrum faucibus eget sit amet diam. Duis tincidunt sapien turpis, at vehicula leo blandit eget. Aliquam pulvinar semper efficitur. Nam ut tempor enim. Integer vestibulum, lacus ac fringilla ultricies, odio velit cursus metus, et feugiat nunc nisl ut enim. Nam ut neque porta, scelerisque massa nec, dapibus nisi. Cras iaculis tellus sed mi varius volutpat. Morbi efficitur sapien eget faucibus ultricies. Fusce ornare dolor sed pellentesque mattis. Praesent vel arcu metus.</p>
 	<p>Vestibulum hendrerit odio vel nibh sollicitudin accumsan. Aliquam suscipit sapien et ipsum porta imperdiet. Aliquam erat volutpat. Duis euismod massa ac placerat hendrerit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Praesent rhoncus sit amet ex sit amet fermentum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.</p>
