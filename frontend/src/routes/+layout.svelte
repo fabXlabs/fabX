@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ModeWatcher } from "mode-watcher";
 	import '../app.css';
 
 	let { children } = $props();
@@ -14,6 +15,7 @@
 	<link rel="preload" as="font" href="/fonts/routed-gothic-half-italic.ttf" type="font/ttf" crossorigin="anonymous">
 </svelte:head>
 
+<ModeWatcher />
 <div class="bg-background relative flex min-h-screen flex-col" id="page">
 	<svelte:boundary {onerror}>
 		{@render children()}

@@ -5,7 +5,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="container relative prose max-w-screen-2xl mt-7">
+<div class="container relative max-w-screen-2xl mt-7">
 	<h2 class="font-accent">Qualifications</h2>
 	<QualificationList qualifications={data.qualifications} />
 </div>
