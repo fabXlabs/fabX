@@ -7,7 +7,7 @@
 	}
 </script>
 
-<div class="prose">
+<div>
 	<h2>Logout</h2>
 
 	<button onclick={doLogout}>Logout</button>
