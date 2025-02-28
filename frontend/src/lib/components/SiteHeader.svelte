@@ -1,7 +1,7 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
 	import * as Sheet from "$lib/components/ui/sheet/index.js";
-	import NavLink from "./nav-link.svelte";
+	import NavLink from "./NavLink.svelte";
 	import { CircleUserRound, Menu } from 'lucide-svelte';
 
 	let sheetOpen = $state(false);
