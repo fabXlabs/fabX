@@ -1,10 +1,9 @@
 <script lang="ts">
-	import type { Qualification } from '$lib/api/qualifications';
+	import type { Qualification } from '$lib/api/model/qualification';
 
 	interface Props {
 		qualifications: Qualification[]
 	}
-
 	let { qualifications }: Props = $props();
 </script>
 

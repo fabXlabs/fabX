@@ -3,7 +3,7 @@ import { deserialize } from '$lib/api/deserialize';
 import type { Qualification } from '$lib/api/model/qualification';
 
 export async function getAllQualifications(fetch: FetchFunction): Promise<Qualification[]> {
-	console.debug('getQualifications...');
+	console.debug('getAllQualifications...');
 
 	return await fetch(`${baseUrl}/qualification`, { credentials: 'include' })
 		.then(deserialize<Qualification[]>);
