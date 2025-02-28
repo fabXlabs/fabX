@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Qualification } from '$lib/qualifications';
+	import type { Qualification } from '$lib/api/qualifications';
 
 	interface Props {
 		qualifications: Qualification[]

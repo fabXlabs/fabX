@@ -1,5 +1,5 @@
-import { baseUrl } from '$lib';
-import { checkError } from '$lib/deserialize';
+import { baseUrl } from '$lib/api';
+import { checkError } from '$lib/api/deserialize';
 
 export async function loginBasicAuth(username: string, password: string) {
 	console.debug(`login...`);

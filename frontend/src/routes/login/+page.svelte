@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { loginBasicAuth } from '$lib/auth';
+	import { loginBasicAuth } from '$lib/api/auth';
 	// noinspection ES6UnusedImports
 	import * as Card from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
