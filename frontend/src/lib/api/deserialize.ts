@@ -1,12 +1,4 @@
-export class UnauthorizedError extends Error {
-	kind: string;
-
-	constructor() {
-		const kind = 'Unauthorized';
-		super(kind);
-		this.kind = kind;
-	}
-}
+import { UnauthorizedError } from '$lib/api/model/error';
 
 export function deserialize<T>(response: Response): Promise<T> {
 	return new Promise((resolve, reject) => {
