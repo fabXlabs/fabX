@@ -8,3 +8,11 @@ export async function getMe(fetch: FetchFunction): Promise<User> {
 	return await fetch(`${baseUrl}/user/me`, { credentials: 'include' })
 		.then(deserialize<User>);
 }
+
+
+export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
+	console.debug('getAllUsers...');
+
+	return await fetch(`${baseUrl}/user`, { credentials: 'include' })
+		.then(deserialize<User[]>);
+}
