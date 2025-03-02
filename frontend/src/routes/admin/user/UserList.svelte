@@ -12,7 +12,7 @@
 	<thead>
 	<tr>
 		<th>Name</th>
-		<th>Qualifications</th>
+		<th>Type</th>
 	</tr>
 	</thead>
 	<tbody>
