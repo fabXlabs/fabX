@@ -1,8 +1,11 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from "$lib/components/ui/sheet/index.js";
-	import NavLink from "./NavLink.svelte";
-	import { CircleUserRound, Menu } from 'lucide-svelte';
+	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	// noinspection ES6UnusedImports
+	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import NavLink from './NavLink.svelte';
+	import { Menu } from 'lucide-svelte';
+	import SiteHeaderDropdownMenu from '$lib/components/SiteHeaderDropdownMenu.svelte';
 
 	let sheetOpen = $state(false);
 </script>
@@ -38,9 +41,7 @@
 		</div>
 		<div class="flex flex-1 items-center space-x-2 justify-end">
 			<nav class="flex items-center gap-6 text-base">
-				<a class="hover:text-foreground/80 transition-colors text-foreground/60" href="/me">
-					<CircleUserRound class="mt-1" />
-				</a>
+				<SiteHeaderDropdownMenu />
 			</nav>
 		</div>
 	</div>
