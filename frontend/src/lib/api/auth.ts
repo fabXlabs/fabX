@@ -17,5 +17,5 @@ export async function loginBasicAuth(username: string, password: string) {
 }
 
 export async function logout() {
-	await fetch(`${baseUrl}/logout`, { credentials: 'include' });
+	return await fetch(`${baseUrl}/logout`, { credentials: 'include' });
 }
