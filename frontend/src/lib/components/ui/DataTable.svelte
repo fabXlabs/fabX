@@ -1,11 +1,12 @@
 <script lang="ts" generics="TData, TValue">
-	import { type ColumnDef, getCoreRowModel, type VisibilityState } from '@tanstack/table-core';
+	import { type ColumnDef, getCoreRowModel, getFilteredRowModel, type VisibilityState } from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/';
 	// noinspection ES6UnusedImports
 	import * as Table from '$lib/components/ui/table';
 	// noinspection ES6UnusedImports
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -25,6 +26,7 @@
 	});
 
 	let columnVisibility = $state<VisibilityState>(initialColumnVisibility);
+	let globalFilter = $state<any>([]);
 
 	const table = createSvelteTable({
 		get data() {
@@ -32,6 +34,7 @@
 		},
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: (updater) => {
 			if (typeof updater === 'function') {
 				columnVisibility = updater(columnVisibility);
@@ -39,17 +42,39 @@
 				columnVisibility = updater;
 			}
 		},
+		onGlobalFilterChange: (updater) => {
+			if (typeof updater === 'function') {
+				globalFilter = updater(globalFilter);
+			} else {
+				globalFilter = updater;
+			}
+		},
 		state: {
 			get columnVisibility() {
 				return columnVisibility;
+			},
+			get globalFilter() {
+				return globalFilter;
 			}
-		}
+		},
+		globalFilterFn: 'includesString'
 	});
-
-
 </script>
+
 <div class="max-w-screen-2xl">
 	<div class="container flex items-center py-4">
+		<Input
+			placeholder="Search..."
+			value=""
+			onchange={(e) => {
+				table.setGlobalFilter(String(e.currentTarget.value));
+      }}
+			oninput={(e) => {
+				table.setGlobalFilter(String(e.currentTarget.value));
+      }}
+			class="max-w-sm mr-2"
+			autocorrect="off"
+		/>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger>
 				{#snippet child({ props })}
