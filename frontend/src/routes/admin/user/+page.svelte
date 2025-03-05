@@ -1,11 +1,16 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import AdminEntityList from '$lib/components/AdminEntityList.svelte';
-	import UserList from './UserList.svelte';
+	import DataTable from '$lib/components/ui/DataTable.svelte';
+	import { columns } from './columns';
+
+	let initialColumnVisibility = {
+		'wikiName': false,
+		'locked': false,
+		'notes': false,
+		'instructorQualifications': false
+	};
 
 	let { data }: PageProps = $props();
 </script>
 
-<AdminEntityList name="Users">
-	<UserList users={data.users} />
-</AdminEntityList>
+<DataTable columns={columns} data={data.users} initialColumnVisibility={initialColumnVisibility} />
