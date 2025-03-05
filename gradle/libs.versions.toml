@@ -22,7 +22,7 @@ assertk = "0.28.1"
 mockito-kotlin = "5.4.0"
 mockito-junit5 = "5.16.0"
 kotlin-wiremock = "2.1.1"
-testcontainers = "1.20.5"
+testcontainers = "1.20.6"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
