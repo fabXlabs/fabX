@@ -11,9 +11,18 @@
 		columns: ColumnDef<TData, TValue>[];
 		data: TData[];
 		initialColumnVisibility: Record<string, boolean>;
+		onRowSelect?: ((data: TData) => void) | null;
 	};
 
-	let { data, columns, initialColumnVisibility }: DataTableProps<TData, TValue> = $props();
+	let { data, columns, initialColumnVisibility, onRowSelect = null }: DataTableProps<TData, TValue> = $props();
+
+	let rowCursor = $derived.by(() => {
+		if (onRowSelect) {
+			return "cursor-pointer";
+		} else {
+			return "cursor-default";
+		}
+	});
 
 	let columnVisibility = $state<VisibilityState>(initialColumnVisibility);
 
@@ -36,6 +45,8 @@
 			}
 		}
 	});
+
+
 </script>
 <div class="max-w-screen-2xl">
 	<div class="container flex items-center py-4">
@@ -81,7 +92,7 @@
 				</Table.Header>
 				<Table.Body>
 					{#each table.getRowModel().rows as row (row.id)}
-						<Table.Row data-state={row.getIsSelected() && "selected"}>
+						<Table.Row data-state={row.getIsSelected() && "selected"} class={rowCursor} onclick={() => onRowSelect?.(row.original)}>
 							{#each row.getVisibleCells() as cell (cell.id)}
 								<Table.Cell>
 									<FlexRender
