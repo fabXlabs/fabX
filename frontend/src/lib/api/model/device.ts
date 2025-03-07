@@ -1,4 +1,5 @@
 import type { ChangeableValue } from './changeable-value';
+import type { Tool } from '$lib/api/model/tool';
 
 export interface Device {
 	id: string,
@@ -9,6 +10,17 @@ export interface Device {
 	actualFirmwareVersion: string | null,
 	desiredFirmwareVersion: string | null,
 	attachedTools: Record<number, string>,
+}
+
+export interface AugmentedDevice {
+	id: string,
+	aggregateVersion: number,
+	name: string,
+	background: string,
+	backupBackendUrl: string,
+	actualFirmwareVersion: string | null,
+	desiredFirmwareVersion: string | null,
+	attachedTools: Record<number, Tool>,
 }
 
 export interface DeviceCreationDetails {
