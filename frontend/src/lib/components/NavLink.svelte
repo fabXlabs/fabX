@@ -1,4 +1,7 @@
 <script lang="ts">
+	import { cn } from '$lib/utils';
+	import { page } from '$app/state';
+
 	let {
 		sheetOpen = $bindable(false),
 		href,
@@ -12,4 +15,4 @@
 	}
 </script>
 
-<a class="hover:text-foreground/80 transition-colors text-foreground/60 font-accent {classes}" onclick={closeSheet} {href} {...others}>{@render children()}</a>
+<a class={cn("hover:text-foreground/80 transition-colors text-foreground/60 font-accent", classes, page.url.pathname.startsWith(href) ? "text-foreground" : "text-foreground/60")} onclick={closeSheet} {href} {...others}>{@render children()}</a>
