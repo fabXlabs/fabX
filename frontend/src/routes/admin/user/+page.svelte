@@ -2,9 +2,11 @@
 	import type { PageProps } from './$types';
 	import DataTable from '$lib/components/ui/DataTable.svelte';
 	import { columns } from './columns';
-	import type { User } from '$lib/api/model/user';
+	import type { AugmentedUser } from '$lib/api/model/user';
 	import { goto } from '$app/navigation';
 	import type { SortingState } from '@tanstack/table-core';
+
+	let { data }: PageProps = $props();
 
 	let initialColumnVisibility = {
 		'wikiName': false,
@@ -24,16 +26,14 @@
 		}
 	];
 
-	let { data }: PageProps = $props();
-
-	function rowClick(data: User) {
+	function rowClick(data: AugmentedUser) {
 		goto(`/admin/user/${data.id}`);
 	}
 </script>
 
 <DataTable
 	{columns}
-	data={data.users}
+	data={data.augmentedUsers}
 	{initialColumnVisibility}
 	{initialSortingState}
 	onRowSelect={rowClick}
