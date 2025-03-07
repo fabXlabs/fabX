@@ -14,11 +14,13 @@ export const columns: ColumnDef<User>[] = [
 	},
 	{
 		accessorKey: 'firstName',
-		header: 'First Name'
+		header: 'First Name',
+		enableSorting: true
 	},
 	{
 		accessorKey: 'lastName',
-		header: 'Last Name'
+		header: 'Last Name',
+		enableSorting: true
 	},
 	{
 		accessorKey: 'wikiName',

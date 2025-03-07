@@ -4,6 +4,7 @@
 	import { columns } from './columns';
 	import type { User } from '$lib/api/model/user';
 	import { goto } from '$app/navigation';
+	import type { SortingState } from '@tanstack/table-core';
 
 	let initialColumnVisibility = {
 		'wikiName': false,
@@ -11,6 +12,17 @@
 		'notes': false,
 		'instructorQualifications': false
 	};
+
+	let initialSortingState: SortingState = [
+		{
+			id: 'isAdmin',
+			desc: true
+		},
+		{
+			id: 'firstName',
+			desc: false
+		}
+	];
 
 	let { data }: PageProps = $props();
 
@@ -20,8 +32,9 @@
 </script>
 
 <DataTable
-	columns={columns}
+	{columns}
 	data={data.users}
-	initialColumnVisibility={initialColumnVisibility}
+	{initialColumnVisibility}
+	{initialSortingState}
 	onRowSelect={rowClick}
 />
