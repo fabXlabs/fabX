@@ -1,4 +1,5 @@
 import type { ChangeableValue } from "./changeable-value";
+import type { Qualification } from '$lib/api/model/qualification';
 
 export interface User {
 	id: string,
@@ -11,6 +12,20 @@ export interface User {
 	identities: UserIdentity[],
 	memberQualifications: string[],
 	instructorQualifications: string[] | null,
+	isAdmin: boolean
+}
+
+export interface AugmentedUser {
+	id: string,
+	aggregateVersion: number,
+	firstName: string,
+	lastName: string,
+	wikiName: string,
+	locked: boolean,
+	notes: string | null,
+	identities: UserIdentity[],
+	memberQualifications: Qualification[],
+	instructorQualifications: Qualification[] | null,
 	isAdmin: boolean
 }
 

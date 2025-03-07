@@ -1,9 +1,10 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import type { User } from '$lib/api/model/user';
+import type { AugmentedUser } from '$lib/api/model/user';
 import { renderComponent } from '$lib/components/ui/data-table';
 import AdminShield from './AdminShield.svelte';
+import QualificationTagList from '$lib/components/QualificationTagList.svelte';
 
-export const columns: ColumnDef<User>[] = [
+export const columns: ColumnDef<AugmentedUser>[] = [
 	{
 		accessorKey: 'isAdmin',
 		header: '',
@@ -36,10 +37,16 @@ export const columns: ColumnDef<User>[] = [
 	},
 	{
 		accessorKey: 'memberQualifications',
-		header: 'Qualifications'
+		header: 'Qualifications',
+		cell: ({ row }) => {
+			return renderComponent(QualificationTagList, { qualifications: row.original.memberQualifications })
+		}
 	},
 	{
 		accessorKey: 'instructorQualifications',
-		header: 'Instructor'
+		header: 'Instructor',
+		cell: ({ row }) => {
+			return renderComponent(QualificationTagList, { qualifications: row.original.instructorQualifications || [] })
+		}
 	}
 ];
