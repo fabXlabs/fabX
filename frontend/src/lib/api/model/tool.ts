@@ -1,4 +1,5 @@
 import type { ChangeableValue } from "./changeable-value";
+import type { Qualification } from '$lib/api/model/qualification';
 
 export interface Tool {
 	id: string,
@@ -12,6 +13,20 @@ export interface Tool {
 	notes: string | null,
 	wikiLink: string,
 	requiredQualifications: string[]
+}
+
+export interface AugmentedTool {
+	id: string,
+	aggregateVersion: number,
+	name: string,
+	type: ToolType,
+	requires2FA: boolean,
+	time: number,
+	idleState: IdleState,
+	enabled: Boolean,
+	notes: string | null,
+	wikiLink: string,
+	requiredQualifications: Qualification[]
 }
 
 export interface ToolCreationDetails {
