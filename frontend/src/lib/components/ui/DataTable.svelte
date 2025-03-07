@@ -1,5 +1,11 @@
 <script lang="ts" generics="TData, TValue">
-	import { type ColumnDef, getCoreRowModel, getFilteredRowModel, type VisibilityState } from '@tanstack/table-core';
+	import {
+		type ColumnDef,
+		getCoreRowModel,
+		getFilteredRowModel, getSortedRowModel,
+		type SortingState,
+		type VisibilityState
+	} from '@tanstack/table-core';
 	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/';
 	// noinspection ES6UnusedImports
 	import * as Table from '$lib/components/ui/table';
@@ -12,21 +18,29 @@
 		columns: ColumnDef<TData, TValue>[];
 		data: TData[];
 		initialColumnVisibility: Record<string, boolean>;
+		initialSortingState: SortingState;
 		onRowSelect?: ((data: TData) => void) | null;
 	};
 
-	let { data, columns, initialColumnVisibility, onRowSelect = null }: DataTableProps<TData, TValue> = $props();
+	let {
+		data,
+		columns,
+		initialColumnVisibility,
+		initialSortingState,
+		onRowSelect = null
+	}: DataTableProps<TData, TValue> = $props();
 
 	let rowCursor = $derived.by(() => {
 		if (onRowSelect) {
-			return "cursor-pointer";
+			return 'cursor-pointer';
 		} else {
-			return "cursor-default";
+			return 'cursor-default';
 		}
 	});
 
 	let columnVisibility = $state<VisibilityState>(initialColumnVisibility);
 	let globalFilter = $state<any>([]);
+	let sorting = $state<SortingState>(initialSortingState);
 
 	const table = createSvelteTable({
 		get data() {
@@ -35,6 +49,7 @@
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
+		getSortedRowModel: getSortedRowModel(),
 		onColumnVisibilityChange: (updater) => {
 			if (typeof updater === 'function') {
 				columnVisibility = updater(columnVisibility);
@@ -49,12 +64,22 @@
 				globalFilter = updater;
 			}
 		},
+		onSortingChange: (updater) => {
+			if (typeof updater === 'function') {
+				sorting = updater(globalFilter);
+			} else {
+				sorting = updater;
+			}
+		},
 		state: {
 			get columnVisibility() {
 				return columnVisibility;
 			},
 			get globalFilter() {
 				return globalFilter;
+			},
+			get sorting() {
+				return sorting;
 			}
 		},
 		globalFilterFn: 'includesString'
@@ -117,7 +142,8 @@
 				</Table.Header>
 				<Table.Body>
 					{#each table.getRowModel().rows as row (row.id)}
-						<Table.Row data-state={row.getIsSelected() && "selected"} class={rowCursor} onclick={() => onRowSelect?.(row.original)}>
+						<Table.Row data-state={row.getIsSelected() && "selected"} class={rowCursor}
+											 onclick={() => onRowSelect?.(row.original)}>
 							{#each row.getVisibleCells() as cell (cell.id)}
 								<Table.Cell>
 									<FlexRender
