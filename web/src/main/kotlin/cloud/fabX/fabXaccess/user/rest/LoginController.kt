@@ -13,6 +13,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.principal
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.RoutingCall
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
@@ -34,30 +35,45 @@ class LoginController(
     private val cookiePath: String
 ) {
 
+    private fun createJwt(userId: UserId): String =
+        JWT.create()
+            .withIssuer(jwtIssuer)
+            .withAudience(jwtAudience)
+            .withSubject(userId.serialize())
+            .withExpiresAt(clock.now().plus(1.hours).toJavaInstant().toGMTDate().toJvmDate())
+            .sign(Algorithm.HMAC256(jwtHMAC256Secret))
+
+    private fun RoutingCall.appendCookie(token: String) =
+        this.response.cookies.append(
+            "FABX_AUTH",
+            token,
+            maxAge = 55.minutes.inWholeSeconds,
+            domain = cookieDomain,
+            path = cookiePath,
+            // sets secure to true when not developing on localhost
+            secure = cookieDomain.isNotEmpty(),
+            httpOnly = true
+        )
+
+    private suspend fun RoutingCall.respondWithToken(userId: UserId) {
+        val token = createJwt(userId)
+
+        val setCookie = this.queryParameters["cookie"]
+
+        if (setCookie != null && setCookie == "true") {
+            this.appendCookie(token)
+            this.respond(HttpStatusCode.NoContent)
+        } else {
+            this.respond(TokenResponse(token))
+        }
+    }
+
     val routes: Route.() -> Unit = {
         route("/login") {
             get("") {
-                val setCookie: String? = call.queryParameters["cookie"]
-
                 call.principal<UserPrincipal>()?.let { userPrincipal ->
                     if (userPrincipal.authenticationMethod == AuthenticationMethod.BASIC) {
-                        val token = createJwt(userPrincipal.asMember().userId)
-
-                        if (setCookie != null && setCookie == "true") {
-                            call.response.cookies.append(
-                                "FABX_AUTH",
-                                token,
-                                maxAge = 55.minutes.inWholeSeconds,
-                                domain = cookieDomain,
-                                path = cookiePath,
-                                // sets secure to true when not developing on localhost
-                                secure = cookieDomain.isNotEmpty(),
-                                httpOnly = true
-                            )
-                            call.respond(HttpStatusCode.NoContent)
-                        } else {
-                            call.respond(TokenResponse(token))
-                        }
+                        call.respondWithToken(userPrincipal.asMember().userId)
                     } else {
                         call.respond(HttpStatusCode.Forbidden)
                     }
@@ -69,14 +85,6 @@ class LoginController(
             }
         }
     }
-
-    private fun createJwt(userId: UserId): String =
-        JWT.create()
-            .withIssuer(jwtIssuer)
-            .withAudience(jwtAudience)
-            .withSubject(userId.serialize())
-            .withExpiresAt(clock.now().plus(1.hours).toJavaInstant().toGMTDate().toJvmDate())
-            .sign(Algorithm.HMAC256(jwtHMAC256Secret))
 
     val routesWebauthn: Route.() -> Unit = {
         route("/webauthn") {
@@ -98,27 +106,18 @@ class LoginController(
             post("/response") {
                 readBody<WebauthnResponseDetails>()
                     ?.let {
-                        call.respondWithErrorHandler(
-                            webauthnIdentityService.parseAndValidateAuthentication(
-                                newCorrelationId(),
-                                UserId.fromString(it.userId),
-                                it.credentialId,
-                                it.authenticatorData,
-                                it.clientDataJSON,
-                                it.signature
-                            )
-                                .map { userId ->
-                                    val token = JWT.create()
-                                        .withIssuer(jwtIssuer)
-                                        .withAudience(jwtAudience)
-                                        .withSubject(userId.serialize())
-                                        .withExpiresAt(
-                                            clock.now().plus(1.hours).toJavaInstant().toGMTDate().toJvmDate()
-                                        )
-                                        .sign(Algorithm.HMAC256(jwtHMAC256Secret))
+                        val userId = UserId.fromString(it.userId)
 
-                                    TokenResponse(token)
-                                }
+                        webauthnIdentityService.parseAndValidateAuthentication(
+                            newCorrelationId(),
+                            userId,
+                            it.credentialId,
+                            it.authenticatorData,
+                            it.clientDataJSON,
+                            it.signature
+                        ).fold(
+                            { call.handleError(it) },
+                            { call.respondWithToken(userId) }
                         )
                     }
             }
