@@ -15,7 +15,7 @@
 		<div class="mr-4 flex">
 			<!-- Mobile Nav -->
 			<Sheet.Root bind:open={sheetOpen}>
-				<Sheet.Trigger class="mr-2 px-0 text-center text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 sm:hidden">
+				<Sheet.Trigger class="mr-2 px-0 text-center text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 sm:hidden outline-none">
 					<Menu size="32" class="mt-1 mr-2 hover:text-foreground/80 transition-colors text-foreground/60"/>
 					<span class="sr-only">Toggle Menu</span>
 				</Sheet.Trigger>

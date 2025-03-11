@@ -1,16 +1,16 @@
 import type { LayoutLoad } from './$types';
 import { getMe } from '$lib/api/users';
-import { UnauthorizedError } from '$lib/api/model/error';
 import { redirect } from '@sveltejs/kit';
+import { UNAUTHORIZED_ERROR } from '$lib/api/model/error';
 
 export const load: LayoutLoad = async ({ fetch }) => {
-	let me = await getMe(fetch)
-		.catch(error => {
-			console.log('getMe failed:', error);
-			if (error instanceof UnauthorizedError) {
-				redirect(302, '/login')
-			}
-		})
-
-	return { me };
+	try {
+		const me = await getMe(fetch);
+		return { me };
+	} catch (error) {
+		if (error === UNAUTHORIZED_ERROR) {
+			redirect(302, '/login');
+		}
+	}
+	throw Error('Runtime exception. Should never reach.');
 };

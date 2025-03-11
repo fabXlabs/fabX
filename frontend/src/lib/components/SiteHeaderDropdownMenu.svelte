@@ -14,7 +14,7 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger>
+	<DropdownMenu.Trigger class="outline-none">
 		<CircleUserRound class="mt-1" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="end">
@@ -27,7 +27,7 @@
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Item>
+			<DropdownMenu.Item onSelect={async () => {await goto('/admin/me'); }} class="cursor-pointer">
 				<User class="mr-2 size-4" />
 				<span>Profile</span>
 			</DropdownMenu.Item>

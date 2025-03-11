@@ -1,13 +1,13 @@
 import { baseUrl, type FetchFunction } from '$lib/api';
-import { deserialize } from '$lib/api/deserialize';
+import { mapError } from '$lib/api/map-error';
 import type { AugmentedDevice, Device } from '$lib/api/model/device';
 import type { Tool } from '$lib/api/model/tool';
 
 export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	console.debug('getAllDevices...');
-
-	return await fetch(`${baseUrl}/device`, { credentials: 'include' })
-		.then(deserialize<Device[]>);
+	const res = await fetch(`${baseUrl}/device`, { credentials: 'include' })
+		.then(mapError);
+	return res.json();
 }
 
 export function augmentDevices(devices: Device[], tools: Tool[]): AugmentedDevice[] {

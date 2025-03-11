@@ -5,12 +5,9 @@ export interface FabXError {
 	correlationId: string | null
 }
 
-export class UnauthorizedError extends Error {
-	kind: string;
-
-	constructor() {
-		const kind = 'Unauthorized';
-		super(kind);
-		this.kind = kind;
-	}
-}
+export const UNAUTHORIZED_ERROR: FabXError = {
+	type: 'Unauthorized',
+	message: 'Unauthorized',
+	parameters: {},
+	correlationId: null
+};

@@ -27,7 +27,7 @@ data class Config(
             val jwtIssuer = readEnvString("JWT_ISSUER", "localhost")
             val jwtAudience = readEnvString("JWT_AUDIENCE", "localhost")
             val jwtHMAC256Secret = readEnvString("JWT_HMAC256_SECRET", Random.nextBytes(32).decodeToString())
-            val webauthnOrigin = readEnvString("WEBAUTHN_ORIGIN", "http://localhost:4200")
+            val webauthnOrigin = readEnvString("WEBAUTHN_ORIGIN", "http://localhost:5173")
             val webauthnRpId = readEnvString("WEBAUTHN_RP_ID", "localhost")
             val webauthnRpName = readEnvString("WEBAUTHN_RP_NAME", "fabX")
             val cookieDomain = readEnvString("COOKIE_DOMAIN", "")
