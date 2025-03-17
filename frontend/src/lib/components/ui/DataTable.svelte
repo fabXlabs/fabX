@@ -13,6 +13,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
+	import { SlidersHorizontal, UserRoundPlus } from 'lucide-svelte';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -103,10 +104,15 @@
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="outline" class="ml-auto normal-case">columns</Button>
+					<Button {...props} variant="outline" class="ml-auto normal-case mr-2">
+						<SlidersHorizontal />
+						<div>View</div>
+					</Button>
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content align="end">
+				<DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
+				<DropdownMenu.Separator />
 				{#each table
 					.getAllColumns()
 					.filter((col) => col.getCanHide()) as column (column.id)}
@@ -120,6 +126,11 @@
 				{/each}
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
+		<Button class="normal-case">
+			<!-- TODO make configurable -->
+			<UserRoundPlus />
+			Add User
+		</Button>
 	</div>
 	<div class="sm:container">
 		<div class="border sm:rounded-md">
