@@ -14,7 +14,7 @@ liquibase = "4.31.1"
 liquibase-slf4j = "5.1.0"
 webauthn4j = "0.28.6.RELEASE"
 scrimage = "4.3.0"
-logback = "1.5.17"
+logback = "1.5.18"
 slf4j = "2.0.17"
 
 junit = "5.12.1"
