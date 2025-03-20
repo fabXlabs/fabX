@@ -5,6 +5,9 @@
 	import { CircleUserRound, User } from 'lucide-svelte';
 	import { logout } from '$lib/api/auth';
 	import { goto } from '$app/navigation';
+	import { getMeContext } from '$lib/context';
+
+	const me = getMeContext();
 
 	async function doLogout() {
 		const res = await logout();
@@ -20,9 +23,8 @@
 	<DropdownMenu.Content class="w-56" align="end">
 		<DropdownMenu.Label class="font-normal">
 			<div class="flex flex-col space-y-1">
-				<!-- TODO show acting user details -->
-				<p class="text-base font-medium leading-none">First Last</p>
-				<p class="text-muted-foreground text-sm leading-none">wikiname</p>
+				<p class="text-base font-medium leading-none">{ me.firstName } { me.lastName }</p>
+				<p class="text-muted-foreground text-sm leading-none">{ me.wikiName }</p>
 			</div>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
