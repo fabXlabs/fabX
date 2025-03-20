@@ -39,13 +39,5 @@
 			<LogOut class="mr-2 size-4" />
 			<span>Log out</span>
 		</DropdownMenu.Item>
-		<!--		<DropdownMenu.Item class="block">-->
-		<!--			<a href="/logout">-->
-		<!--				<div class="w-full flex gap-2 items-center">-->
-		<!--					<LogOut class="mr-2 size-4" />-->
-		<!--					<span>Log out</span>-->
-		<!--				</div>-->
-		<!--			</a>-->
-		<!--		</DropdownMenu.Item>-->
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
