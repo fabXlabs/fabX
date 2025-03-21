@@ -5,6 +5,8 @@
 	import { goto } from '$app/navigation';
 	import type { AugmentedDevice } from '$lib/api/model/device';
 	import type { SortingState } from '@tanstack/table-core';
+	import { Button } from '$lib/components/ui/button';
+	import { Plus } from 'lucide-svelte';
 
 	let { data }: PageProps = $props();
 
@@ -32,4 +34,12 @@
 	{initialColumnVisibility}
 	{initialSortingState}
 	onRowSelect={rowClick}
-/>
+>
+	{#snippet addButton()}
+		<!-- TODO implement adding device -->
+		<Button class="normal-case" onclick={() => { alert("NOT YET IMPLEMENTED") }}>
+			<Plus />
+			Add Device
+		</Button>
+	{/snippet}
+</DataTable>

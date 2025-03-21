@@ -5,6 +5,8 @@
 	import type { AugmentedUser } from '$lib/api/model/user';
 	import { goto } from '$app/navigation';
 	import type { SortingState } from '@tanstack/table-core';
+	import { UserRoundPlus } from 'lucide-svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	let { data }: PageProps = $props();
 
@@ -37,4 +39,12 @@
 	{initialColumnVisibility}
 	{initialSortingState}
 	onRowSelect={rowClick}
-/>
+>
+	{#snippet addButton()}
+		<!-- TODO implement adding user -->
+		<Button class="normal-case" onclick={() => { alert("NOT YET IMPLEMENTED") }}>
+			<UserRoundPlus />
+			Add User
+		</Button>
+	{/snippet}
+</DataTable>
