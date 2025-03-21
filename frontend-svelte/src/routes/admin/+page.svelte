@@ -1,6 +1,6 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from "$lib/components/ui/card/index.js";
+	import * as Card from '$lib/components/ui/card/index.js';
 	import type { PageProps } from './$types';
 	import { Drill, Microchip, Stamp, Users } from 'lucide-svelte';
 
@@ -24,7 +24,7 @@
 					<Users class="text-muted-foreground h-4 w-4" />
 				</Card.Header>
 				<Card.Content>
-					<div class="text-2xl font-bold"># Users TODO</div>
+					<div class="text-2xl font-bold">{data.userCount}</div>
 				</Card.Content>
 			</Card.Root>
 		</a>
@@ -37,7 +37,7 @@
 					<Drill class="text-muted-foreground h-4 w-4" />
 				</Card.Header>
 				<Card.Content>
-					<div class="text-2xl font-bold"># Tools TODO</div>
+					<div class="text-2xl font-bold">{data.toolCount}</div>
 				</Card.Content>
 			</Card.Root>
 		</a>
@@ -50,7 +50,7 @@
 					<Stamp class="text-muted-foreground h-4 w-4" />
 				</Card.Header>
 				<Card.Content>
-					<div class="text-2xl font-bold"># Qualification TODO</div>
+					<div class="text-2xl font-bold">{data.qualificationCount}</div>
 				</Card.Content>
 			</Card.Root>
 		</a>
@@ -63,7 +63,7 @@
 					<Microchip class="text-muted-foreground h-4 w-4" />
 				</Card.Header>
 				<Card.Content>
-					<div class="text-2xl font-bold"># Devices TODO</div>
+					<div class="text-2xl font-bold">{data.deviceCount}</div>
 				</Card.Content>
 			</Card.Root>
 		</a>
