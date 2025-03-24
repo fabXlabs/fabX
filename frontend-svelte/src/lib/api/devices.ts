@@ -10,6 +10,13 @@ export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	return res.json();
 }
 
+export async function getDeviceById(fetch: FetchFunction, id: string): Promise<Device> {
+	console.debug(`getDeviceById(${id})...`);
+	const res = await fetch(`${baseUrl}/device/${id}`, { credentials: 'include' })
+		.then(mapError);
+	return res.json();
+}
+
 export function augmentDevices(devices: Device[], tools: Tool[]): AugmentedDevice[] {
 	const toolsMap = new Map(tools.map(t => [t.id, t]));
 
