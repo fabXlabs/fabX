@@ -6,7 +6,7 @@ export function augmentQualifications(qualifications: Qualification[]): (qualifi
 	function getQualifications(qualifications: string[]) {
 		return qualifications
 			.map(q => qualificationsMap.get(q))
-			.filter(q => !!q)
+			.filter((q): q is Qualification => !!q)
 			.sort((a: Qualification, b: Qualification) => {
 				return a.orderNr - b.orderNr;
 			});

@@ -18,6 +18,22 @@ export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
 	return res.json();
 }
 
+export async function getUserById(fetch: FetchFunction, id: string): Promise<User> {
+	console.debug(`getUserById(${id})`);
+	const res = await fetch(`${baseUrl}/user/${id}`, { credentials: 'include' })
+		.then(mapError);
+	return res.json();
+}
+
+export function augmentUser(user: User, qualifications: Qualification[]): AugmentedUser {
+	const getQualifications = augmentQualifications(qualifications);
+	return {
+		...user,
+		memberQualifications: getQualifications(user.memberQualifications),
+		instructorQualifications: getQualifications(user.instructorQualifications || [])
+	}
+}
+
 export function augmentUsers(users: User[], qualifications: Qualification[]): AugmentedUser[] {
 	const getQualifications = augmentQualifications(qualifications);
 
