@@ -9,3 +9,11 @@ export async function getAllQualifications(fetch: FetchFunction): Promise<Qualif
 		.then(mapError);
 	return res.json();
 }
+
+export async function getQualificationById(fetch: FetchFunction, id: string): Promise<Qualification> {
+	console.debug(`getQualificationById(${id})...`);
+
+	const res = await fetch(`${baseUrl}/qualification/${id}`, { credentials: 'include' })
+		.then(mapError);
+	return res.json();
+}
