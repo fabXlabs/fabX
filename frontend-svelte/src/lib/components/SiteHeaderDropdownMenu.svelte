@@ -17,7 +17,7 @@
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger class="outline-none">
+	<DropdownMenu.Trigger class="outline-hidden">
 		<CircleUserRound class="mt-1" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="w-56" align="end">

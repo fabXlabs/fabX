@@ -5,7 +5,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="max-w-screen-2xl">
+<div class="max-w-(--breakpoint-2xl)">
 	<div class="container items-center py-4">
 		{#if data.augmentedTool}
 			<h1>Tool {data.augmentedTool.name}</h1>

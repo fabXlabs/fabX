@@ -10,7 +10,7 @@
 	}
 </script>
 
-<div class="max-w-screen-2xl">
+<div class="max-w-(--breakpoint-2xl)">
 	<div class="container py-4">
 		<div>
 			<h1>Hello, {data.me.firstName} {data.me.lastName}</h1>

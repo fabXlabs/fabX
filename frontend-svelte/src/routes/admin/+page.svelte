@@ -11,7 +11,7 @@
 	<title>fabX | Admin</title>
 </svelte:head>
 
-<div class="container relative max-w-screen-2xl mt-7">
+<div class="container relative max-w-(--breakpoint-2xl) mt-7">
 	<h2 class="font-accent text-2xl my-2">Hello, {data.me?.firstName}</h2>
 
 	<div class="my-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">

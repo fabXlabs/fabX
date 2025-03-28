@@ -91,7 +91,7 @@
 	});
 </script>
 
-<div class="max-w-screen-2xl">
+<div class="max-w-(--breakpoint-2xl)">
 	<div class="container flex items-center py-4">
 		<Input
 			placeholder="Search..."

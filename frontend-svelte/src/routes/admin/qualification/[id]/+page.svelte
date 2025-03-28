@@ -5,7 +5,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="max-w-screen-2xl">
+<div class="max-w-(--breakpoint-2xl)">
 	<div class="container items-center py-4">
 		{#if data.qualification}
 			<h1>Qualification {data.qualification.name}</h1>

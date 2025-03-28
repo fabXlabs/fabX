@@ -10,12 +10,12 @@
 	let sheetOpen = $state(false);
 </script>
 
-<header class="border-border/40 bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
-	<div class="container flex h-14 max-w-screen-2xl items-center font-mono text-2xl">
+<header class="border-border/40 bg-background/95 supports-backdrop-filter:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur-sm">
+	<div class="container flex h-14 max-w-(--breakpoint-2xl) items-center font-mono text-2xl">
 		<div class="mr-4 flex">
 			<!-- Mobile Nav -->
 			<Sheet.Root bind:open={sheetOpen}>
-				<Sheet.Trigger class="mr-2 px-0 text-center text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 sm:hidden outline-none">
+				<Sheet.Trigger class="mr-2 px-0 text-center text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 sm:hidden outline-hidden">
 					<Menu size="32" class="mt-1 mr-2 hover:text-foreground/80 transition-colors text-foreground/60"/>
 					<span class="sr-only">Toggle Menu</span>
 				</Sheet.Trigger>

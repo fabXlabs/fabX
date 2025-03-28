@@ -5,7 +5,7 @@
 	let { data }: PageProps = $props();
 </script>
 
-<div class="max-w-screen-2xl">
+<div class="max-w-(--breakpoint-2xl)">
 	<div class="container items-center py-4">
 		{#if data.augmentedUser}
 			<h1>User {data.augmentedUser.firstName} {data.augmentedUser.lastName}</h1>
