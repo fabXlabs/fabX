@@ -7,6 +7,7 @@ import { AugmentedUser } from "../models/user.model";
 import { ErrorService } from "../services/error.service";
 import { Users } from "../state/user.actions";
 import { HttpErrorResponse } from "@angular/common/http";
+import { AuthService } from '../services/auth.service';
 
 @Component({
     selector: 'fabx-user-add-username-password-identity',
@@ -24,11 +25,16 @@ export class UserAddUsernamePasswordIdentityComponent {
 
     @Select(FabxState.selectedUser) user$!: Observable<AugmentedUser>;
 
-    constructor(private store: Store, private errorHandler: ErrorService) { }
+    constructor(private store: Store, private errorHandler: ErrorService, private authService: AuthService) { }
 
     onSubmit() {
         const username = this.form.get('username')!.value!;
         const password = this.form.get('password')!.value!;
+
+        if (!this.authService.validatePassword(password)) {
+            this.error = "Password is not long enough (8 characters min.) or contains forbidden characters (characters 0x21 through 0x7e of the ASCII set are allowed)."
+            return;
+        }
 
         const currentUser = this.store.selectSnapshot(FabxState.selectedUser)!;
 

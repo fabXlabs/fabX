@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
-import { catchError, mergeMap, Observable, throwError } from "rxjs";
-import { environment } from "../../environments/environment";
-import { Store } from "@ngxs/store";
-import { FabxState } from "../state/fabx-state";
-import { TokenResponse } from "../models/user.model";
-import { fromPromise } from "rxjs/internal/observable/innerFrom";
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { catchError, mergeMap, Observable, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Store } from '@ngxs/store';
+import { FabxState } from '../state/fabx-state';
+import { TokenResponse } from '../models/user.model';
+import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 
 @Injectable({
     providedIn: 'root'
@@ -101,6 +101,11 @@ export class AuthService {
         } else {
             return null;
         }
+    }
+
+    validatePassword(password: string): boolean {
+        const regex = new RegExp('^[!-~]{8,}$');
+        return regex.test(password);
     }
 }
 
