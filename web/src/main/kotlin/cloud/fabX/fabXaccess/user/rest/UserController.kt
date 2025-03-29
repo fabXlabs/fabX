@@ -4,15 +4,10 @@ import arrow.core.right
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
+import cloud.fabX.fabXaccess.common.rest.*
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
-import cloud.fabX.fabXaccess.common.rest.readHexStringParameter
-import cloud.fabX.fabXaccess.common.rest.readStringParameter
-import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
-import cloud.fabX.fabXaccess.common.rest.requireStringQueryParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
-import cloud.fabX.fabXaccess.common.rest.toByteArray
-import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
 import cloud.fabX.fabXaccess.common.rest.withAdminOrMemberAuthRespond
 import cloud.fabX.fabXaccess.common.rest.withInstructorAuthRespond
@@ -85,6 +80,20 @@ class UserController(
                             gettingUser
                                 .getAll(
                                     admin,
+                                    newCorrelationId()
+                                )
+                                .map { it.toRestModel() }
+                        }
+                )
+            }
+
+            get("/limited") {
+                call.respondWithErrorHandler(
+                    readInstructorAuthentication()
+                        .map { instructor ->
+                            gettingUser
+                                .getAllLimited(
+                                    instructor,
                                     newCorrelationId()
                                 )
                                 .map { it.toRestModel() }

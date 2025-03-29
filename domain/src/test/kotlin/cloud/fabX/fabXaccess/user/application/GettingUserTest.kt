@@ -9,6 +9,8 @@ import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.ErrorFixture
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.user.model.AdminFixture
+import cloud.fabX.fabXaccess.user.model.InstructorFixture
+import cloud.fabX.fabXaccess.user.model.LimitedUser
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserRepository
@@ -25,6 +27,7 @@ import org.mockito.kotlin.whenever
 internal class GettingUserTest {
 
     private val adminActor = AdminFixture.arbitrary()
+    private val instructorActor = InstructorFixture.arbitrary()
     private val userId = UserIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
 
@@ -61,7 +64,32 @@ internal class GettingUserTest {
 
         // then
         assertThat(result)
-            .isSameInstanceAs(users)
+           .isSameInstanceAs(users)
+    }
+
+    @Test
+    fun `when getting all limited then returns limited users`() = runTest {
+        // given
+        val user1 = UserFixture.arbitrary(firstName = "first1", wikiName = "wiki1")
+        val user2 = UserFixture.arbitrary(firstName = "first2", wikiName = "wiki2")
+        val user3 = UserFixture.arbitrary(firstName = "first3", wikiName = "wiki3")
+
+        val users = setOf(user1, user2, user3)
+
+        val expectedLimitedUsers = setOf(
+            LimitedUser(user1.id, firstName = "first1", wikiName = "wiki1"),
+            LimitedUser(user2.id, firstName = "first2", wikiName = "wiki2"),
+            LimitedUser(user3.id, firstName = "first3", wikiName = "wiki3")
+        )
+
+        whenever(userRepository.getAll())
+            .thenReturn(users)
+
+        // when
+        val result = testee.getAllLimited(instructorActor, correlationId)
+
+        // then
+        assertThat(result).isEqualTo(expectedLimitedUsers)
     }
 
     @Test
