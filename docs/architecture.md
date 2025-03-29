@@ -5,9 +5,10 @@
 In general, we lean on ideas from hexagonal architecture and Domain Driven Design.
 
 We use a gradle multi-project build with the following subprojects:
-* rest
+* web
     * offers REST API
     * controllers
+    * hosts frontend
 * domain
     * domain model classes
         * immutable
