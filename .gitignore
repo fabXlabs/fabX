@@ -14,3 +14,6 @@ build
 # tooling
 tooling/wikiusers.html
 tooling/wikiSpeedyUsers.csv
+
+# IDE setup
+/mise.toml
