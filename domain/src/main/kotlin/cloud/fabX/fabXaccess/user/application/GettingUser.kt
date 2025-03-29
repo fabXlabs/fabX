@@ -7,9 +7,13 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
+import cloud.fabX.fabXaccess.user.model.Instructor
+import cloud.fabX.fabXaccess.user.model.LimitedUser
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserRepository
+import cloud.fabX.fabXaccess.user.model.toLimitedUser
+
 
 /**
  * Service to get users.
@@ -27,6 +31,15 @@ class GettingUser(
         log.debug("getAll (actor: $actor, correlationId: $correlationId)...")
 
         return userRepository.getAll()
+    }
+
+    suspend fun getAllLimited(
+        actor: Instructor,
+        correlationId: CorrelationId
+    ): Set<LimitedUser> {
+        log.debug("getAllLimited (actor: $actor, correlationId: $correlationId)...")
+
+        return userRepository.getAll().map { it.toLimitedUser() }.toSet()
     }
 
     suspend fun getById(

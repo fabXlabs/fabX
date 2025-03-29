@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.common.rest.isError
 import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.application.GettingUser
+import cloud.fabX.fabXaccess.user.model.InstructorFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import io.ktor.client.call.body
@@ -39,7 +40,8 @@ class UserControllerGetTest {
     private val username = "some.one"
     private val password = "some.password"
 
-    private val actingUser = UserFixture.arbitrary(isAdmin = true)
+    private val actingUser = UserFixture.arbitrary(isAdmin = true, instructorQualifications = setOf(QualificationIdFixture.arbitrary())
+    )
 
     @BeforeEach
     fun `configure WebModule`(
@@ -174,6 +176,50 @@ class UserControllerGetTest {
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
         assertThat(response.body<Set<User>>()).containsExactlyInAnyOrder(mappedUser1, mappedUser2)
+    }
+
+    @Test
+    fun `given users exists when get user limited returns mapped limited users`() = withConfiguredTestApp {
+        // given
+        val limitedUser1 = cloud.fabX.fabXaccess.user.model.LimitedUser(
+            UserIdFixture.arbitrary(),
+            "First1",
+            "wiki1"
+        )
+
+        val limitedUser2 = cloud.fabX.fabXaccess.user.model.LimitedUser(
+            UserIdFixture.arbitrary(),
+            "First2",
+            "wiki2"
+        )
+
+        whenever(
+            gettingUser.getAllLimited(
+                eq(actingUser.asInstructor().getOrElse { throw IllegalStateException() }),
+                any()
+            )
+        ).thenReturn(setOf(limitedUser1, limitedUser2))
+
+        val mappedLimitedUser1 = cloud.fabX.fabXaccess.user.rest.LimitedUser(
+            limitedUser1.id.serialize(),
+            limitedUser1.firstName,
+            limitedUser1.wikiName
+        )
+
+        val mappedLimitedUser2 = cloud.fabX.fabXaccess.user.rest.LimitedUser(
+            limitedUser2.id.serialize(),
+            limitedUser2.firstName,
+            limitedUser2.wikiName
+        )
+
+        // when
+        val response = c().get("/api/v1/user/limited") {
+            basicAuth(username, password)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<LimitedUser>>()).containsExactlyInAnyOrder(mappedLimitedUser1, mappedLimitedUser2)
     }
 
     @Test

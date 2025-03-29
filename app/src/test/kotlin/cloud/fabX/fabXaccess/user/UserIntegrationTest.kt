@@ -16,6 +16,7 @@ import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
+import cloud.fabX.fabXaccess.user.rest.LimitedUser
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
@@ -139,6 +140,64 @@ internal class UserIntegrationTest {
                     null,
                     false
                 )
+            )
+    }
+
+    @Test
+    fun `given no authentication when get limited users then returns http unauthorized`() = withTestApp {
+        // given
+
+        // when
+        val response = c().get("/api/v1/user/limited")
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
+    }
+
+    @Test
+    fun `given invalid authentication when get limited users then returns http unauthorized`() = withTestApp {
+        // given
+
+        // when
+        val response = c().get("/api/v1/user/limited") {
+            basicAuth("no.body", "nobodyssecret")
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Unauthorized)
+    }
+
+    @Test
+    fun `given instructor authentication when get limited users then returns limited users`() = withTestApp {
+        // given
+        val qualificationId = givenQualification()
+        val instructorId = givenUser("Instructor", "", "instructor",)
+        givenUserIsInstructorFor(instructorId, qualificationId)
+        val instructorUsername = "instructor_username"
+        val instructorPassword = "instructor_password"
+        givenUsernamePasswordIdentity(instructorId, instructorUsername, instructorPassword)
+
+        // when
+        val response = c().get("/api/v1/user/limited") {
+            basicAuth(instructorUsername, instructorPassword) // auth with instructor level creds
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.body<Set<LimitedUser>>())
+            .containsExactlyInAnyOrder(
+                LimitedUser(
+                    "c63b3a7d-bd18-4272-b4ed-4bcf9683c602",
+                    "Member",
+                    "member",
+
+                    ),
+                LimitedUser(
+                    "337be01a-fee3-4938-8dc3-c801d37c0e95",
+                    "Admin",
+                    "admin",
+                ),
+                LimitedUser(instructorId, "Instructor", "instructor")
             )
     }
 
