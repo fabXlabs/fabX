@@ -17,3 +17,5 @@ tooling/wikiSpeedyUsers.csv
 
 # IDE setup
 /mise.toml
+
+.kotlin/

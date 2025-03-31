@@ -1,7 +1,6 @@
 plugins {
     java
     alias(libs.plugins.node)
-    alias(libs.plugins.kotlinx.serialization)
 }
 
 node {

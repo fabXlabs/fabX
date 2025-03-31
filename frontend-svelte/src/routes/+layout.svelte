@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import { ModeWatcher } from "mode-watcher";
 	import '../app.css';
 
@@ -11,8 +12,8 @@
 
 <svelte:head>
 	<title>fabX</title>
-	<link rel="preload" as="font" href="/fonts/routed-gothic.ttf" type="font/ttf" crossorigin="anonymous">
-	<link rel="preload" as="font" href="/fonts/routed-gothic-half-italic.ttf" type="font/ttf" crossorigin="anonymous">
+	<link rel="preload" as="font" href="{base}/fonts/routed-gothic.ttf" type="font/ttf" crossorigin="anonymous">
+	<link rel="preload" as="font" href="{base}/fonts/routed-gothic-half-italic.ttf" type="font/ttf" crossorigin="anonymous">
 </svelte:head>
 
 <ModeWatcher />

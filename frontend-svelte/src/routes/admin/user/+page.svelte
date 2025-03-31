@@ -7,6 +7,7 @@
 	import type { SortingState } from '@tanstack/table-core';
 	import { UserRoundPlus } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { base } from "$app/paths";
 
 	let { data }: PageProps = $props();
 
@@ -29,7 +30,7 @@
 	];
 
 	function rowClick(data: AugmentedUser) {
-		goto(`/admin/user/${data.id}`);
+		goto(`${base}/admin/user/${data.id}`);
 	}
 </script>
 

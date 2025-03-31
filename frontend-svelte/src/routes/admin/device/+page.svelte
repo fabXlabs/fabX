@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
+	import { base } from '$app/paths';
 	import DataTable from '$lib/components/ui/DataTable.svelte';
 	import { columns } from './columns';
 	import { goto } from '$app/navigation';
@@ -24,7 +25,7 @@
 	];
 
 	function rowClick(data: AugmentedDevice) {
-		goto(`/admin/device/${data.id}`);
+		goto(`${base}/admin/device/${data.id}`);
 	}
 </script>
 

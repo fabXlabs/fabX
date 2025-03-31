@@ -1,6 +1,7 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import { base } from '$app/paths';
 	// noinspection ES6UnusedImports
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import NavLink from './NavLink.svelte';
@@ -21,22 +22,22 @@
 				</Sheet.Trigger>
 				<Sheet.Content side="left" class="flex flex-col text-2xl">
 					<span class="font-bold text-violet-800 transition-colors font-accent italic text-4xl">fabX</span>
-					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="/admin/user">Users</NavLink>
-					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="/admin/tool">Tools</NavLink>
-					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="/admin/qualification">Qualifications</NavLink>
-					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="/admin/device">Devices</NavLink>
+					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="{base}/admin/user">Users</NavLink>
+					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="{base}/admin/tool">Tools</NavLink>
+					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="{base}/admin/qualification">Qualifications</NavLink>
+					<NavLink bind:sheetOpen={sheetOpen} classes="mt-4" href="{base}/admin/device">Devices</NavLink>
 				</Sheet.Content>
 			</Sheet.Root>
 
 			<!-- Main Nav -->
-			<a href="/admin" class="mr-6 flex items-center space-x-2">
+			<a href="{base}/admin" class="mr-6 flex items-center space-x-2">
 				<span class="font-bold hover:text-violet-800 transition-colors font-accent italic">fabX</span>
 			</a>
 			<nav class="hidden sm:flex items-center gap-6 text-base">
-				<NavLink href="/admin/user">Users</NavLink>
-				<NavLink href="/admin/tool">Tools</NavLink>
-				<NavLink href="/admin/qualification">Qualifications</NavLink>
-				<NavLink href="/admin/device">Devices</NavLink>
+				<NavLink href="{base}/admin/user">Users</NavLink>
+				<NavLink href="{base}/admin/tool">Tools</NavLink>
+				<NavLink href="{base}/admin/qualification">Qualifications</NavLink>
+				<NavLink href="{base}/admin/device">Devices</NavLink>
 			</nav>
 		</div>
 		<div class="flex flex-1 items-center space-x-2 justify-end">

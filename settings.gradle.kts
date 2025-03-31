@@ -8,4 +8,4 @@
  */
 
 rootProject.name = "fabX"
-include("app", "web", "domain", "persistence", "logging", "frontend-angular")
+include("app", "web", "domain", "persistence", "logging", "frontend-angular", "frontend-svelte")

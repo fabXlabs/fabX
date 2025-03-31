@@ -3,12 +3,7 @@ package cloud.fabX.fabXaccess
 import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.common.model.Logger
-import cloud.fabX.fabXaccess.common.rest.AppleAppSiteAssociation
-import cloud.fabX.fabXaccess.common.rest.MetricsController
-import cloud.fabX.fabXaccess.common.rest.MetricsPrincipal
-import cloud.fabX.fabXaccess.common.rest.Slf4jLogger
-import cloud.fabX.fabXaccess.common.rest.WebCredentials
-import cloud.fabX.fabXaccess.common.rest.extractCause
+import cloud.fabX.fabXaccess.common.rest.*
 import cloud.fabX.fabXaccess.device.rest.DeviceController
 import cloud.fabX.fabXaccess.device.rest.DeviceFirmwareUpdateController
 import cloud.fabX.fabXaccess.device.ws.DeviceWebsocketController
@@ -20,45 +15,32 @@ import cloud.fabX.fabXaccess.user.rest.LogoutController
 import cloud.fabX.fabXaccess.user.rest.UserController
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.auth.AuthScheme
-import io.ktor.http.auth.HttpAuthHeader
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.http.*
+import io.ktor.http.auth.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
-import io.ktor.server.auth.Authentication
-import io.ktor.server.auth.authenticate
-import io.ktor.server.auth.basic
-import io.ktor.server.auth.jwt.jwt
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.http.content.angular
-import io.ktor.server.http.content.singlePageApplication
-import io.ktor.server.metrics.micrometer.MicrometerMetrics
-import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.BadRequestException
-import io.ktor.server.plugins.calllogging.CallLogging
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.plugins.forwardedheaders.XForwardedHeaders
-import io.ktor.server.plugins.httpsredirect.HttpsRedirect
-import io.ktor.server.plugins.origin
-import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.request.ApplicationRequest
-import io.ktor.server.request.httpMethod
-import io.ktor.server.request.path
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.route
-import io.ktor.server.routing.routing
-import io.ktor.server.websocket.WebSockets
-import io.ktor.server.websocket.pingPeriod
-import io.ktor.server.websocket.timeout
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
+import io.ktor.server.engine.*
+import io.ktor.server.http.content.*
+import io.ktor.server.metrics.micrometer.*
+import io.ktor.server.netty.*
+import io.ktor.server.plugins.*
+import io.ktor.server.plugins.calllogging.*
+import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.forwardedheaders.*
+import io.ktor.server.plugins.httpsredirect.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
-import kotlin.time.Duration
 import kotlinx.serialization.json.Json
 import org.slf4j.MDC
 import org.slf4j.event.Level
+import kotlin.time.Duration
 
 class WebApp(
     loggerFactory: LoggerFactory,
@@ -244,6 +226,12 @@ class WebApp(
                 angular("fabx-dashboard")
                 useResources = true
             }
+            route("sv") {
+                singlePageApplication {
+                    filesPath = "fabx-svelte"
+                    useResources = true
+                }
+            }
             route("/api/v1") {
                 authenticate("api-jwt-cookie", "api-basic", "api-jwt") {
                     qualificationController.routes(this)
@@ -261,7 +249,6 @@ class WebApp(
                 metricsController.routes(this)
             }
             get("/health") {
-                // TODO expand health checks, e.g. connection to database
                 call.respond(HttpStatusCode.OK)
             }
             get("/.well-known/apple-app-site-association") {

@@ -44,19 +44,15 @@ jobs:
       with:
         node-version: 'lts/*'
 
-    - name: Install Frontend Dependencies (Svelte)
-      working-directory: ./frontend-svelte
-      run: npm ci
-
-    - name: Build Frontend (Svelte)
-      working-directory: ./frontend-svelte
-      run: npm run build
-
     - name: Build Backend
       run: ./gradlew classes -x npmInstall -x npmBuild
 
     - name: Test Backend
       run: ./gradlew check -x npmInstall -x npmBuild
+
+    - name: Install Frontend Dependencies (Svelte)
+      working-directory: ./frontend-svelte
+      run: npm ci
 
     - name: Build Fat JAR
       run: ./gradlew stage

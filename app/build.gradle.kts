@@ -19,6 +19,7 @@ tasks{
 dependencies {
     implementation(project(":web"))
     implementation(project(":frontend-angular"))
+    implementation(project(":frontend-svelte"))
     implementation(project(":domain"))
     implementation(project(":persistence"))
     implementation(project(":logging"))

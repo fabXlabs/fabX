@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from '$app/paths';
 	import type { PageProps } from './$types';
 	import DataTable from '$lib/components/ui/DataTable.svelte';
 	import { columns } from './columns';
@@ -18,7 +19,7 @@
 	];
 
 	function rowClick(data: Qualification) {
-		goto(`/admin/qualification/${data.id}`);
+		goto(`${base}/admin/qualification/${data.id}`);
 	}
 </script>
 

@@ -1,7 +1,6 @@
 plugins {
     java
     alias(libs.plugins.node)
-    alias(libs.plugins.kotlinx.serialization)
 }
 
 node {
@@ -16,10 +15,20 @@ tasks.npmInstall.configure {
 val buildTask = tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuild") {
     dependsOn(tasks.npmInstall)
     npmCommand.set(listOf("run", "build"))
-    inputs.dir(project.fileTree("src").exclude("**/*.spec.ts"))
+    inputs.dir(project.fileTree("src"))
     inputs.dir("node_modules")
-    inputs.files("angular.json", ".browserslistrc", "tsconfig.json", "tsconfig.app.json")
-    outputs.dir("${project.projectDir}/dist")
+    inputs.files(
+        "package.json",
+        "package-lock.json",
+        "components.json",
+        "eslint.config.js",
+        "postcss.config.js",
+        "svelte.config.js",
+        "tailwind.config.js",
+        "tsconfig.json",
+        "vite.config.js"
+    )
+    outputs.dir("${project.projectDir}/target")
     environment.put("FABX_VERSION", project.version.toString())
 }
 

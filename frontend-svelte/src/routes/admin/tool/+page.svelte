@@ -7,6 +7,7 @@
 	import type { AugmentedTool } from '$lib/api/model/tool';
 	import { Button } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
+	import { base } from "$app/paths";
 
 	let { data }: PageProps = $props();
 
@@ -26,7 +27,7 @@
 	];
 
 	function rowClick(data: AugmentedTool) {
-		goto(`/admin/tool/${data.id}`);
+		goto(`${base}/admin/tool/${data.id}`);
 	}
 </script>
 
