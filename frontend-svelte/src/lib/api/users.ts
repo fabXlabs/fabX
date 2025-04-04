@@ -18,6 +18,13 @@ export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
 	return res.json();
 }
 
+export async function getAllLimitedUsers(fetch: FetchFunction): Promise<User[]> {
+	console.debug('getAllLimitedUsers...');
+	const res = await fetch(`${baseUrl}/user/limited`, { credentials: 'include' })
+		.then(mapError);
+	return res.json();
+}
+
 export async function getUserById(fetch: FetchFunction, id: string): Promise<User> {
 	console.debug(`getUserById(${id})`);
 	const res = await fetch(`${baseUrl}/user/${id}`, { credentials: 'include' })
