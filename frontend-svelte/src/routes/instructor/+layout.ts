@@ -13,5 +13,5 @@ export const load: LayoutLoad = async ({ fetch }) => {
 			redirect(302, `${base}/login`);
 		}
 	}
-	throw Error('Runtime exception during loading admin layout. Should never reach.');
+	throw Error('Runtime exception during loading instructor layout. Should never reach.');
 };

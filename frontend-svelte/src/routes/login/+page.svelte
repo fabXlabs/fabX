@@ -24,7 +24,7 @@
 	async function loginPasswordless() {
 		await loginWebauthn(username)
 			.then(() => {
-				goto(`${base}/admin`);
+				goto(`${base}`);
 			})
 			.catch(e => { error = e; });
 	}
@@ -36,7 +36,7 @@
 		} else {
 			await loginBasicAuth(username, password)
 				.then(() => {
-					goto(`${base}/admin`);
+					goto(`${base}`);
 				})
 				.catch(e => { error = e; });
 		}

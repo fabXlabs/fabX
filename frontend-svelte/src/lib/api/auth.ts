@@ -84,6 +84,7 @@ export async function loginWebauthn(username: string) {
 	).then(mapError);
 
 	console.log('res', res);
+	return res;
 }
 
 export async function logout() {
