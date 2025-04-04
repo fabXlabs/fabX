@@ -8,10 +8,12 @@
 
   let { data } = $props();
 
-  onMount(() => {
+  onMount(async ()  => {
+		// Wait for me data to be loaded by the server
+		const me = await data.mePromise;
 		// Handle redirection based on user type
-		if (data.me) {
-			if (data.me.isAdmin) {
+		if (me) {
+			if (me.isAdmin) {
 				goto(`${base}/admin`);
 			} else {
 				goto(`${base}/instructor`);

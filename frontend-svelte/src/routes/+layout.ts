@@ -8,8 +8,8 @@ export const ssr = true;
 
 export const load: LayoutLoad = async ({ fetch }) => {
 	try {
-		const me = await getMe(fetch);
-		return { me };
+		const mePromise = getMe(fetch);
+		return { mePromise };
 	} catch (error) {
 		return { me: null, error };
 	}
