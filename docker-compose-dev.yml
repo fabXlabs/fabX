@@ -20,6 +20,9 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespassword
+    volumes:
+      - fabx-pg-data:/var/lib/postgresql/data
+
 
   prometheus:
     image: prom/prometheus
@@ -27,3 +30,6 @@ services:
       - "9090:9090"
     volumes:
       - ./tooling/prometheus.yml:/etc/prometheus/prometheus.yml
+
+volumes:
+  fabx-pg-data:
