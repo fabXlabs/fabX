@@ -1,15 +1,14 @@
 <script lang="ts">
-	import type { PageProps } from './$types';
-	import DataTable from '$lib/components/ui/DataTable.svelte';
-	import { columns } from './columns';
-	import type { AugmentedUser } from '$lib/api/model/user';
-	import { goto } from '$app/navigation';
-	import type { SortingState } from '@tanstack/table-core';
-	import { UserRoundPlus } from 'lucide-svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { base } from "$app/paths";
+  import type { PageProps } from './$types';
+  import DataTable from '$lib/components/ui/DataTable.svelte';
+  import { columns } from './columns';
+  import type { AugmentedUser } from '$lib/api/model/user';
+  import { goto } from '$app/navigation';
+  import type { SortingState } from '@tanstack/table-core';
+  import { base } from '$app/paths';
+  import AddUserSheet from './AddUserSheet.svelte';
 
-	let { data }: PageProps = $props();
+  let { data }: PageProps = $props();
 
 	let initialColumnVisibility = {
 		'wikiName': false,
@@ -42,10 +41,6 @@
 	onRowSelect={rowClick}
 >
 	{#snippet addButton()}
-		<!-- TODO implement adding user -->
-		<Button class="normal-case" onclick={() => { alert("NOT YET IMPLEMENTED") }}>
-			<UserRoundPlus />
-			Add User
-		</Button>
+    <AddUserSheet />
 	{/snippet}
 </DataTable>

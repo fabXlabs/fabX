@@ -1,5 +1,5 @@
 import { baseUrl, type FetchFunction } from '$lib/api';
-import type { AugmentedUser, User } from '$lib/api/model/user';
+import type { AugmentedUser, User, UserCreationDetails } from '$lib/api/model/user';
 import { mapError } from '$lib/api/map-error';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
@@ -42,6 +42,20 @@ export function augmentUsers(users: User[], qualifications: Qualification[]): Au
 		memberQualifications: getQualifications(u.memberQualifications),
 		instructorQualifications: getQualifications(u.instructorQualifications || [])
 	}));
+}
+
+export async function addUser(details: UserCreationDetails): Promise<string> {
+    const res = await fetch(
+        `${baseUrl}/user`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(details)
+        })
+        .then(mapError);
+    return res.text();
 }
 
 export async function addWebauthnIdentity(userId: string) {
