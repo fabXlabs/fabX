@@ -12,7 +12,7 @@ services:
       # must be false when running multiple instances
       DATABASE_CACHING: true
     depends_on:
-      db:
+      postgres:
         condition: service_healthy
 
   postgres:
@@ -20,7 +20,7 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: pg_isready -h db
+      test: pg_isready -h postgres
       retries: 5
       interval: 5s
       timeout: 5s
