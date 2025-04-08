@@ -22,5 +22,6 @@
 		{@render children()}
 	</svelte:boundary>
 </div>
-<!-- TODO show version -->
-<div class="text-center m-5 bg-background text-foreground/60 font-mono text-xs">fabX vTODO</div>
+	<!-- TODO show version. FIXME: this should be inside the div above, otherwise the footer overflows the page -->
+	<div class="text-center m-5 bg-background text-foreground/60 font-mono text-xs">fabX vTODO</div>
+
