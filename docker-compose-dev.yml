@@ -11,11 +11,19 @@ services:
       FABX_DB_PASSWORD: postgrespassword
       # must be false when running multiple instances
       DATABASE_CACHING: true
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:16
     ports:
       - "5432:5432"
+    healthcheck:
+      test: pg_isready -h postgres
+      retries: 5
+      interval: 5s
+      timeout: 5s
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
