@@ -1,7 +1,7 @@
 import type { LayoutLoad } from "./$types";
 import { getMe } from "$lib/api/users";
 import { redirect } from '@sveltejs/kit';
-import { UNAUTHORIZED_ERROR } from '$lib/api/model/error';
+import { UNAUTHORIZED_ERROR, type FabXError } from '$lib/api/model/error';
 import { base } from '$app/paths';
 import { error } from '@sveltejs/kit';
 
@@ -20,6 +20,6 @@ export const load: LayoutLoad  = async ({ url, fetch, }) => {
 			redirect(302, `${base}/login`);
 		}
 		// if error is other than UNAUTHORIZED_ERROR, backend is in unexpected state
-		error(500, "Unexpected server response while attempting to fetch user data from backend")
+		error(500, "Unexpected server response while attempting to fetch user data. Backend responded with error: " + (e as FabXError))
 	}
 };
