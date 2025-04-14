@@ -22,6 +22,8 @@ npm ci
 
 The setup includes pre-commit hooks via [husky](https://typicode.github.io/husky/). On commit, husky triggers [lint-staged](https://github.com/lint-staged/lint-staged), which runs automatic linting and formatting before a commit.
 
+The pre-commit hooks can be bypassed by adding the `--no-verify` or `-n` flag to the commit command.
+
 ## Development
 
 ```bash
