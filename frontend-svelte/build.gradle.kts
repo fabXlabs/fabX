@@ -29,6 +29,7 @@ val buildTask = tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuil
         "vite.config.js"
     )
     outputs.dir("${project.projectDir}/target")
+    environment.put("BASE_DIR", "/sv")
     environment.put("FABX_VERSION", project.version.toString())
 }
 
