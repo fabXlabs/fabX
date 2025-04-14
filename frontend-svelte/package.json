@@ -48,7 +48,8 @@
 		"@tanstack/table-core": "^8.21.3",
 		"mode-watcher": "^1.0.1"
 	},
-    "lint-staged": {
-      "**/*.{js,ts,svelte}": "prettier --write"
-    }
+	"lint-staged": {
+		"**/*.{js,ts,svelte,html,jsx,cjs,json,yaml,yml,md}": "eslint --fix",
+		"**/*.{js,ts,svelte}": "prettier --write"
+	}
 }
