@@ -1,8 +1,8 @@
 import { fontFamily } from 'tailwindcss/defaultTheme';
 import type { Config } from 'tailwindcss';
-// @ts-ignore
+// @ts-expect-error: I dont know
 import tailwindcssAnimate from 'tailwindcss-animate';
-// @ts-ignore
+// @ts-expect-error: I dont know
 import typography from '@tailwindcss/typography';
 
 const config: Config = {

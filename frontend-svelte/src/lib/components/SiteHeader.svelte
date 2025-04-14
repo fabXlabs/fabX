@@ -3,7 +3,6 @@
 	import * as Sheet from '$lib/components/ui/sheet/index.js';
 	import { base } from '$app/paths';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import NavLink from './NavLink.svelte';
 	import { Menu } from 'lucide-svelte';
 	import SiteHeaderDropdownMenu from '$lib/components/SiteHeaderDropdownMenu.svelte';

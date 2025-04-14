@@ -24,7 +24,7 @@ export function augmentDevices(devices: Device[], tools: Tool[]): AugmentedDevic
 			Array.from(Object.entries(d.attachedTools), ([pin, tool]) => [
 				Number(pin),
 				toolsMap.get(tool)
-			]).filter(([_, v]) => v)
+			]).filter(([, v]) => v)
 		)
 	}));
 }
