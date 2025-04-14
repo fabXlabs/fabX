@@ -44,6 +44,7 @@
 	});
 
 	let columnVisibility = $state<VisibilityState>(initialColumnVisibility);
+	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	let globalFilter = $state<any>([]);
 	let sorting = $state<SortingState>(initialSortingState);
 

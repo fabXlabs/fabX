@@ -5,6 +5,7 @@
 
 	let { children } = $props();
 
+	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	function onerror(e: any) {
 		console.error('global error boundary', e);
 	}

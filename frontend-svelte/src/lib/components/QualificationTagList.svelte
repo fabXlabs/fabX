@@ -10,7 +10,7 @@
 </script>
 
 <div class="flex flex-wrap space-y-1">
-	{#each qualifications as qualification}
+	{#each qualifications as qualification (qualification.id)}
 		<QualificationTag {qualification} />
 	{/each}
 </div>

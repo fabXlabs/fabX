@@ -11,13 +11,13 @@
 			<h1>User {data.augmentedUser.firstName} {data.augmentedUser.lastName}</h1>
 			<h2>Member Qualifications</h2>
 			<div>
-				{#each data.augmentedUser.memberQualifications as qualification}
+				{#each data.augmentedUser.memberQualifications as qualification (qualification.id)}
 					<QualificationTag {qualification} />
 				{/each}
 			</div>
 			<h2>Instructor Qualifications</h2>
 			<div>
-				{#each data.augmentedUser.instructorQualifications || [] as qualification}
+				{#each data.augmentedUser.instructorQualifications || [] as qualification (qualification.id)}
 					<QualificationTag {qualification} />
 				{/each}
 			</div>
