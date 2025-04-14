@@ -1,1 +1,2 @@
+cd frontend-svelte
 npx lint-staged
