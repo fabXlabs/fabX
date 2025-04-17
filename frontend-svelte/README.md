@@ -1,16 +1,16 @@
 # FabxDashboard
 
-Frontend for the FabX system.
+Frontend for the fabX system.
 
 ## Dev Setup
 
-#### Prerequisites
+### Prerequisites
 
 This project depends on the following to be installed on the system:
 
 - NodeJS
 
-#### Installation
+### Installation
 
 Run the following command to set up the project according to the `package-lock.json`
 
@@ -18,7 +18,7 @@ Run the following command to set up the project according to the `package-lock.j
 npm ci
 ```
 
-##### Automatic Linting and Formatting
+#### Automatic Linting and Formatting
 
 The setup includes pre-commit hooks via [husky](https://typicode.github.io/husky/). On commit, husky triggers [lint-staged](https://github.com/lint-staged/lint-staged), which runs automatic linting and formatting before a commit.
 
