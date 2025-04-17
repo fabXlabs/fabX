@@ -1,22 +1,30 @@
-# sv
+# FabxDashboard
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Frontend for the fabX system.
 
-## Creating a project
+## Dev Setup
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Prerequisites
+
+This project depends on the following to be installed on the system:
+
+- NodeJS
+
+### Installation
+
+Run the following command to set up the project according to the `package-lock.json`
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+npm ci
 ```
 
-## Developing
+#### Automatic Linting and Formatting
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+The setup includes pre-commit hooks via [husky](https://typicode.github.io/husky/). On commit, husky triggers [lint-staged](https://github.com/lint-staged/lint-staged), which runs automatic linting and formatting before a commit.
+
+The pre-commit hooks can be bypassed by adding the `--no-verify` or `-n` flag to the commit command.
+
+## Development
 
 ```bash
 npm run dev
@@ -34,5 +42,3 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
