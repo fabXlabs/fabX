@@ -51,7 +51,7 @@ You should be able to get started with the following steps:
 * run `docker compose up -d postgres` (replace `docker compose` by `podman-compose` if you use Podman) to start the database
 * wait a few seconds for the database to be ready to accept connections
 * run `docker compose up -d app` to start fabX
-* open `http://localhost:8000` and continue with the Setup section below
+* open `http://localhost:8080` and continue with the Setup section below
 
 To stop fabX and the database, run `docker compose down`.
 

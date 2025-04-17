@@ -3,7 +3,7 @@ services:
   app:
     build: .
     ports:
-      - "8000:1234"
+      - "8080:1234"
     environment:
       PORT: 1234
       FABX_DB_URL: jdbc:postgresql://postgres/postgres
