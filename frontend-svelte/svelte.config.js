@@ -1,7 +1,6 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
-// TODO SET ENV DURING GRADLE BUILD
 const baseDir = process.env.BASE_DIR || '';
 
 /** @type {import('@sveltejs/kit').Config} */
