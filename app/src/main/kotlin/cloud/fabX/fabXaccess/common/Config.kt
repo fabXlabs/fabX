@@ -23,7 +23,7 @@ data class Config(
 ) {
     companion object {
         fun fromEnv(): Config {
-            val port = readEnvInt("PORT", 80)
+            val port = readEnvInt("PORT", 8080)
             val jwtIssuer = readEnvString("JWT_ISSUER", "localhost")
             val jwtAudience = readEnvString("JWT_AUDIENCE", "localhost")
             val jwtHMAC256Secret = readEnvString("JWT_HMAC256_SECRET", Random.nextBytes(32).decodeToString())
