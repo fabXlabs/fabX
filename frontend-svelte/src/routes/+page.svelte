@@ -1,28 +1,30 @@
 <script>
 	import { base } from '$app/paths';
 	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 	import bgImg3 from '$lib/assets/bg/3.jpeg';
 	import { LoaderCircle } from 'lucide-svelte';
-	import { onMount } from 'svelte';
 
-  	console.log(`base is ${base}`)
+	console.log(`base is ${base}`);
 
-  	let { data } = $props();
+	let { data } = $props();
 
-	// route user to their dasboard depending on their role
+	// route user to their dashboard depending on their role
 	if (data.me) {
-			if (data.me.isAdmin) {
+		if (data.me.isAdmin) {
+			if (browser) {
 				goto(`${base}/admin`);
-			} else {
+			}
+		} else {
+			if (browser) {
 				goto(`${base}/instructor`);
 			}
 		}
-
-
+	}
 </script>
 
 <div class="flex grow bg-cover bg-center" style="background-image: url({bgImg3})">
-	  	<div class="flex w-full justify-center items-center">
-			<LoaderCircle class="text-gray-300 w-16 h-16 animate-spin" />
-		</div>
+	<div class="flex w-full items-center justify-center">
+		<LoaderCircle class="h-16 w-16 animate-spin text-gray-300" />
+	</div>
 </div>
