@@ -24,9 +24,11 @@
 	async function loginPasswordless() {
 		await loginWebauthn(username)
 			.then(() => {
-				goto(`${base}/admin`);
+				goto(`${base}`);
 			})
-			.catch(e => { error = e; });
+			.catch((e) => {
+				error = e;
+			});
 	}
 
 	async function loginUsernamePassword() {
@@ -36,32 +38,45 @@
 		} else {
 			await loginBasicAuth(username, password)
 				.then(() => {
-					goto(`${base}/admin`);
+					goto(base || '/');
 				})
-				.catch(e => { error = e; });
+				.catch((e) => {
+					error = e;
+				});
 		}
 	}
 </script>
 
 <div class="flex h-screen w-full items-center justify-center px-4">
 	<div class="absolute inset-0 bg-cover bg-center" style="background-image: url({bgImg3})"></div>
-	<Card.Root class="w-72 z-50">
+	<Card.Root class="z-50 w-72">
 		<Card.Header>
-			<Card.Title class="text-4xl text-center font-accent italic">fabX</Card.Title>
+			<Card.Title class="font-accent text-center text-4xl italic">fabX</Card.Title>
 		</Card.Header>
 		<Card.Content>
 			<form>
 				<div class="grid gap-4">
 					<div class="grid gap-2">
 						<Label for="username">Username</Label>
-						<Input bind:value="{username}" type="text" id="username" placeholder="Username" autocomplete="username"
-									 required />
+						<Input
+							bind:value={username}
+							type="text"
+							id="username"
+							placeholder="Username"
+							autocomplete="username"
+							required
+						/>
 					</div>
 					{#if showPassword}
 						<div class="grid gap-2">
 							<Label for="password">Password</Label>
-							<Input bind:value="{password}" type="password" id="password" autocomplete="current-password"
-										 required />
+							<Input
+								bind:value={password}
+								type="password"
+								id="password"
+								autocomplete="current-password"
+								required
+							/>
 						</div>
 					{/if}
 
@@ -71,7 +86,11 @@
 						<Button onclick={loginPasswordless} type="submit">Login Passwordless</Button>
 						<Separator />
 					{/if}
-					<Button variant="secondary" onclick={loginUsernamePassword} type={showPassword ? "submit" : null}>
+					<Button
+						variant="secondary"
+						onclick={loginUsernamePassword}
+						type={showPassword ? 'submit' : null}
+					>
 						Login with Password
 					</Button>
 				</div>
