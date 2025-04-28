@@ -54,6 +54,10 @@ jobs:
       working-directory: ./frontend-svelte
       run: npm ci
 
+    - name: Lint Frontend (Svelte)
+      working-directory: ./frontend-svelte
+      run: npm run lint
+
     - name: Build Fat JAR
       run: ./gradlew stage
       env:
