@@ -4,6 +4,11 @@ plugins {
 }
 
 node {
+    // workaround for https://github.com/node-gradle/gradle-node-plugin/issues/152
+    if(System.getenv().contains("FABX_NPM_COMMAND")) {
+        npmCommand = System.getenv("FABX_NPM_COMMAND")
+    }
+
     download.set(false)
     npmInstallCommand.set("ci")
 }
