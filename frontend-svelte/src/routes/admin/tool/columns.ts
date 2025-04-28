@@ -40,7 +40,9 @@ export const columns: ColumnDef<AugmentedTool>[] = [
 		accessorKey: 'requiredQualifications',
 		header: 'Qualifications',
 		cell: ({ row }) => {
-			return renderComponent(QualificationTagList, { qualifications: row.original.requiredQualifications || [] })
+			return renderComponent(QualificationTagList, {
+				qualifications: row.original.requiredQualifications || []
+			});
 		}
 	}
 ];

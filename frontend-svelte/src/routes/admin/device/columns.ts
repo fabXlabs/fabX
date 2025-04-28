@@ -20,7 +20,9 @@ export const columns: ColumnDef<AugmentedDevice>[] = [
 		accessorKey: 'attachedTools',
 		header: 'Tools',
 		cell: ({ row }) => {
-			return renderComponent(AttachedToolsList, { attachedTools: row.original.attachedTools });
+			return renderComponent(AttachedToolsList, {
+				attachedTools: row.original.attachedTools
+			});
 		}
 	},
 	{

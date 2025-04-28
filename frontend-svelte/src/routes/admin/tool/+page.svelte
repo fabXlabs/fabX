@@ -7,16 +7,16 @@
 	import type { AugmentedTool } from '$lib/api/model/tool';
 	import { Button } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
-	import { base } from "$app/paths";
+	import { base } from '$app/paths';
 
 	let { data }: PageProps = $props();
 
 	let initialColumnVisibility = {
-		'requires2FA': false,
-		'time': false,
-		'idleState': false,
-		'notes': false,
-		'wikiLink': false
+		requires2FA: false,
+		time: false,
+		idleState: false,
+		notes: false,
+		wikiLink: false
 	};
 
 	let initialSortingState: SortingState = [
@@ -40,7 +40,12 @@
 >
 	{#snippet addButton()}
 		<!-- TODO implement adding tool -->
-		<Button class="normal-case" onclick={() => { alert("NOT YET IMPLEMENTED") }}>
+		<Button
+			class="normal-case"
+			onclick={() => {
+				alert('NOT YET IMPLEMENTED');
+			}}
+		>
 			<Plus />
 			Add Tool
 		</Button>

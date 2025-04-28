@@ -6,6 +6,6 @@ export async function mapError(response: Response): Promise<Response> {
 	} else if (response.status == 401) {
 		throw UNAUTHORIZED_ERROR;
 	} else {
-		throw await response.json() as FabXError;
+		throw (await response.json()) as FabXError;
 	}
 }

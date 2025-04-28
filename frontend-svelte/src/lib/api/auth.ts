@@ -7,34 +7,34 @@ export async function loginBasicAuth(username: string, password: string) {
 	await logout();
 
 	const headers = {
-		'Authorization': 'Basic ' + btoa(username + ':' + password)
+		Authorization: 'Basic ' + btoa(username + ':' + password)
 	};
-	const res = await fetch(`${baseUrl}/login?cookie=true`, { headers, credentials: 'include' })
-		.then(mapError);
+	const res = await fetch(`${baseUrl}/login?cookie=true`, {
+		headers,
+		credentials: 'include'
+	}).then(mapError);
 
 	console.log('...login result', res);
 	return res;
 }
 
 export async function loginWebauthn(username: string) {
-	const challengeRes = await fetch(
-		`${baseUrl}/webauthn/login`,
-		{
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			body: JSON.stringify({
-				'username': username
-			})
-		}).then(mapError);
+	const challengeRes = await fetch(`${baseUrl}/webauthn/login`, {
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		method: 'POST',
+		body: JSON.stringify({
+			username: username
+		})
+	}).then(mapError);
 
-	const loginResponse = await challengeRes.json() as WebauthnLoginResponse;
+	const loginResponse = (await challengeRes.json()) as WebauthnLoginResponse;
 
 	const userId = loginResponse.userId;
 
-	const allowCred: PublicKeyCredentialDescriptor[] = loginResponse.credentialIds.map(e => {
+	const allowCred: PublicKeyCredentialDescriptor[] = loginResponse.credentialIds.map((e) => {
 		const eArr = new Int8Array(e.values());
 		return {
 			id: eArr.buffer,
@@ -71,36 +71,32 @@ export async function loginWebauthn(username: string) {
 		signature: Array.from(signatureArray)
 	};
 
-	const res = await fetch(
-		`${baseUrl}/webauthn/response?cookie=true`,
-		{
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			method: 'POST',
-			body: JSON.stringify(response)
-		}
-	).then(mapError);
+	const res = await fetch(`${baseUrl}/webauthn/response?cookie=true`, {
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		method: 'POST',
+		body: JSON.stringify(response)
+	}).then(mapError);
 
 	console.log('res', res);
 }
 
 export async function logout() {
-	return await fetch(`${baseUrl}/logout`, { credentials: 'include' })
-		.then(mapError);
+	return await fetch(`${baseUrl}/logout`, { credentials: 'include' }).then(mapError);
 }
 
 interface WebauthnLoginResponse {
-	userId: string,
-	challenge: number[],
-	credentialIds: number[][]
+	userId: string;
+	challenge: number[];
+	credentialIds: number[][];
 }
 
 interface WebauthnResponseDetails {
-	userId: string,
-	credentialId: number[],
-	authenticatorData: number[],
-	clientDataJSON: number[],
-	signature: number[]
+	userId: string;
+	credentialId: number[];
+	authenticatorData: number[];
+	clientDataJSON: number[];
+	signature: number[];
 }
