@@ -4,7 +4,7 @@ import { getAllDevices } from '$lib/api/devices';
 import { getAllQualifications } from '$lib/api/qualifications';
 import { getAllTools } from '$lib/api/tools';
 
-export const load: PageLoad = async ({ fetch, }) => {
+export const load: PageLoad = async ({ fetch }) => {
 	const devices_ = getAllDevices(fetch).catch(() => {
 		return [];
 	});
