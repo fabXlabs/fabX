@@ -9,7 +9,7 @@ export interface Tool {
 	requires2FA: boolean;
 	time: number;
 	idleState: IdleState;
-	enabled: Boolean;
+	enabled: boolean;
 	notes: string | null;
 	wikiLink: string;
 	requiredQualifications: string[];
@@ -23,7 +23,7 @@ export interface AugmentedTool {
 	requires2FA: boolean;
 	time: number;
 	idleState: IdleState;
-	enabled: Boolean;
+	enabled: boolean;
 	notes: string | null;
 	wikiLink: string;
 	requiredQualifications: Qualification[];

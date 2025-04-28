@@ -62,7 +62,7 @@ export async function addWebauthnIdentity(userId: string) {
 	const challengeArray = new Int8Array(registrationDetails.challenge);
 	const userIdArray = new Int8Array(registrationDetails.userId);
 
-	let options: CredentialCreationOptions = {
+	const options: CredentialCreationOptions = {
 		publicKey: {
 			attestation: registrationDetails.attestation,
 			challenge: challengeArray.buffer,
