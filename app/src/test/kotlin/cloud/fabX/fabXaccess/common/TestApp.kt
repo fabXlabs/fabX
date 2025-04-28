@@ -124,7 +124,7 @@ private fun testSetup(): WebApp {
     val db: Database by testApp.instance()
 
     transaction(db) {
-        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, ToolSourcingEvent, UserSourcingEvent")
+        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, DeviceThumbnail, ToolSourcingEvent, UserSourcingEvent, ToolUsageLog")
     }
 
     val domainEventPublisher: SynchronousDomainEventPublisher by testApp.instance()
