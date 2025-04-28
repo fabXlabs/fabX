@@ -41,19 +41,19 @@ internal class ToolUsageDatabaseRepositoryTest {
 
     @Nested
     internal inner class GivenUsagesStoredInRepository {
-        private val usage1 = ToolUsageLogEntry(
+        private val usage1 = ToolUsageLogEntry.fromUnvalidated(
             fixedInstant1,
             userId1,
             toolId1
         )
 
-        private val usage2 = ToolUsageLogEntry(
+        private val usage2 = ToolUsageLogEntry.fromUnvalidated(
             fixedInstant2,
             userId1,
             toolId2
         )
 
-        private val usage3 = ToolUsageLogEntry(
+        private val usage3 = ToolUsageLogEntry.fromUnvalidated(
             fixedInstant3,
             userId2,
             toolId2

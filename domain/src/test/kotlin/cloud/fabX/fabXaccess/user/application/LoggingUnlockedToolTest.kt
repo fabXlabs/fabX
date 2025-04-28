@@ -4,6 +4,7 @@ import FixedClock
 import arrow.core.right
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import cloud.fabX.fabXaccess.common.application.withSecondPrecision
 import cloud.fabX.fabXaccess.common.model.CorrelationIdFixture
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Logger
@@ -40,7 +41,7 @@ internal class LoggingUnlockedToolTest {
     private lateinit var toolRepository: ToolRepository
     private lateinit var toolUsageLogRepository: ToolUsageLogRepository
 
-    private val fixedInstant = Clock.System.now()
+    private val fixedInstant = Clock.System.now().withSecondPrecision()
     private val fixedClock = FixedClock(fixedInstant)
 
     private lateinit var testee: LoggingUnlockedTool
