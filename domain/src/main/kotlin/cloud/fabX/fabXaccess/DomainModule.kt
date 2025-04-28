@@ -129,7 +129,15 @@ val domainModule = DI.Module("domain") {
     bindSingleton { GettingUserByIdentity(instance(), instance()) }
     bindSingleton { GettingUserIdByWikiName(instance(), instance()) }
     bindSingleton { GettingUserSourcingEvents(instance(), instance()) }
-    bindSingleton { LoggingUnlockedTool(instance(tag = "toolUsageCounter"), instance(), instance()) }
+    bindSingleton {
+        LoggingUnlockedTool(
+            instance(tag = "toolUsageCounter"),
+            instance(),
+            instance(),
+            instance(),
+            instance()
+        )
+    }
     bindSingleton { RemovingCardIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingInstructorQualification(instance(), instance(), instance()) }
     bindSingleton { RemovingMemberQualification(instance(), instance(), instance()) }
@@ -137,7 +145,17 @@ val domainModule = DI.Module("domain") {
     bindSingleton { RemovingPinIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingUsernamePasswordIdentity(instance(), instance(), instance()) }
     bindSingleton { RemovingWebauthnIdentity(instance(), instance(), instance()) }
-    bindSingleton { UserDomainEventHandler(instance(), instance(), instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton {
+        UserDomainEventHandler(
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance(),
+            instance()
+        )
+    }
     bindSingleton { UserMetrics(instance()) }
     bindSingleton { ValidatingSecondFactor(instance(), instance()) }
 

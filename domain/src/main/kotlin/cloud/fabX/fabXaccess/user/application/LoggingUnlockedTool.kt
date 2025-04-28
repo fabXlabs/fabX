@@ -11,6 +11,9 @@ import cloud.fabX.fabXaccess.common.model.TaggedCounter
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
+import cloud.fabX.fabXaccess.user.model.ToolUsageLogEntry
+import cloud.fabX.fabXaccess.user.model.ToolUsageLogRepository
+import kotlinx.datetime.Clock
 
 /**
  * Service to log that a user has unlocked a certain tool.
@@ -18,6 +21,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolRepository
 class LoggingUnlockedTool(
     private val toolUsageCounter: TaggedCounter<ToolId>,
     private val toolRepository: ToolRepository,
+    private val toolUsageLogRepository: ToolUsageLogRepository,
+    private val clock: Clock,
     loggerFactory: LoggerFactory
 ) {
     private val log: Logger = loggerFactory.invoke(this::class.java)
@@ -39,6 +44,17 @@ class LoggingUnlockedTool(
                             mapOf("toolId" to toolId.serialize())
                         }
                 })
+            }
+            .onRight {
+                toolUsageLogRepository.store(
+                    ToolUsageLogEntry(
+                        timestamp = clock.now(),
+                        userId = it,
+                        toolId = toolId,
+                    )
+                ).onLeft { error ->
+                    log.error("Not able to store tool usage log: $error")
+                }
             }
             .onRight {
                 log.info("User $it unlocked tool $toolId")

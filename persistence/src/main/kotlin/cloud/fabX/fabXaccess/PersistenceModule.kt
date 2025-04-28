@@ -5,6 +5,7 @@ import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.device.infrastructure.DevicePinStatusInMemoryRepository
 import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
 import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
+import cloud.fabX.fabXaccess.user.infrastructure.ToolUsageLogDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.WebauthnInMemoryRepository
 import com.zaxxer.hikari.HikariConfig
@@ -22,6 +23,8 @@ fun makePersistenceModule(): DI.Module = DI.Module("persistence") {
     bindSingleton { QualificationDatabaseRepository(instance()) }
     bindSingleton { ToolDatabaseRepository(instance(), instance()) }
     bindSingleton { UserDatabaseRepository(instance()) }
+
+    bindSingleton { ToolUsageLogDatabaseRepository(instance()) }
 
     bindSingleton { WebauthnInMemoryRepository() }
 

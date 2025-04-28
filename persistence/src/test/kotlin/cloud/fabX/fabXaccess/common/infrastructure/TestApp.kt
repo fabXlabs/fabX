@@ -1,12 +1,8 @@
 package cloud.fabX.fabXaccess.common.infrastructure
 
 import cloud.fabX.fabXaccess.PersistenceApp
-import cloud.fabX.fabXaccess.device.infrastructure.DeviceDatabaseRepository
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
-import cloud.fabX.fabXaccess.qualification.infrastructure.QualificationDatabaseRepository
-import cloud.fabX.fabXaccess.tool.infrastructure.ToolDatabaseRepository
-import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.runTest
@@ -14,7 +10,6 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.bindInstance
-import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.utility.DockerImageName
@@ -72,7 +67,7 @@ internal fun withTestApp(
     val db: Database by testApp.instance()
 
     transaction(db) {
-        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, DeviceThumbnail, ToolSourcingEvent, UserSourcingEvent")
+        exec("TRUNCATE TABLE QualificationSourcingEvent, DeviceSourcingEvent, DeviceThumbnail, ToolSourcingEvent, UserSourcingEvent, ToolUsageLog")
     }
 
     runTest {
