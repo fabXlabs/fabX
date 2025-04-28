@@ -47,7 +47,7 @@ class LoggingUnlockedTool(
             }
             .onRight {
                 toolUsageLogRepository.store(
-                    ToolUsageLogEntry(
+                    ToolUsageLogEntry.fromUnvalidated(
                         timestamp = clock.now(),
                         userId = it,
                         toolId = toolId,
