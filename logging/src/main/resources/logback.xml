@@ -7,7 +7,6 @@
 
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
-    <logger name="io.ktor.websocket.WebSocket" level="TRACE"/>
     <logger name="liquibase" level="INFO"/>
     <logger name="Exposed" level="INFO"/>
     <logger name="com.zaxxer.hikari" level="INFO"/>
