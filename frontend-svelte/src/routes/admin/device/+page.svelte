@@ -12,9 +12,9 @@
 	let { data }: PageProps = $props();
 
 	let initialColumnVisibility = {
-		'background': false,
-		'backupBackendUrl': false,
-		'desiredFirmwareVersion': false
+		background: false,
+		backupBackendUrl: false,
+		desiredFirmwareVersion: false
 	};
 
 	let initialSortingState: SortingState = [
@@ -38,7 +38,12 @@
 >
 	{#snippet addButton()}
 		<!-- TODO implement adding device -->
-		<Button class="normal-case" onclick={() => { alert("NOT YET IMPLEMENTED") }}>
+		<Button
+			class="normal-case"
+			onclick={() => {
+				alert('NOT YET IMPLEMENTED');
+			}}
+		>
 			<Plus />
 			Add Device
 		</Button>

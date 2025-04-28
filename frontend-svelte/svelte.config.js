@@ -11,12 +11,12 @@ const config = {
 
 	kit: {
 		paths: {
-            base: baseDir
+			base: baseDir
 		},
 		adapter: adapter({
 			pages: 'target/fabx-svelte/',
 			assets: 'target/fabx-svelte/',
-			fallback: 'index.html',
+			fallback: 'index.html'
 		})
 	}
 };

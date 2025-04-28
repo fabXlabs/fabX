@@ -32,7 +32,12 @@
 >
 	{#snippet addButton()}
 		<!-- TODO implement adding qualification -->
-		<Button class="normal-case" onclick={() => { alert("NOT YET IMPLEMENTED") }}>
+		<Button
+			class="normal-case"
+			onclick={() => {
+				alert('NOT YET IMPLEMENTED');
+			}}
+		>
 			<Plus />
 			Add Qualification
 		</Button>

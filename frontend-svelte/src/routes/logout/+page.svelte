@@ -3,7 +3,7 @@
 
 	async function doLogout() {
 		const res = await logout();
-		console.debug("logout", res);
+		console.debug('logout', res);
 	}
 </script>
 

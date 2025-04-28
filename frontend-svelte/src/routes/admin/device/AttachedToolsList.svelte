@@ -8,6 +8,6 @@
 	let { attachedTools }: Props = $props();
 </script>
 
-{#each Object.entries(attachedTools) as [pin, tool] }
+{#each Object.entries(attachedTools) as [pin, tool] (pin)}
 	<div>{pin}: {tool.name}</div>
 {/each}

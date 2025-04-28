@@ -4,11 +4,19 @@ import { getAllDevices } from '$lib/api/devices';
 import { getAllQualifications } from '$lib/api/qualifications';
 import { getAllTools } from '$lib/api/tools';
 
-export const load: PageLoad = async ({ fetch, params }) => {
-	const devices_ = getAllDevices(fetch).catch(_ => { return []; });
-	const qualifications_ = getAllQualifications(fetch).catch(_ => { return []; });
-	const tools_ = getAllTools(fetch).catch(_ => { return []; });
-	const users_ = getAllUsers(fetch).catch(_ => { return []; });
+export const load: PageLoad = async ({ fetch }) => {
+	const devices_ = getAllDevices(fetch).catch(() => {
+		return [];
+	});
+	const qualifications_ = getAllQualifications(fetch).catch(() => {
+		return [];
+	});
+	const tools_ = getAllTools(fetch).catch(() => {
+		return [];
+	});
+	const users_ = getAllUsers(fetch).catch(() => {
+		return [];
+	});
 
 	const devices = await devices_;
 	const qualifications = await qualifications_;

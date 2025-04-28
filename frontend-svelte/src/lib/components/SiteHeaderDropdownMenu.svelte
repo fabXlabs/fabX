@@ -24,13 +24,18 @@
 	<DropdownMenu.Content class="w-56" align="end">
 		<DropdownMenu.Label class="font-normal">
 			<div class="flex flex-col space-y-1">
-				<p class="text-base font-medium leading-none">{ me.firstName } { me.lastName }</p>
-				<p class="text-muted-foreground text-sm leading-none">{ me.wikiName }</p>
+				<p class="text-base leading-none font-medium">{me.firstName} {me.lastName}</p>
+				<p class="text-muted-foreground text-sm leading-none">{me.wikiName}</p>
 			</div>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />
 		<DropdownMenu.Group>
-			<DropdownMenu.Item onSelect={async () => {await goto(`${base}/admin/me`); }} class="cursor-pointer">
+			<DropdownMenu.Item
+				onSelect={async () => {
+					await goto(`${base}/admin/me`);
+				}}
+				class="cursor-pointer"
+			>
 				<User class="mr-2 size-4" />
 				<span>Profile</span>
 			</DropdownMenu.Item>

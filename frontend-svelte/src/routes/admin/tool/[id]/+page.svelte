@@ -11,7 +11,7 @@
 			<h1>Tool {data.augmentedTool.name}</h1>
 			<h2>Required Qualifications</h2>
 			<div>
-				{#each data.augmentedTool.requiredQualifications as qualification}
+				{#each data.augmentedTool.requiredQualifications as qualification (qualification.id)}
 					<QualificationTag {qualification} />
 				{/each}
 			</div>

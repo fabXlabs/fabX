@@ -15,7 +15,7 @@
 			<p class="text-xs text-red-800">{error.type}</p>
 		{/if}
 		{#if error.parameters}
-			{#each Object.entries(error.parameters) as parameter}
+			{#each Object.entries(error.parameters) as parameter (parameter)}
 				<p class="text-xs text-red-800">{parameter[0]}: {parameter[1]}</p>
 			{/each}
 		{/if}

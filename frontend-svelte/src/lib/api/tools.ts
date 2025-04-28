@@ -6,15 +6,13 @@ import { augmentQualifications } from '$lib/api/model/augment-qualifications';
 
 export async function getAllTools(fetch: FetchFunction): Promise<Tool[]> {
 	console.debug('getAllTools...');
-	const res = await fetch(`${baseUrl}/tool`, { credentials: 'include' })
-		.then(mapError);
+	const res = await fetch(`${baseUrl}/tool`, { credentials: 'include' }).then(mapError);
 	return res.json();
 }
 
 export async function getToolById(fetch: FetchFunction, id: string): Promise<Tool> {
 	console.debug(`getToolById(${id})`);
-	const res = await fetch(`${baseUrl}/tool/${id}`, { credentials: 'include' })
-		.then(mapError);
+	const res = await fetch(`${baseUrl}/tool/${id}`, { credentials: 'include' }).then(mapError);
 	return res.json();
 }
 
@@ -30,7 +28,7 @@ export function augmentTool(tool: Tool, qualifications: Qualification[]): Augmen
 export function augmentTools(tools: Tool[], qualifications: Qualification[]): AugmentedTool[] {
 	const getQualifications = augmentQualifications(qualifications);
 
-	return tools.map(t => ({
+	return tools.map((t) => ({
 		...t,
 		requiredQualifications: getQualifications(t.requiredQualifications)
 	}));

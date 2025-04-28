@@ -25,7 +25,7 @@ export const columns: ColumnDef<AugmentedUser>[] = [
 	},
 	{
 		accessorKey: 'wikiName',
-		header: 'Wiki Name',
+		header: 'Wiki Name'
 	},
 	{
 		accessorKey: 'locked',
@@ -39,14 +39,18 @@ export const columns: ColumnDef<AugmentedUser>[] = [
 		accessorKey: 'memberQualifications',
 		header: 'Qualifications',
 		cell: ({ row }) => {
-			return renderComponent(QualificationTagList, { qualifications: row.original.memberQualifications })
+			return renderComponent(QualificationTagList, {
+				qualifications: row.original.memberQualifications
+			});
 		}
 	},
 	{
 		accessorKey: 'instructorQualifications',
 		header: 'Instructor',
 		cell: ({ row }) => {
-			return renderComponent(QualificationTagList, { qualifications: row.original.instructorQualifications || [] })
+			return renderComponent(QualificationTagList, {
+				qualifications: row.original.instructorQualifications || []
+			});
 		}
 	}
 ];

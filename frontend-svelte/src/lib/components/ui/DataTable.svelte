@@ -44,6 +44,7 @@
 	});
 
 	let columnVisibility = $state<VisibilityState>(initialColumnVisibility);
+	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	let globalFilter = $state<any>([]);
 	let sorting = $state<SortingState>(initialSortingState);
 
@@ -98,17 +99,17 @@
 			value=""
 			onchange={(e) => {
 				table.setGlobalFilter(String(e.currentTarget.value));
-      }}
+			}}
 			oninput={(e) => {
 				table.setGlobalFilter(String(e.currentTarget.value));
-      }}
-			class="max-w-sm mr-2"
+			}}
+			class="mr-2 max-w-sm"
 			autocorrect="off"
 		/>
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger>
 				{#snippet child({ props })}
-					<Button {...props} variant="outline" class="ml-auto normal-case mr-2">
+					<Button {...props} variant="outline" class="mr-2 ml-auto normal-case">
 						<SlidersHorizontal />
 						<div>View</div>
 					</Button>
@@ -117,13 +118,10 @@
 			<DropdownMenu.Content align="end">
 				<DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
 				<DropdownMenu.Separator />
-				{#each table
-					.getAllColumns()
-					.filter((col) => col.getCanHide()) as column (column.id)}
+				{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
 					<DropdownMenu.CheckboxItem
 						class="capitalize"
-						bind:checked={() => column.getIsVisible(),
-            (v) => column.toggleVisibility(!!v)}
+						bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
 					>
 						{column.columnDef.header || column.id}
 					</DropdownMenu.CheckboxItem>
@@ -155,22 +153,20 @@
 				</Table.Header>
 				<Table.Body>
 					{#each table.getRowModel().rows as row (row.id)}
-						<Table.Row data-state={row.getIsSelected() && "selected"} class={rowCursor}
-											 onclick={() => onRowSelect?.(row.original)}>
+						<Table.Row
+							data-state={row.getIsSelected() && 'selected'}
+							class={rowCursor}
+							onclick={() => onRowSelect?.(row.original)}
+						>
 							{#each row.getVisibleCells() as cell (cell.id)}
 								<Table.Cell>
-									<FlexRender
-										content={cell.column.columnDef.cell}
-										context={cell.getContext()}
-									/>
+									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
 								</Table.Cell>
 							{/each}
 						</Table.Row>
 					{:else}
 						<Table.Row>
-							<Table.Cell colspan={columns.length} class="h-24 text-center">
-								No results.
-							</Table.Cell>
+							<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>
