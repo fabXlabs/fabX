@@ -40,7 +40,7 @@
 		"tailwindcss": "^4.0.17",
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "^5.8.3",
-		"typescript-eslint": "^8.31.0",
+		"typescript-eslint": "^8.31.1",
 		"vite": "^6.3.3",
 		"lint-staged": "^15.5.1"
 	},
