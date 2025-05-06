@@ -19,8 +19,8 @@
 
 	let error: FabXError | null = $state(null);
 
-	async function loginPasswordless() {
-		await loginWebauthn(username)
+	async function loginWithPasskey() {
+		await loginWebauthn()
 			.then(() => {
 				goto(`${base}`);
 			})
@@ -80,7 +80,7 @@
 
 			<Separator class="my-4" />
 			<div class="grid">
-				<Button onclick={loginPasswordless} variant="secondary" type="submit"
+				<Button onclick={loginWithPasskey} variant="secondary" type="submit"
 					>sign in with passkey</Button
 				>
 			</div>
