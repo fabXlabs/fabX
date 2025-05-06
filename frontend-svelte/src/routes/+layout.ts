@@ -21,6 +21,7 @@ export const load: LayoutLoad = async ({ url, fetch }) => {
 		if (e === UNAUTHORIZED_ERROR) {
 			if (browser) {
 				await goto(`${base}/login`);
+				return {};
 			} else {
 				redirect(302, `${base}/login`);
 			}
@@ -29,7 +30,7 @@ export const load: LayoutLoad = async ({ url, fetch }) => {
 		error(
 			500,
 			'Unexpected server response while attempting to fetch user data. Backend responded with error: ' +
-				(e as FabXError)
+				JSON.stringify(e as FabXError)
 		);
 	}
 };
