@@ -17,8 +17,6 @@
 	let username = $state('');
 	let password = $state('');
 
-	let showPassword = $state(false);
-
 	let error: FabXError | null = $state(null);
 
 	async function loginPasswordless() {
@@ -33,17 +31,13 @@
 
 	async function loginUsernamePassword() {
 		error = null;
-		if (!showPassword) {
-			showPassword = true;
-		} else {
-			await loginBasicAuth(username, password)
-				.then(() => {
-					goto(base || '/');
-				})
-				.catch((e) => {
-					error = e;
-				});
-		}
+		await loginBasicAuth(username, password)
+			.then(() => {
+				goto(base || '/');
+			})
+			.catch((e) => {
+				error = e;
+			});
 	}
 </script>
 
@@ -62,39 +56,34 @@
 							bind:value={username}
 							type="text"
 							id="username"
-							placeholder="Username"
 							autocomplete="username"
 							required
 						/>
 					</div>
-					{#if showPassword}
-						<div class="grid gap-2">
-							<Label for="password">Password</Label>
-							<Input
-								bind:value={password}
-								type="password"
-								id="password"
-								autocomplete="current-password"
-								required
-							/>
-						</div>
-					{/if}
+
+					<div class="grid gap-2">
+						<Label for="password">Password</Label>
+						<Input
+							bind:value={password}
+							type="password"
+							id="password"
+							autocomplete="current-password"
+							required
+						/>
+					</div>
 
 					<ErrorText {error} />
 
-					{#if !showPassword}
-						<Button onclick={loginPasswordless} type="submit">Login Passwordless</Button>
-						<Separator />
-					{/if}
-					<Button
-						variant="secondary"
-						onclick={loginUsernamePassword}
-						type={showPassword ? 'submit' : null}
-					>
-						Login with Password
-					</Button>
+					<Button onclick={loginUsernamePassword} type="submit">Sign In</Button>
 				</div>
 			</form>
+
+			<Separator class="my-4" />
+			<div class="grid">
+				<Button onclick={loginPasswordless} variant="secondary" type="submit"
+					>sign in with passkey</Button
+				>
+			</div>
 		</Card.Content>
 	</Card.Root>
 </div>
