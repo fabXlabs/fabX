@@ -1,12 +1,10 @@
-import { baseUrl, type FetchFunction } from '$lib/api';
-import { mapError } from '$lib/api/map-error';
+import { type FetchFunction } from '$lib/api';
 import type { Qualification } from '$lib/api/model/qualification';
+import { getRequest } from '$lib/api/common';
 
 export async function getAllQualifications(fetch: FetchFunction): Promise<Qualification[]> {
 	console.debug('getAllQualifications...');
-
-	const res = await fetch(`${baseUrl}/qualification`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, '/qualification');
 }
 
 export async function getQualificationById(
@@ -14,9 +12,5 @@ export async function getQualificationById(
 	id: string
 ): Promise<Qualification> {
 	console.debug(`getQualificationById(${id})...`);
-
-	const res = await fetch(`${baseUrl}/qualification/${id}`, { credentials: 'include' }).then(
-		mapError
-	);
-	return res.json();
+	return await getRequest(fetch, `/qualification/${id}`);
 }

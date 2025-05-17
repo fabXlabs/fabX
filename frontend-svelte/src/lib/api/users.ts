@@ -1,25 +1,29 @@
 import { baseUrl, type FetchFunction } from '$lib/api';
-import type { AugmentedUser, User, UserCreationDetails } from '$lib/api/model/user';
+import type {
+	AugmentedUser,
+	User,
+	UserCreationDetails,
+	UserDetails,
+	UserLockDetails
+} from '$lib/api/model/user';
 import { mapError } from '$lib/api/map-error';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
+import { getRequest, putRequest } from '$lib/api/common';
 
 export async function getMe(fetch: FetchFunction): Promise<User> {
 	console.debug('getMe...');
-	const res = await fetch(`${baseUrl}/user/me`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, '/user/me');
 }
 
 export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
 	console.debug('getAllUsers...');
-	const res = await fetch(`${baseUrl}/user`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, '/user');
 }
 
 export async function getUserById(fetch: FetchFunction, id: string): Promise<User> {
 	console.debug(`getUserById(${id})`);
-	const res = await fetch(`${baseUrl}/user/${id}`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, `/user/${id}`);
 }
 
 export function augmentUser(user: User, qualifications: Qualification[]): AugmentedUser {
@@ -50,6 +54,14 @@ export async function addUser(details: UserCreationDetails): Promise<string> {
 		body: JSON.stringify(details)
 	}).then(mapError);
 	return res.text();
+}
+
+export async function changePersonalInformation(id: string, details: UserDetails): Promise<string> {
+	return await putRequest(fetch, `/user/${id}`, id, details);
+}
+
+export async function changeLockState(id: string, details: UserLockDetails): Promise<string> {
+	return await putRequest(fetch, `/user/${id}/lock`, id, details);
 }
 
 export async function addWebauthnIdentity(userId: string) {
