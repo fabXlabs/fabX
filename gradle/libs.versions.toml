@@ -20,7 +20,7 @@ slf4j = "2.0.17"
 junit = "5.12.2"
 assertk = "0.28.1"
 mockito-kotlin = "5.4.0"
-mockito-junit5 = "5.17.0"
+mockito-junit5 = "5.18.0"
 kotlin-wiremock = "2.1.1"
 testcontainers = "1.21.0"
 
