@@ -40,7 +40,7 @@
 
 <Sheet.Root bind:open={sheetOpen}>
 	<Sheet.Trigger
-		class="mr-2 px-0 text-center text-base outline-hidden hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+		class="px-0 text-center text-base outline-hidden hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
 	>
 		<Button class="normal-case">
 			<UserRoundPlus />
