@@ -23,6 +23,7 @@
 		initialColumnVisibility: Record<string, boolean>;
 		initialSortingState: SortingState;
 		onRowSelect?: ((data: TData) => void) | null;
+		breadCrumbs: Snippet | null;
 		addButton?: Snippet | null;
 	};
 
@@ -32,6 +33,7 @@
 		initialColumnVisibility,
 		initialSortingState,
 		onRowSelect = null,
+		breadCrumbs = null,
 		addButton = null
 	}: DataTableProps<TData, TValue> = $props();
 
@@ -92,7 +94,15 @@
 	});
 </script>
 
-<div class="max-w-(--breakpoint-2xl) sm:container">
+{#if breadCrumbs}
+	<div class="container mt-5 max-w-(--breakpoint-2xl) px-4 sm:px-8">
+		<div class="mx-4 sm:mx-0">
+			{@render breadCrumbs()}
+		</div>
+	</div>
+{/if}
+
+<div class="container max-w-(--breakpoint-2xl) px-0 sm:px-8">
 	<div class="mx-4 flex items-center py-4 sm:mx-0">
 		<Input
 			placeholder="Search..."

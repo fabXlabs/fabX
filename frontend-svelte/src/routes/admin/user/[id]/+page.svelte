@@ -2,15 +2,15 @@
 	import type { PageProps } from './$types';
 	import PersonalInformationCard from './PersonalInformationCard.svelte';
 	import LockDetailsCard from './LockDetailsCard.svelte';
+	import Crumbs from './Crumbs.svelte';
 
 	let { data }: PageProps = $props();
 </script>
 
-<!-- TODO Breadcrumbs? https://next.shadcn-svelte.com/docs/components/breadcrumb -->
-
-<div class="relative container mt-7 max-w-(--breakpoint-2xl)">
+<div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	{#if data.augmentedUser}
-		<h1 class="font-accent my-2 text-3xl">
+		<Crumbs user={data.augmentedUser} />
+		<h1 class="font-accent mt-4 mb-2 text-3xl">
 			{data.augmentedUser.firstName}
 			{data.augmentedUser.lastName}
 		</h1>
