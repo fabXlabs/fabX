@@ -2,13 +2,13 @@
 	// noinspection ES6UnusedImports
 	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
 	import { base } from '$app/paths';
-	import type { AugmentedTool } from '$lib/api/model/tool';
+	import type { Qualification } from '$lib/api/model/qualification';
 
 	interface Props {
-		tool: AugmentedTool;
+		qualification: Qualification;
 	}
 
-	let { tool }: Props = $props();
+	let { qualification }: Props = $props();
 </script>
 
 <Breadcrumb.Root>
@@ -20,13 +20,13 @@
 		<Breadcrumb.Separator />
 
 		<Breadcrumb.Item>
-			<Breadcrumb.Link href="{base}/admin/tool">Tools</Breadcrumb.Link>
+			<Breadcrumb.Link href="{base}/admin/qualification">Qualifications</Breadcrumb.Link>
 		</Breadcrumb.Item>
 
 		<Breadcrumb.Separator />
 
 		<Breadcrumb.Item>
-			<Breadcrumb.Page>{tool.name}</Breadcrumb.Page>
+			<Breadcrumb.Page>{qualification.name}</Breadcrumb.Page>
 		</Breadcrumb.Item>
 	</Breadcrumb.List>
 </Breadcrumb.Root>

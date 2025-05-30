@@ -13,7 +13,7 @@
 		<Breadcrumb.Separator />
 
 		<Breadcrumb.Item>
-			<Breadcrumb.Link href="{base}/admin/tool">Tools</Breadcrumb.Link>
+			<Breadcrumb.Link href="{base}/admin/qualification">Qualifications</Breadcrumb.Link>
 		</Breadcrumb.Item>
 	</Breadcrumb.List>
 </Breadcrumb.Root>

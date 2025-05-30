@@ -8,6 +8,7 @@
 	import type { Qualification } from '$lib/api/model/qualification';
 	import { Button } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
+	import Crumbs from './Crumbs.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -30,6 +31,9 @@
 	{initialSortingState}
 	onRowSelect={rowClick}
 >
+	{#snippet breadCrumbs()}
+		<Crumbs />
+	{/snippet}
 	{#snippet addButton()}
 		<!-- TODO implement adding qualification -->
 		<Button

@@ -13,16 +13,25 @@ export async function getDeviceById(fetch: FetchFunction, id: string): Promise<D
 	return await getRequest(fetch, `/device/${id}`);
 }
 
-export function augmentDevices(devices: Device[], tools: Tool[]): AugmentedDevice[] {
-	const toolsMap = new Map(tools.map((t) => [t.id, t]));
-
-	return devices.map((d) => ({
-		...d,
+function augmentDevice_(device: Device, toolsMap: Map<string, Tool>): AugmentedDevice {
+	return {
+		...device,
 		attachedTools: Object.fromEntries(
-			Array.from(Object.entries(d.attachedTools), ([pin, tool]) => [
+			Array.from(Object.entries(device.attachedTools), ([pin, tool]) => [
 				Number(pin),
 				toolsMap.get(tool)
 			]).filter(([, v]) => v)
 		)
-	}));
+	};
+}
+
+export function augmentDevice(device: Device, tools: Tool[]): AugmentedDevice {
+	const toolsMap = new Map(tools.map((t) => [t.id, t]));
+	return augmentDevice_(device, toolsMap);
+}
+
+export function augmentDevices(devices: Device[], tools: Tool[]): AugmentedDevice[] {
+	const toolsMap = new Map(tools.map((t) => [t.id, t]));
+
+	return devices.map((d) => augmentDevice_(d, toolsMap));
 }

@@ -1,13 +1,15 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
+	import Crumbs from './Crumbs.svelte';
 
 	let { data }: PageProps = $props();
 </script>
 
-<div class="max-w-(--breakpoint-2xl)">
-	<div class="container items-center py-4">
-		{#if data.device}
-			<h1>Device {data.device.name}</h1>
-		{/if}
-	</div>
+<div class="relative container mt-5 max-w-(--breakpoint-2xl)">
+	{#if data.augmentedDevice}
+		<Crumbs device={data.augmentedDevice} />
+		<h1 class="font-accent mt-4 mb-2 text-3xl">
+			{data.augmentedDevice.name}
+		</h1>
+	{/if}
 </div>
