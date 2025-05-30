@@ -10,6 +10,7 @@
 	import { base } from '$app/paths';
 	import type { FabXError } from '$lib/api/model/error';
 	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
 
 	let sheetOpen = $state(false);
 
@@ -39,13 +40,9 @@
 </script>
 
 <Sheet.Root bind:open={sheetOpen}>
-	<Sheet.Trigger
-		class="px-0 text-center text-base outline-hidden hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-	>
-		<Button class="normal-case">
-			<UserRoundPlus />
-			Add User
-		</Button>
+	<Sheet.Trigger class={buttonVariants({ variant: 'normalcase' })}>
+		<UserRoundPlus />
+		Add User
 	</Sheet.Trigger>
 	<Sheet.Content side="right" class="flex flex-col">
 		<Sheet.Header>
