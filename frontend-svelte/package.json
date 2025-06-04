@@ -18,8 +18,8 @@
 		"@eslint/js": "^9.28.0",
 		"@sveltejs/adapter-auto": "^6.0.1",
 		"@sveltejs/adapter-static": "^3.0.8",
-		"@sveltejs/kit": "^2.21.1",
-		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@sveltejs/kit": "^2.21.2",
+		"@sveltejs/vite-plugin-svelte": "^5.1.0",
 		"@tailwindcss/postcss": "^4.1.8",
 		"@tailwindcss/typography": "^0.5.16",
 		"bits-ui": "^2.4.1",
@@ -30,7 +30,7 @@
 		"globals": "^16.2.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^16.1.0",
-		"lucide-svelte": "^0.511.0",
+		"lucide-svelte": "^0.512.0",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.6.12",
@@ -45,7 +45,7 @@
 		"vite": "^6.3.5"
 	},
 	"dependencies": {
-		"@lucide/svelte": "^0.511.0",
+		"@lucide/svelte": "^0.512.0",
 		"@tanstack/table-core": "^8.21.3",
 		"mode-watcher": "^1.0.7"
 	},
