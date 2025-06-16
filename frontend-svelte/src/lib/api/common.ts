@@ -28,3 +28,15 @@ export async function putRequest(
 		return res.text();
 	}
 }
+
+export async function deleteRequest(fetch: FetchFunction, path: string, id: string): Promise<any> {
+	const res = await fetch(`${baseUrl}${path}`, {
+		method: 'DELETE'
+	}).then(mapError);
+
+	if (res.status == 204) {
+		return id;
+	} else {
+		return res.text();
+	}
+}

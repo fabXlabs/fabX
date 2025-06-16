@@ -3,6 +3,7 @@
 	import PersonalInformationCard from './PersonalInformationCard.svelte';
 	import LockDetailsCard from './LockDetailsCard.svelte';
 	import Crumbs from './Crumbs.svelte';
+	import IdentitiesCard from './IdentitiesCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -18,10 +19,10 @@
 		<div class="my-6 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
 			<PersonalInformationCard user={data.augmentedUser} />
 			<LockDetailsCard user={data.augmentedUser} />
+			<IdentitiesCard user={data.augmentedUser} />
 		</div>
 
-		<!-- TODO Identities -->
-		<!-- TODO Instructor Qualifications -->
+		<!-- TODO Member Qualifications -->
 		<!-- TODO Instructor Qualifications -->
 		<!-- TODO Admin or not -->
 		<!-- TODO deleting User -->

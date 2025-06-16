@@ -9,7 +9,7 @@ import type {
 import { mapError } from '$lib/api/map-error';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
-import { getRequest, putRequest } from '$lib/api/common';
+import { deleteRequest, getRequest, putRequest } from '$lib/api/common';
 
 export async function getMe(fetch: FetchFunction): Promise<User> {
 	console.debug('getMe...');
@@ -115,6 +115,38 @@ export async function addWebauthnIdentity(userId: string) {
 		},
 		body: JSON.stringify(details)
 	}).then(mapError);
+}
+
+export async function removeUsernamePasswordIdentity(
+	fetch: FetchFunction,
+	userId: string,
+	username: string
+) {
+	return await deleteRequest(
+		fetch,
+		`/user/${userId}/identity/username-password/${username}`,
+		userId
+	);
+}
+
+export async function removeCardIdentity(fetch: FetchFunction, userId: string, cardId: string) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/card/${cardId}`, userId);
+}
+
+export async function removePhoneIdentity(fetch: FetchFunction, userId: string, phoneNr: string) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/phone/${phoneNr}`, userId);
+}
+
+export async function removePinIdentity(fetch: FetchFunction, userId: string) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/pin`, userId);
+}
+
+export async function removeWebauthnIdentity(
+	fetch: FetchFunction,
+	userId: string,
+	credentialId: string
+) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/webauthn/${credentialId}`, userId);
 }
 
 export interface WebauthnRegistrationDetails {
