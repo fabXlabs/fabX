@@ -57,7 +57,7 @@
 			</Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content>
+	<DropdownMenu.Content align="end">
 		<DropdownMenu.Item onclick={deleteIdentity} class="text-red-600 data-highlighted:text-red-500">
 			Delete
 		</DropdownMenu.Item>

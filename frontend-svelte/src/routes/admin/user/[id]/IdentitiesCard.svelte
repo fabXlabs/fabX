@@ -65,7 +65,7 @@
 						<Table.Row>
 							<Table.Cell>{identityDisplayType(identity)}</Table.Cell>
 							<Table.Cell>{identityId(identity)}</Table.Cell>
-							<Table.Cell
+							<Table.Cell class="text-right"
 								><IdentitiesCardTableActions userId={user.id} {identity} bind:error /></Table.Cell
 							>
 						</Table.Row>
