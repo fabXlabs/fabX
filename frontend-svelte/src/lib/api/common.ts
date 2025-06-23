@@ -29,6 +29,27 @@ export async function putRequest(
 	}
 }
 
+export async function postRequest(
+	fetch: FetchFunction,
+	path: string,
+	id: string,
+	details: any
+): Promise<any> {
+	const res = await fetch(`${baseUrl}${path}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(details)
+	}).then(mapError);
+
+	if (res.status == 204) {
+		return id;
+	} else {
+		return res.text();
+	}
+}
+
 export async function deleteRequest(fetch: FetchFunction, path: string, id: string): Promise<any> {
 	const res = await fetch(`${baseUrl}${path}`, {
 		method: 'DELETE'

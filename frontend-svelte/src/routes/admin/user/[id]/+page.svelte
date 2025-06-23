@@ -19,7 +19,7 @@
 		<div class="my-6 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
 			<PersonalInformationCard user={data.augmentedUser} />
 			<LockDetailsCard user={data.augmentedUser} />
-			<IdentitiesCard user={data.augmentedUser} />
+			<IdentitiesCard user={data.augmentedUser} devices={data.devices} />
 		</div>
 
 		<!-- TODO Member Qualifications -->

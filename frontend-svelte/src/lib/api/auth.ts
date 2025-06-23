@@ -18,6 +18,11 @@ export async function loginBasicAuth(username: string, password: string) {
 	return res;
 }
 
+export function validatePassword(password: string): boolean {
+	const regex = new RegExp('^[!-~]{8,}$');
+	return regex.test(password);
+}
+
 export async function loginWebauthn(username: string) {
 	const challengeRes = await fetch(`${baseUrl}/webauthn/login`, {
 		credentials: 'include',

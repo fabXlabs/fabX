@@ -7,12 +7,15 @@
 	import * as Table from '$lib/components/ui/table/index.js';
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import IdentitiesCardTableActions from './IdentitiesCardTableActions.svelte';
+	import IdentitiesCardAddDropdown from './IdentitiesCardAddDropdown.svelte';
+	import type { Device } from '$lib/api/model/device';
 
 	interface Props {
 		user: AugmentedUser;
+		devices: Device[];
 	}
 
-	let { user }: Props = $props();
+	let { user, devices }: Props = $props();
 
 	let error: FabXError | null = $state(null);
 
@@ -21,7 +24,7 @@
 			case 'cloud.fabX.fabXaccess.user.rest.PinIdentity':
 				return 'Pin';
 			case 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity':
-				return 'Username / Password';
+				return 'Username/Password';
 			case 'cloud.fabX.fabXaccess.user.rest.CardIdentity':
 				return 'Card';
 			case 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity':
@@ -43,10 +46,12 @@
 	}
 </script>
 
-<!-- TODO ADDING IDENTITIES -->
 <Card.Root class="overflow-auto">
 	<Card.Header>
-		<Card.Title class="text-lg">Identities</Card.Title>
+		<div class="flex items-center justify-between">
+			<Card.Title class="text-lg">Identities</Card.Title>
+			<IdentitiesCardAddDropdown userId={user.id} bind:error {devices} />
+		</div>
 	</Card.Header>
 	<Card.Content>
 		<ErrorText {error} />
