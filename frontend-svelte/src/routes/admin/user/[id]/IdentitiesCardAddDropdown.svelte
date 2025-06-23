@@ -9,20 +9,30 @@
 	import type { Device } from '$lib/api/model/device';
 	import AddPinIdentitySheet from './AddPinIdentitySheet.svelte';
 	import AddPhoneNrIdentitySheet from './AddPhoneNrIdentitySheet.svelte';
+	import type { AugmentedUser } from '$lib/api/model/user';
 
 	interface Props {
-		userId: string;
+		user: AugmentedUser;
 		error: FabXError | null;
 		devices: Device[];
 	}
 
-	let { userId, error = $bindable(), devices }: Props = $props();
+	let { user, error = $bindable(), devices }: Props = $props();
 
 	let addUsernamePasswordIdentitySheetOpen = $state(false);
 	let addCardIdentitySheetOpen = $state(false);
 	let addCardIdentityAtDeviceSheetOpen = $state(false);
 	let addPinIdentitySheetOpen = $state(false);
 	let addPhoneNrIdentitySheetOpen = $state(false);
+
+	function hasUsernamePasswordIdentity(): boolean {
+		return !!user.identities.find(
+			(i) => i.type == 'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity'
+		);
+	}
+	function hasPinIdentity(): boolean {
+		return !!user.identities.find((i) => i.type == 'cloud.fabX.fabXaccess.user.rest.PinIdentity');
+	}
 </script>
 
 <DropdownMenu.Root>
@@ -33,15 +43,18 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end">
 		<DropdownMenu.Group>
-			<!-- TODO hide entries based on existing identities -->
-			<DropdownMenu.Item onclick={() => (addUsernamePasswordIdentitySheetOpen = true)}>
-				Username / Password
-			</DropdownMenu.Item>
+			{#if !hasUsernamePasswordIdentity()}
+				<DropdownMenu.Item onclick={() => (addUsernamePasswordIdentitySheetOpen = true)}>
+					Username / Password
+				</DropdownMenu.Item>
+			{/if}
 			<DropdownMenu.Item onclick={() => (addCardIdentitySheetOpen = true)}>Card</DropdownMenu.Item>
 			<DropdownMenu.Item onclick={() => (addCardIdentityAtDeviceSheetOpen = true)}>
 				Card (at Device)
 			</DropdownMenu.Item>
-			<DropdownMenu.Item onclick={() => (addPinIdentitySheetOpen = true)}>Pin</DropdownMenu.Item>
+			{#if !hasPinIdentity()}
+				<DropdownMenu.Item onclick={() => (addPinIdentitySheetOpen = true)}>Pin</DropdownMenu.Item>
+			{/if}
 			<DropdownMenu.Item onclick={() => (addPhoneNrIdentitySheetOpen = true)}>
 				Phone Nr.
 			</DropdownMenu.Item>
@@ -49,12 +62,15 @@
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
 
-<AddUsernamePasswordIdentitySheet bind:sheetOpen={addUsernamePasswordIdentitySheetOpen} {userId} />
-<AddCardIdentitySheet bind:sheetOpen={addCardIdentitySheetOpen} {userId} />
+<AddUsernamePasswordIdentitySheet
+	bind:sheetOpen={addUsernamePasswordIdentitySheetOpen}
+	userId={user.id}
+/>
+<AddCardIdentitySheet bind:sheetOpen={addCardIdentitySheetOpen} userId={user.id} />
 <AddCardIdentityAtDeviceSheet
 	bind:sheetOpen={addCardIdentityAtDeviceSheetOpen}
-	{userId}
+	userId={user.id}
 	{devices}
 />
-<AddPinIdentitySheet bind:sheetOpen={addPinIdentitySheetOpen} {userId} />
-<AddPhoneNrIdentitySheet bind:sheetOpen={addPhoneNrIdentitySheetOpen} {userId} />
+<AddPinIdentitySheet bind:sheetOpen={addPinIdentitySheetOpen} userId={user.id} />
+<AddPhoneNrIdentitySheet bind:sheetOpen={addPhoneNrIdentitySheetOpen} userId={user.id} />

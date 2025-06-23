@@ -50,7 +50,7 @@
 	<Card.Header>
 		<div class="flex items-center justify-between">
 			<Card.Title class="text-lg">Identities</Card.Title>
-			<IdentitiesCardAddDropdown userId={user.id} bind:error {devices} />
+			<IdentitiesCardAddDropdown {user} bind:error {devices} />
 		</div>
 	</Card.Header>
 	<Card.Content>
@@ -65,6 +65,7 @@
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
+					<!-- TODO stable-sort identities (by type?) -->
 					<!-- eslint-disable-next-line svelte/require-each-key -->
 					{#each user.identities as identity}
 						<Table.Row>
