@@ -9,6 +9,7 @@
 	import IdentitiesCardTableActions from './IdentitiesCardTableActions.svelte';
 	import IdentitiesCardAddDropdown from './IdentitiesCardAddDropdown.svelte';
 	import type { Device } from '$lib/api/model/device';
+	import { toHexString } from '$lib/utils';
 
 	interface Props {
 		user: AugmentedUser;
@@ -29,6 +30,8 @@
 				return 'Card';
 			case 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity':
 				return 'Phone Nr.';
+			case 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity':
+				return 'Webauthn';
 		}
 	}
 
@@ -42,6 +45,8 @@
 				return identity.cardId;
 			case 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity':
 				return identity.phoneNr;
+			case 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity':
+				return toHexString(identity.credentialId);
 		}
 	}
 </script>

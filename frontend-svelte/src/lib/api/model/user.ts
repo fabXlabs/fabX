@@ -112,8 +112,17 @@ export interface PinIdentity {
 	type: 'cloud.fabX.fabXaccess.user.rest.PinIdentity';
 }
 
-// TODO add WebauthnIdentity
-export type UserIdentity = UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity | PinIdentity;
+export interface WebauthnIdentity {
+	type: 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity';
+	credentialId: Int8Array;
+}
+
+export type UserIdentity =
+	| UsernamePasswordIdentity
+	| CardIdentity
+	| PhoneNrIdentity
+	| PinIdentity
+	| WebauthnIdentity;
 
 export interface TokenResponse {
 	token: string;

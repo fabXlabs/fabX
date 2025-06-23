@@ -13,6 +13,8 @@
 	} from '$lib/api/users';
 	import type { FabXError } from '$lib/api/model/error';
 	import { invalidateAll } from '$app/navigation';
+	import { removeWebauthnIdentity } from '$lib/api/users.js';
+	import { toHexString } from '$lib/utils.js';
 
 	interface Props {
 		userId: string;
@@ -41,6 +43,15 @@
 			}
 			case 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity': {
 				const result = await removePhoneIdentity(fetch, userId, identity.phoneNr);
+				await invalidateAll();
+				return result;
+			}
+			case 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity': {
+				const result = await removeWebauthnIdentity(
+					fetch,
+					userId,
+					toHexString(identity.credentialId)
+				);
 				await invalidateAll();
 				return result;
 			}
