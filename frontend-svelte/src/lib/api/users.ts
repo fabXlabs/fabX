@@ -52,14 +52,7 @@ export function augmentUsers(users: User[], qualifications: Qualification[]): Au
 }
 
 export async function addUser(details: UserCreationDetails): Promise<string> {
-	const res = await fetch(`${baseUrl}/user`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(details)
-	}).then(mapError);
-	return res.text();
+	return await postRequest(fetch, '/user', 'unknown', details);
 }
 
 export async function changePersonalInformation(id: string, details: UserDetails): Promise<string> {
@@ -114,14 +107,7 @@ export async function addWebauthnIdentity(userId: string) {
 		clientDataJSON: clientDataArray
 	};
 
-	// TODO replace by postRequest(...)
-	await fetch(`${baseUrl}/user/${userId}/identity/webauthn/response`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(details)
-	}).then(mapError);
+	return await postRequest(fetch, `/user/${userId}/identity/webauthn/response`, userId, details);
 }
 
 export async function addUsernamePasswordIdentity(
