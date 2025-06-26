@@ -1,11 +1,11 @@
 [versions]
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 arrow = "2.1.2"
 kodein = "7.26.1"
 ktor = "3.2.0"
 micrometer = "1.15.1"
 kotlinx-coroutines = "1.10.2"
-kotlinx-datetime = "0.6.2"
+kotlinx-datetime = "0.7.0-0.6.x-compat"
 kotlinx-serialization-json = "1.8.1"
 exposed = "0.61.0"
 hikari = "6.3.0"
@@ -13,11 +13,11 @@ postgresql = "42.7.7"
 liquibase = "4.32.0"
 liquibase-slf4j = "5.1.0"
 webauthn4j = "0.29.3.RELEASE"
-scrimage = "4.3.1"
+scrimage = "4.3.2"
 logback = "1.5.18"
 slf4j = "2.0.17"
 
-junit = "5.13.1"
+junit = "5.13.2"
 assertk = "0.28.1"
 mockito-kotlin = "5.4.0"
 mockito-junit5 = "5.18.0"
@@ -78,6 +78,6 @@ testcontainers-postgres = { module = "org.testcontainers:postgresql", version.re
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-shadow = { id = "com.gradleup.shadow", version = "8.3.6" }
+shadow = { id = "com.gradleup.shadow", version = "8.3.7" }
 versions = { id = "com.github.ben-manes.versions", version = "0.52.0" }
 node = { id = "com.github.node-gradle.node", version = "7.1.0" }
