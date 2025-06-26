@@ -34,8 +34,6 @@
 	}
 </script>
 
-<!-- TODO Breadcrumbs on other pages -->
-
 <DataTable
 	{columns}
 	data={data.augmentedUsers}
