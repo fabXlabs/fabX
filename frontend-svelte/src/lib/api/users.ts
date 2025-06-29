@@ -4,6 +4,7 @@ import type {
 	CardIdentityAdditionDetails,
 	PhoneNrIdentityAdditionDetails,
 	PinIdentityAdditionDetails,
+	QualificationAdditionDetails,
 	User,
 	UserCreationDetails,
 	UserDetails,
@@ -190,4 +191,25 @@ export interface WebauthnRegistrationDetails {
 export interface WebauthnIdentityAdditionDetails {
 	attestationObject: number[];
 	clientDataJSON: number[];
+}
+
+export async function addMemberQualification(
+	fetch: FetchFunction,
+	userId: string,
+	qualificationId: string
+) {
+	const details: QualificationAdditionDetails = { qualificationId };
+	return await postRequest(fetch, `/user/${userId}/member-qualification`, userId, details);
+}
+
+export async function removeMemberQualification(
+	fetch: FetchFunction,
+	userId: string,
+	qualificationId: string
+) {
+	return await deleteRequest(
+		fetch,
+		`/user/${userId}/member-qualification/${qualificationId}`,
+		userId
+	);
 }

@@ -20,13 +20,15 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	});
 
 	const user = await user_;
+	const qualifications = await qualifications_;
 	if (user) {
-		const augmentedUser = augmentUser(user, await qualifications_);
+		const augmentedUser = augmentUser(user, qualifications);
 		const devices = await devices_;
-		return { augmentedUser, devices };
+		return { augmentedUser, devices, qualifications };
 	}
 	return {
 		augmentedUser: null,
-		devices: null
+		devices: null,
+		qualifications: null
 	};
 };
