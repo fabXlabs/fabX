@@ -23,6 +23,7 @@
 		initialColumnVisibility: Record<string, boolean>;
 		initialSortingState: SortingState;
 		onRowSelect?: ((data: TData) => void) | null;
+		breadCrumbs: Snippet | null;
 		addButton?: Snippet | null;
 	};
 
@@ -32,6 +33,7 @@
 		initialColumnVisibility,
 		initialSortingState,
 		onRowSelect = null,
+		breadCrumbs = null,
 		addButton = null
 	}: DataTableProps<TData, TValue> = $props();
 
@@ -92,8 +94,16 @@
 	});
 </script>
 
-<div class="max-w-(--breakpoint-2xl)">
-	<div class="container flex items-center py-4">
+{#if breadCrumbs}
+	<div class="container mt-5 max-w-(--breakpoint-2xl) px-4 sm:px-8">
+		<div class="mx-4 sm:mx-0">
+			{@render breadCrumbs()}
+		</div>
+	</div>
+{/if}
+
+<div class="container max-w-(--breakpoint-2xl) px-0 sm:px-8">
+	<div class="mx-4 flex items-center py-4 sm:mx-0">
 		<Input
 			placeholder="Search..."
 			value=""
@@ -132,45 +142,43 @@
 			{@render addButton()}
 		{/if}
 	</div>
-	<div class="sm:container">
-		<div class="border sm:rounded-md">
-			<Table.Root>
-				<Table.Header>
-					{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
-						<Table.Row>
-							{#each headerGroup.headers as header (header.id)}
-								<Table.Head>
-									{#if !header.isPlaceholder}
-										<FlexRender
-											content={header.column.columnDef.header}
-											context={header.getContext()}
-										/>
-									{/if}
-								</Table.Head>
-							{/each}
-						</Table.Row>
-					{/each}
-				</Table.Header>
-				<Table.Body>
-					{#each table.getRowModel().rows as row (row.id)}
-						<Table.Row
-							data-state={row.getIsSelected() && 'selected'}
-							class={rowCursor}
-							onclick={() => onRowSelect?.(row.original)}
-						>
-							{#each row.getVisibleCells() as cell (cell.id)}
-								<Table.Cell>
-									<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
-								</Table.Cell>
-							{/each}
-						</Table.Row>
-					{:else}
-						<Table.Row>
-							<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
-						</Table.Row>
-					{/each}
-				</Table.Body>
-			</Table.Root>
-		</div>
+	<div class="border sm:rounded-md">
+		<Table.Root>
+			<Table.Header>
+				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
+					<Table.Row>
+						{#each headerGroup.headers as header (header.id)}
+							<Table.Head>
+								{#if !header.isPlaceholder}
+									<FlexRender
+										content={header.column.columnDef.header}
+										context={header.getContext()}
+									/>
+								{/if}
+							</Table.Head>
+						{/each}
+					</Table.Row>
+				{/each}
+			</Table.Header>
+			<Table.Body>
+				{#each table.getRowModel().rows as row (row.id)}
+					<Table.Row
+						data-state={row.getIsSelected() && 'selected'}
+						class={rowCursor}
+						onclick={() => onRowSelect?.(row.original)}
+					>
+						{#each row.getVisibleCells() as cell (cell.id)}
+							<Table.Cell>
+								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
+							</Table.Cell>
+						{/each}
+					</Table.Row>
+				{:else}
+					<Table.Row>
+						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
 	</div>
 </div>

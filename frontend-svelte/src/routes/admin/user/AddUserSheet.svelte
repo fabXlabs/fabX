@@ -10,6 +10,7 @@
 	import { base } from '$app/paths';
 	import type { FabXError } from '$lib/api/model/error';
 	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
 
 	let sheetOpen = $state(false);
 
@@ -39,13 +40,9 @@
 </script>
 
 <Sheet.Root bind:open={sheetOpen}>
-	<Sheet.Trigger
-		class="mr-2 px-0 text-center text-base outline-hidden hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-	>
-		<Button class="normal-case">
-			<UserRoundPlus />
-			Add User
-		</Button>
+	<Sheet.Trigger class={buttonVariants({ variant: 'normalcase' })}>
+		<UserRoundPlus />
+		Add User
 	</Sheet.Trigger>
 	<Sheet.Content side="right" class="flex flex-col">
 		<Sheet.Header>
@@ -53,24 +50,24 @@
 		</Sheet.Header>
 		<form onsubmit={submit}>
 			<div class="grid gap-4 py-4">
-				<div class="grid grid-cols-4 items-center gap-4">
-					<Label for="firstName" class="text-right">First Name</Label>
-					<Input id="firstName" class="col-span-3" bind:value={firstName} />
+				<div class="grid gap-2">
+					<Label for="firstName">First Name</Label>
+					<Input id="firstName" bind:value={firstName} />
 				</div>
-				<div class="grid grid-cols-4 items-center gap-4">
-					<Label for="lastName" class="text-right">Last Name</Label>
-					<Input id="lastName" class="col-span-3" bind:value={lastName} />
+				<div class="grid gap-2">
+					<Label for="lastName">Last Name</Label>
+					<Input id="lastName" bind:value={lastName} />
 				</div>
-				<div class="grid grid-cols-4 items-center gap-4">
-					<Label for="wikiName" class="text-right">Wiki Name</Label>
-					<Input id="wikiName" class="col-span-3" bind:value={wikiName} />
+				<div class="grid gap-2">
+					<Label for="wikiName">Wiki Name</Label>
+					<Input id="wikiName" bind:value={wikiName} />
 				</div>
 			</div>
 
 			<ErrorText {error} />
 
 			<Sheet.Footer>
-				<Button type="submit" variant="outline">Add</Button>
+				<Button type="submit" class="w-full">Add</Button>
 			</Sheet.Footer>
 		</form>
 	</Sheet.Content>

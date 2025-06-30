@@ -7,7 +7,8 @@
 
 	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	function onerror(e: any) {
-		console.error('global error boundary', e);
+		console.error('global error boundary 1', e);
+		console.error('global error boundary 2', JSON.stringify(e));
 	}
 </script>
 

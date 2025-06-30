@@ -1,25 +1,35 @@
 import { baseUrl, type FetchFunction } from '$lib/api';
-import type { AugmentedUser, User, UserCreationDetails } from '$lib/api/model/user';
+import type {
+	AugmentedUser,
+	CardIdentityAdditionDetails,
+	PhoneNrIdentityAdditionDetails,
+	PinIdentityAdditionDetails,
+	User,
+	UserCreationDetails,
+	UserDetails,
+	UserLockDetails,
+	UsernamePasswordIdentityAdditionDetails
+} from '$lib/api/model/user';
 import { mapError } from '$lib/api/map-error';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
+import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
+import { validatePassword } from '$lib/api/auth';
+import { INVALID_PASSWORD_ERROR } from '$lib/api/model/error';
 
 export async function getMe(fetch: FetchFunction): Promise<User> {
 	console.debug('getMe...');
-	const res = await fetch(`${baseUrl}/user/me`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, '/user/me');
 }
 
 export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
 	console.debug('getAllUsers...');
-	const res = await fetch(`${baseUrl}/user`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, '/user');
 }
 
 export async function getUserById(fetch: FetchFunction, id: string): Promise<User> {
 	console.debug(`getUserById(${id})`);
-	const res = await fetch(`${baseUrl}/user/${id}`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, `/user/${id}`);
 }
 
 export function augmentUser(user: User, qualifications: Qualification[]): AugmentedUser {
@@ -42,14 +52,15 @@ export function augmentUsers(users: User[], qualifications: Qualification[]): Au
 }
 
 export async function addUser(details: UserCreationDetails): Promise<string> {
-	const res = await fetch(`${baseUrl}/user`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(details)
-	}).then(mapError);
-	return res.text();
+	return await postRequest(fetch, '/user', 'unknown', details);
+}
+
+export async function changePersonalInformation(id: string, details: UserDetails): Promise<string> {
+	return await putRequest(fetch, `/user/${id}`, id, details);
+}
+
+export async function changeLockState(id: string, details: UserLockDetails): Promise<string> {
+	return await putRequest(fetch, `/user/${id}/lock`, id, details);
 }
 
 export async function addWebauthnIdentity(userId: string) {
@@ -96,13 +107,73 @@ export async function addWebauthnIdentity(userId: string) {
 		clientDataJSON: clientDataArray
 	};
 
-	await fetch(`${baseUrl}/user/${userId}/identity/webauthn/response`, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(details)
-	}).then(mapError);
+	return await postRequest(fetch, `/user/${userId}/identity/webauthn/response`, userId, details);
+}
+
+export async function addUsernamePasswordIdentity(
+	fetch: FetchFunction,
+	userId: string,
+	username: string,
+	password: string
+) {
+	if (!validatePassword(password)) {
+		throw INVALID_PASSWORD_ERROR;
+	}
+
+	const details: UsernamePasswordIdentityAdditionDetails = { username, password };
+	return await postRequest(fetch, `/user/${userId}/identity/username-password`, userId, details);
+}
+
+export async function removeUsernamePasswordIdentity(
+	fetch: FetchFunction,
+	userId: string,
+	username: string
+) {
+	return await deleteRequest(
+		fetch,
+		`/user/${userId}/identity/username-password/${username}`,
+		userId
+	);
+}
+
+export async function addCardIdentity(
+	fetch: FetchFunction,
+	userId: string,
+	cardId: string,
+	cardSecret: string
+) {
+	const details: CardIdentityAdditionDetails = { cardId, cardSecret };
+	return await postRequest(fetch, `/user/${userId}/identity/card`, userId, details);
+}
+
+export async function removeCardIdentity(fetch: FetchFunction, userId: string, cardId: string) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/card/${cardId}`, userId);
+}
+
+export async function addPhoneIdentity(fetch: FetchFunction, userId: string, phoneNr: string) {
+	const details: PhoneNrIdentityAdditionDetails = { phoneNr };
+	return await postRequest(fetch, `/user/${userId}/identity/phone`, userId, details);
+}
+
+export async function removePhoneIdentity(fetch: FetchFunction, userId: string, phoneNr: string) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/phone/${phoneNr}`, userId);
+}
+
+export async function addPinIdentity(fetch: FetchFunction, userId: string, pin: string) {
+	const details: PinIdentityAdditionDetails = { pin };
+	return await postRequest(fetch, `/user/${userId}/identity/pin`, userId, details);
+}
+
+export async function removePinIdentity(fetch: FetchFunction, userId: string) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/pin`, userId);
+}
+
+export async function removeWebauthnIdentity(
+	fetch: FetchFunction,
+	userId: string,
+	credentialId: string
+) {
+	return await deleteRequest(fetch, `/user/${userId}/identity/webauthn/${credentialId}`, userId);
 }
 
 export interface WebauthnRegistrationDetails {

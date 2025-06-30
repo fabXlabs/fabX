@@ -1,19 +1,17 @@
-import { baseUrl, type FetchFunction } from '$lib/api';
+import { type FetchFunction } from '$lib/api';
 import type { AugmentedTool, Tool } from '$lib/api/model/tool';
-import { mapError } from '$lib/api/map-error';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
+import { getRequest } from '$lib/api/common';
 
 export async function getAllTools(fetch: FetchFunction): Promise<Tool[]> {
 	console.debug('getAllTools...');
-	const res = await fetch(`${baseUrl}/tool`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, '/tool');
 }
 
 export async function getToolById(fetch: FetchFunction, id: string): Promise<Tool> {
 	console.debug(`getToolById(${id})`);
-	const res = await fetch(`${baseUrl}/tool/${id}`, { credentials: 'include' }).then(mapError);
-	return res.json();
+	return await getRequest(fetch, `/tool/${id}`);
 }
 
 export function augmentTool(tool: Tool, qualifications: Qualification[]): AugmentedTool {

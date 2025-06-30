@@ -7,6 +7,7 @@
 	import type { SortingState } from '@tanstack/table-core';
 	import { base } from '$app/paths';
 	import AddUserSheet from './AddUserSheet.svelte';
+	import Crumbs from './Crumbs.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -33,6 +34,8 @@
 	}
 </script>
 
+<!-- TODO Breadcrumbs on other pages -->
+
 <DataTable
 	{columns}
 	data={data.augmentedUsers}
@@ -40,6 +43,9 @@
 	{initialSortingState}
 	onRowSelect={rowClick}
 >
+	{#snippet breadCrumbs()}
+		<Crumbs />
+	{/snippet}
 	{#snippet addButton()}
 		<AddUserSheet />
 	{/snippet}
