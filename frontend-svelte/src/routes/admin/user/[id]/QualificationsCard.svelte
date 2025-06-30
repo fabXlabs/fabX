@@ -8,24 +8,52 @@
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import type { Qualification } from '$lib/api/model/qualification';
 	import QualificationTag from '$lib/components/QualificationTag.svelte';
-	import MemberQualificationTableActions from './MemberQualificationTableActions.svelte';
-	import MemberQualificationsCardAddDropdown from './MemberQualificationsCardAddDropdown.svelte';
+	import QualificationTableActions from './QualificationTableActions.svelte';
+	import QualificationsCardAddDropdown from './QualificationsCardAddDropdown.svelte';
+	import type { FetchFunction } from '$lib/api';
 
 	interface Props {
+		qualificationType: string;
 		user: AugmentedUser;
+		accessorFunction: (user: AugmentedUser) => Qualification[];
+		addFunction: (fetch: FetchFunction, userId: string, qualificationId: string) => Promise<string>;
+		removeFunction: (
+			fetch: FetchFunction,
+			userId: string,
+			qualificationId: string
+		) => Promise<string>;
 		qualifications: Qualification[];
 	}
 
-	let { user, qualifications }: Props = $props();
+	let {
+		qualificationType,
+		accessorFunction,
+		addFunction,
+		removeFunction,
+		user,
+		qualifications
+	}: Props = $props();
 
 	let error: FabXError | null = $state(null);
+
+	let existingQualification: Qualification[] = $derived.by(() => {
+		return accessorFunction(user);
+	});
+
+	let hasExistingQualifications: boolean = $derived(existingQualification.length > 0);
 </script>
 
 <Card.Root class="overflow-auto">
 	<Card.Header>
 		<div class="flex items-center justify-between">
-			<Card.Title class="text-lg">Member Qualifications</Card.Title>
-			<MemberQualificationsCardAddDropdown {user} bind:error {qualifications} />
+			<Card.Title class="text-lg">{qualificationType}</Card.Title>
+			<QualificationsCardAddDropdown
+				{user}
+				{addFunction}
+				{accessorFunction}
+				bind:error
+				{qualifications}
+			/>
 		</div>
 	</Card.Header>
 	<Card.Content>
@@ -40,12 +68,15 @@
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					{#each user.memberQualifications as qualification (qualification.id)}
+					{#each existingQualification as qualification (qualification.id)}
 						<Table.Row>
-							<Table.Cell><QualificationTag {qualification} /></Table.Cell>
+							<Table.Cell>
+								<QualificationTag {qualification} />
+							</Table.Cell>
 							<Table.Cell>{qualification.description}</Table.Cell>
 							<Table.Cell class="text-right">
-								<MemberQualificationTableActions
+								<QualificationTableActions
+									{removeFunction}
 									userId={user.id}
 									qualificationId={qualification.id}
 									bind:error
@@ -53,9 +84,9 @@
 							</Table.Cell>
 						</Table.Row>
 					{/each}
-					{#if user.memberQualifications.length <= 0}
+					{#if !hasExistingQualifications}
 						<Table.Row>
-							<Table.Cell colspan={3} class="text-center">No Member Qualifications</Table.Cell>
+							<Table.Cell colspan={3} class="text-center">No {qualificationType}</Table.Cell>
 						</Table.Row>
 					{/if}
 				</Table.Body>

@@ -5,30 +5,38 @@
 	import { Button } from '$lib/components/ui/button';
 	import type { AugmentedUser } from '$lib/api/model/user';
 	import type { Qualification } from '$lib/api/model/qualification';
-	import { addMemberQualification } from '$lib/api/users';
 	import { invalidateAll } from '$app/navigation';
 	import QualificationTag from '$lib/components/QualificationTag.svelte';
+	import type { FetchFunction } from '$lib/api';
 
 	interface Props {
 		user: AugmentedUser;
+		accessorFunction: (user: AugmentedUser) => Qualification[];
+		addFunction: (fetch: FetchFunction, userId: string, qualificationId: string) => Promise<string>;
 		error: FabXError | null;
 		qualifications: Qualification[];
 	}
 
-	let { user, error = $bindable(), qualifications }: Props = $props();
+	let {
+		user,
+		addFunction,
+		accessorFunction,
+		error = $bindable(),
+		qualifications
+	}: Props = $props();
 
-	let missingMemberQualifications = $derived.by(() => {
+	let missingQualifications = $derived.by(() => {
 		return qualifications.filter((qualification) => {
-			return !user.memberQualifications.find((q) => q.id === qualification.id);
+			return !accessorFunction(user).find((q) => q.id === qualification.id);
 		});
 	});
 
-	let hasMissingMemberQualifications = $derived.by(() => {
-		return missingMemberQualifications.length > 0;
+	let hasMissingQualifications = $derived.by(() => {
+		return missingQualifications.length > 0;
 	});
 
-	async function addMemberQualification_(qualificationId: string) {
-		const res = await addMemberQualification(fetch, user.id, qualificationId).catch((e) => {
+	async function addQualification_(qualificationId: string) {
+		const res = await addFunction(fetch, user.id, qualificationId).catch((e) => {
 			error = e;
 			return '';
 		});
@@ -42,13 +50,13 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} variant="outline" disabled={!hasMissingMemberQualifications}>Add</Button>
+			<Button {...props} variant="outline" disabled={!hasMissingQualifications}>Add</Button>
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end">
 		<DropdownMenu.Group>
-			{#each missingMemberQualifications as qualification (qualification.id)}
-				<DropdownMenu.Item onclick={async () => await addMemberQualification_(qualification.id)}>
+			{#each missingQualifications as qualification (qualification.id)}
+				<DropdownMenu.Item onclick={async () => await addQualification_(qualification.id)}>
 					<QualificationTag {qualification} />
 				</DropdownMenu.Item>
 			{/each}

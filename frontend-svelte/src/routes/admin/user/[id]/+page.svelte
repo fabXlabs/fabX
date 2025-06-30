@@ -4,7 +4,13 @@
 	import LockDetailsCard from './LockDetailsCard.svelte';
 	import Crumbs from './Crumbs.svelte';
 	import IdentitiesCard from './IdentitiesCard.svelte';
-	import MemberQualificationsCard from './MemberQualificationsCard.svelte';
+	import QualificationsCard from './QualificationsCard.svelte';
+	import {
+		addInstructorQualification,
+		addMemberQualification,
+		removeInstructorQualification,
+		removeMemberQualification
+	} from '$lib/api/users';
 
 	let { data }: PageProps = $props();
 </script>
@@ -21,10 +27,24 @@
 			<PersonalInformationCard user={data.augmentedUser} />
 			<LockDetailsCard user={data.augmentedUser} />
 			<IdentitiesCard user={data.augmentedUser} devices={data.devices} />
-			<MemberQualificationsCard user={data.augmentedUser} qualifications={data.qualifications} />
+			<QualificationsCard
+				qualificationType="Member Qualifications"
+				accessorFunction={(user) => user.memberQualifications}
+				addFunction={addMemberQualification}
+				removeFunction={removeMemberQualification}
+				user={data.augmentedUser}
+				qualifications={data.qualifications}
+			/>
+			<QualificationsCard
+				qualificationType="Instructor Qualifications"
+				accessorFunction={(user) => user.instructorQualifications || []}
+				addFunction={addInstructorQualification}
+				removeFunction={removeInstructorQualification}
+				user={data.augmentedUser}
+				qualifications={data.qualifications}
+			/>
 		</div>
 
-		<!-- TODO Instructor Qualifications -->
 		<!-- TODO Admin or not -->
 		<!-- TODO deleting User -->
 	{/if}

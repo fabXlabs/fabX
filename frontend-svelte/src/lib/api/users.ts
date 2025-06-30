@@ -197,7 +197,7 @@ export async function addMemberQualification(
 	fetch: FetchFunction,
 	userId: string,
 	qualificationId: string
-) {
+): Promise<string> {
 	const details: QualificationAdditionDetails = { qualificationId };
 	return await postRequest(fetch, `/user/${userId}/member-qualification`, userId, details);
 }
@@ -206,10 +206,31 @@ export async function removeMemberQualification(
 	fetch: FetchFunction,
 	userId: string,
 	qualificationId: string
-) {
+): Promise<string> {
 	return await deleteRequest(
 		fetch,
 		`/user/${userId}/member-qualification/${qualificationId}`,
+		userId
+	);
+}
+
+export async function addInstructorQualification(
+	fetch: FetchFunction,
+	userId: string,
+	qualificationId: string
+): Promise<string> {
+	const details: QualificationAdditionDetails = { qualificationId };
+	return await postRequest(fetch, `/user/${userId}/instructor-qualification`, userId, details);
+}
+
+export async function removeInstructorQualification(
+	fetch: FetchFunction,
+	userId: string,
+	qualificationId: string
+): Promise<string> {
+	return await deleteRequest(
+		fetch,
+		`/user/${userId}/instructor-qualification/${qualificationId}`,
 		userId
 	);
 }

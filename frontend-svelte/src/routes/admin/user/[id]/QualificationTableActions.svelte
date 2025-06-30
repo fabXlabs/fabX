@@ -6,18 +6,23 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import type { FabXError } from '$lib/api/model/error';
 	import { invalidateAll } from '$app/navigation';
-	import { removeMemberQualification } from '$lib/api/users';
+	import type { FetchFunction } from '$lib/api';
 
 	interface Props {
+		removeFunction: (
+			fetch: FetchFunction,
+			userId: string,
+			qualificationId: string
+		) => Promise<string>;
 		userId: string;
 		qualificationId: string;
 		error: FabXError | null;
 	}
 
-	let { userId, qualificationId, error = $bindable() }: Props = $props();
+	let { removeFunction, userId, qualificationId, error = $bindable() }: Props = $props();
 
 	async function removeQualification(): Promise<string> {
-		const res = await removeMemberQualification(fetch, userId, qualificationId).catch((e) => {
+		const res = await removeFunction(fetch, userId, qualificationId).catch((e) => {
 			error = e;
 			return '';
 		});
