@@ -2,6 +2,7 @@ import { baseUrl, type FetchFunction } from '$lib/api';
 import type {
 	AugmentedUser,
 	CardIdentityAdditionDetails,
+	IsAdminDetails,
 	PhoneNrIdentityAdditionDetails,
 	PinIdentityAdditionDetails,
 	QualificationAdditionDetails,
@@ -233,4 +234,17 @@ export async function removeInstructorQualification(
 		`/user/${userId}/instructor-qualification/${qualificationId}`,
 		userId
 	);
+}
+
+export async function changeIsAdmin(
+	fetch: FetchFunction,
+	userId: string,
+	isAdmin: boolean
+): Promise<string> {
+	const details: IsAdminDetails = { isAdmin };
+	return await putRequest(fetch, `/user/${userId}/is-admin`, userId, details);
+}
+
+export async function deleteUser(fetch: FetchFunction, userId: string): Promise<string> {
+	return await deleteRequest(fetch, `/user/${userId}`, userId);
 }

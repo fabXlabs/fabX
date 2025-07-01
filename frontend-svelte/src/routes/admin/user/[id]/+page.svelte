@@ -11,6 +11,7 @@
 		removeInstructorQualification,
 		removeMemberQualification
 	} from '$lib/api/users';
+	import DangerZoneCard from './DangerZoneCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -43,9 +44,8 @@
 				user={data.augmentedUser}
 				qualifications={data.qualifications}
 			/>
+			<DangerZoneCard user={data.augmentedUser} />
 		</div>
-
-		<!-- TODO Admin or not -->
-		<!-- TODO deleting User -->
+		<!-- TODO user history -->
 	{/if}
 </div>
