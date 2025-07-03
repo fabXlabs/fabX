@@ -4,6 +4,7 @@
 	import { base } from '$app/paths';
 	import type { PageProps } from './$types';
 	import { Drill, Microchip, Stamp, Users } from 'lucide-svelte';
+	import { Button } from '$lib/components/ui/button';
 
 	let { data }: PageProps = $props();
 </script>
@@ -61,4 +62,7 @@
 			</Card.Root>
 		</a>
 	</div>
+	<Button href="{base}/admin/user/soft-deleted" variant="outline" size="sm"
+		>Soft-Deleted Users</Button
+	>
 </div>

@@ -48,5 +48,3 @@
 		<AddUserSheet />
 	{/snippet}
 </DataTable>
-
-<!-- TODO soft-deleted user list + hard deletion -->

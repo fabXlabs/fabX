@@ -34,6 +34,11 @@ export async function getUserById(fetch: FetchFunction, id: string): Promise<Use
 	return await getRequest(fetch, `/user/${id}`);
 }
 
+export async function getSoftDeletedUsers(fetch: FetchFunction): Promise<User[]> {
+	console.debug('getSoftDeletedUsers...');
+	return await getRequest(fetch, '/user/soft-deleted');
+}
+
 export function augmentUser(user: User, qualifications: Qualification[]): AugmentedUser {
 	const getQualifications = augmentQualifications(qualifications);
 	return {
@@ -247,4 +252,8 @@ export async function changeIsAdmin(
 
 export async function deleteUser(fetch: FetchFunction, userId: string): Promise<string> {
 	return await deleteRequest(fetch, `/user/${userId}`, userId);
+}
+
+export async function hardDeleteUser(fetch: FetchFunction, userId: string): Promise<string> {
+	return await deleteRequest(fetch, `/user/soft-deleted/${userId}`, userId);
 }
