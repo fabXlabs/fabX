@@ -40,7 +40,7 @@
 			</Sheet.Root>
 
 			<!-- Main Nav -->
-			<a href="{base}/admin" class="mr-6 flex items-center space-x-2">
+			<a href="{base}/" class="mr-6 flex items-center space-x-2">
 				<span class="font-accent font-bold italic transition-colors hover:text-violet-800"
 					>fabX</span
 				>
