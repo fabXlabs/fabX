@@ -1,5 +1,6 @@
 import type { ChangeableValue } from './changeable-value';
 import type { Qualification } from '$lib/api/model/qualification';
+import type { Device } from '$lib/api/model/device';
 
 export interface User {
 	id: string;
@@ -135,6 +136,17 @@ export interface UserSourcingEvent {
 	actorId: ActorId;
 	correlationId: string;
 	timestamp: string;
+}
+
+export interface AugmentedUserSourcingEvent {
+	type: string;
+	aggregateRootId: string;
+	aggregateVersion: number;
+	// DeviceActorId and UserActorId only used for unknown Devices/Users
+	actor: SystemActorId | Device | DeviceActorId | User | UserActorId;
+	correlationId: string;
+	timestamp: string;
+	qualification: Qualification | undefined;
 }
 
 export interface SystemActorId {

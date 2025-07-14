@@ -1,11 +1,18 @@
 import type { PageLoad } from './$types';
-import { augmentUser, getUserById } from '$lib/api/users';
+import { augmentUser, getAllUsers, getUserById, getUserSourcingEventsById } from '$lib/api/users';
 import { getAllQualifications } from '$lib/api/qualifications';
 import { getAllDevices } from '$lib/api/devices';
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	const user_ = getUserById(fetch, params.id).catch((error) => {
 		console.log('getUserById failed:', error);
+		return null;
+	});
+
+	const users_ = getAllUsers(fetch);
+
+	const sourcingEvents_ = getUserSourcingEventsById(fetch, params.id).catch((error) => {
+		console.log('getUserSourcingEventsById failed:', error);
 		return null;
 	});
 
@@ -20,15 +27,19 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	});
 
 	const user = await user_;
+	const users = await users_;
+	const sourcingEvents = await sourcingEvents_;
 	const qualifications = await qualifications_;
+	const devices = await devices_;
 	if (user) {
 		const augmentedUser = augmentUser(user, qualifications);
-		const devices = await devices_;
-		return { augmentedUser, devices, qualifications };
+		return { augmentedUser, users, sourcingEvents, devices, qualifications };
 	}
 	return {
 		augmentedUser: null,
+		users: null,
 		devices: null,
-		qualifications: null
+		qualifications: null,
+		sourcingEvents: null
 	};
 };

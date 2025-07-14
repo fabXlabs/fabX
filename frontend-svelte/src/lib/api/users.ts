@@ -10,7 +10,8 @@ import type {
 	UserCreationDetails,
 	UserDetails,
 	UserLockDetails,
-	UsernamePasswordIdentityAdditionDetails
+	UsernamePasswordIdentityAdditionDetails,
+	UserSourcingEvent
 } from '$lib/api/model/user';
 import { mapError } from '$lib/api/map-error';
 import type { Qualification } from '$lib/api/model/qualification';
@@ -32,6 +33,14 @@ export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
 export async function getUserById(fetch: FetchFunction, id: string): Promise<User> {
 	console.debug(`getUserById(${id})`);
 	return await getRequest(fetch, `/user/${id}`);
+}
+
+export async function getUserSourcingEventsById(
+	fetch: FetchFunction,
+	id: string
+): Promise<UserSourcingEvent[]> {
+	console.debug(`getUserSourcingEventsById(${id})`);
+	return await getRequest(fetch, `/user/${id}/sourcing-event`);
 }
 
 export async function getSoftDeletedUsers(fetch: FetchFunction): Promise<User[]> {

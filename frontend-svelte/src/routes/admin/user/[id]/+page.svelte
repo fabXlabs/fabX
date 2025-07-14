@@ -12,6 +12,7 @@
 		removeMemberQualification
 	} from '$lib/api/users';
 	import DangerZoneCard from './DangerZoneCard.svelte';
+	import UserSourcingEventsCard from './UserSourcingEventsCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -45,7 +46,12 @@
 				qualifications={data.qualifications}
 			/>
 			<DangerZoneCard user={data.augmentedUser} />
+			<UserSourcingEventsCard
+				events={data.sourcingEvents || []}
+				users={data.users}
+				devices={data.devices}
+				qualifications={data.qualifications}
+			/>
 		</div>
-		<!-- TODO user history -->
 	{/if}
 </div>
