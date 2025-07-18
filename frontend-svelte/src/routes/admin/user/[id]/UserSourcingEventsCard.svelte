@@ -14,6 +14,7 @@
 	import type { Device } from '$lib/api/model/device';
 	import Actor from './Actor.svelte';
 	import QualificationTag from '$lib/components/QualificationTag.svelte';
+	import type { EntityId } from '$lib/api/model/entity';
 
 	interface Props {
 		events: UserSourcingEvent[];
@@ -68,7 +69,9 @@
 
 	function resolveQualification(event: UserSourcingEvent): Qualification | undefined {
 		if ('qualificationId' in event) {
-			return qualifications.find((qualification) => qualification.id === event.qualificationId);
+			return qualifications.find(
+				(qualification) => qualification.id === (event.qualificationId as EntityId).value
+			);
 		} else {
 			return undefined;
 		}
@@ -88,16 +91,16 @@
 			hash: undefined,
 			pin: undefined,
 			cardSecret: undefined,
-			qualificationId: undefined
+			qualificationId: undefined,
+			qualification: undefined
 		};
 
 		return Object.entries(reducedEvent)
-			.filter((entry) => entry[1])
-			.map((entry) => [entry[0], newValueToString(entry[1] as object)])
-			.filter((entry) => entry[1]);
+			.filter((entry) => entry[1] !== undefined)
+			.map((entry) => [entry[0], newValueToString(entry[1])]);
 	}
 
-	function newValueToString(value: object): string {
+	function newValueToString(value: object | undefined): string {
 		if (typeof value === 'object' && 'type' in value) {
 			if (value.type == 'cloud.fabX.fabXaccess.common.model.ChangeableValue.LeaveAsIs') {
 				return '';
