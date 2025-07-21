@@ -103,6 +103,21 @@ class LoginController(
                         )
                     }
             }
+            post("/login/passkey") {
+                readBody<WebauthnLoginDetails>()
+                    ?.let {
+                        call.respondWithErrorHandler(
+                            webauthnIdentityService.getLoginUserDetails(it.username)
+                                .map { userLoginDetails ->
+                                    WebauthnLoginResponse(
+                                        userLoginDetails.userId.serialize(),
+                                        userLoginDetails.challenge,
+                                        userLoginDetails.credentialIds
+                                    )
+                                }
+                        )
+                    }
+            }
             post("/response") {
                 readBody<WebauthnResponseDetails>()
                     ?.let {
