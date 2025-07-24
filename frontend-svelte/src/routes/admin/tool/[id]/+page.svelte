@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
 	import Crumbs from './Crumbs.svelte';
+	import ToolDetailsCard from './ToolDetailsCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -12,11 +12,8 @@
 		<h1 class="font-accent mt-4 mb-2 text-3xl">
 			{data.augmentedTool.name}
 		</h1>
-		<h2>Required Qualifications</h2>
-		<div>
-			{#each data.augmentedTool.requiredQualifications as qualification (qualification.id)}
-				<QualificationTag {qualification} />
-			{/each}
+		<div class="my-6 grid gap-4">
+			<ToolDetailsCard tool={data.augmentedTool} qualifications={data.qualifications} />
 		</div>
 	{/if}
 </div>

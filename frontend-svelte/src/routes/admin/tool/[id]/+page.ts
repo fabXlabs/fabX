@@ -14,11 +14,13 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	});
 
 	const tool = await tool_;
+	const qualifications = await qualifications_;
 	if (tool) {
-		const augmentedTool = augmentTool(tool, await qualifications_);
-		return { augmentedTool };
+		const augmentedTool = augmentTool(tool, qualifications);
+		return { augmentedTool, qualifications };
 	}
 	return {
-		augmentedTool: null
+		augmentedTool: null,
+		qualifications: null
 	};
 };

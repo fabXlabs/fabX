@@ -10,3 +10,7 @@ export function toHexString(arr: Int8Array): string {
 		return ('0' + (byte & 0xff).toString(16)).slice(-2);
 	}).join('');
 }
+
+export function areSetsEqual<T>(a: Set<T>, b: Set<T>): boolean {
+	return a.size === b.size && [...a].every((value) => b.has(value));
+}
