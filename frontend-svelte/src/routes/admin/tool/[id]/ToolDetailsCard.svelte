@@ -111,7 +111,7 @@
 				: null
 		};
 
-		const res = await changeToolDetails(tool.id, details).catch((e) => {
+		const res = await changeToolDetails(fetch, tool.id, details).catch((e) => {
 			error = e;
 			return '';
 		});

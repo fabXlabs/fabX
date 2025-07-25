@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import Crumbs from './Crumbs.svelte';
 	import ToolDetailsCard from './ToolDetailsCard.svelte';
+	import DangerZoneCard from './DangerZoneCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -14,6 +15,7 @@
 		</h1>
 		<div class="my-6 grid gap-4">
 			<ToolDetailsCard tool={data.augmentedTool} qualifications={data.qualifications} />
+			<DangerZoneCard tool={data.augmentedTool} />
 		</div>
 	{/if}
 </div>
