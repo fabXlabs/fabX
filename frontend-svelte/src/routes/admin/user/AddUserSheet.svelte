@@ -23,7 +23,7 @@
 	async function submit() {
 		error = null;
 
-		const res = await addUser({
+		const res = await addUser(fetch, {
 			firstName,
 			lastName,
 			wikiName

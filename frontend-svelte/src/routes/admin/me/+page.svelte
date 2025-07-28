@@ -13,7 +13,7 @@
 	async function addPasskey() {
 		error = null;
 
-		await addWebauthnIdentity(data.me.id).catch((e) => {
+		await addWebauthnIdentity(fetch, data.me.id).catch((e) => {
 			error = e;
 			return '';
 		});
