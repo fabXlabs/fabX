@@ -1,8 +1,8 @@
 import { type FetchFunction } from '$lib/api';
-import type { AugmentedTool, Tool, ToolDetails } from '$lib/api/model/tool';
+import type { AugmentedTool, Tool, ToolCreationDetails, ToolDetails } from '$lib/api/model/tool';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
-import { deleteRequest, getRequest, putRequest } from '$lib/api/common';
+import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
 
 export async function getAllTools(fetch: FetchFunction): Promise<Tool[]> {
 	console.debug('getAllTools...');
@@ -30,6 +30,10 @@ export function augmentTools(tools: Tool[], qualifications: Qualification[]): Au
 		...t,
 		requiredQualifications: getQualifications(t.requiredQualifications)
 	}));
+}
+
+export async function addTool(fetch: FetchFunction, details: ToolCreationDetails): Promise<string> {
+	return await postRequest(fetch, '/tool', 'unknown', details);
 }
 
 export async function changeToolDetails(
