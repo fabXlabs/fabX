@@ -44,7 +44,7 @@
 			notes: normalizedNotes != user.notes ? { newValue: normalizedNotes } : null
 		};
 
-		const res = await changeLockState(user.id, details).catch((e) => {
+		const res = await changeLockState(fetch, user.id, details).catch((e) => {
 			error = e;
 			return '';
 		});

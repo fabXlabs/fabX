@@ -67,19 +67,27 @@ export function augmentUsers(users: User[], qualifications: Qualification[]): Au
 	}));
 }
 
-export async function addUser(details: UserCreationDetails): Promise<string> {
+export async function addUser(fetch: FetchFunction, details: UserCreationDetails): Promise<string> {
 	return await postRequest(fetch, '/user', 'unknown', details);
 }
 
-export async function changePersonalInformation(id: string, details: UserDetails): Promise<string> {
+export async function changePersonalInformation(
+	fetch: FetchFunction,
+	id: string,
+	details: UserDetails
+): Promise<string> {
 	return await putRequest(fetch, `/user/${id}`, id, details);
 }
 
-export async function changeLockState(id: string, details: UserLockDetails): Promise<string> {
+export async function changeLockState(
+	fetch: FetchFunction,
+	id: string,
+	details: UserLockDetails
+): Promise<string> {
 	return await putRequest(fetch, `/user/${id}/lock`, id, details);
 }
 
-export async function addWebauthnIdentity(userId: string) {
+export async function addWebauthnIdentity(fetch: FetchFunction, userId: string) {
 	const registrationRes = await fetch(`${baseUrl}/user/${userId}/identity/webauthn/register`, {
 		method: 'POST'
 	}).then(mapError);

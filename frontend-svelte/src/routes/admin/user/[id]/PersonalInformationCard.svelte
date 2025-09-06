@@ -45,7 +45,7 @@
 			wikiName: wikiName != user.wikiName ? { newValue: wikiName } : null
 		};
 
-		const res = await changePersonalInformation(user.id, details).catch((e) => {
+		const res = await changePersonalInformation(fetch, user.id, details).catch((e) => {
 			error = e;
 			return '';
 		});

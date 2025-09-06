@@ -240,7 +240,7 @@
 						</Select.Trigger>
 						<Select.Content>
 							{#each qualifications as qualification (qualification.id)}
-								<Select.Item value={qualification.id} (qualification.id)>
+								<Select.Item value={qualification.id}>
 									<QualificationTag {qualification} />
 								</Select.Item>
 							{/each}
