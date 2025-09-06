@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { deleteTool } from '$lib/api/tools.js';
 	import type { AugmentedTool } from '$lib/api/model/tool';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		tool: AugmentedTool;
@@ -24,7 +25,7 @@
 		});
 
 		if (res) {
-			await goto(`/admin/tool/`);
+			await goto(resolve(`/admin/tool/`));
 		}
 	}
 </script>

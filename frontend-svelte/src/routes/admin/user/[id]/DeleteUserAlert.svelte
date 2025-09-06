@@ -7,6 +7,7 @@
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import { goto } from '$app/navigation';
 	import { deleteUser } from '$lib/api/users.js';
+	import { resolve } from '$app/paths';
 
 	interface Props {
 		user: AugmentedUser;
@@ -24,7 +25,7 @@
 		});
 
 		if (res) {
-			await goto(`/admin/user/`);
+			await goto(resolve(`/admin/user/`));
 		}
 	}
 </script>

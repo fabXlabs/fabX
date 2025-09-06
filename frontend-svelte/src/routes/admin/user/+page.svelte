@@ -5,7 +5,7 @@
 	import type { AugmentedUser } from '$lib/api/model/user';
 	import { goto } from '$app/navigation';
 	import type { SortingState } from '@tanstack/table-core';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import AddUserSheet from './AddUserSheet.svelte';
 	import Crumbs from './Crumbs.svelte';
 
@@ -30,7 +30,11 @@
 	];
 
 	function rowClick(data: AugmentedUser) {
-		goto(`${base}/admin/user/${data.id}`);
+		goto(
+			resolve('/admin/user/[id]', {
+				id: data.id
+			})
+		);
 	}
 </script>
 

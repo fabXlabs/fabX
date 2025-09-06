@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import type { Device } from '$lib/api/model/device';
 	import type { DeviceActorId, SystemActorId, User, UserActorId } from '$lib/api/model/user';
 
@@ -21,7 +21,9 @@
 		<span>Unknown {JSON.stringify(actor)}</span>
 	{/if}
 {:else if 'firstName' in actor}
-	<a href="{base}/admin/user/{actor.id}">{actor.firstName} {actor.lastName} ({actor.wikiName})</a>
+	<a href={resolve('/admin/user/[id]', { id: actor.id })}
+		>{actor.firstName} {actor.lastName} ({actor.wikiName})</a
+	>
 {:else if 'attachedTools' in actor}
 	<span>{actor.name}</span>
 {:else}

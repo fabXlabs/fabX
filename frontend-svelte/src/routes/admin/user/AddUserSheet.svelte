@@ -7,7 +7,7 @@
 	import { Input } from '$lib/components/ui/input';
 	import { addUser } from '$lib/api/users';
 	import { goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import type { FabXError } from '$lib/api/model/error';
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
@@ -34,7 +34,11 @@
 
 		if (res) {
 			sheetOpen = false;
-			await goto(`${base}/admin/user/${res}`);
+			await goto(
+				resolve('/admin/user/[id]', {
+					id: res
+				})
+			);
 		}
 	}
 </script>

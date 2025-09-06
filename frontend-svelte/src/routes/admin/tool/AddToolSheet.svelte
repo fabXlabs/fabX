@@ -7,7 +7,7 @@
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import { addTool } from '$lib/api/tools';
 	import { goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import { Plus } from 'lucide-svelte';
 	import { Label } from '$lib/components/ui/label';
@@ -80,7 +80,11 @@
 
 		if (res) {
 			sheetOpen = false;
-			await goto(`${base}/admin/tool/${res}`);
+			await goto(
+				resolve('/admin/tool/[id]', {
+					id: res
+				})
+			);
 		}
 	}
 </script>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import LogOut from 'lucide-svelte/icons/log-out';
 	import { CircleUserRound, User } from 'lucide-svelte';
@@ -13,7 +13,7 @@
 	async function doLogout() {
 		const res = await logout();
 		console.log('logout', res);
-		await goto(`${base}/`);
+		await goto(resolve('/'));
 	}
 </script>
 
@@ -32,7 +32,7 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.Item
 				onSelect={async () => {
-					await goto(`${base}/admin/me`);
+					await goto(resolve('/admin/me'));
 				}}
 				class="cursor-pointer"
 			>

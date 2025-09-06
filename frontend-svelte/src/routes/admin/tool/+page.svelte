@@ -5,7 +5,7 @@
 	import { goto } from '$app/navigation';
 	import type { SortingState } from '@tanstack/table-core';
 	import type { AugmentedTool } from '$lib/api/model/tool';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import Crumbs from './Crumbs.svelte';
 	import AddToolSheet from './AddToolSheet.svelte';
 
@@ -27,7 +27,11 @@
 	];
 
 	function rowClick(data: AugmentedTool) {
-		goto(`${base}/admin/tool/${data.id}`);
+		goto(
+			resolve('/admin/tool/[id]', {
+				id: data.id
+			})
+		);
 	}
 </script>
 

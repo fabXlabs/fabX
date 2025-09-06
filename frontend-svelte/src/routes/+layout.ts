@@ -2,7 +2,7 @@ import type { LayoutLoad } from './$types';
 import { getMe } from '$lib/api/users';
 import { redirect } from '@sveltejs/kit';
 import { UNAUTHORIZED_ERROR, type FabXError } from '$lib/api/model/error';
-import { base } from '$app/paths';
+import { resolve } from '$app/paths';
 import { error } from '@sveltejs/kit';
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
@@ -10,7 +10,7 @@ import { goto } from '$app/navigation';
 export const ssr = true;
 
 export const load: LayoutLoad = async ({ url, fetch }) => {
-	if (url.pathname === `${base}/login`) {
+	if (url.pathname === resolve('/login')) {
 		// no redirect if user already on login page
 		return {};
 	}
@@ -20,10 +20,10 @@ export const load: LayoutLoad = async ({ url, fetch }) => {
 	} catch (e) {
 		if (e === UNAUTHORIZED_ERROR) {
 			if (browser) {
-				await goto(`${base}/login`);
+				await goto(resolve('/login'));
 				return {};
 			} else {
-				redirect(302, `${base}/login`);
+				redirect(302, resolve('/login'));
 			}
 		}
 		// if error is other than UNAUTHORIZED_ERROR, backend is in unexpected state

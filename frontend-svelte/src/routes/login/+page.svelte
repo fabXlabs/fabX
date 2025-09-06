@@ -6,7 +6,7 @@
 	import { Label } from '$lib/components/ui/label';
 	import { Input } from '$lib/components/ui/input';
 	import { goto } from '$app/navigation';
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 
 	// TODO use https://svelte.dev/docs/kit/images#sveltejs-enhanced-img
 	import bgImg3 from '$lib/assets/bg/3.jpeg';
@@ -24,7 +24,7 @@
 	async function loginPasswordless() {
 		await loginWebauthn(username)
 			.then(() => {
-				goto(`${base}`);
+				goto(resolve('/'));
 			})
 			.catch((e) => {
 				error = e;
@@ -38,7 +38,7 @@
 		} else {
 			await loginBasicAuth(username, password)
 				.then(() => {
-					goto(base || '/');
+					goto(resolve('/'));
 				})
 				.catch((e) => {
 					error = e;

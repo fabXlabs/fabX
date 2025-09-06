@@ -1,11 +1,9 @@
 <script>
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import bgImg3 from '$lib/assets/bg/3.jpeg';
 	import { LoaderCircle } from 'lucide-svelte';
-
-	console.log(`base is ${base}`);
 
 	let { data } = $props();
 
@@ -13,11 +11,11 @@
 	if (data.me) {
 		if (data.me.isAdmin) {
 			if (browser) {
-				goto(`${base}/admin`);
+				goto(resolve('/admin'));
 			}
 		} else {
 			if (browser) {
-				goto(`${base}/instructor`);
+				goto(resolve('/instructor'));
 			}
 		}
 	}
