@@ -38,12 +38,12 @@
 		"svelte": "^5.38.6",
 		"svelte-check": "^4.3.1",
 		"tailwind-merge": "^3.3.1",
-		"tailwind-variants": "^3.1.0",
+		"tailwind-variants": "^3.1.1",
 		"tailwindcss": "^4.0.17",
 		"tailwindcss-animate": "^1.0.7",
 		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.42.0",
-		"vite": "^7.1.4"
+		"typescript-eslint": "^8.43.0",
+		"vite": "^7.1.5"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.542.0",
