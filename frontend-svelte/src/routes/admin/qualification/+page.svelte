@@ -6,9 +6,8 @@
 	import type { SortingState } from '@tanstack/table-core';
 	import { goto } from '$app/navigation';
 	import type { Qualification } from '$lib/api/model/qualification';
-	import { Button } from '$lib/components/ui/button';
-	import { Plus } from 'lucide-svelte';
 	import Crumbs from './Crumbs.svelte';
+	import AddQualificationSheet from './AddQualificationSheet.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -39,15 +38,6 @@
 		<Crumbs />
 	{/snippet}
 	{#snippet addButton()}
-		<!-- TODO implement adding qualification -->
-		<Button
-			class="normal-case"
-			onclick={() => {
-				alert('NOT YET IMPLEMENTED');
-			}}
-		>
-			<Plus />
-			Add Qualification
-		</Button>
+		<AddQualificationSheet />
 	{/snippet}
 </DataTable>
