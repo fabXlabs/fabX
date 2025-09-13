@@ -9,11 +9,13 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to remove a [UsernamePasswordIdentity] from a user.
  */
+@OptIn(ExperimentalTime::class)
 class RemovingUsernamePasswordIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

@@ -8,11 +8,13 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle actual and desired device firmware version.
  */
+@OptIn(ExperimentalTime::class)
 class ChangingFirmwareVersion(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,

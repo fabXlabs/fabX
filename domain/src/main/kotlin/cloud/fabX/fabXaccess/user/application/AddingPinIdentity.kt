@@ -9,11 +9,13 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.PinIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a [PinIdentity] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class AddingPinIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

@@ -7,11 +7,13 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle deleting a device.
  */
+@OptIn(ExperimentalTime::class)
 class DeletingDevice(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,

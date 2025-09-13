@@ -9,11 +9,13 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.SystemActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service for detaching a tool from a device.
  */
+@OptIn(ExperimentalTime::class)
 class DetachingTool(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,

@@ -68,7 +68,8 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import java.io.File
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.serialization.json.Json
 import org.kodein.di.DI
 import org.kodein.di.bindConstant
@@ -85,6 +86,7 @@ internal fun withTestApp(
     withTestApp(diSetup, {}, block)
 }
 
+@OptIn(ExperimentalTime::class)
 internal fun withTestApp(
     diSetup: DI.MainBuilder.() -> Unit,
     diGetter: (DI) -> Unit = {},

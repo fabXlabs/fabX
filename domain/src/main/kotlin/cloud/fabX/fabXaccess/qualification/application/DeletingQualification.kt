@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle deleting a qualification.
  */
+@OptIn(ExperimentalTime::class)
 class DeletingQualification(
     loggerFactory: LoggerFactory,
     private val clock: Clock,

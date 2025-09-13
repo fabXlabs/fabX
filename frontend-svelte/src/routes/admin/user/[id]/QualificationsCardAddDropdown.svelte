@@ -47,6 +47,7 @@
 	}
 </script>
 
+<!-- TODO filter by qualifications that actor is instructor for -->
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}

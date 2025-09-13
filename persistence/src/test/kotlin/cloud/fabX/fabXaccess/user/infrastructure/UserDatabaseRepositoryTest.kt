@@ -29,13 +29,15 @@ import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import isLeft
 import isRight
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import org.kodein.di.instance
 
+@OptIn(ExperimentalTime::class)
 internal open class UserDatabaseRepositoryTest {
     private val userId = UserIdFixture.static(1234)
     private val actorId = UserIdFixture.static(1)

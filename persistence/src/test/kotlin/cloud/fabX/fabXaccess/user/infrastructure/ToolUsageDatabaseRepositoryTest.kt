@@ -8,11 +8,13 @@ import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.ToolUsageLogEntry
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.kodein.di.instance
 
+@OptIn(ExperimentalTime::class)
 internal class ToolUsageDatabaseRepositoryTest {
     private val userId1 = UserIdFixture.arbitrary()
     private val userId2 = UserIdFixture.arbitrary()

@@ -19,7 +19,8 @@ import com.webauthn4j.credential.CredentialRecord
 import isLeft
 import isRight
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -27,6 +28,7 @@ import org.mockito.Mockito.inOrder
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalTime::class)
 @MockitoSettings
 internal class AddingWebauthnIdentityTest {
 

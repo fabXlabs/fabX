@@ -8,11 +8,13 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle changing qualification properties.
  */
+@OptIn(ExperimentalTime::class)
 class ChangingQualification(
     loggerFactory: LoggerFactory,
     private val qualificationRepository: QualificationRepository,

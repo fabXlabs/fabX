@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.device.model.Device
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add new devices.
  */
+@OptIn(ExperimentalTime::class)
 class AddingDevice(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,

@@ -21,7 +21,8 @@ import cloud.fabX.fabXaccess.user.model.AdminFixture
 import isLeft
 import isRight
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
@@ -29,6 +30,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalTime::class)
 @MockitoSettings
 internal class DeletingQualificationTest {
 

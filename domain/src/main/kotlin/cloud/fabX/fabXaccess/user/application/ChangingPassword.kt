@@ -8,11 +8,13 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service for changing password of a user.
  */
+@OptIn(ExperimentalTime::class)
 class ChangingPassword(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

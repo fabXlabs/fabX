@@ -13,8 +13,9 @@ import cloud.fabX.fabXaccess.user.model.UserCreated
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentityAdded
 import java.io.File
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
 import org.kodein.di.DI
 import org.kodein.di.allInstances
 import org.kodein.di.bindConstant
@@ -26,6 +27,7 @@ object App // logger tag
 
 val config = Config.fromEnv()
 
+@OptIn(ExperimentalTime::class)
 val app = DI {
     import(domainModule)
     import(webModule)
@@ -85,6 +87,7 @@ fun main() {
     webApp.start()
 }
 
+@OptIn(ExperimentalTime::class)
 fun createInitialAdminAccountIfUserRepoIsEmpty(userRepository: UserRepository, logger: Logger) = runBlocking {
     if (userRepository.getSourcingEvents().isEmpty()) {
         logger.warn("No events are found in user repository. A new admin account with username \"admin\" and password \"password\" is created...")

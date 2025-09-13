@@ -5,7 +5,6 @@ kodein = "7.26.1"
 ktor = "3.3.0"
 micrometer = "1.15.4"
 kotlinx-coroutines = "1.10.2"
-kotlinx-datetime = "0.7.1-0.6.x-compat"
 kotlinx-serialization-json = "1.9.0"
 exposed = "0.61.0"
 hikari = "7.0.2"
@@ -46,7 +45,6 @@ ktor-server-metrics-micrometer-jvm = { module = "io.ktor:ktor-server-metrics-mic
 micrometer-registry-prometheus = { module = "io.micrometer:micrometer-registry-prometheus", version.ref = "micrometer" }
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-json = { module = "org.jetbrains.exposed:exposed-json", version.ref = "exposed" }

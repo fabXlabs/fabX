@@ -12,7 +12,6 @@ dependencies {
     testImplementation(rootProject.libs.kotlinx.coroutines.test)
 
     testFixturesImplementation(rootProject.libs.webauthn4j.core)
-    testFixturesImplementation(rootProject.libs.kotlinx.datetime)
     testFixturesImplementation(rootProject.libs.arrow.core)
     testFixturesImplementation(rootProject.libs.assertk.jvm)
     testFixturesImplementation(rootProject.libs.mockito.kotlin)

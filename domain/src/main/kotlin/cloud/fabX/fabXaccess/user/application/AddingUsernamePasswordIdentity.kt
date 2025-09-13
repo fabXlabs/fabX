@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByUsername
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UsernamePasswordIdentity
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a [UsernamePasswordIdentity] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class AddingUsernamePasswordIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

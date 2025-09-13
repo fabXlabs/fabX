@@ -16,9 +16,10 @@ import cloud.fabX.fabXaccess.tool.model.GettingToolsByQualificationId
 import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolSourcingEvent
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -49,6 +50,7 @@ object ToolThumbnailDAO : Table("ToolThumbnail") {
     override val primaryKey = PrimaryKey(aggregateRootId, name = "aggregate_root_id_pk")
 }
 
+@OptIn(ExperimentalTime::class)
 open class ToolDatabaseRepository(
     loggerFactory: LoggerFactory,
     private val db: Database

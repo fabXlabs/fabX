@@ -24,8 +24,9 @@ import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
+import kotlin.time.ExperimentalTime
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindInstance
@@ -35,6 +36,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalTime::class)
 @MockitoSettings
 class UserControllerGetSourcingEventsTest {
     private lateinit var gettingUserSourcingEvents: GettingUserSourcingEvents

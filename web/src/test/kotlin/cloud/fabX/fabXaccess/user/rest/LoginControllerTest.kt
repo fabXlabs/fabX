@@ -25,8 +25,9 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.util.toGMTDate
 import io.ktor.util.date.toJvmDate
 import kotlin.time.Duration.Companion.hours
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toJavaInstant
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.kodein.di.bindConstant
@@ -35,6 +36,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.whenever
 
+@OptIn(ExperimentalTime::class)
 @MockitoSettings
 internal class LoginControllerTest {
     private lateinit var authenticationService: AuthenticationService

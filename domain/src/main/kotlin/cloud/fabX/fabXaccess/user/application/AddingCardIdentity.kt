@@ -12,11 +12,13 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.CardIdentity
 import cloud.fabX.fabXaccess.user.model.GettingUserByCardId
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a [CardIdentity] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class AddingCardIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

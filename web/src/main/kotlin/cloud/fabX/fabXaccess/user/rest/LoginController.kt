@@ -21,10 +21,12 @@ import io.ktor.server.util.toGMTDate
 import io.ktor.util.date.toJvmDate
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.toJavaInstant
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalTime::class)
 class LoginController(
     private val webauthnIdentityService: WebauthnIdentityService,
     private val clock: Clock,

@@ -1,8 +1,10 @@
 package cloud.fabX.fabXaccess.common.model
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 interface DomainEvent {
     val actorId: ActorId
     val timestamp: Instant
@@ -22,6 +24,7 @@ interface DomainEventHandler {
     suspend fun handle(domainEvent: CardCreatedAtDevice) = handle(domainEvent as DomainEvent)
 }
 
+@OptIn(ExperimentalTime::class)
 data class QualificationDeleted(
     override val actorId: ActorId,
     override val timestamp: Instant = Clock.System.now(),
@@ -33,6 +36,7 @@ data class QualificationDeleted(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 data class ToolDeleted(
     override val actorId: ActorId,
     override val timestamp: Instant = Clock.System.now(),
@@ -44,6 +48,7 @@ data class ToolDeleted(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 data class CardCreatedAtDevice(
     override val actorId: ActorId,
     override val timestamp: Instant = Clock.System.now(),
