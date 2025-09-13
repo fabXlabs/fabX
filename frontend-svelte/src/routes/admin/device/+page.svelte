@@ -6,9 +6,8 @@
 	import { goto } from '$app/navigation';
 	import type { AugmentedDevice } from '$lib/api/model/device';
 	import type { SortingState } from '@tanstack/table-core';
-	import { Button } from '$lib/components/ui/button';
-	import { Plus } from 'lucide-svelte';
 	import Crumbs from './Crumbs.svelte';
+	import AddDeviceSheet from './AddDeviceSheet.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -45,15 +44,6 @@
 		<Crumbs />
 	{/snippet}
 	{#snippet addButton()}
-		<!-- TODO implement adding device -->
-		<Button
-			class="normal-case"
-			onclick={() => {
-				alert('NOT YET IMPLEMENTED');
-			}}
-		>
-			<Plus />
-			Add Device
-		</Button>
+		<AddDeviceSheet />
 	{/snippet}
 </DataTable>
