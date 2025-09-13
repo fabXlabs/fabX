@@ -1,7 +1,9 @@
 package cloud.fabX.fabXaccess.common.application
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 fun Instant.withSecondPrecision(): Instant {
     return Instant.fromEpochSeconds(this.epochSeconds)
 }

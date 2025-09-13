@@ -13,11 +13,13 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.User
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add new users.
  */
+@OptIn(ExperimentalTime::class)
 class AddingUser(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

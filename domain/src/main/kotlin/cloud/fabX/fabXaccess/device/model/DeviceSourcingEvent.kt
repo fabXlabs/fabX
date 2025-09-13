@@ -7,9 +7,11 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
 import cloud.fabX.fabXaccess.common.model.ToolId
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 sealed class DeviceSourcingEvent : SourcingEvent {
     abstract override val aggregateRootId: DeviceId
@@ -31,6 +33,7 @@ sealed class DeviceSourcingEvent : SourcingEvent {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class DeviceCreated(
     override val aggregateRootId: DeviceId,
@@ -49,6 +52,7 @@ data class DeviceCreated(
         eventHandler.handle(this, device)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class DeviceDetailsChanged(
     override val aggregateRootId: DeviceId,
@@ -65,6 +69,7 @@ data class DeviceDetailsChanged(
         eventHandler.handle(this, device)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class ActualFirmwareVersionChanged(
     override val aggregateRootId: DeviceId,
@@ -79,6 +84,7 @@ data class ActualFirmwareVersionChanged(
         eventHandler.handle(this, device)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class DesiredFirmwareVersionChanged(
     override val aggregateRootId: DeviceId,
@@ -93,6 +99,7 @@ data class DesiredFirmwareVersionChanged(
         eventHandler.handle(this, device)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class ToolAttached(
     override val aggregateRootId: DeviceId,
@@ -108,6 +115,7 @@ data class ToolAttached(
         eventHandler.handle(this, device)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class ToolDetached(
     override val aggregateRootId: DeviceId,
@@ -122,6 +130,7 @@ data class ToolDetached(
         eventHandler.handle(this, device)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class DeviceDeleted(
     override val aggregateRootId: DeviceId,

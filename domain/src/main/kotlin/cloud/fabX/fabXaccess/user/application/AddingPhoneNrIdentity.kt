@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByIdentity
 import cloud.fabX.fabXaccess.user.model.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a [PhoneNrIdentity] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class AddingPhoneNrIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

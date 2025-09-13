@@ -9,12 +9,14 @@ import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service for attaching a tool to a device.
  */
-class AttachingTool(
+@OptIn(ExperimentalTime::class)
+class AttachingTool constructor(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
     private val gettingToolById: GettingToolById,

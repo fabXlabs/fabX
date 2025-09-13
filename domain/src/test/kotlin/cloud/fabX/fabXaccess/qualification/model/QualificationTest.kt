@@ -14,10 +14,12 @@ import isNone
 import isRight
 import isSome
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+@OptIn(ExperimentalTime::class)
 internal class QualificationTest {
 
     private val adminActor = AdminFixture.arbitrary()

@@ -11,11 +11,13 @@ import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentity
 import cloud.fabX.fabXaccess.user.model.WebauthnService
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a [WebauthnIdentity] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class AddingWebauthnIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

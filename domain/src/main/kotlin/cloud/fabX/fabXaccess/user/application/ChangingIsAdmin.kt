@@ -8,11 +8,13 @@ import cloud.fabX.fabXaccess.common.model.Logger
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle changing whether a user is admin.
  */
+@OptIn(ExperimentalTime::class)
 class ChangingIsAdmin(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

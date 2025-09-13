@@ -7,9 +7,11 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
 import cloud.fabX.fabXaccess.common.model.ToolId
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 sealed class ToolSourcingEvent : SourcingEvent {
     abstract override val aggregateRootId: ToolId
@@ -27,6 +29,7 @@ sealed class ToolSourcingEvent : SourcingEvent {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class ToolCreated(
     override val aggregateRootId: ToolId,
@@ -47,6 +50,7 @@ data class ToolCreated(
         eventHandler.handle(this, tool)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class ToolDetailsChanged(
     override val aggregateRootId: ToolId,
@@ -69,6 +73,7 @@ data class ToolDetailsChanged(
         eventHandler.handle(this, tool)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class ToolDeleted(
     override val aggregateRootId: ToolId,

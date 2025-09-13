@@ -23,7 +23,8 @@ import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import isLeft
 import isRight
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -32,6 +33,7 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.kodein.di.instance
 
+@OptIn(ExperimentalTime::class)
 internal open class ToolDatabaseRepositoryTest {
 
     companion object {

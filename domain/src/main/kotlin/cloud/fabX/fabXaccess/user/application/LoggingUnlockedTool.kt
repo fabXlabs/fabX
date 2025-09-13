@@ -13,11 +13,13 @@ import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.ToolUsageLogEntry
 import cloud.fabX.fabXaccess.user.model.ToolUsageLogRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to log that a user has unlocked a certain tool.
  */
+@OptIn(ExperimentalTime::class)
 class LoggingUnlockedTool(
     private val toolUsageCounter: TaggedCounter<ToolId>,
     private val toolRepository: ToolRepository,

@@ -11,11 +11,13 @@ import cloud.fabX.fabXaccess.qualification.model.GettingQualificationById
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.user.model.Instructor
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a member [Qualification] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class AddingMemberQualification(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

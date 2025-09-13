@@ -3,8 +3,10 @@ package cloud.fabX.fabXaccess.user.model
 import cloud.fabX.fabXaccess.common.application.withSecondPrecision
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.model.UserId
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 data class ToolUsageLogEntry(
     val timestamp: Instant,
     val userId: UserId,

@@ -14,13 +14,15 @@ import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.tool.model.Tool
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service for a device to get its configuration.
  *
  * As side effect, the device's actual firmware version is updated (in the backend).
  */
+@OptIn(ExperimentalTime::class)
 class GettingConfiguration(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,

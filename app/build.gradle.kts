@@ -24,7 +24,6 @@ dependencies {
     implementation(project(":persistence"))
     implementation(project(":logging"))
     implementation(rootProject.libs.kotlinx.coroutines.core)
-    implementation(rootProject.libs.kotlinx.datetime)
 
     testImplementation(testFixtures(project(":domain")))
     testImplementation(rootProject.libs.ktor.server.test.host)

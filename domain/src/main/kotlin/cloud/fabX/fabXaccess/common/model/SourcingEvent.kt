@@ -1,7 +1,9 @@
 package cloud.fabX.fabXaccess.common.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 interface SourcingEvent {
     val aggregateRootId: EntityId<*>
     val aggregateVersion: Long
@@ -11,7 +13,6 @@ interface SourcingEvent {
 }
 
 fun <E : SourcingEvent> Iterable<E>.assertIsNotEmpty() {
-    @Suppress("ReplaceSizeZeroCheckWithIsEmpty") // isEmpty method does not exist on Iterable
     if (count() == 0) {
         throw IterableIsEmpty("No sourcing events contained in iterable.")
     }

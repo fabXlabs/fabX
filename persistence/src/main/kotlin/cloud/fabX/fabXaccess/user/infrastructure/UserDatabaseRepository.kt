@@ -23,9 +23,10 @@ import cloud.fabX.fabXaccess.user.model.UserDeleted
 import cloud.fabX.fabXaccess.user.model.UserIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -48,6 +49,7 @@ object UserSourcingEventDAO : Table("UserSourcingEvent") {
     val data = jsonb<UserSourcingEvent>("data", Json { serializersModule = domainSerializersModule })
 }
 
+@OptIn(ExperimentalTime::class)
 open class UserDatabaseRepository(private val db: Database) :
     UserRepository,
     GettingUserByIdentity,

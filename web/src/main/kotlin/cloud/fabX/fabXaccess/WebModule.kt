@@ -22,11 +22,13 @@ import cloud.fabX.fabXaccess.user.rest.LogoutController
 import cloud.fabX.fabXaccess.user.rest.UserController
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
+import kotlin.time.ExperimentalTime
 import org.kodein.di.DI
 import org.kodein.di.bindEagerSingleton
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 
+@OptIn(ExperimentalTime::class)
 val webModule = DI.Module("web") {
     bindSingleton { AuthenticationService(instance(), instance(), instance()) }
 

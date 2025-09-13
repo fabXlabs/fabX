@@ -10,9 +10,10 @@ import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.qualification.model.QualificationSourcingEvent
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -33,6 +34,7 @@ object QualificationSourcingEventDAO : Table("QualificationSourcingEvent") {
     val data = jsonb<QualificationSourcingEvent>("data", Json { serializersModule = domainSerializersModule })
 }
 
+@OptIn(ExperimentalTime::class)
 open class QualificationDatabaseRepository(private val db: Database) : QualificationRepository {
 
     override suspend fun getAll(): Set<Qualification> {

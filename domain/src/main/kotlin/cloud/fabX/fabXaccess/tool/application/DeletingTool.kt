@@ -9,11 +9,13 @@ import cloud.fabX.fabXaccess.common.model.ToolDeleted
 import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle deleting a tool.
  */
+@OptIn(ExperimentalTime::class)
 class DeletingTool(
     loggerFactory: LoggerFactory,
     private val clock: Clock,

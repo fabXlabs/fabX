@@ -51,7 +51,6 @@ allprojects {
         implementation(rootProject.libs.kotlin.stdlib)
         implementation(rootProject.libs.arrow.core)
         implementation(rootProject.libs.kodein)
-        implementation(rootProject.libs.kotlinx.datetime)
         implementation(rootProject.libs.kotlinx.serialization.json)
 
         testImplementation(rootProject.libs.kotlin.test)

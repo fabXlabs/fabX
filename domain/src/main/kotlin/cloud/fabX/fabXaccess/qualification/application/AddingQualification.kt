@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.device.application.logError
 import cloud.fabX.fabXaccess.qualification.model.Qualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationRepository
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add new qualifications.
  */
+@OptIn(ExperimentalTime::class)
 class AddingQualification(
     loggerFactory: LoggerFactory,
     private val qualificationRepository: QualificationRepository,

@@ -7,10 +7,11 @@ import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.ToolUsageLogEntry
 import cloud.fabX.fabXaccess.user.model.ToolUsageLogRepository
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
+import kotlin.time.toKotlinInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.toJavaInstant
-import kotlinx.datetime.toKotlinInstant
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.Transaction
@@ -25,6 +26,7 @@ object ToolUsageLogDAO : Table("ToolUsageLog") {
     val toolId = uuid("tool_id")
 }
 
+@OptIn(ExperimentalTime::class)
 class ToolUsageLogDatabaseRepository(private val db: Database) : ToolUsageLogRepository {
     override suspend fun getAll(): List<ToolUsageLogEntry> {
         return transaction {

@@ -14,11 +14,13 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserById
 import kotlin.random.Random
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add a card identity to a User at a Device.
  */
+@OptIn(ExperimentalTime::class)
 class AddingCardIdentityAtDevice(
     loggerFactory: LoggerFactory,
     private val domainEventPublisher: DomainEventPublisher,

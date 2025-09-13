@@ -14,11 +14,13 @@ import cloud.fabX.fabXaccess.tool.model.Tool
 import cloud.fabX.fabXaccess.tool.model.ToolRepository
 import cloud.fabX.fabXaccess.tool.model.ToolType
 import cloud.fabX.fabXaccess.user.model.Admin
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to add new tools.
  */
+@OptIn(ExperimentalTime::class)
 class AddingTool(
     loggerFactory: LoggerFactory,
     private val toolRepository: ToolRepository,

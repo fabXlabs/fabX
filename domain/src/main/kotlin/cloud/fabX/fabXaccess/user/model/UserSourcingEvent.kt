@@ -9,9 +9,11 @@ import cloud.fabX.fabXaccess.common.model.SourcingEvent
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newUserId
 import com.webauthn4j.credential.CredentialRecord
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 sealed class UserSourcingEvent : SourcingEvent {
     abstract override val aggregateRootId: UserId
@@ -51,6 +53,7 @@ sealed class UserSourcingEvent : SourcingEvent {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class UserCreated(
     override val aggregateRootId: UserId = newUserId(),
@@ -67,6 +70,7 @@ data class UserCreated(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class UserPersonalInformationChanged(
     override val aggregateRootId: UserId,
@@ -83,6 +87,7 @@ data class UserPersonalInformationChanged(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class UserLockStateChanged(
     override val aggregateRootId: UserId,
@@ -98,6 +103,7 @@ data class UserLockStateChanged(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class UsernamePasswordIdentityAdded(
     override val aggregateRootId: UserId,
@@ -113,6 +119,7 @@ data class UsernamePasswordIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class PasswordChanged(
     override val aggregateRootId: UserId,
@@ -127,6 +134,7 @@ data class PasswordChanged(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class UsernamePasswordIdentityRemoved(
     override val aggregateRootId: UserId,
@@ -141,6 +149,7 @@ data class UsernamePasswordIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class WebauthnIdentityAdded(
     override val aggregateRootId: UserId,
@@ -154,6 +163,7 @@ data class WebauthnIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class WebauthnIdentityRemoved(
     override val aggregateRootId: UserId,
@@ -193,6 +203,7 @@ data class WebauthnIdentityRemoved(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class CardIdentityAdded(
     override val aggregateRootId: UserId,
@@ -208,6 +219,7 @@ data class CardIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class CardIdentityRemoved(
     override val aggregateRootId: UserId,
@@ -222,6 +234,7 @@ data class CardIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class PhoneNrIdentityAdded(
     override val aggregateRootId: UserId,
@@ -236,6 +249,7 @@ data class PhoneNrIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class PhoneNrIdentityRemoved(
     override val aggregateRootId: UserId,
@@ -250,6 +264,7 @@ data class PhoneNrIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class PinIdentityAdded(
     override val aggregateRootId: UserId,
@@ -264,6 +279,7 @@ data class PinIdentityAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class PinIdentityRemoved(
     override val aggregateRootId: UserId,
@@ -277,6 +293,7 @@ data class PinIdentityRemoved(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class MemberQualificationAdded(
     override val aggregateRootId: UserId,
@@ -291,6 +308,7 @@ data class MemberQualificationAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class MemberQualificationRemoved(
     override val aggregateRootId: UserId,
@@ -305,6 +323,7 @@ data class MemberQualificationRemoved(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class InstructorQualificationAdded(
     override val aggregateRootId: UserId,
@@ -319,6 +338,7 @@ data class InstructorQualificationAdded(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class InstructorQualificationRemoved(
     override val aggregateRootId: UserId,
@@ -333,6 +353,7 @@ data class InstructorQualificationRemoved(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class IsAdminChanged(
     override val aggregateRootId: UserId,
@@ -347,6 +368,7 @@ data class IsAdminChanged(
         eventHandler.handle(this, user)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class UserDeleted(
     override val aggregateRootId: UserId,

@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingUserByWikiName
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle changing user properties.
  */
+@OptIn(ExperimentalTime::class)
 class ChangingUser(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

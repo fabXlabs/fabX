@@ -57,11 +57,13 @@ import cloud.fabX.fabXaccess.user.application.RemovingWebauthnIdentity
 import cloud.fabX.fabXaccess.user.application.UserDomainEventHandler
 import cloud.fabX.fabXaccess.user.application.UserMetrics
 import cloud.fabX.fabXaccess.user.application.ValidatingSecondFactor
+import kotlin.time.ExperimentalTime
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance
 import cloud.fabX.fabXaccess.tool.application.ChangingThumbnail as ChangingToolThumbnail
 
+@OptIn(ExperimentalTime::class)
 val domainModule = DI.Module("domain") {
     // device
     bindSingleton { AddingCardIdentityAtDevice(instance(), instance(), instance(), instance(), instance(), instance()) }

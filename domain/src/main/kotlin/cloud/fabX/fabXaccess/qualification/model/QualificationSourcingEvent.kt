@@ -6,10 +6,12 @@ import cloud.fabX.fabXaccess.common.model.ChangeableValue
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.SourcingEvent
-import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
 
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 sealed class QualificationSourcingEvent : SourcingEvent {
     abstract override val aggregateRootId: QualificationId
@@ -27,6 +29,7 @@ sealed class QualificationSourcingEvent : SourcingEvent {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class QualificationCreated(
     override val aggregateRootId: QualificationId,
@@ -44,6 +47,7 @@ data class QualificationCreated(
         eventHandler.handle(this, qualification)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class QualificationDetailsChanged(
     override val aggregateRootId: QualificationId,
@@ -61,6 +65,7 @@ data class QualificationDetailsChanged(
         eventHandler.handle(this, qualification)
 }
 
+@OptIn(ExperimentalTime::class)
 @Serializable
 data class QualificationDeleted(
     override val aggregateRootId: QualificationId,

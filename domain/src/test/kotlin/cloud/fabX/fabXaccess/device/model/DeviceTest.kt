@@ -25,12 +25,14 @@ import isRight
 import isSome
 import java.awt.Color
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
+@OptIn(ExperimentalTime::class)
 internal class DeviceTest {
 
     private val adminActor = AdminFixture.arbitrary()

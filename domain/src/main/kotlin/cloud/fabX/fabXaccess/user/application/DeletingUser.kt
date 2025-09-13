@@ -13,11 +13,13 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.GettingSoftDeletedUsers
 import cloud.fabX.fabXaccess.user.model.HardDeletingUser
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to handle deleting a user.
  */
+@OptIn(ExperimentalTime::class)
 class DeletingUser(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

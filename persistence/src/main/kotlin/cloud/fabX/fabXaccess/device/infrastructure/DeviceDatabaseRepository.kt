@@ -16,9 +16,10 @@ import cloud.fabX.fabXaccess.device.model.DeviceRepository
 import cloud.fabX.fabXaccess.device.model.DeviceSourcingEvent
 import cloud.fabX.fabXaccess.device.model.GettingDeviceByIdentity
 import cloud.fabX.fabXaccess.device.model.GettingDevicesByAttachedTool
+import kotlin.time.ExperimentalTime
+import kotlin.time.toJavaInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.toJavaInstant
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SortOrder
@@ -49,6 +50,7 @@ object DeviceThumbnailDAO : Table("DeviceThumbnail") {
     override val primaryKey = PrimaryKey(aggregateRootId, name = "aggregate_root_id_pk")
 }
 
+@OptIn(ExperimentalTime::class)
 open class DeviceDatabaseRepository(
     private val db: Database
 ) : DeviceRepository, GettingDeviceByIdentity, GettingDevicesByAttachedTool {

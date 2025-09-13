@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.Member
 import cloud.fabX.fabXaccess.user.model.UserRepository
 import cloud.fabX.fabXaccess.user.model.WebauthnIdentity
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to remove a [WebauthnIdentity] to a user.
  */
+@OptIn(ExperimentalTime::class)
 class RemovingWebauthnIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

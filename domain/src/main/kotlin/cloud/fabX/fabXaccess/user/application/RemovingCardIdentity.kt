@@ -9,11 +9,13 @@ import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.user.model.Admin
 import cloud.fabX.fabXaccess.user.model.CardIdentity
 import cloud.fabX.fabXaccess.user.model.UserRepository
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 /**
  * Service to remove a [CardIdentity] from a user.
  */
+@OptIn(ExperimentalTime::class)
 class RemovingCardIdentity(
     loggerFactory: LoggerFactory,
     private val userRepository: UserRepository,

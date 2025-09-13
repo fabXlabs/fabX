@@ -6,7 +6,8 @@ import cloud.fabX.fabXaccess.common.model.QualificationDeleted
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.mockito.Mock
@@ -14,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoSettings
 import org.mockito.kotlin.same
 import org.mockito.kotlin.verify
 
+@OptIn(ExperimentalTime::class)
 @MockitoSettings
 internal class SynchronousDomainEventPublisherTest {
 
