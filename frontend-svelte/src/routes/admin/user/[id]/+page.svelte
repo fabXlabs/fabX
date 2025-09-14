@@ -15,6 +15,17 @@
 	import UserSourcingEventsCard from './UserSourcingEventsCard.svelte';
 
 	let { data }: PageProps = $props();
+
+	function memberQualificationAdditionFilterFunction(qualificationId: string): boolean {
+		const instructorQualifications = data.me.instructorQualifications || [];
+		return instructorQualifications.includes(qualificationId);
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	function instructorQualificationAdditionFilterFunction(qualificationId: string): boolean {
+		// admin can hand out any instructor qualification
+		return true;
+	}
 </script>
 
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
@@ -31,18 +42,20 @@
 			<IdentitiesCard user={data.augmentedUser} devices={data.devices} />
 			<QualificationsCard
 				qualificationType="Member Qualifications"
+				user={data.augmentedUser}
 				accessorFunction={(user) => user.memberQualifications}
 				addFunction={addMemberQualification}
 				removeFunction={removeMemberQualification}
-				user={data.augmentedUser}
+				qualificationAdditionFilterFunction={memberQualificationAdditionFilterFunction}
 				qualifications={data.qualifications}
 			/>
 			<QualificationsCard
 				qualificationType="Instructor Qualifications"
+				user={data.augmentedUser}
 				accessorFunction={(user) => user.instructorQualifications || []}
 				addFunction={addInstructorQualification}
 				removeFunction={removeInstructorQualification}
-				user={data.augmentedUser}
+				qualificationAdditionFilterFunction={instructorQualificationAdditionFilterFunction}
 				qualifications={data.qualifications}
 			/>
 			<DangerZoneCard user={data.augmentedUser} />

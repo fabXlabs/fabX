@@ -22,15 +22,17 @@
 			userId: string,
 			qualificationId: string
 		) => Promise<string>;
+		qualificationAdditionFilterFunction: (qualificationId: string) => boolean;
 		qualifications: Qualification[];
 	}
 
 	let {
 		qualificationType,
+		user,
 		accessorFunction,
 		addFunction,
 		removeFunction,
-		user,
+		qualificationAdditionFilterFunction,
 		qualifications
 	}: Props = $props();
 
@@ -52,6 +54,7 @@
 				{addFunction}
 				{accessorFunction}
 				bind:error
+				{qualificationAdditionFilterFunction}
 				{qualifications}
 			/>
 		</div>

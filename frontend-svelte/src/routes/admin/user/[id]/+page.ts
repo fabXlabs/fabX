@@ -1,5 +1,11 @@
 import type { PageLoad } from './$types';
-import { augmentUser, getAllUsers, getUserById, getUserSourcingEventsById } from '$lib/api/users';
+import {
+	augmentUser,
+	getAllUsers,
+	getMe,
+	getUserById,
+	getUserSourcingEventsById
+} from '$lib/api/users';
 import { getAllQualifications } from '$lib/api/qualifications';
 import { getAllDevices } from '$lib/api/devices';
 
@@ -26,20 +32,27 @@ export const load: PageLoad = async ({ fetch, params }) => {
 		return [];
 	});
 
+	const me_ = getMe(fetch).catch((error) => {
+		console.log('getMe failed: ', error);
+		return null;
+	});
+
 	const user = await user_;
 	const users = await users_;
 	const sourcingEvents = await sourcingEvents_;
 	const qualifications = await qualifications_;
 	const devices = await devices_;
+	const me = await me_;
 	if (user) {
 		const augmentedUser = augmentUser(user, qualifications);
-		return { augmentedUser, users, sourcingEvents, devices, qualifications };
+		return { augmentedUser, users, sourcingEvents, devices, qualifications, me };
 	}
 	return {
 		augmentedUser: null,
 		users: null,
 		devices: null,
 		qualifications: null,
-		sourcingEvents: null
+		sourcingEvents: null,
+		me: null
 	};
 };

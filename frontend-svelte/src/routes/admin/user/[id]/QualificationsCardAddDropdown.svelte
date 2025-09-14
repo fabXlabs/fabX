@@ -14,6 +14,7 @@
 		accessorFunction: (user: AugmentedUser) => Qualification[];
 		addFunction: (fetch: FetchFunction, userId: string, qualificationId: string) => Promise<string>;
 		error: FabXError | null;
+		qualificationAdditionFilterFunction: (qualificationId: string) => boolean;
 		qualifications: Qualification[];
 	}
 
@@ -22,13 +23,16 @@
 		addFunction,
 		accessorFunction,
 		error = $bindable(),
+		qualificationAdditionFilterFunction,
 		qualifications
 	}: Props = $props();
 
 	let missingQualifications = $derived.by(() => {
-		return qualifications.filter((qualification) => {
-			return !accessorFunction(user).find((q) => q.id === qualification.id);
-		});
+		return qualifications
+			.filter((qualification) => {
+				return !accessorFunction(user).find((q) => q.id === qualification.id);
+			})
+			.filter((qualification) => qualificationAdditionFilterFunction(qualification.id));
 	});
 
 	let hasMissingQualifications = $derived.by(() => {
@@ -47,7 +51,6 @@
 	}
 </script>
 
-<!-- TODO filter by qualifications that actor is instructor for -->
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
