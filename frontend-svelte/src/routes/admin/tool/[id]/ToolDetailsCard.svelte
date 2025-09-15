@@ -211,6 +211,7 @@
 					<Label for="wikiLink" class="text-muted-foreground">Wiki Link</Label>
 					<Input
 						id="wikiLink"
+						type="url"
 						class="disabled:border-transparent disabled:opacity-100"
 						disabled={!editing}
 						placeholder="https://example.com/..."

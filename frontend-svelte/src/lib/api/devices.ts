@@ -3,10 +3,11 @@ import type {
 	AtDeviceCardCreationDetails,
 	AugmentedDevice,
 	Device,
-	DeviceCreationDetails
+	DeviceCreationDetails,
+	DeviceDetails
 } from '$lib/api/model/device';
 import type { Tool } from '$lib/api/model/tool';
-import { getRequest, postRequest } from '$lib/api/common';
+import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
 
 export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	console.debug('getAllDevices...');
@@ -53,4 +54,16 @@ export async function addCardIdentityAtDevice(fetch: FetchFunction, id: string, 
 		userId: userId
 	};
 	return await postRequest(fetch, `/device/${id}/add-user-card-identity`, id, details);
+}
+
+export async function changeDeviceDetails(
+	fetch: FetchFunction,
+	id: string,
+	details: DeviceDetails
+): Promise<string> {
+	return await putRequest(fetch, `/device/${id}`, id, details);
+}
+
+export async function deleteDevice(fetch: FetchFunction, id: string): Promise<string> {
+	return await deleteRequest(fetch, `/device/${id}`, id);
 }
