@@ -4,7 +4,7 @@ import type {
 	QualificationCreationDetails,
 	QualificationDetails
 } from '$lib/api/model/qualification';
-import { getRequest, postRequest, putRequest } from '$lib/api/common';
+import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
 
 export async function getAllQualifications(fetch: FetchFunction): Promise<Qualification[]> {
 	console.debug('getAllQualifications...');
@@ -32,4 +32,8 @@ export async function changeQualificationDetails(
 	details: QualificationDetails
 ): Promise<string> {
 	return await putRequest(fetch, `/qualification/${id}`, id, details);
+}
+
+export async function deleteQualification(fetch: FetchFunction, id: string): Promise<string> {
+	return await deleteRequest(fetch, `/qualification/${id}`, id);
 }
