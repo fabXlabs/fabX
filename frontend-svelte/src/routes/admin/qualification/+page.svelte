@@ -13,7 +13,7 @@
 
 	let initialSortingState: SortingState = [
 		{
-			id: 'name',
+			id: 'orderNr',
 			desc: false
 		}
 	];
@@ -30,7 +30,7 @@
 <DataTable
 	{columns}
 	data={data.qualifications}
-	initialColumnVisibility={{}}
+	initialColumnVisibility={{ orderNr: false }}
 	{initialSortingState}
 	onRowSelect={rowClick}
 >

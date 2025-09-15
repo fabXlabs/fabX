@@ -5,6 +5,10 @@ import QualificationTag from '$lib/components/QualificationTag.svelte';
 
 export const columns: ColumnDef<Qualification>[] = [
 	{
+		accessorKey: 'orderNr',
+		header: 'Order Nr.'
+	},
+	{
 		accessorKey: 'name',
 		header: 'Name',
 		cell: ({ row }) => {
