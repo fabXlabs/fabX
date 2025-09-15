@@ -65,7 +65,13 @@
 				</div>
 				<div class="grid gap-2">
 					<Label for="orderNr">Order Nr.</Label>
-					<Input id="orderNr" bind:value={orderNr} />
+					<Input
+						id="orderNr"
+						inputmode="numeric"
+						pattern={'\\d{1,100}'}
+						min="0"
+						bind:value={orderNr}
+					/>
 				</div>
 			</div>
 

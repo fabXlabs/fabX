@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
 	import Crumbs from './Crumbs.svelte';
+	import QualificationDetailsCard from './QualificationDetailsCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -13,7 +13,10 @@
 			{data.qualification.name}
 		</h1>
 		<div>
-			<QualificationTag qualification={data.qualification} />
+			<div class="my-6 grid gap-4">
+				<QualificationDetailsCard qualification={data.qualification} />
+				<!-- TODO DangerZoneCard -->
+			</div>
 		</div>
 	{/if}
 </div>
