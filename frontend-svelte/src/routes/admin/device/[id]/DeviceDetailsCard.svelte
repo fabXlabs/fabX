@@ -61,7 +61,7 @@
 <Card.Root>
 	<Card.Header>
 		<div class="flex items-center justify-between">
-			<Card.Title class="text-lg">Tool Details</Card.Title>
+			<Card.Title class="text-lg">Device Details</Card.Title>
 			<Button variant="outline" onclick={toggleEditing}>
 				{#if !editing}
 					Edit
