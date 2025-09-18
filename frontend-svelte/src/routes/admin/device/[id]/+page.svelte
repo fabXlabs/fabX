@@ -2,6 +2,7 @@
 	import type { PageProps } from './$types';
 	import Crumbs from './Crumbs.svelte';
 	import DeviceDetailsCard from './DeviceDetailsCard.svelte';
+	import DeviceFirmwareCard from './DeviceFirmwareCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -14,10 +15,10 @@
 		</h1>
 		<div class="my-6 grid gap-4">
 			<DeviceDetailsCard device={data.augmentedDevice} />
-			<!-- TODO Edit desired firmware, update firmware -->
+			<DeviceFirmwareCard device={data.augmentedDevice} />
 			<!-- TODO Attach/Detach Tool -->
 			<!-- TODO Unlock Tool at Device -->
-			<!-- TODO DangerZoneCard (Restart + Delete) -->
+			<!-- TODO DangerZoneCard (Restart, Delete, Update Firmware) -->
 		</div>
 	{/if}
 </div>

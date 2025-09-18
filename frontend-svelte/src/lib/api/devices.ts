@@ -2,6 +2,7 @@ import { type FetchFunction } from '$lib/api';
 import type {
 	AtDeviceCardCreationDetails,
 	AugmentedDevice,
+	DesiredFirmwareVersion,
 	Device,
 	DeviceCreationDetails,
 	DeviceDetails
@@ -62,6 +63,14 @@ export async function changeDeviceDetails(
 	details: DeviceDetails
 ): Promise<string> {
 	return await putRequest(fetch, `/device/${id}`, id, details);
+}
+
+export async function changeDesiredFirmwareVersion(
+	fetch: FetchFunction,
+	id: string,
+	details: DesiredFirmwareVersion
+): Promise<string> {
+	return await putRequest(fetch, `/device/${id}/desired-firmware-version`, id, details);
 }
 
 export async function deleteDevice(fetch: FetchFunction, id: string): Promise<string> {
