@@ -4,6 +4,7 @@
 	import DeviceDetailsCard from './DeviceDetailsCard.svelte';
 	import DeviceFirmwareCard from './DeviceFirmwareCard.svelte';
 	import AttachedToolsCard from './AttachedToolsCard.svelte';
+	import DangerZoneCard from './DangerZoneCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -18,7 +19,7 @@
 			<DeviceDetailsCard device={data.augmentedDevice} />
 			<DeviceFirmwareCard device={data.augmentedDevice} />
 			<AttachedToolsCard device={data.augmentedDevice} />
-			<!-- TODO DangerZoneCard (Restart, Delete, Update Firmware) -->
+			<DangerZoneCard device={data.augmentedDevice} />
 		</div>
 	{/if}
 </div>

@@ -98,6 +98,16 @@ export async function unlockTool(
 	return await postRequest(fetch, `/device/${id}/unlock-tool`, id, details);
 }
 
+export async function restartDevice(fetch: FetchFunction, id: string): Promise<string> {
+	const details = {};
+	return await postRequest(fetch, `/device/${id}/restart`, id, details);
+}
+
+export async function updateDeviceFirmware(fetch: FetchFunction, id: string): Promise<string> {
+	const details = {};
+	return await postRequest(fetch, `/device/${id}/update-firmware`, id, details);
+}
+
 export async function deleteDevice(fetch: FetchFunction, id: string): Promise<string> {
 	return await deleteRequest(fetch, `/device/${id}`, id);
 }
