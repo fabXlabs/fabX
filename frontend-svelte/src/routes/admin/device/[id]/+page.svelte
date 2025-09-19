@@ -3,6 +3,7 @@
 	import Crumbs from './Crumbs.svelte';
 	import DeviceDetailsCard from './DeviceDetailsCard.svelte';
 	import DeviceFirmwareCard from './DeviceFirmwareCard.svelte';
+	import AttachedToolsCard from './AttachedToolsCard.svelte';
 
 	let { data }: PageProps = $props();
 </script>
@@ -16,8 +17,7 @@
 		<div class="my-6 grid gap-4">
 			<DeviceDetailsCard device={data.augmentedDevice} />
 			<DeviceFirmwareCard device={data.augmentedDevice} />
-			<!-- TODO Attach/Detach Tool -->
-			<!-- TODO Unlock Tool at Device -->
+			<AttachedToolsCard device={data.augmentedDevice} />
 			<!-- TODO DangerZoneCard (Restart, Delete, Update Firmware) -->
 		</div>
 	{/if}
