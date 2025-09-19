@@ -42,10 +42,9 @@
 							<Table.Cell>{attachedTool.name}</Table.Cell>
 							<Table.Cell class="text-right">
 								<AttachedToolsCardTableActions
-									deviceId={device.id}
+									{device}
+									tool={attachedTool}
 									pin={Number.parseInt(pin)}
-									toolId={attachedTool.id}
-									bind:error
 								/>
 							</Table.Cell>
 						</Table.Row>

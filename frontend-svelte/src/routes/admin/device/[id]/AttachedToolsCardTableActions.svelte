@@ -4,39 +4,33 @@
 	import { Button } from '$lib/components/ui/button';
 	// noinspection ES6UnusedImports
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { FabXError } from '$lib/api/model/error';
-	import { invalidateAll } from '$app/navigation';
-	import { detachTool, unlockTool } from '$lib/api/devices';
+	import type { Tool } from '$lib/api/model/tool';
+	import type { AugmentedDevice } from '$lib/api/model/device';
+	import UnlockToolAlert from './UnlockToolAlert.svelte';
+	import DetachToolAlert from './DetachToolAlert.svelte';
 
 	interface Props {
-		deviceId: string;
+		device: AugmentedDevice;
 		pin: number;
-		toolId: string;
-		error: FabXError | null;
+		tool: Tool;
 	}
 
-	let { deviceId, pin, toolId, error = $bindable() }: Props = $props();
+	let { device, pin, tool }: Props = $props();
 
-	async function detachTool_(): Promise<string> {
-		const res = await detachTool(fetch, deviceId, pin).catch((e) => {
-			error = e;
-			return '';
-		});
-		await invalidateAll();
-		return res;
+	let showUnlockToolAlert = $state(false);
+	let showDetachToolAlert = $state(false);
+
+	function showUnlockToolAlert_() {
+		showUnlockToolAlert = true;
 	}
 
-	async function unlockTool_(): Promise<string> {
-		// TODO success notification
-		const res = await unlockTool(fetch, deviceId, toolId).catch((e) => {
-			error = e;
-			return '';
-		});
-		await invalidateAll();
-		return res;
+	function showDetachToolAlert_() {
+		showDetachToolAlert = true;
 	}
 </script>
 
+<UnlockToolAlert bind:open={showUnlockToolAlert} {device} {tool} />
+<DetachToolAlert bind:open={showDetachToolAlert} {device} {pin} {tool} />
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
@@ -47,12 +41,16 @@
 		{/snippet}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content align="end">
-		<!-- TODO Alert to ask whether the actor really wants to unlock the tool -->
-		<DropdownMenu.Item onclick={unlockTool_} class="text-red-600 data-highlighted:text-red-500">
+		<DropdownMenu.Item
+			onclick={showUnlockToolAlert_}
+			class="text-red-600 data-highlighted:text-red-500"
+		>
 			Unlock
 		</DropdownMenu.Item>
-		<!-- TODO Alert to ask whether the actor really wants to detach the tool -->
-		<DropdownMenu.Item onclick={detachTool_} class="text-red-600 data-highlighted:text-red-500">
+		<DropdownMenu.Item
+			onclick={showDetachToolAlert_}
+			class="text-red-600 data-highlighted:text-red-500"
+		>
 			Detach
 		</DropdownMenu.Item>
 	</DropdownMenu.Content>
