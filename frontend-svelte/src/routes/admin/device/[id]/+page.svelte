@@ -18,7 +18,7 @@
 		<div class="my-6 grid gap-4">
 			<DeviceDetailsCard device={data.augmentedDevice} />
 			<DeviceFirmwareCard device={data.augmentedDevice} />
-			<AttachedToolsCard device={data.augmentedDevice} />
+			<AttachedToolsCard device={data.augmentedDevice} tools={data.tools} />
 			<DangerZoneCard device={data.augmentedDevice} />
 		</div>
 	{/if}

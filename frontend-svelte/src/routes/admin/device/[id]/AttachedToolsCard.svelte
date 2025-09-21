@@ -7,12 +7,15 @@
 	import type { FabXError } from '$lib/api/model/error';
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import AttachedToolsCardTableActions from './AttachedToolsCardTableActions.svelte';
+	import AttachToolSheet from './AttachToolSheet.svelte';
+	import type { Tool } from '$lib/api/model/tool';
 
 	interface Props {
 		device: AugmentedDevice;
+		tools: Tool[];
 	}
 
-	let { device }: Props = $props();
+	let { device, tools }: Props = $props();
 
 	let error: FabXError | null = $state(null);
 </script>
@@ -20,8 +23,8 @@
 <Card.Root class="overflow-auto">
 	<Card.Header>
 		<div class="flex items-center justify-between">
-			<Card.Title class="text-lg">Identities</Card.Title>
-			<!-- TODO Attach Tool Sheet -->
+			<Card.Title class="text-lg">Attached Tools</Card.Title>
+			<AttachToolSheet {device} {tools} />
 		</div>
 	</Card.Header>
 	<Card.Content>

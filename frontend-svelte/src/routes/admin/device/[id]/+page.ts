@@ -14,9 +14,10 @@ export const load: PageLoad = async ({ fetch, params }) => {
 	});
 
 	const device = await device_;
+	const tools = await tools_;
 	if (device) {
-		const augmentedDevice = augmentDevice(device, await tools_);
-		return { augmentedDevice };
+		const augmentedDevice = augmentDevice(device, tools);
+		return { augmentedDevice, tools };
 	}
 
 	return {
