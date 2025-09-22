@@ -1,5 +1,11 @@
 <script lang="ts">
-	import type { AugmentedUser, UserIdentity } from '$lib/api/model/user';
+	import type {
+		AugmentedUser,
+		CardIdentity,
+		PhoneNrIdentity,
+		UserIdentity,
+		WebauthnIdentity
+	} from '$lib/api/model/user';
 	import type { FabXError } from '$lib/api/model/error';
 	// noinspection ES6UnusedImports
 	import * as Card from '$lib/components/ui/card/index.js';
@@ -17,6 +23,35 @@
 	}
 
 	let { user, devices }: Props = $props();
+
+	let identityTypeOrder = [
+		'cloud.fabX.fabXaccess.user.rest.PinIdentity',
+		'cloud.fabX.fabXaccess.user.rest.UsernamePasswordIdentity',
+		'cloud.fabX.fabXaccess.user.rest.CardIdentity',
+		'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity',
+		'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity'
+	];
+
+	let sortedIdentities = $derived.by(() => {
+		return user.identities.toSorted((a, b) => {
+			const res = identityTypeOrder.indexOf(a.type) - identityTypeOrder.indexOf(b.type);
+
+			if (res == 0) {
+				switch (a.type) {
+					case 'cloud.fabX.fabXaccess.user.rest.CardIdentity':
+						return a.cardId < (b as CardIdentity).cardId ? -1 : 1;
+					case 'cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity':
+						return a.phoneNr < (b as PhoneNrIdentity).phoneNr ? -1 : 1;
+					case 'cloud.fabX.fabXaccess.user.rest.WebauthnIdentity':
+						return a.credentialId < (b as WebauthnIdentity).credentialId ? -1 : 1;
+					default:
+						return 0;
+				}
+			} else {
+				return res;
+			}
+		});
+	});
 
 	let error: FabXError | null = $state(null);
 
@@ -70,9 +105,8 @@
 					</Table.Row>
 				</Table.Header>
 				<Table.Body>
-					<!-- TODO stable-sort identities (by type?) -->
 					<!-- eslint-disable-next-line svelte/require-each-key -->
-					{#each user.identities as identity}
+					{#each sortedIdentities as identity}
 						<Table.Row>
 							<Table.Cell>{identityDisplayType(identity)}</Table.Cell>
 							<Table.Cell>{identityId(identity)}</Table.Cell>
@@ -81,7 +115,7 @@
 							>
 						</Table.Row>
 					{/each}
-					{#if user.identities.length <= 0}
+					{#if sortedIdentities.length <= 0}
 						<Table.Row>
 							<Table.Cell colspan={3} class="text-center">No Identities</Table.Cell>
 						</Table.Row>
