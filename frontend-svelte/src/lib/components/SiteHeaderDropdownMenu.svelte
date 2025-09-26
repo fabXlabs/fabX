@@ -1,6 +1,6 @@
 <script lang="ts">
-	// noinspection ES6UnusedImports
 	import { resolve } from '$app/paths';
+	// noinspection ES6UnusedImports
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import LogOut from 'lucide-svelte/icons/log-out';
 	import { CircleUserRound, User } from 'lucide-svelte';
@@ -9,6 +9,8 @@
 	import { getMeContext } from '$lib/context';
 
 	const me = getMeContext();
+
+	const profileLink = me.isAdmin ? '/admin/me' : '/instructor/me';
 
 	async function doLogout() {
 		const res = await logout();
@@ -32,7 +34,7 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.Item
 				onSelect={async () => {
-					await goto(resolve('/admin/me'));
+					await goto(resolve(profileLink));
 				}}
 				class="cursor-pointer"
 			>

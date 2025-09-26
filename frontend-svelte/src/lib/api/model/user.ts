@@ -30,6 +30,12 @@ export interface AugmentedUser {
 	isAdmin: boolean;
 }
 
+export interface LimitedUser {
+	id: string;
+	firstName: string;
+	wikiName: string;
+}
+
 export interface UserCreationDetails {
 	firstName: string;
 	lastName: string;

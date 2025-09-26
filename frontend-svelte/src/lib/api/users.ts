@@ -3,6 +3,7 @@ import type {
 	AugmentedUser,
 	CardIdentityAdditionDetails,
 	IsAdminDetails,
+	LimitedUser,
 	PhoneNrIdentityAdditionDetails,
 	PinIdentityAdditionDetails,
 	QualificationAdditionDetails,
@@ -28,6 +29,11 @@ export async function getMe(fetch: FetchFunction): Promise<User> {
 export async function getAllUsers(fetch: FetchFunction): Promise<User[]> {
 	console.debug('getAllUsers...');
 	return await getRequest(fetch, '/user');
+}
+
+export async function getAllUsersLimited(fetch: FetchFunction): Promise<LimitedUser[]> {
+	console.debug('getAllUsersLimited...');
+	return await getRequest(fetch, '/user/limited');
 }
 
 export async function getUserById(fetch: FetchFunction, id: string): Promise<User> {
