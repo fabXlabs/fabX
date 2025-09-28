@@ -11,6 +11,7 @@
 	import ErrorText from '$lib/components/ErrorText.svelte';
 	import { Button } from '$lib/components/ui/button';
 	import Crumbs from './Crumbs.svelte';
+	import { toast } from 'svelte-sonner';
 
 	let { data }: PageProps = $props();
 
@@ -22,7 +23,7 @@
 
 	let instructorQualifications = $derived.by(() => {
 		return data.qualifications
-			.filter((q) => data.me.instructorQualifications.includes(q.id))
+			.filter((q) => data.me?.instructorQualifications?.includes(q.id) || false)
 			.toSorted((a, b) => a.orderNr - b.orderNr);
 	});
 
@@ -65,7 +66,7 @@
 		}
 		if (errors.length == 0) {
 			resetForm();
-			// TODO success notification (https://shadcn-svelte.com/docs/components/sonner)
+			toast.success('Added member Qualifications');
 		}
 	}
 </script>

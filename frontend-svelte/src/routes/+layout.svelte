@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import { ModeWatcher } from 'mode-watcher';
+	import { Toaster } from '$lib/components/ui/sonner/index.js';
 	import '../app.css';
 
 	let { children } = $props();
@@ -31,6 +32,7 @@
 </svelte:head>
 
 <ModeWatcher />
+<Toaster richColors closeButton position="top-right" />
 <div class="bg-background relative flex min-h-screen flex-col" id="page">
 	<svelte:boundary {onerror}>{@render children()}</svelte:boundary>
 </div>
