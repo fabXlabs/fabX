@@ -35,7 +35,7 @@ val buildTask = tasks.register<com.github.gradle.node.npm.task.NpmTask>("npmBuil
     )
     outputs.dir("${project.projectDir}/target")
     environment.put("BASE_DIR", "/sv")
-    environment.put("FABX_VERSION", project.version.toString())
+    environment.put("PUBLIC_FABX_VERSION", project.version.toString())
 }
 
 sourceSets {

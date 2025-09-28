@@ -2,6 +2,7 @@
 	import { asset } from '$app/paths';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
+	import { PUBLIC_FABX_VERSION } from '$env/static/public';
 	import '../app.css';
 
 	let { children } = $props();
@@ -36,5 +37,6 @@
 <div class="bg-background relative flex min-h-screen flex-col" id="page">
 	<svelte:boundary {onerror}>{@render children()}</svelte:boundary>
 </div>
-<!-- TODO show version -->
-<div class="bg-background text-foreground/60 m-5 text-center font-mono text-xs">fabX vTODO</div>
+<div class="bg-background text-foreground/60 m-5 text-center font-mono text-xs">
+	fabX v{PUBLIC_FABX_VERSION}
+</div>
