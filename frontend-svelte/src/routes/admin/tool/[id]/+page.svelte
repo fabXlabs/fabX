@@ -7,6 +7,7 @@
 	let { data }: PageProps = $props();
 </script>
 
+<!-- TODO: Show Image -->
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	{#if data.augmentedTool}
 		<Crumbs tool={data.augmentedTool} />

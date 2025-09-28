@@ -65,7 +65,7 @@
 		}
 		if (errors.length == 0) {
 			resetForm();
-			// TODO success notification
+			// TODO success notification (https://shadcn-svelte.com/docs/components/sonner)
 		}
 	}
 </script>

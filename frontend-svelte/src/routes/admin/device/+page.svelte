@@ -33,6 +33,7 @@
 	}
 </script>
 
+<!-- TODO: Show Images -->
 <DataTable
 	{columns}
 	data={data.augmentedDevices}
