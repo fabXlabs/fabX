@@ -11,7 +11,8 @@ export const columns: ColumnDef<AugmentedDevice>[] = [
 		cell: ({ row }) => {
 			return renderComponent(DeviceImage, {
 				id: row.original.id,
-				class: ''
+				class: '',
+				onclick: () => {}
 			});
 		}
 	},

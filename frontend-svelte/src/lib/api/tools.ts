@@ -3,6 +3,7 @@ import type { AugmentedTool, Tool, ToolCreationDetails, ToolDetails } from '$lib
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
 import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
+import { mapError } from '$lib/api/map-error';
 
 export async function getAllTools(fetch: FetchFunction): Promise<Tool[]> {
 	console.debug('getAllTools...');
@@ -46,6 +47,26 @@ export async function changeToolDetails(
 	details: ToolDetails
 ): Promise<string> {
 	return await putRequest(fetch, `/tool/${id}`, id, details);
+}
+
+export async function changeThumbnail(
+	fetch: FetchFunction,
+	id: string,
+	file: File
+): Promise<string> {
+	const res = await fetch(`${baseUrl}/tool/${id}/thumbnail`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: file
+	}).then(mapError);
+
+	if (res.status == 204) {
+		return id;
+	} else {
+		return res.text();
+	}
 }
 
 export async function deleteTool(fetch: FetchFunction, id: string): Promise<string> {

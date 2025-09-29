@@ -6,11 +6,14 @@
 	import AttachedToolsCard from './AttachedToolsCard.svelte';
 	import DangerZoneCard from './DangerZoneCard.svelte';
 	import DeviceImage from '../DeviceImage.svelte';
+	import ChangeImageSheet from './ChangeImageSheet.svelte';
 
 	let { data }: PageProps = $props();
+
+	let changeImageSheetOpen = $state(false);
 </script>
 
-<!-- TODO: edit image -->
+<ChangeImageSheet id={data.augmentedDevice?.id || ''} bind:open={changeImageSheetOpen} />
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	{#if data.augmentedDevice}
 		<div class="flex justify-between">
@@ -20,7 +23,13 @@
 					{data.augmentedDevice.name}
 				</h1>
 			</div>
-			<DeviceImage id={data.augmentedDevice.id} class="w-19" />
+			<DeviceImage
+				id={data.augmentedDevice.id}
+				class="w-19"
+				onclick={() => {
+					changeImageSheetOpen = true;
+				}}
+			/>
 		</div>
 		<div class="my-6 grid gap-4">
 			<DeviceDetailsCard device={data.augmentedDevice} />

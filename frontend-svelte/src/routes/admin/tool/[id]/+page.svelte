@@ -4,11 +4,14 @@
 	import ToolDetailsCard from './ToolDetailsCard.svelte';
 	import DangerZoneCard from './DangerZoneCard.svelte';
 	import ToolImage from '../ToolImage.svelte';
+	import ChangeImageSheet from './ChangeImageSheet.svelte';
 
 	let { data }: PageProps = $props();
+
+	let changeImageSheetOpen = $state(false);
 </script>
 
-<!-- TODO edit image -->
+<ChangeImageSheet id={data.augmentedTool?.id || ''} bind:open={changeImageSheetOpen} />
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	{#if data.augmentedTool}
 		<div class="flex justify-between">
@@ -18,7 +21,13 @@
 					{data.augmentedTool.name}
 				</h1>
 			</div>
-			<ToolImage id={data.augmentedTool.id} class="w-19" />
+			<ToolImage
+				id={data.augmentedTool.id}
+				class="w-19"
+				onclick={() => {
+					changeImageSheetOpen = true;
+				}}
+			/>
 		</div>
 		<div class="my-6 grid gap-4">
 			<ToolDetailsCard tool={data.augmentedTool} qualifications={data.qualifications} />

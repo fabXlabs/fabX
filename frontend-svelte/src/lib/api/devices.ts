@@ -11,6 +11,7 @@ import type {
 } from '$lib/api/model/device';
 import type { Tool } from '$lib/api/model/tool';
 import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
+import { mapError } from '$lib/api/map-error';
 
 export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	console.debug('getAllDevices...');
@@ -110,6 +111,26 @@ export async function restartDevice(fetch: FetchFunction, id: string): Promise<s
 export async function updateDeviceFirmware(fetch: FetchFunction, id: string): Promise<string> {
 	const details = {};
 	return await postRequest(fetch, `/device/${id}/update-firmware`, id, details);
+}
+
+export async function changeThumbnail(
+	fetch: FetchFunction,
+	id: string,
+	file: File
+): Promise<string> {
+	const res = await fetch(`${baseUrl}/device/${id}/thumbnail`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: file
+	}).then(mapError);
+
+	if (res.status == 204) {
+		return id;
+	} else {
+		return res.text();
+	}
 }
 
 export async function deleteDevice(fetch: FetchFunction, id: string): Promise<string> {

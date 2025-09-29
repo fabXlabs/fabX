@@ -6,9 +6,10 @@
 	interface Props {
 		id: string;
 		class: ClassValue | null | undefined;
+		onclick: () => void;
 	}
 
-	let { id, class: className }: Props = $props();
+	let { id, class: className, onclick }: Props = $props();
 
 	let thumbnailUrl = $derived.by(() => {
 		return deviceThumbnailUrl(id);
@@ -19,4 +20,5 @@
 	src={thumbnailUrl}
 	alt="the device"
 	class={cn('aspect-square w-12 rounded-lg border shadow-xs', className)}
+	{onclick}
 />

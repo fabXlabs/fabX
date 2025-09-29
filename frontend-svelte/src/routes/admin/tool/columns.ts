@@ -11,7 +11,8 @@ export const columns: ColumnDef<AugmentedTool>[] = [
 		cell: ({ row }) => {
 			return renderComponent(ToolImage, {
 				id: row.original.id,
-				class: ''
+				class: '',
+				onclick: () => {}
 			});
 		}
 	},
