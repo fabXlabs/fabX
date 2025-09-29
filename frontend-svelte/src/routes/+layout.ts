@@ -10,7 +10,7 @@ import { goto } from '$app/navigation';
 export const ssr = true;
 
 export const load: LayoutLoad = async ({ url, fetch }) => {
-	if (url.pathname === resolve('/login')) {
+	if (url.pathname.endsWith('/login')) {
 		// no redirect if user already on login page
 		return {};
 	}
