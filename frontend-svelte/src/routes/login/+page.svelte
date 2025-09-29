@@ -7,9 +7,6 @@
 	import { Input } from '$lib/components/ui/input';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-
-	// TODO use https://svelte.dev/docs/kit/images#sveltejs-enhanced-img
-	import bgImg3 from '$lib/assets/bg/3.jpeg';
 	import { Separator } from '$lib/components/ui/separator';
 	import type { FabXError } from '$lib/api/model/error';
 	import ErrorText from '$lib/components/ErrorText.svelte';
@@ -47,8 +44,13 @@
 	}
 </script>
 
+<enhanced:img
+	src="/static/bg/3.jpeg"
+	alt="an art installation"
+	class="pointer-events-none absolute h-full w-full object-cover"
+/>
+
 <div class="flex h-screen w-full items-center justify-center px-4">
-	<div class="absolute inset-0 bg-cover bg-center" style="background-image: url({bgImg3})"></div>
 	<Card.Root class="z-50 w-72">
 		<Card.Header>
 			<Card.Title class="font-accent text-center text-4xl italic">fabX</Card.Title>
