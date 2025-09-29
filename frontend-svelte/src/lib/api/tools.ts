@@ -1,4 +1,4 @@
-import { type FetchFunction } from '$lib/api';
+import { baseUrl, type FetchFunction } from '$lib/api';
 import type { AugmentedTool, Tool, ToolCreationDetails, ToolDetails } from '$lib/api/model/tool';
 import type { Qualification } from '$lib/api/model/qualification';
 import { augmentQualifications } from '$lib/api/model/augment-qualifications';
@@ -12,6 +12,10 @@ export async function getAllTools(fetch: FetchFunction): Promise<Tool[]> {
 export async function getToolById(fetch: FetchFunction, id: string): Promise<Tool> {
 	console.debug(`getToolById(${id})`);
 	return await getRequest(fetch, `/tool/${id}`);
+}
+
+export function toolThumbnailUrl(id: string): string {
+	return `${baseUrl}/tool/${id}/thumbnail`;
 }
 
 export function augmentTool(tool: Tool, qualifications: Qualification[]): AugmentedTool {

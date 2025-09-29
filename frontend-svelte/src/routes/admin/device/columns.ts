@@ -2,8 +2,18 @@ import type { ColumnDef } from '@tanstack/table-core';
 import type { AugmentedDevice } from '$lib/api/model/device';
 import { renderComponent } from '$lib/components/ui/data-table';
 import AttachedToolsList from './AttachedToolsList.svelte';
+import DeviceImage from './DeviceImage.svelte';
 
 export const columns: ColumnDef<AugmentedDevice>[] = [
+	{
+		accessorKey: 'image',
+		header: '',
+		cell: ({ row }) => {
+			return renderComponent(DeviceImage, {
+				id: row.original.id
+			});
+		}
+	},
 	{
 		accessorKey: 'name',
 		header: 'Name'

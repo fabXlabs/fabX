@@ -1,4 +1,4 @@
-import { type FetchFunction } from '$lib/api';
+import { baseUrl, type FetchFunction } from '$lib/api/index';
 import type {
 	AtDeviceCardCreationDetails,
 	AugmentedDevice,
@@ -20,6 +20,10 @@ export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 export async function getDeviceById(fetch: FetchFunction, id: string): Promise<Device> {
 	console.debug(`getDeviceById(${id})...`);
 	return await getRequest(fetch, `/device/${id}`);
+}
+
+export function deviceThumbnailUrl(id: string): string {
+	return `${baseUrl}/device/${id}/thumbnail`;
 }
 
 function augmentDevice_(device: Device, toolsMap: Map<string, Tool>): AugmentedDevice {

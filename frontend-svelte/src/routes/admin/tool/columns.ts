@@ -2,8 +2,18 @@ import type { ColumnDef } from '@tanstack/table-core';
 import type { AugmentedTool } from '$lib/api/model/tool';
 import { renderComponent } from '$lib/components/ui/data-table';
 import QualificationTagList from '$lib/components/QualificationTagList.svelte';
+import ToolImage from './ToolImage.svelte';
 
 export const columns: ColumnDef<AugmentedTool>[] = [
+	{
+		accessorKey: 'image',
+		header: '',
+		cell: ({ row }) => {
+			return renderComponent(ToolImage, {
+				id: row.original.id
+			});
+		}
+	},
 	{
 		accessorKey: 'name',
 		header: 'Name'
