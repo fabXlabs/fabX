@@ -10,7 +10,8 @@ export const columns: ColumnDef<AugmentedDevice>[] = [
 		header: '',
 		cell: ({ row }) => {
 			return renderComponent(DeviceImage, {
-				id: row.original.id
+				id: row.original.id,
+				class: ''
 			});
 		}
 	},

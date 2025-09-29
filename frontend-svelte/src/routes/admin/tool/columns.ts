@@ -10,7 +10,8 @@ export const columns: ColumnDef<AugmentedTool>[] = [
 		header: '',
 		cell: ({ row }) => {
 			return renderComponent(ToolImage, {
-				id: row.original.id
+				id: row.original.id,
+				class: ''
 			});
 		}
 	},

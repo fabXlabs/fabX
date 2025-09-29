@@ -3,17 +3,23 @@
 	import Crumbs from './Crumbs.svelte';
 	import ToolDetailsCard from './ToolDetailsCard.svelte';
 	import DangerZoneCard from './DangerZoneCard.svelte';
+	import ToolImage from '../ToolImage.svelte';
 
 	let { data }: PageProps = $props();
 </script>
 
-<!-- TODO: Show Image -->
+<!-- TODO edit image -->
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	{#if data.augmentedTool}
-		<Crumbs tool={data.augmentedTool} />
-		<h1 class="font-accent mt-4 mb-2 text-3xl">
-			{data.augmentedTool.name}
-		</h1>
+		<div class="flex justify-between">
+			<div>
+				<Crumbs tool={data.augmentedTool} />
+				<h1 class="font-accent mt-4 mb-2 text-3xl">
+					{data.augmentedTool.name}
+				</h1>
+			</div>
+			<ToolImage id={data.augmentedTool.id} class="w-19" />
+		</div>
 		<div class="my-6 grid gap-4">
 			<ToolDetailsCard tool={data.augmentedTool} qualifications={data.qualifications} />
 			<DangerZoneCard tool={data.augmentedTool} />
