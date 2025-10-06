@@ -8,6 +8,7 @@
 	import { resolve } from '$app/paths';
 	import AddUserSheet from './AddUserSheet.svelte';
 	import Crumbs from './Crumbs.svelte';
+	import DataTableColumnFilter from '$lib/components/ui/DataTableColumnFilter.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -29,6 +30,12 @@
 		}
 	];
 
+	let qualificationOptions = $derived.by(() => {
+		return data.qualifications.map((q) => {
+			return { label: q.name, value: q.id };
+		});
+	});
+
 	function rowClick(data: AugmentedUser) {
 		goto(
 			resolve('/admin/user/[id]', {
@@ -47,6 +54,18 @@
 >
 	{#snippet breadCrumbs()}
 		<Crumbs />
+	{/snippet}
+	{#snippet columnFilterSnippet({ table })}
+		<DataTableColumnFilter
+			column={table.getColumn('memberQualifications')}
+			title="Qualification"
+			options={qualificationOptions}
+		/>
+		<DataTableColumnFilter
+			column={table.getColumn('instructorQualifications')}
+			title="Instructor"
+			options={qualificationOptions}
+		/>
 	{/snippet}
 	{#snippet addButton()}
 		<AddUserSheet />

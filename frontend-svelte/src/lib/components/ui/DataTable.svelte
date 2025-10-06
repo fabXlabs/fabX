@@ -1,6 +1,7 @@
 <script lang="ts" generics="TData, TValue">
 	import {
 		type ColumnDef,
+		type ColumnFiltersState,
 		getCoreRowModel,
 		getFilteredRowModel,
 		getSortedRowModel,
@@ -15,7 +16,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
-	import { SlidersHorizontal } from 'lucide-svelte';
+	import { SlidersHorizontal, XIcon } from 'lucide-svelte';
 
 	type DataTableProps<TData, TValue> = {
 		columns: ColumnDef<TData, TValue>[];
@@ -24,6 +25,8 @@
 		initialSortingState: SortingState;
 		onRowSelect?: ((data: TData) => void) | null;
 		breadCrumbs: Snippet | null;
+		/* eslint-disable  @typescript-eslint/no-explicit-any */
+		columnFilterSnippet: Snippet<[{ table: any }]> | null;
 		addButton?: Snippet | null;
 	};
 
@@ -34,6 +37,7 @@
 		initialSortingState,
 		onRowSelect = null,
 		breadCrumbs = null,
+		columnFilterSnippet = null,
 		addButton = null
 	}: DataTableProps<TData, TValue> = $props();
 
@@ -48,6 +52,7 @@
 	let columnVisibility = $state<VisibilityState>(initialColumnVisibility);
 	/* eslint-disable  @typescript-eslint/no-explicit-any */
 	let globalFilter = $state<any>([]);
+	let columnFilters = $state<ColumnFiltersState>([]);
 	let sorting = $state<SortingState>(initialSortingState);
 
 	const table = createSvelteTable({
@@ -72,6 +77,13 @@
 				globalFilter = updater;
 			}
 		},
+		onColumnFiltersChange: (updater) => {
+			if (typeof updater === 'function') {
+				columnFilters = updater(columnFilters);
+			} else {
+				columnFilters = updater;
+			}
+		},
 		onSortingChange: (updater) => {
 			if (typeof updater === 'function') {
 				sorting = updater(globalFilter);
@@ -86,12 +98,17 @@
 			get globalFilter() {
 				return globalFilter;
 			},
+			get columnFilters() {
+				return columnFilters;
+			},
 			get sorting() {
 				return sorting;
 			}
 		},
 		globalFilterFn: 'includesString'
 	});
+
+	let isFiltered = $derived(table.getState().columnFilters.length > 0);
 </script>
 
 {#if breadCrumbs}
@@ -103,44 +120,61 @@
 {/if}
 
 <div class="container max-w-(--breakpoint-2xl) px-0 sm:px-8">
-	<div class="mx-4 flex items-center py-4 sm:mx-0">
-		<Input
-			placeholder="Search..."
-			value=""
-			onchange={(e) => {
-				table.setGlobalFilter(String(e.currentTarget.value));
-			}}
-			oninput={(e) => {
-				table.setGlobalFilter(String(e.currentTarget.value));
-			}}
-			class="mr-2 max-w-sm"
-			autocorrect="off"
-		/>
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger>
-				{#snippet child({ props })}
-					<Button {...props} variant="outline" class="mr-2 ml-auto normal-case">
-						<SlidersHorizontal />
-						<div>View</div>
-					</Button>
-				{/snippet}
-			</DropdownMenu.Trigger>
-			<DropdownMenu.Content align="end">
-				<DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
-				<DropdownMenu.Separator />
-				{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
-					<DropdownMenu.CheckboxItem
-						class="capitalize"
-						bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
+	<div class="items-top mx-4 flex justify-between py-4 sm:mx-0">
+		<div class="flex flex-wrap items-center gap-y-2 md:flex-nowrap">
+			<Input
+				placeholder="Search..."
+				value=""
+				onchange={(e) => {
+					table.setGlobalFilter(String(e.currentTarget.value));
+				}}
+				oninput={(e) => {
+					table.setGlobalFilter(String(e.currentTarget.value));
+				}}
+				class="mr-2 max-w-sm"
+				autocorrect="off"
+			/>
+			{#if columnFilterSnippet}
+				{@render columnFilterSnippet({ table })}
+				{#if isFiltered}
+					<Button
+						variant="ghost"
+						onclick={() => table.resetColumnFilters()}
+						class="h-8 px-2 normal-case lg:px-3"
 					>
-						{column.columnDef.header || column.id}
-					</DropdownMenu.CheckboxItem>
-				{/each}
-			</DropdownMenu.Content>
-		</DropdownMenu.Root>
-		{#if addButton}
-			{@render addButton()}
-		{/if}
+						Reset
+						<XIcon />
+					</Button>
+				{/if}
+			{/if}
+		</div>
+		<div class="flex flex-nowrap">
+			<DropdownMenu.Root>
+				<DropdownMenu.Trigger>
+					{#snippet child({ props })}
+						<Button {...props} variant="outline" class="auto mr-2 normal-case">
+							<SlidersHorizontal />
+							<div>View</div>
+						</Button>
+					{/snippet}
+				</DropdownMenu.Trigger>
+				<DropdownMenu.Content align="end">
+					<DropdownMenu.Label>Toggle columns</DropdownMenu.Label>
+					<DropdownMenu.Separator />
+					{#each table.getAllColumns().filter((col) => col.getCanHide()) as column (column.id)}
+						<DropdownMenu.CheckboxItem
+							class="capitalize"
+							bind:checked={() => column.getIsVisible(), (v) => column.toggleVisibility(!!v)}
+						>
+							{column.columnDef.header || column.id}
+						</DropdownMenu.CheckboxItem>
+					{/each}
+				</DropdownMenu.Content>
+			</DropdownMenu.Root>
+			{#if addButton}
+				{@render addButton()}
+			{/if}
+		</div>
 	</div>
 	<div class="border sm:rounded-md">
 		<Table.Root>

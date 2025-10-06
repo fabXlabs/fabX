@@ -15,5 +15,5 @@ export const load: PageLoad = async ({ fetch }) => {
 
 	const augmentedUsers = augmentUsers(users, qualifications);
 
-	return { augmentedUsers };
+	return { augmentedUsers, qualifications };
 };
