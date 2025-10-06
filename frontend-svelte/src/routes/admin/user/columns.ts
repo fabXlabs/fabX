@@ -42,6 +42,10 @@ export const columns: ColumnDef<AugmentedUser>[] = [
 			return renderComponent(QualificationTagList, {
 				qualifications: row.original.memberQualifications
 			});
+		},
+		filterFn: (row, columnId, filterValue) => {
+			const fV = filterValue as Array<string>;
+			return fV.every((v) => !!row.original.memberQualifications.find((q) => q.id === v));
 		}
 	},
 	{
@@ -51,6 +55,12 @@ export const columns: ColumnDef<AugmentedUser>[] = [
 			return renderComponent(QualificationTagList, {
 				qualifications: row.original.instructorQualifications || []
 			});
+		},
+		filterFn: (row, columnId, filterValue) => {
+			const fV = filterValue as Array<string>;
+			return fV.every(
+				(v) => !!row.original.instructorQualifications?.find((q) => q.id === v)
+			);
 		}
 	}
 ];

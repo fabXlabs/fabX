@@ -53,9 +53,6 @@
 	}
 </script>
 
-{@debug tools}
-{@debug sortedTools}
-
 <Sheet.Root bind:open={sheetOpen}>
 	<Sheet.Trigger class={buttonVariants({ variant: 'outline' })}>Attach Tool</Sheet.Trigger>
 	<Sheet.Content side="right" class="flex flex-col">

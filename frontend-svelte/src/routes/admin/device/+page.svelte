@@ -39,6 +39,7 @@
 	{initialColumnVisibility}
 	{initialSortingState}
 	onRowSelect={rowClick}
+	columnFilterSnippet={null}
 >
 	{#snippet breadCrumbs()}
 		<Crumbs />

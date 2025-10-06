@@ -33,6 +33,7 @@
 	initialColumnVisibility={{ orderNr: false }}
 	{initialSortingState}
 	onRowSelect={rowClick}
+	columnFilterSnippet={null}
 >
 	{#snippet breadCrumbs()}
 		<Crumbs />
