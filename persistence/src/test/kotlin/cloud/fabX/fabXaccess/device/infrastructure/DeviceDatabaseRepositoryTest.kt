@@ -36,6 +36,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.ArgumentsProvider
 import org.junit.jupiter.params.provider.ArgumentsSource
 import org.junit.jupiter.params.provider.ValueSource
+import org.junit.jupiter.params.support.ParameterDeclarations
 import org.kodein.di.instance
 
 @OptIn(ExperimentalTime::class)
@@ -554,7 +555,10 @@ internal open class DeviceDatabaseRepositoryTest {
     }
 
     class ToolIdProvider : ArgumentsProvider {
-        override fun provideArguments(context: ExtensionContext?): Stream<out Arguments> {
+        override fun provideArguments(
+            parameters: ParameterDeclarations,
+            context: ExtensionContext
+        ): Stream<out Arguments> {
             return Stream.of(
                 Arguments.of(toolId1, setOf(deviceId)),
                 Arguments.of(toolId2, setOf(deviceId, deviceId2))
