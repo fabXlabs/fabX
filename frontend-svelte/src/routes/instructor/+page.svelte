@@ -71,6 +71,8 @@
 	}
 </script>
 
+<!-- TODO use component with keyboard input, e.g. Command (see DataTableColumnFilter) -->
+
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	<Crumbs />
 	<h1 class="font-accent mt-4 mb-2 text-3xl">
