@@ -2,16 +2,19 @@
 	// noinspection ES6UnusedImports
 	import * as Card from '$lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Select from '$lib/components/ui/select/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	// noinspection ES6UnusedImports
+	import * as Command from '$lib/components/ui/command/index.js';
 	import type { PageProps } from './$types';
 	import { addMemberQualification } from '$lib/api/users';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
-	import { Label } from '$lib/components/ui/label';
 	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
 	import { Button } from '$lib/components/ui/button';
+	import { Badge } from '$lib/components/ui/badge';
 	import Crumbs from './Crumbs.svelte';
 	import { toast } from 'svelte-sonner';
+	import { CheckIcon, CirclePlusIcon } from 'lucide-svelte';
+	import { cn } from '$lib/utils';
+	import ErrorText from '$lib/components/ErrorText.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -51,27 +54,23 @@
 	async function submit() {
 		errors = [];
 
-		const promises = members.flatMap((member) => {
-			return qualifications.map((qualification) => {
-				return addMemberQualification(fetch, member, qualification);
-			});
-		});
-		for (const promise of promises) {
-			await promise.catch((e) => {
-				if (e.type !== 'MemberQualificationAlreadyFound') {
-					errors.push(e);
-				}
-				return '';
-			});
+		for (const member of members) {
+			for (const qualification of qualifications) {
+				await addMemberQualification(fetch, member, qualification).catch((e) => {
+					if (e.type !== 'MemberQualificationAlreadyFound') {
+						errors.push(e);
+					}
+					return '';
+				});
+			}
 		}
+
 		if (errors.length == 0) {
 			resetForm();
 			toast.success('Added member Qualifications');
 		}
 	}
 </script>
-
-<!-- TODO use component with keyboard input, e.g. Command (see DataTableColumnFilter) -->
 
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	<Crumbs />
@@ -81,61 +80,114 @@
 	<div class="my-6 grid gap-4">
 		<Card.Root>
 			<Card.Header>
-				<Card.Title class="text-lg">Add Member Qualification</Card.Title>
+				<Card.Title class="text-lg">Add Member Qualification NEW</Card.Title>
 			</Card.Header>
-			<Card.Content>
-				<form onsubmit={submit}>
-					<div class="grid gap-4">
-						<div class="grid gap-2">
-							<Label for="members" class="text-muted-foreground">Members</Label>
-							<Select.Root type="multiple" name="members" bind:value={members}>
-								<Select.Trigger class="w-full whitespace-normal">
-									<div class="flex flex-wrap justify-start">
-										{#each membersTriggerContent as member (member.id)}
-											<span class="inline-block flex-none">
-												{member.firstName} ({member.wikiName})&nbsp;
-											</span>
-										{/each}
-									</div>
-								</Select.Trigger>
-								<Select.Content>
+			<Card.Content class="grid gap-2">
+				<Popover.Root>
+					<Popover.Trigger>
+						{#snippet child({ props })}
+							<Button {...props} variant="outline" class="normal-case">
+								<CirclePlusIcon />
+								{#if members.length > 0}
+									{#each membersTriggerContent as member (member.id)}
+										<Badge variant="secondary">{member.firstName} ({member.wikiName})</Badge>
+									{/each}
+								{:else}
+									Select Members
+								{/if}
+							</Button>
+						{/snippet}
+					</Popover.Trigger>
+					<Popover.Content class="w-[200px] p-0" align="start">
+						<Command.Root>
+							<Command.Input placeholder="Member" />
+							<Command.List>
+								<Command.Empty>No results found.</Command.Empty>
+								<Command.Group>
 									{#each sortedMembers as member (member.id)}
-										<Select.Item value={member.id}>
-											{member.firstName} ({member.wikiName})
-										</Select.Item>
+										{@const isSelected = !!members.find((m) => m === member.id)}
+										<Command.Item
+											onSelect={() => {
+												if (isSelected) {
+													members = members.filter((m) => m !== member.id);
+												} else {
+													members.push(member.id);
+												}
+											}}
+										>
+											<div
+												class={cn(
+													'border-primary mr-2 flex size-4 items-center justify-center rounded-sm border',
+													isSelected
+														? 'bg-primary text-primary-foreground'
+														: 'opacity-50 [&_svg]:invisible'
+												)}
+											>
+												<CheckIcon class="size-4" />
+											</div>
+											<span>{member.firstName} ({member.wikiName})</span>
+										</Command.Item>
 									{/each}
-								</Select.Content>
-							</Select.Root>
-						</div>
-
-						<div class="grid gap-2">
-							<Label for="qualifications" class="text-muted-foreground">Qualifications</Label>
-							<Select.Root type="multiple" name="qualifications" bind:value={qualifications}>
-								<Select.Trigger class="w-full whitespace-normal">
-									<div class="flex flex-wrap justify-start">
-										{#each qualificationsTriggerContent as qualification (qualification.id)}
-											<span class="inline-block flex-none">
-												<QualificationTag {qualification} />
-											</span>
-										{/each}
-									</div>
-								</Select.Trigger>
-								<Select.Content>
+								</Command.Group>
+							</Command.List>
+						</Command.Root>
+					</Popover.Content>
+				</Popover.Root>
+				<Popover.Root>
+					<Popover.Trigger>
+						{#snippet child({ props })}
+							<Button {...props} variant="outline" class="normal-case">
+								<CirclePlusIcon />
+								{#if qualifications.length > 0}
+									{#each qualificationsTriggerContent as qualification (qualification.id)}
+										<Badge variant="secondary">{qualification.name}</Badge>
+									{/each}
+								{:else}
+									Select Qualifications
+								{/if}
+							</Button>
+						{/snippet}
+					</Popover.Trigger>
+					<Popover.Content class="w-[200px] p-0" align="start">
+						<Command.Root>
+							<Command.Input placeholder="Qualification" />
+							<Command.List>
+								<Command.Empty>No results found.</Command.Empty>
+								<Command.Group>
 									{#each instructorQualifications as qualification (qualification.id)}
-										<Select.Item value={qualification.id}>
-											<QualificationTag {qualification} />
-										</Select.Item>
+										{@const isSelected = !!qualifications.find((q) => q === qualification.id)}
+										<Command.Item
+											onSelect={() => {
+												if (isSelected) {
+													qualifications = qualifications.filter((q) => q !== qualification.id);
+												} else {
+													qualifications.push(qualification.id);
+												}
+											}}
+										>
+											<div
+												class={cn(
+													'border-primary mr-2 flex size-4 items-center justify-center rounded-sm border',
+													isSelected
+														? 'bg-primary text-primary-foreground'
+														: 'opacity-50 [&_svg]:invisible'
+												)}
+											>
+												<CheckIcon class="size-4" />
+											</div>
+											<span>{qualification.name}</span>
+										</Command.Item>
 									{/each}
-								</Select.Content>
-							</Select.Root>
-						</div>
-						<!-- eslint-disable-next-line svelte/require-each-key -->
-						{#each errors as error}
-							<ErrorText {error} />
-						{/each}
-						<Button type="submit" class="w-full">Add</Button>
-					</div>
-				</form>
+								</Command.Group>
+							</Command.List>
+						</Command.Root>
+					</Popover.Content>
+				</Popover.Root>
+				<!-- eslint-disable-next-line svelte/require-each-key -->
+				{#each errors as error}
+					<ErrorText {error} />
+				{/each}
+				<Button type="submit" class="w-full" onclick={submit}>Add</Button>
 			</Card.Content>
 		</Card.Root>
 	</div>
