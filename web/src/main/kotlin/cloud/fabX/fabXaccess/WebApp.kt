@@ -223,14 +223,8 @@ class WebApp(
 
         routing {
             singlePageApplication {
-                angular("fabx-dashboard")
+                filesPath = "fabx-svelte"
                 useResources = true
-            }
-            route("sv") {
-                singlePageApplication {
-                    filesPath = "fabx-svelte"
-                    useResources = true
-                }
             }
             route("/api/v1") {
                 authenticate("api-jwt-cookie", "api-basic", "api-jwt") {
