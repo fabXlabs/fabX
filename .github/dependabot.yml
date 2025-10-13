@@ -5,7 +5,7 @@ updates:
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       be-dependencies:
         patterns:
@@ -15,7 +15,7 @@ updates:
     # default location of `.github/workflows`
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       gha-dependencies:
         patterns:
@@ -23,7 +23,7 @@ updates:
   - package-ecosystem: npm
     directory: "/frontend-svelte"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       fe-dependencies:
         patterns:
