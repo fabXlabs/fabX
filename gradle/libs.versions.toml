@@ -11,7 +11,7 @@ hikari = "7.0.2"
 postgresql = "42.7.8"
 liquibase = "5.0.1"
 liquibase-slf4j = "5.1.0"
-webauthn4j = "0.30.0.RELEASE"
+webauthn4j = "0.30.1.RELEASE"
 scrimage = "4.3.5"
 logback = "1.5.21"
 slf4j = "2.0.17"
@@ -76,6 +76,6 @@ testcontainers-postgres = { module = "org.testcontainers:postgresql", version.re
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-shadow = { id = "com.gradleup.shadow", version = "9.2.2" }
+shadow = { id = "com.gradleup.shadow", version = "9.3.0" }
 versions = { id = "com.github.ben-manes.versions", version = "0.53.0" }
 node = { id = "com.github.node-gradle.node", version = "7.1.0" }
