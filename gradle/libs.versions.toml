@@ -1,6 +1,6 @@
 [versions]
-kotlin = "2.2.21"
-arrow = "2.2.0"
+kotlin = "2.3.0"
+arrow = "2.2.1.1"
 kodein = "7.30.0"
 ktor = "3.3.3"
 micrometer = "1.16.1"
@@ -11,9 +11,9 @@ hikari = "7.0.2"
 postgresql = "42.7.8"
 liquibase = "5.0.1"
 liquibase-slf4j = "5.1.0"
-webauthn4j = "0.30.1.RELEASE"
+webauthn4j = "0.30.2.RELEASE"
 scrimage = "4.3.5"
-logback = "1.5.22"
+logback = "1.5.23"
 slf4j = "2.0.17"
 
 junit = "6.0.1"
@@ -21,7 +21,7 @@ assertk = "0.28.1"
 mockito-kotlin = "6.1.0"
 mockito-junit5 = "5.21.0"
 kotlin-wiremock = "2.1.1"
-testcontainers = "1.21.3"
+testcontainers = "1.21.4"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
