@@ -9,7 +9,9 @@ import com.webauthn4j.data.attestation.authenticator.EC2COSEKey
 import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier
 import com.webauthn4j.data.attestation.statement.COSEKeyOperation
 import com.webauthn4j.data.client.CollectedClientData
-import java.util.UUID
+import kotlin.uuid.Uuid
+import kotlin.uuid.toJavaUuid
+import kotlin.uuid.toKotlinUuid
 import kotlinx.serialization.Serializable
 
 // TODO implement new CredentialRecord according to >= WebAuthn Level3 working draft1
@@ -79,7 +81,7 @@ class AuthenticatorImpl(
 @Serializable
 data class SerializableAttestedCredentialData(
     @Serializable(with = UuidSerializer::class)
-    private val aaguid: UUID?,
+    private val aaguid: Uuid?,
     private val credentialId: ByteArray,
     private val coseKey: SerializableCOSEKey
 ) {
@@ -91,7 +93,7 @@ data class SerializableAttestedCredentialData(
             }
 
             return SerializableAttestedCredentialData(
-                attestedCredentialData.aaguid.value,
+                attestedCredentialData.aaguid.value?.toKotlinUuid(),
                 attestedCredentialData.credentialId,
                 key
             )
@@ -100,7 +102,7 @@ data class SerializableAttestedCredentialData(
 
     fun to(): AttestedCredentialData {
         return AttestedCredentialData(
-            AAGUID(aaguid),
+            AAGUID(aaguid?.toJavaUuid()),
             credentialId,
             coseKey.to()
         )
