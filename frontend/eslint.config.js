@@ -23,6 +23,11 @@ export default ts.config(
 		}
 	},
 	{
+		rules: {
+			'no-useless-assignment': 'off'
+		}
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		// See more details at: https://typescript-eslint.io/packages/parser/
 		languageOptions: {
