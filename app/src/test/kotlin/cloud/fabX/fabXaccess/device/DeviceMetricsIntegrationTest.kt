@@ -21,7 +21,6 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Test
 
@@ -240,45 +239,46 @@ class DeviceMetricsIntegrationTest {
     }
 
     @Test
-    fun `given device disconnected when getting device metrics then no longer returns device pin status`() = withTestApp {
-        // given
-        val mac = "AABBCCDDEE01"
-        val secret = "49ecad93aac0bdff2915768bd514678f"
+    fun `given device disconnected when getting device metrics then no longer returns device pin status`() =
+        withTestApp {
+            // given
+            val mac = "AABBCCDDEE01"
+            val secret = "49ecad93aac0bdff2915768bd514678f"
 
-        val deviceName1 = "Some Device Name"
-        val deviceId1 = givenDevice(mac = mac, secret = secret, name = deviceName1)
+            val deviceName1 = "Some Device Name"
+            val deviceId1 = givenDevice(mac = mac, secret = secret, name = deviceName1)
 
-        val notification = PinStatusNotification(mapOf(1 to true))
+            val notification = PinStatusNotification(mapOf(1 to true))
 
-        c().webSocket("/api/v1/device/ws", {
-            basicAuth(mac, secret)
-        }) {
-            (incoming.receive() as Frame.Text).readText() // greeting text
-            outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerNotification>(notification)))
+            c().webSocket("/api/v1/device/ws", {
+                basicAuth(mac, secret)
+            }) {
+                (incoming.receive() as Frame.Text).readText() // greeting text
+                outgoing.send(Frame.Text(Json.encodeToString<DeviceToServerNotification>(notification)))
+
+                delay(100.milliseconds)
+
+                // when
+                val initialResponse = c().get("/metrics") {
+                    basicAuth("metrics", "supersecretmetricspassword")
+                }
+
+                // then
+                assertThat(initialResponse.status).isEqualTo(HttpStatusCode.OK)
+                assertThat(initialResponse.bodyAsText()).all {
+                    contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
+                }
+            }
 
             delay(100.milliseconds)
 
-            // when
-            val initialResponse = c().get("/metrics") {
+            val response = c().get("/metrics") {
                 basicAuth("metrics", "supersecretmetricspassword")
             }
 
-            // then
-            assertThat(initialResponse.status).isEqualTo(HttpStatusCode.OK)
-            assertThat(initialResponse.bodyAsText()).all {
-                contains("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
+            assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+            assertThat(response.bodyAsText()).all {
+                doesNotContain("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
             }
         }
-
-        delay(100.milliseconds)
-
-        val response = c().get("/metrics") {
-            basicAuth("metrics", "supersecretmetricspassword")
-        }
-
-        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.bodyAsText()).all {
-            doesNotContain("fabx_device_pins{deviceId=\"$deviceId1\",pin=\"1\"} 1.0")
-        }
-    }
 }

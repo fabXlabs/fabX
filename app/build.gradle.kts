@@ -33,5 +33,6 @@ dependencies {
     testImplementation(rootProject.libs.testcontainers)
     testImplementation(rootProject.libs.testcontainers.postgres)
     testImplementation(rootProject.libs.exposed.core)
+    testImplementation(rootProject.libs.exposed.jdbc)
     testImplementation(rootProject.libs.hikaricp)
 }

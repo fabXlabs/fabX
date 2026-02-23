@@ -2321,7 +2321,7 @@ internal class UserTest {
 
         // then
         assertThat(result).isEqualTo(
-            "User(id=UserId(value=f4a3f34c-e12a-395c-9fd2-23e167422c32), " +
+            "User(id=UserId(value=00000000-0000-002a-0000-000000000000), " +
                     "aggregateVersion=123, " +
                     "firstName=Nikola, " +
                     "lastName=Tesla, " +
@@ -2329,8 +2329,8 @@ internal class UserTest {
                     "locked=false, " +
                     "notes=null, " +
                     "identities=[], " +
-                    "memberQualifications=[QualificationId(value=6ecbc07c-382b-3e04-a9b3-a86909f10e64)], " +
-                    "instructorQualifications=[QualificationId(value=a3dd6fd6-61a5-3c37-810c-8c68fe610bec)], " +
+                    "memberQualifications=[QualificationId(value=00000000-0000-002b-0000-000000000000)], " +
+                    "instructorQualifications=[QualificationId(value=00000000-0000-002c-0000-000000000000)], " +
                     "isAdmin=true)"
         )
     }

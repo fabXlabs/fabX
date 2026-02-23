@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.device.model
 
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.newDeviceId
-import java.util.UUID
+import kotlin.uuid.Uuid
 
 object DeviceIdFixture {
 
@@ -12,6 +12,6 @@ object DeviceIdFixture {
     fun static(nr: Int): DeviceId {
         val byteArray = ByteArray(16)
         byteArray[7] = nr.toByte()
-        return DeviceId(UUID.nameUUIDFromBytes(byteArray))
+        return DeviceId(Uuid.fromByteArray(byteArray))
     }
 }

@@ -4,12 +4,13 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.RoutingContext
 import java.util.UUID
+import kotlin.uuid.Uuid
 
-suspend inline fun RoutingContext.readUUIDParameter(name: String): UUID? {
+suspend inline fun RoutingContext.readUUIDParameter(name: String): Uuid? {
     call.parameters[name]?.let {
         try {
-            UUID.fromString(it)
-        } catch (e: IllegalArgumentException) {
+            Uuid.parseHexDash(it)
+        } catch (_: IllegalArgumentException) {
             null
         }
     }?.let {

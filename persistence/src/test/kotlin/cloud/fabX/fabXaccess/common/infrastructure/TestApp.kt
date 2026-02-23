@@ -6,8 +6,8 @@ import cloud.fabX.fabXaccess.persistenceModule
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.test.runTest
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.bindInstance
 import org.kodein.di.instance

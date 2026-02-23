@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.common.model
 
 import cloud.fabX.fabXaccess.common.application.UuidSerializer
-import java.util.UUID
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,11 +9,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class DeviceId(
-    @Serializable(with = UuidSerializer::class) override val value: UUID
-) : EntityId<UUID>, ActorId {
+    @Serializable(with = UuidSerializer::class) override val value: Uuid
+) : EntityId<Uuid>, ActorId {
     companion object {
         fun fromString(s: String): DeviceId {
-            return DeviceId(UUID.fromString(s))
+            return DeviceId(Uuid.parseHexDash(s))
         }
     }
 
@@ -30,5 +30,5 @@ typealias DeviceIdFactory = () -> DeviceId
  * @return DeviceId of a random UUID
  */
 fun newDeviceId(): DeviceId {
-    return DeviceId(UUID.randomUUID())
+    return DeviceId(Uuid.random())
 }

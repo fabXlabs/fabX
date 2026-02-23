@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.user.model
 
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newUserId
-import java.util.UUID
+import kotlin.uuid.Uuid
 
 object UserIdFixture {
 
@@ -11,6 +11,6 @@ object UserIdFixture {
     fun static(nr: Int): UserId {
         val byteArray = ByteArray(16)
         byteArray[7] = nr.toByte()
-        return UserId(UUID.nameUUIDFromBytes(byteArray))
+        return UserId(Uuid.fromByteArray(byteArray))
     }
 }

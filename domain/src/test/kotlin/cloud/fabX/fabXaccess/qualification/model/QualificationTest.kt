@@ -332,7 +332,7 @@ internal class QualificationTest {
 
         // then
         assertThat(result).isEqualTo(
-            "Qualification(id=QualificationId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779), " +
+            "Qualification(id=QualificationId(value=00000000-0000-00d2-0000-000000000000), " +
                     "aggregateVersion=123, " +
                     "name=Door Shop, " +
                     "description=Door of the workshop, " +

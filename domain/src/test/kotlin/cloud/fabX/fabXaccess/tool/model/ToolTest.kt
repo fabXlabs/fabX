@@ -600,7 +600,7 @@ internal class ToolTest {
 
         // then
         assertThat(result).isEqualTo(
-            "Tool(id=ToolId(value=31174c35-800c-3c91-bf56-08f55101fcfc), " +
+            "Tool(id=ToolId(value=00000000-0000-00c8-0000-000000000000), " +
                     "aggregateVersion=42, " +
                     "name=Door Shop, " +
                     "type=UNLOCK, " +
@@ -610,7 +610,7 @@ internal class ToolTest {
                     "enabled=true, " +
                     "notes=hello world, " +
                     "wikiLink=https://example.com/shopdoor, " +
-                    "requiredQualifications=[QualificationId(value=4bfb3604-f1ae-3404-b651-12239513f529)])"
+                    "requiredQualifications=[QualificationId(value=00000000-0000-00a6-0000-000000000000)])"
         )
     }
 }

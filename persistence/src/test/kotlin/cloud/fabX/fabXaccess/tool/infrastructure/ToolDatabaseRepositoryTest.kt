@@ -81,7 +81,7 @@ internal open class ToolDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.ToolNotFound(
-                        "Tool with id ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) not found.",
+                        "Tool with id ToolId(value=00000000-0000-0076-0000-000000000000) not found.",
                         toolId
                     )
                 )
@@ -215,7 +215,7 @@ internal open class ToolDatabaseRepositoryTest {
                     .isLeft()
                     .isEqualTo(
                         Error.VersionConflict(
-                            "Previous version of tool ToolId(value=7d039745-0d78-3b2d-86d8-fdeec2b8a872) is 2, " +
+                            "Previous version of tool ToolId(value=00000000-0000-0076-0000-000000000000) is 2, " +
                                     "desired new version is $version."
                         )
                     )

@@ -7,7 +7,6 @@ import cloud.fabX.fabXaccess.common.model.DomainEventHandler
 import cloud.fabX.fabXaccess.common.model.SystemActorId
 import cloud.fabX.fabXaccess.common.model.UserId
 import cloud.fabX.fabXaccess.common.model.newCorrelationId
-import cloud.fabX.fabXaccess.config
 import cloud.fabX.fabXaccess.domainModule
 import cloud.fabX.fabXaccess.loggingModule
 import cloud.fabX.fabXaccess.persistenceModule
@@ -30,14 +29,14 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import java.io.File
-import java.util.UUID
-import kotlinx.coroutines.test.runTest
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.kodein.di.DI
 import org.kodein.di.allInstances
 import org.kodein.di.bindConstant
@@ -142,7 +141,7 @@ private fun testSetup(): WebApp {
     val setupCorrelationId = newCorrelationId()
     val timestamp = Instant.fromEpochMilliseconds(1641085323000)
 
-    val memberUserId = UserId(UUID.fromString("c63b3a7d-bd18-4272-b4ed-4bcf9683c602"))
+    val memberUserId = UserId(Uuid.parseHexDash("c63b3a7d-bd18-4272-b4ed-4bcf9683c602"))
     val memberCreated = UserCreated(
         memberUserId,
         SystemActorId,
@@ -163,7 +162,7 @@ private fun testSetup(): WebApp {
         hash = "GTs+xQn4hIhy4gEKY0xPE6yaJVTesoxzBPk7izh0+pQ=" // password: s3cr3t
     )
 
-    val adminUserId = UserId(UUID.fromString("337be01a-fee3-4938-8dc3-c801d37c0e95"))
+    val adminUserId = UserId(Uuid.parseHexDash("337be01a-fee3-4938-8dc3-c801d37c0e95"))
     val adminCreated = UserCreated(
         adminUserId,
         SystemActorId,

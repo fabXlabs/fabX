@@ -2,7 +2,7 @@ package cloud.fabX.fabXaccess.qualification.model
 
 import cloud.fabX.fabXaccess.common.model.QualificationId
 import cloud.fabX.fabXaccess.common.model.newQualificationId
-import java.util.UUID
+import kotlin.uuid.Uuid
 
 object QualificationIdFixture {
 
@@ -11,7 +11,7 @@ object QualificationIdFixture {
     fun static(nr: Int): QualificationId {
         val byteArray = ByteArray(16)
         byteArray[7] = nr.toByte()
-        return QualificationId(UUID.nameUUIDFromBytes(byteArray))
+        return QualificationId(Uuid.fromByteArray(byteArray))
     }
 
     fun arbitraries(amount: Int): Set<QualificationId> {

@@ -18,6 +18,12 @@ allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "jacoco")
 
+    kotlin {
+        compilerOptions {
+            optIn.add("kotlin.uuid.ExperimentalUuidApi")
+        }
+    }
+
     repositories {
         mavenCentral()
         maven("https://oss.sonatype.org/content/repositories/snapshots/")

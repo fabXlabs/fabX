@@ -1,6 +1,6 @@
 package cloud.fabX.fabXaccess.common.model
 
-import java.util.UUID
+import kotlin.uuid.Uuid
 
 object CorrelationIdFixture {
 
@@ -9,6 +9,6 @@ object CorrelationIdFixture {
     fun static(nr: Int): CorrelationId {
         val byteArray = ByteArray(16)
         byteArray[7] = nr.toByte()
-        return CorrelationId(UUID.nameUUIDFromBytes(byteArray))
+        return CorrelationId(Uuid.fromByteArray(byteArray))
     }
 }

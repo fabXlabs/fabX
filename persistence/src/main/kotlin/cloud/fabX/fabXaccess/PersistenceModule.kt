@@ -10,7 +10,8 @@ import cloud.fabX.fabXaccess.user.infrastructure.UserDatabaseRepository
 import cloud.fabX.fabXaccess.user.infrastructure.WebauthnInMemoryRepository
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.v1.jdbc.Database
+
 import org.kodein.di.DI
 import org.kodein.di.bindSingleton
 import org.kodein.di.instance

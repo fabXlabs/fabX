@@ -72,7 +72,7 @@ internal open class DeviceDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.DeviceNotFound(
-                        "Device with id DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) not found.",
+                        "Device with id DeviceId(value=00000000-0000-0092-0000-000000000000) not found.",
                         deviceId
                     )
                 )
@@ -198,7 +198,7 @@ internal open class DeviceDatabaseRepositoryTest {
                     .isLeft()
                     .isEqualTo(
                         Error.VersionConflict(
-                            "Previous version of device DeviceId(value=a47a7eb7-4f7d-3d6d-8287-0d27bda3d39a) is 2, " +
+                            "Previous version of device DeviceId(value=00000000-0000-0092-0000-000000000000) is 2, " +
                                     "desired new version is $version."
                         )
                     )

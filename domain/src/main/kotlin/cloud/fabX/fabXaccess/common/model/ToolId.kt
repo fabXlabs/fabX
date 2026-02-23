@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.common.model
 
 import cloud.fabX.fabXaccess.common.application.UuidSerializer
-import java.util.UUID
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,11 +9,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class ToolId(
-    @Serializable(with = UuidSerializer::class) override val value: UUID
-) : EntityId<UUID> {
+    @Serializable(with = UuidSerializer::class) override val value: Uuid
+) : EntityId<Uuid> {
     companion object {
         fun fromString(s: String): ToolId {
-            return ToolId(UUID.fromString(s))
+            return ToolId(Uuid.parseHexDash(s))
         }
     }
 
@@ -30,5 +30,5 @@ typealias ToolIdFactory = () -> ToolId
  * @return a ToolId of a random UUID
  */
 fun newToolId(): ToolId {
-    return ToolId(UUID.randomUUID())
+    return ToolId(Uuid.random())
 }

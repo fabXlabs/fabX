@@ -26,7 +26,7 @@ internal class WebauthnInMemoryRepositoryTest {
             .isLeft()
             .isEqualTo(
                 Error.ChallengeNotFound(
-                    "Challenge not found for UserId(value=5d10bf13-ef2a-3d2a-acf3-b9e9a0e9537c).",
+                    "Challenge not found for UserId(value=00000000-0000-002e-0000-000000000000).",
                     userId
                 )
             )
@@ -65,7 +65,7 @@ internal class WebauthnInMemoryRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.ChallengeNotFound(
-                        "Challenge not found for UserId(value=5d10bf13-ef2a-3d2a-acf3-b9e9a0e9537c).",
+                        "Challenge not found for UserId(value=00000000-0000-002e-0000-000000000000).",
                         userId
                     )
                 )

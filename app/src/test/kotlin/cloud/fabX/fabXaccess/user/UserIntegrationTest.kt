@@ -16,11 +16,11 @@ import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.qualification.givenQualification
 import cloud.fabX.fabXaccess.qualification.model.QualificationIdFixture
-import cloud.fabX.fabXaccess.user.rest.LimitedUser
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import cloud.fabX.fabXaccess.user.model.UserSourcingEvent
 import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.IsAdminDetails
+import cloud.fabX.fabXaccess.user.rest.LimitedUser
 import cloud.fabX.fabXaccess.user.rest.PasswordChangeDetails
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import cloud.fabX.fabXaccess.user.rest.PinIdentityDetails
@@ -171,7 +171,7 @@ internal class UserIntegrationTest {
     fun `given instructor authentication when get limited users then returns limited users`() = withTestApp {
         // given
         val qualificationId = givenQualification()
-        val instructorId = givenUser("Instructor", "", "instructor",)
+        val instructorId = givenUser("Instructor", "", "instructor")
         givenUserIsInstructorFor(instructorId, qualificationId)
         val instructorUsername = "instructor_username"
         val instructorPassword = "instructor_password"
@@ -399,22 +399,23 @@ internal class UserIntegrationTest {
     }
 
     @Test
-    fun `given non-admin authentication when getting sourcing events by id then returns http forbidden`() = withTestApp {
-        // given
-        val userId = givenUser(
-            "Alan",
-            "Turing",
-            "turing"
-        )
+    fun `given non-admin authentication when getting sourcing events by id then returns http forbidden`() =
+        withTestApp {
+            // given
+            val userId = givenUser(
+                "Alan",
+                "Turing",
+                "turing"
+            )
 
-        // when
-        val response = c().get("/api/v1/user/$userId/sourcing-event") {
-            memberAuth()
+            // when
+            val response = c().get("/api/v1/user/$userId/sourcing-event") {
+                memberAuth()
+            }
+
+            // then
+            assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
         }
-
-        // then
-        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
-    }
 
     @Test
     fun `given non-admin authentication when adding user then returns http forbidden`() = withTestApp {

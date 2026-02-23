@@ -1,7 +1,7 @@
 package cloud.fabX.fabXaccess.common.model
 
 import cloud.fabX.fabXaccess.common.application.UuidSerializer
-import java.util.UUID
+import kotlin.uuid.Uuid
 import kotlinx.serialization.Serializable
 
 /**
@@ -9,11 +9,11 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 data class CorrelationId(
-    @Serializable(with = UuidSerializer::class) val id: UUID
+    @Serializable(with = UuidSerializer::class) val id: Uuid
 ) {
     companion object {
         fun fromString(s: String): CorrelationId {
-            return CorrelationId(UUID.fromString(s))
+            return CorrelationId(Uuid.parseHexDash(s))
         }
     }
 
@@ -23,5 +23,5 @@ data class CorrelationId(
 }
 
 fun newCorrelationId(): CorrelationId {
-    return CorrelationId(UUID.randomUUID())
+    return CorrelationId(Uuid.random())
 }

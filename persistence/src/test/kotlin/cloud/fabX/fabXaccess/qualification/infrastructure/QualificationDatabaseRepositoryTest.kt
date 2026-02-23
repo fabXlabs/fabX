@@ -53,7 +53,7 @@ internal open class QualificationDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.QualificationNotFound(
-                        "Qualification with id QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) not found.",
+                        "Qualification with id QualificationId(value=00000000-0000-007b-0000-000000000000) not found.",
                         qualificationId
                     )
                 )
@@ -166,7 +166,7 @@ internal open class QualificationDatabaseRepositoryTest {
                     .isLeft()
                     .isEqualTo(
                         Error.VersionConflict(
-                            "Previous version of qualification QualificationId(value=3ec3cfae-43c1-3af8-8a4b-8cf636d21640) is 2, " +
+                            "Previous version of qualification QualificationId(value=00000000-0000-007b-0000-000000000000) is 2, " +
                                     "desired new version is $version."
                         )
                     )

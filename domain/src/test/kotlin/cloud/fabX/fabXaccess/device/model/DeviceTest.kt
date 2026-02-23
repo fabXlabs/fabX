@@ -828,14 +828,14 @@ internal class DeviceTest {
 
         // then
         assertThat(result).isEqualTo(
-            "Device(id=DeviceId(value=b51364fb-0487-3d2d-8da4-e7478a1c163d), " +
+            "Device(id=DeviceId(value=00000000-0000-0094-0000-000000000000), " +
                     "aggregateVersion=567, " +
                     "name=Woodworking, " +
                     "background=https://example.com/image.bmp, " +
                     "backupBackendUrl=https://fabx-backup.example.com, " +
                     "actualFirmwareVersion=1.2.3, " +
                     "desiredFirmwareVersion=4.5.6, " +
-                    "attachedTools={3=ToolId(value=b6f53dde-e176-3672-8b65-819b4c168e6f)}, " +
+                    "attachedTools={3=ToolId(value=00000000-0000-0059-0000-000000000000)}, " +
                     "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret))"
         )
     }

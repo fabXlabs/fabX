@@ -62,7 +62,7 @@ internal open class UserDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.UserNotFound(
-                        "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                        "User with id UserId(value=00000000-0000-00d2-0000-000000000000) not found.",
                         userId
                     )
                 )
@@ -81,7 +81,7 @@ internal open class UserDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.UserNotFound(
-                        "User with id UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) not found.",
+                        "User with id UserId(value=00000000-0000-00d2-0000-000000000000) not found.",
                         userId
                     )
                 )
@@ -187,7 +187,7 @@ internal open class UserDatabaseRepositoryTest {
                 .isLeft()
                 .isEqualTo(
                     Error.VersionConflict(
-                        "Previous version of user UserId(value=58de55f4-f3cd-3fde-8a2f-59b01c428779) is 2, " +
+                        "Previous version of user UserId(value=00000000-0000-00d2-0000-000000000000) is 2, " +
                                 "desired new version is $version."
                     )
                 )
