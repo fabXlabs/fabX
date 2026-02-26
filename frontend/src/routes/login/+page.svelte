@@ -10,6 +10,8 @@
 	import { Separator } from '$lib/components/ui/separator';
 	import type { FabXError } from '$lib/api/model/error';
 	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { deleteRedirectAfterLoginCookie, getRedirectAfterLoginCookie } from '$lib/utils';
+	import { browser } from '$app/environment';
 
 	let username = $state('');
 	let password = $state('');
@@ -18,10 +20,25 @@
 
 	let error: FabXError | null = $state(null);
 
+	async function gotoRedirectAfterLoginOrSlash() {
+		if (browser) {
+			const redirectAfterLogin = getRedirectAfterLoginCookie();
+			deleteRedirectAfterLoginCookie();
+
+			if (redirectAfterLogin) {
+				// eslint-disable-next-line svelte/no-navigation-without-resolve
+				await goto(redirectAfterLogin);
+				return;
+			}
+		}
+
+		await goto(resolve('/'));
+	}
+
 	async function loginPasswordless() {
 		await loginWebauthn(username)
 			.then(() => {
-				goto(resolve('/'));
+				gotoRedirectAfterLoginOrSlash();
 			})
 			.catch((e) => {
 				error = e;
@@ -35,7 +52,7 @@
 		} else {
 			await loginBasicAuth(username, password)
 				.then(() => {
-					goto(resolve('/'));
+					gotoRedirectAfterLoginOrSlash();
 				})
 				.catch((e) => {
 					error = e;

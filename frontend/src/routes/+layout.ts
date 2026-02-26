@@ -6,6 +6,7 @@ import { resolve } from '$app/paths';
 import { error } from '@sveltejs/kit';
 import { browser } from '$app/environment';
 import { goto } from '$app/navigation';
+import { setRedirectAfterLoginCookie } from '$lib/utils';
 
 export const ssr = true;
 
@@ -19,10 +20,12 @@ export const load: LayoutLoad = async ({ url, fetch }) => {
 		return { me, meError: null };
 	} catch (e) {
 		if (e === UNAUTHORIZED_ERROR) {
+			setRedirectAfterLoginCookie(url.pathname);
 			if (browser) {
 				await goto(resolve('/login'));
 				return {};
 			} else {
+				console.log('redirecting to /login on server side');
 				redirect(302, resolve('/login'));
 			}
 		}
