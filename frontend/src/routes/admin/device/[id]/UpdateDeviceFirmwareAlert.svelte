@@ -13,18 +13,20 @@
 
 	let { device }: Props = $props();
 
-  let open = $state(false);
+	let open = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function updateDeviceFirmware_(): Promise<string> {
 		error = null;
 		return await updateDeviceFirmware(fetch, device.id)
-            .then({ open = false })
-            .catch((e) => {
-              error = e;
-              return '';
-            });
+			.then((_res) => {
+				open = false;
+			})
+			.catch((e) => {
+				error = e;
+				return '';
+			});
 	}
 </script>
 

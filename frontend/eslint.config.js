@@ -24,7 +24,8 @@ export default ts.config(
 	},
 	{
 		rules: {
-			'no-useless-assignment': 'off'
+			'no-useless-assignment': 'off',
+			'@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }]
 		}
 	},
 	{
