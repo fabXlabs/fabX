@@ -1,30 +1,32 @@
 <script lang="ts">
-	// noinspection ES6UnusedImports
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import type { AugmentedDevice } from '$lib/api/model/device';
-	import { unlockTool } from '$lib/api/devices';
-	import type { Tool } from '$lib/api/model/tool';
+  // noinspection ES6UnusedImports
+  import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
+  import type {FabXError} from '$lib/api/model/error';
+  import {buttonVariants} from '$lib/components/ui/button';
+  import ErrorText from '$lib/components/ErrorText.svelte';
+  import type {AugmentedDevice} from '$lib/api/model/device';
+  import {unlockTool} from '$lib/api/devices';
+  import type {Tool} from '$lib/api/model/tool';
 
-	interface Props {
-		device: AugmentedDevice;
-		tool: Tool;
-		open: boolean;
-	}
+  interface Props {
+    device: AugmentedDevice;
+    tool: Tool;
+    open: boolean;
+  }
 
-	let { device, tool, open = $bindable() }: Props = $props();
+  let {device, tool, open = $bindable()}: Props = $props();
 
-	let error: FabXError | null = $state(null);
+  let error: FabXError | null = $state(null);
 
-	async function unlockTool_(): Promise<string> {
-		error = null;
-		return await unlockTool(fetch, device.id, tool.id).catch((e) => {
-			error = e;
-			return '';
-		});
-	}
+  async function unlockTool_(): Promise<string> {
+    error = null;
+    return await unlockTool(fetch, device.id, tool.id)
+            .then({ open = false })
+            .catch((e) => {
+              error = e;
+              return '';
+            });
+  }
 </script>
 
 <AlertDialog.Root bind:open>

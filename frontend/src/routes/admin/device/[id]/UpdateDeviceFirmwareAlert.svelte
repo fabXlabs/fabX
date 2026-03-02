@@ -13,18 +13,22 @@
 
 	let { device }: Props = $props();
 
+  let open = $state(false);
+
 	let error: FabXError | null = $state(null);
 
 	async function updateDeviceFirmware_(): Promise<string> {
 		error = null;
-		return await updateDeviceFirmware(fetch, device.id).catch((e) => {
-			error = e;
-			return '';
-		});
+		return await updateDeviceFirmware(fetch, device.id)
+            .then({ open = false })
+            .catch((e) => {
+              error = e;
+              return '';
+            });
 	}
 </script>
 
-<AlertDialog.Root>
+<AlertDialog.Root bind:open>
 	<AlertDialog.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline">Update Device Firmware</Button>

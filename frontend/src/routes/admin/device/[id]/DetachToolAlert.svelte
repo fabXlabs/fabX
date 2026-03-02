@@ -26,6 +26,7 @@
 			error = e;
 			return '';
 		});
+		open = false;
 		await invalidateAll();
 		return res;
 	}

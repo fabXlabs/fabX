@@ -15,6 +15,8 @@
 
 	let { qualification }: Props = $props();
 
+	let open = $state(false);
+
 	let error: FabXError | null = $state(null);
 
 	async function deleteQualification_() {
@@ -25,12 +27,13 @@
 		});
 
 		if (res) {
+			open = false;
 			await goto(resolve(`/admin/qualification/`));
 		}
 	}
 </script>
 
-<AlertDialog.Root>
+<AlertDialog.Root bind:open>
 	<AlertDialog.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline">Delete Tool</Button>

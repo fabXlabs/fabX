@@ -15,6 +15,8 @@
 
 	let { device }: Props = $props();
 
+	let open = $state(false);
+
 	let error: FabXError | null = $state(null);
 
 	async function deleteDevice_() {
@@ -25,12 +27,13 @@
 		});
 
 		if (res) {
+			open = false;
 			await goto(resolve(`/admin/device/`));
 		}
 	}
 </script>
 
-<AlertDialog.Root>
+<AlertDialog.Root bind:open>
 	<AlertDialog.Trigger>
 		{#snippet child({ props })}
 			<Button {...props} variant="outline">Delete Device</Button>
