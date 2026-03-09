@@ -16,20 +16,34 @@
 	let { device }: Props = $props();
 
 	let open = $state(false);
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function deleteDevice_() {
+		working = true;
 		error = null;
-		const res = await deleteDevice(fetch, device.id).catch((e) => {
-			error = e;
-			return '';
-		});
+
+		const res = await deleteDevice(fetch, device.id)
+			.then((res) => {
+				reset();
+				return res;
+			})
+			.catch((e) => {
+				error = e;
+				working = false;
+				return '';
+			});
 
 		if (res) {
-			open = false;
 			await goto(resolve(`/admin/device/`));
 		}
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -50,13 +64,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
 				onclick={deleteDevice_}
 				class={buttonVariants({ variant: 'destructive' })}
+				{working}
 			>
 				Continue
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

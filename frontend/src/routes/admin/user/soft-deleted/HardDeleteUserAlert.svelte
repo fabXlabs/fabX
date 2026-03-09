@@ -14,20 +14,30 @@
 	}
 
 	let { user, open = $bindable() }: Props = $props();
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function hardDeleteUser_() {
+		working = true;
 		error = null;
+
 		const res = await hardDeleteUser(fetch, user.id).catch((e) => {
 			error = e;
+			working = false;
 			return '';
 		});
 
 		if (res) {
+			reset();
 			await invalidateAll();
-			open = false;
 		}
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -45,13 +55,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
 				onclick={hardDeleteUser_}
 				class={buttonVariants({ variant: 'destructive' })}
+				{working}
 			>
 				Continue
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

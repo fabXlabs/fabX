@@ -16,27 +16,44 @@
 	let { qualification }: Props = $props();
 
 	let open = $state(false);
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
-	async function deleteQualification_() {
+	async function deleteQualification_(): Promise<string> {
+		working = true;
 		error = null;
-		const res = await deleteQualification(fetch, qualification.id).catch((e) => {
-			error = e;
-			return '';
-		});
+
+		const res = await deleteQualification(fetch, qualification.id)
+			.then((res) => {
+				reset();
+				return res;
+			})
+			.catch((e) => {
+				error = e;
+				working = false;
+				return '';
+			});
 
 		if (res) {
-			open = false;
+			reset();
 			await goto(resolve(`/admin/qualification/`));
 		}
+
+		return res;
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
 <AlertDialog.Root bind:open>
 	<AlertDialog.Trigger>
 		{#snippet child({ props })}
-			<Button {...props} variant="outline">Delete Tool</Button>
+			<Button {...props} variant="outline">Delete Qualification</Button>
 		{/snippet}
 	</AlertDialog.Trigger>
 	<AlertDialog.Content>
@@ -50,13 +67,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
 				onclick={deleteQualification_}
 				class={buttonVariants({ variant: 'destructive' })}
+				{working}
 			>
 				Continue
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

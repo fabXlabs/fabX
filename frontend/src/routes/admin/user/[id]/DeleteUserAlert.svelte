@@ -16,20 +16,30 @@
 	let { user }: Props = $props();
 
 	let open = $state(false);
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function deleteUser_() {
+		working = true;
 		error = null;
+
 		const res = await deleteUser(fetch, user.id).catch((e) => {
 			error = e;
+			working = false;
 			return '';
 		});
 
 		if (res) {
-			open = false;
+			reset();
 			await goto(resolve(`/admin/user/`));
 		}
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -52,10 +62,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action onclick={deleteUser_} class={buttonVariants({ variant: 'destructive' })}>
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
+				onclick={deleteUser_}
+				class={buttonVariants({ variant: 'destructive' })}
+				{working}
+			>
 				Continue
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

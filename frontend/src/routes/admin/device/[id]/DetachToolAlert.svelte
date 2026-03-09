@@ -18,17 +18,37 @@
 
 	let { device, pin, tool, open = $bindable() }: Props = $props();
 
+	let working = $state(false);
+
 	let error: FabXError | null = $state(null);
 
 	async function detachTool_(): Promise<string> {
+		working = true;
 		error = null;
-		const res = await detachTool(fetch, device.id, pin).catch((e) => {
-			error = e;
-			return '';
-		});
-		open = false;
-		await invalidateAll();
+
+		const res = await detachTool(fetch, device.id, pin)
+			.then((res) => {
+				reset();
+				return res;
+			})
+			.catch((e) => {
+				error = e;
+				working = false;
+				return '';
+			});
+
+		if (res) {
+			reset();
+			await invalidateAll();
+		}
+
 		return res;
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -44,10 +64,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action onclick={detachTool_} class={buttonVariants({ variant: 'destructive' })}>
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
+				onclick={detachTool_}
+				class={buttonVariants({ variant: 'destructive' })}
+				{working}
+			>
 				Detach Tool
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

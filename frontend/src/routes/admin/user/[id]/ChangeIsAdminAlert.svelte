@@ -15,20 +15,30 @@
 	let { user }: Props = $props();
 
 	let open: boolean = $state(false);
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function changeIsAdmin_() {
+		working = true;
 		error = null;
+
 		const res = await changeIsAdmin(fetch, user.id, !user.isAdmin).catch((e) => {
 			error = e;
+			working = false;
 			return '';
 		});
 
 		if (res) {
-			open = false;
+			reset();
 			await invalidateAll();
 		}
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -71,13 +81,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
 				onclick={changeIsAdmin_}
 				class={buttonVariants({ variant: 'destructive' })}
+				{working}
 			>
 				Continue
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

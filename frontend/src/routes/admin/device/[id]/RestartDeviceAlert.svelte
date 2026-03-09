@@ -14,19 +14,30 @@
 	let { device }: Props = $props();
 
 	let open = $state(false);
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function restartDevice_(): Promise<string> {
+		working = true;
 		error = null;
+
 		return await restartDevice(fetch, device.id)
-			.then((_res) => {
-				open = false;
+			.then((res) => {
+				reset();
+				return res;
 			})
 			.catch((e) => {
 				error = e;
+				working = false;
 				return '';
 			});
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -47,13 +58,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
 				onclick={restartDevice_}
 				class={buttonVariants({ variant: 'destructive' })}
+				{working}
 			>
 				Restart
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

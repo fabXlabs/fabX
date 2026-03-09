@@ -15,19 +15,30 @@
 	}
 
 	let { device, tool, open = $bindable() }: Props = $props();
+	let working = $state(false);
 
 	let error: FabXError | null = $state(null);
 
 	async function unlockTool_(): Promise<string> {
+		working = true;
+
 		error = null;
 		return await unlockTool(fetch, device.id, tool.id)
-			.then((_res) => {
-				open = false;
+			.then((res) => {
+				reset();
+				return res;
 			})
 			.catch((e) => {
 				error = e;
+				working = false;
 				return '';
 			});
+	}
+
+	function reset() {
+		open = false;
+		working = false;
+		error = null;
 	}
 </script>
 
@@ -43,10 +54,14 @@
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
-			<AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
-			<AlertDialog.Action onclick={unlockTool_} class={buttonVariants({ variant: 'destructive' })}>
+			<AlertDialog.Cancel onclick={reset}>Cancel</AlertDialog.Cancel>
+			<AlertDialog.ActionWorking
+				onclick={unlockTool_}
+				class={buttonVariants({ variant: 'destructive' })}
+				{working}
+			>
 				Unlock Tool
-			</AlertDialog.Action>
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
