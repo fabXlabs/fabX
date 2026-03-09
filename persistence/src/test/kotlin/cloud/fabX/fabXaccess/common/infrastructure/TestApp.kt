@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.jetbrains.exposed.v1.jdbc.Database
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.kodein.di.DI
+import org.kodein.di.bindConstant
 import org.kodein.di.bindInstance
 import org.kodein.di.instance
 import org.testcontainers.containers.PostgreSQLContainer
@@ -52,9 +53,11 @@ internal fun withTestApp(
 
         bindInstance(overrides = true) { dbPool }
 
-        bindInstance(tag = "dburl") { postgresContainer.jdbcUrl }
-        bindInstance(tag = "dbuser") { postgresContainer.username }
-        bindInstance(tag = "dbpassword") { postgresContainer.password }
+        bindConstant(tag = "dburl") { postgresContainer.jdbcUrl }
+        bindConstant(tag = "dbuser") { postgresContainer.username }
+        bindConstant(tag = "dbpassword") { postgresContainer.password }
+
+        bindConstant(tag = "logToolUsage") { true }
     }
 
     // only initialise database once

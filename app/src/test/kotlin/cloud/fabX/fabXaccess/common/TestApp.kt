@@ -111,6 +111,8 @@ private fun testSetup(): WebApp {
 
         bindConstant(tag = "httpsRedirect") { false }
 
+        bindConstant(tag = "logToolUsage") { true }
+
         bindSingleton { SynchronousDomainEventPublisher() }
         bindSingleton { Clock.System }
     }

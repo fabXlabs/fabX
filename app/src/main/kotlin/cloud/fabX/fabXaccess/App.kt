@@ -57,9 +57,11 @@ val app = DI {
 
     bindInstance(tag = "firmwareDirectory") { File(config.firmwareDirectory) }
 
-    bindInstance(tag = "metricsPassword") { config.metricsPassword }
+    bindConstant(tag = "metricsPassword") { config.metricsPassword }
 
-    bindInstance(tag = "httpsRedirect") { config.httpsRedirect }
+    bindConstant(tag = "httpsRedirect") { config.httpsRedirect }
+
+    bindConstant(tag = "logToolUsage") { config.logToolUsage }
 
     bindSingleton { SynchronousDomainEventPublisher() }
     bindSingleton { Clock.System }

@@ -6,6 +6,7 @@ import assertk.assertions.isEmpty
 import cloud.fabX.fabXaccess.common.infrastructure.withTestApp
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.ToolUsageLogEntry
+import cloud.fabX.fabXaccess.user.model.ToolUsageLogRepository
 import cloud.fabX.fabXaccess.user.model.UserIdFixture
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Clock
@@ -25,8 +26,8 @@ internal class ToolUsageDatabaseRepositoryTest {
     private val fixedInstant3 = Clock.System.now()
 
     internal fun withRepository(block: suspend (ToolUsageLogDatabaseRepository) -> Unit) = withTestApp { di ->
-        val repository: ToolUsageLogDatabaseRepository by di.instance()
-        block(repository)
+        val repository: ToolUsageLogRepository by di.instance()
+        block(repository as ToolUsageLogDatabaseRepository)
     }
 
     @Test

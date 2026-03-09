@@ -19,7 +19,8 @@ data class Config(
     val deviceReceiveTimeoutMillis: Long,
     val firmwareDirectory: String,
     val metricsPassword: String,
-    val httpsRedirect: Boolean
+    val httpsRedirect: Boolean,
+    val logToolUsage: Boolean
 ) {
     companion object {
         fun fromEnv(): Config {
@@ -37,6 +38,7 @@ data class Config(
             val firmwareDirectory = readEnvString("FIRMWARE_DIRECTORY", "/tmp/fabXfirmware")
             val metricsPassword = readEnvString("METRICS_PASSWORD", Random.nextBytes(32).decodeToString())
             val httpsRedirect = readEnvBoolean("HTTPS_REDIRECT", true)
+            val logToolUsage = readEnvBoolean("LOG_TOOL_USAGE", true)
 
             val dbUrl = readEnvString("FABX_DB_URL", "jdbc:postgresql://localhost/postgres")
             val dbUser = readEnvString("FABX_DB_USER", "postgres")
@@ -59,7 +61,8 @@ data class Config(
                 deviceReceiveTimeoutMillis,
                 firmwareDirectory,
                 metricsPassword,
-                httpsRedirect
+                httpsRedirect,
+                logToolUsage
             )
         }
 
