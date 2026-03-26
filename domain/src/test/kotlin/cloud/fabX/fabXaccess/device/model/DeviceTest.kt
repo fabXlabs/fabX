@@ -551,14 +551,16 @@ internal class DeviceTest {
     fun `given pin is already in use when attaching tool then returns error`() = runTest {
         // given
         val pin = 3
-        val toolId = ToolIdFixture.arbitrary()
-        val tool = ToolFixture.arbitrary(toolId = toolId)
+        val tool1Id = ToolIdFixture.arbitrary()
+
+        val tool2Id = ToolIdFixture.arbitrary()
+        val tool2 = ToolFixture.arbitrary(toolId = tool2Id)
 
         val device = DeviceFixture.arbitrary(
             deviceId,
             aggregateVersion,
             attachedTools = mapOf(
-                pin to toolId
+                pin to tool1Id
             )
         )
 
@@ -568,6 +570,46 @@ internal class DeviceTest {
             fixedClock,
             correlationId,
             pin,
+            tool2Id,
+            { tool2.right() }
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.PinInUse(
+                    "Tool (with id $tool1Id) already attached at pin $pin.",
+                    pin,
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    @Suppress("MoveLambdaOutsideParentheses")
+    fun `given tool is already attached to device on other pin when attaching tool then returns error`() = runTest {
+        // given
+        val pin1 = 3
+        val pin2 = 7
+
+        val toolId = ToolIdFixture.arbitrary()
+        val tool = ToolFixture.arbitrary(toolId = toolId)
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion,
+            attachedTools = mapOf(
+                pin1 to toolId
+            )
+        )
+
+        // when
+        val result = device.attachTool(
+            adminActor,
+            fixedClock,
+            correlationId,
+            pin2,
             toolId,
             { tool.right() }
         )
@@ -576,9 +618,10 @@ internal class DeviceTest {
         assertThat(result)
             .isLeft()
             .isEqualTo(
-                Error.PinInUse(
-                    "Tool (with id $toolId) already attached at pin $pin.",
-                    pin,
+                Error.ToolAlreadyAttachedToDevice(
+                    "Tool with id ${toolId.serialize()} is already attached to device.",
+                    deviceId,
+                    toolId,
                     correlationId
                 )
             )

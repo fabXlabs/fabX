@@ -55,6 +55,7 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.DeviceNotFoundByIdentity -> HttpStatusCode.NotFound
         is Error.PinInUse -> HttpStatusCode.UnprocessableEntity
         is Error.ToolNotAttachedToDevice -> HttpStatusCode.UnprocessableEntity
+        is Error.ToolAlreadyAttachedToDevice -> HttpStatusCode.UnprocessableEntity
         is Error.DeviceNotActor -> HttpStatusCode.UnprocessableEntity
         // web device
         is Error.DeviceNotConnected -> HttpStatusCode.ServiceUnavailable

@@ -356,6 +356,34 @@ internal class DeviceIntegrationTest {
     }
 
     @Test
+    fun `when attaching tool multiple times to same device then returns http unprocessable entity`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "AABBCCDDEEFF")
+        val pin1 = 2
+        val pin2 = 3
+        val toolId = givenTool()
+        val requestBody = ToolAttachmentDetails(toolId)
+
+        givenToolAttachedToDevice(deviceId, pin1, toolId)
+
+        // when
+        val response = c().put("/api/v1/device/$deviceId/attached-tool/$pin2") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<Error>())
+            .isError(
+                "ToolAlreadyAttachedToDevice",
+                "Tool with id $toolId is already attached to device.",
+                mapOf("deviceId" to deviceId, "toolId" to toolId)
+            )
+    }
+
+    @Test
     fun `given non-admin authentication when attaching tool then returns http forbidden`() = withTestApp {
         val deviceId = DeviceIdFixture.arbitrary().serialize()
         val pin = 2

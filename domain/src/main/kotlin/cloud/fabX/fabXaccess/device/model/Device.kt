@@ -181,8 +181,13 @@ data class Device internal constructor(
         toolId: ToolId,
         gettingToolById: GettingToolById
     ): Either<Error, DeviceSourcingEvent> {
-        return attachedTools.getOrNone(pin)
-            .toEither {
+        return requireToolNotAttachedToDevice(correlationId, toolId)
+            .flatMap { requirePinNotInUse(correlationId, pin) }
+            .flatMap {
+                // assert tool exists
+                gettingToolById.getToolById(toolId)
+            }
+            .map {
                 ToolAttached(
                     id,
                     aggregateVersion + 1,
@@ -193,15 +198,6 @@ data class Device internal constructor(
                     toolId
                 )
             }
-            .map {
-                PinInUse("Tool (with id $it) already attached at pin $pin.", pin, correlationId)
-            }
-            .swap()
-            .flatMap { event ->
-                // assert tool exists
-                gettingToolById.getToolById(toolId)
-                    .map { event }
-            }
             .mapLeft {
                 if (it is Error.ToolNotFound) {
                     it.toReferencedToolNotFound(correlationId)
@@ -209,6 +205,36 @@ data class Device internal constructor(
                     it
                 }
             }
+    }
+
+    private fun requirePinNotInUse(
+        correlationId: CorrelationId,
+        pin: Int
+    ): Either<Error, Unit> {
+        return attachedTools.getOrNone(pin)
+            .toEither {
+                Unit
+            }
+            .map {
+                PinInUse("Tool (with id $it) already attached at pin $pin.", pin, correlationId)
+            }
+            .swap()
+    }
+
+    private fun requireToolNotAttachedToDevice(
+        correlationId: CorrelationId,
+        toolId: ToolId
+    ): Either<Error, Unit> {
+        return if (attachedTools.values.contains(toolId)) {
+            Error.ToolAlreadyAttachedToDevice(
+                "Tool with id ${toolId.serialize()} is already attached to device.",
+                this.id,
+                toolId,
+                correlationId
+            ).left()
+        } else {
+            Unit.right()
+        }
     }
 
     /**
