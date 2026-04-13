@@ -8,6 +8,7 @@ import cloud.fabX.fabXaccess.common.model.newCorrelationId
 import cloud.fabX.fabXaccess.common.rest.readAdminAuthentication
 import cloud.fabX.fabXaccess.common.rest.readBody
 import cloud.fabX.fabXaccess.common.rest.readIntParameter
+import cloud.fabX.fabXaccess.common.rest.readMemberAuthentication
 import cloud.fabX.fabXaccess.common.rest.readUUIDParameter
 import cloud.fabX.fabXaccess.common.rest.respondWithErrorHandler
 import cloud.fabX.fabXaccess.common.rest.toDomain
@@ -21,6 +22,8 @@ import cloud.fabX.fabXaccess.device.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
+import cloud.fabX.fabXaccess.device.application.GettingDeviceConnectionStatus
+import cloud.fabX.fabXaccess.device.application.GettingDevicePinStatus
 import cloud.fabX.fabXaccess.device.application.RestartingDevice
 import cloud.fabX.fabXaccess.device.application.UnlockingTool
 import cloud.fabX.fabXaccess.device.application.UpdatingDeviceFirmware
@@ -35,6 +38,8 @@ import io.ktor.server.routing.route
 
 class DeviceController(
     private val gettingDevice: GettingDevice,
+    private val gettingDeviceConnectionStatus: GettingDeviceConnectionStatus,
+    private val gettingDevicePinStatus: GettingDevicePinStatus,
     private val addingDevice: AddingDevice,
     private val changingDevice: ChangingDevice,
     private val changingThumbnail: ChangingThumbnail,
@@ -61,6 +66,34 @@ class DeviceController(
                                 )
                                 .map { it.toRestModel() }
                         }
+                )
+            }
+
+            get("/connection-status") {
+                call.respondWithErrorHandler(
+                    readMemberAuthentication()
+                        .map { member ->
+                            gettingDeviceConnectionStatus
+                                .getAll(
+                                    member,
+                                    newCorrelationId()
+                                )
+                        }
+                        .map { it.toRestModel() }
+                )
+            }
+
+            get("/pin-status") {
+                call.respondWithErrorHandler(
+                    readMemberAuthentication()
+                        .map { member ->
+                            gettingDevicePinStatus
+                                .getAll(
+                                    member,
+                                    newCorrelationId()
+                                )
+                        }
+                        .map { it.toRestModel() }
                 )
             }
 
@@ -171,6 +204,39 @@ class DeviceController(
                             }
                         }
                     }
+                }
+            }
+
+            get("{id}/connection-status") {
+                readId { id ->
+                    call.respondWithErrorHandler(
+                        readMemberAuthentication()
+                            .flatMap { member ->
+                                gettingDeviceConnectionStatus
+                                    .getById(
+                                        member,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                            }
+                    )
+                }
+            }
+
+            get("{id}/pin-status") {
+                readId { id ->
+                    call.respondWithErrorHandler(
+                        readMemberAuthentication()
+                            .flatMap { member ->
+                                gettingDevicePinStatus
+                                    .getById(
+                                        member,
+                                        newCorrelationId(),
+                                        id
+                                    )
+                            }
+                            .map { it.toRestModel() }
+                    )
                 }
             }
 

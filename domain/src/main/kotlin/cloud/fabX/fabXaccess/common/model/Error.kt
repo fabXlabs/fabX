@@ -171,6 +171,11 @@ sealed class Error(
         val deviceId: DeviceId
     ) : Error(message, mapOf("deviceId" to deviceId.serialize()))
 
+    data class DevicePinStatusUnknown(
+        override val message: String,
+        val deviceId: DeviceId
+    ) : Error(message, mapOf("deviceId" to deviceId.serialize()))
+
     data class DeviceThumbnailNotFound(
         override val message: String,
         val deviceId: DeviceId

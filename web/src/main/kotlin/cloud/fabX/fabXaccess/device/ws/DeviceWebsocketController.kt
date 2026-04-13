@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
 import cloud.fabX.fabXaccess.common.model.Error.DeviceCommunicationSerializationError
 import cloud.fabX.fabXaccess.common.rest.readDeviceAuthentication
+import cloud.fabX.fabXaccess.device.model.GetDeviceConnectionStatus
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.route
 import io.ktor.server.websocket.webSocket
@@ -32,7 +33,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 class DeviceWebsocketController(
@@ -40,7 +40,7 @@ class DeviceWebsocketController(
     private val commandHandler: DeviceCommandHandler,
     private val notificationHandler: DeviceNotificationHandler,
     private val deviceReceiveTimeoutMillis: Long
-) {
+) : GetDeviceConnectionStatus {
     private val logger = loggerFactory.invoke(this::class.java)
 
     private val connections: MutableMap<DeviceId, DefaultWebSocketSession> =
@@ -181,7 +181,7 @@ class DeviceWebsocketController(
 
     internal fun newCommandId(): Int = Random.nextInt()
 
-    internal fun isConnected(deviceId: DeviceId): Boolean = connections.containsKey(deviceId)
+    override fun isConnected(deviceId: DeviceId): Boolean = connections.containsKey(deviceId)
 
     internal suspend fun sendCommand(
         deviceId: DeviceId,

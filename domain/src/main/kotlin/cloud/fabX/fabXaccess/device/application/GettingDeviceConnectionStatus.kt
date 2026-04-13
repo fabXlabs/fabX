@@ -5,43 +5,41 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.SystemActor
-import cloud.fabX.fabXaccess.device.model.DevicePinStatus
-import cloud.fabX.fabXaccess.device.model.DevicePinStatusRepository
+import cloud.fabX.fabXaccess.device.model.DeviceRepository
+import cloud.fabX.fabXaccess.device.model.GetDeviceConnectionStatus
 import cloud.fabX.fabXaccess.user.model.Member
 
 /**
- * Service to get device pin status.
+ * Service to get device connection status.
  */
-class GettingDevicePinStatus(
+class GettingDeviceConnectionStatus(
     loggerFactory: LoggerFactory,
-    private val devicePinStatusRepository: DevicePinStatusRepository
+    private val deviceRepository: DeviceRepository,
+    private val getDeviceConnectionStatus: GetDeviceConnectionStatus
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
     suspend fun getAll(
-        actor: SystemActor,
-        correlationId: CorrelationId
-    ): Set<DevicePinStatus> {
-        // no logging as it is used by metrics endpoint
-        return devicePinStatusRepository.getAll()
-    }
-
-    suspend fun getAll(
         actor: Member,
         correlationId: CorrelationId
-    ): Set<DevicePinStatus> {
+    ): Map<DeviceId, Boolean> {
         log.debug("getAll (actor: $actor, correlationId: $correlationId)...")
 
-        return devicePinStatusRepository.getAll()
+        return deviceRepository.getAll()
+            .associate { device ->
+                Pair(device.id, getDeviceConnectionStatus.isConnected(device.id))
+            }
     }
 
     suspend fun getById(
         actor: Member,
         correlationId: CorrelationId,
-        id: DeviceId
-    ): Either<Error, DevicePinStatus> =
+        deviceId: DeviceId
+    ): Either<Error, Boolean> =
         log.logError(actor, correlationId, "getById") {
-            devicePinStatusRepository.getById(id)
+            deviceRepository.getById(deviceId)
+                .map { device ->
+                    getDeviceConnectionStatus.isConnected(device.id)
+                }
         }
 }
