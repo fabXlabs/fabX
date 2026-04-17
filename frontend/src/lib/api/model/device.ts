@@ -21,6 +21,8 @@ export interface AugmentedDevice {
 	actualFirmwareVersion: string | null;
 	desiredFirmwareVersion: string | null;
 	attachedTools: Record<number, Tool>;
+	connectionStatus: boolean | null;
+	pinStatus: Map<number, boolean> | null;
 }
 
 export interface DeviceCreationDetails {

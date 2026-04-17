@@ -3,6 +3,8 @@ import type { AugmentedDevice } from '$lib/api/model/device';
 import { renderComponent } from '$lib/components/ui/data-table';
 import AttachedToolsList from './AttachedToolsList.svelte';
 import DeviceImage from './DeviceImage.svelte';
+import DeviceConnectionStatus from './DeviceConnectionStatus.svelte';
+import PinStatus from './PinStatus.svelte';
 
 export const columns: ColumnDef<AugmentedDevice>[] = [
 	{
@@ -13,6 +15,15 @@ export const columns: ColumnDef<AugmentedDevice>[] = [
 				id: row.original.id,
 				class: '',
 				onclick: () => {}
+			});
+		}
+	},
+	{
+		accessorKey: 'connectionStatus',
+		header: 'Status',
+		cell: ({ row }) => {
+			return renderComponent(DeviceConnectionStatus, {
+				connectionStatus: row.original.connectionStatus
 			});
 		}
 	},
@@ -34,6 +45,15 @@ export const columns: ColumnDef<AugmentedDevice>[] = [
 		cell: ({ row }) => {
 			return renderComponent(AttachedToolsList, {
 				attachedTools: row.original.attachedTools
+			});
+		}
+	},
+	{
+		accessorKey: 'pinStatus',
+		header: 'Inputs',
+		cell: ({ row }) => {
+			return renderComponent(PinStatus, {
+				pinStatus: row.original.pinStatus
 			});
 		}
 	},

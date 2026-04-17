@@ -23,11 +23,71 @@ export async function getDeviceById(fetch: FetchFunction, id: string): Promise<D
 	return await getRequest(fetch, `/device/${id}`);
 }
 
+export async function getAllDeviceConnectionStatuses(
+	fetch: FetchFunction
+): Promise<Map<string, boolean>> {
+	console.debug('getAllDeviceConnectionStatuses...');
+	return await getRequest(fetch, `/device/connection-status`).then(
+		(v) => new Map(Object.entries(v))
+	);
+}
+
+export async function getDeviceConnectionStatusById(
+	fetch: FetchFunction,
+	id: string
+): Promise<boolean> {
+	console.debug('getDeviceConnectionStatusById...');
+	return await getRequest(fetch, `/device/${id}/connection-status`);
+}
+
+export async function getAllDevicePinStatuses(
+	fetch: FetchFunction
+): Promise<Map<string, Map<number, boolean>>> {
+	console.debug('getAllDevicePinStatuses...');
+	return await getRequest(fetch, `/device/pin-status`).then((v) => {
+		return new Map(
+			Object.entries(v).map((vv) => {
+				const innerMap: Map<number, boolean> = new Map(
+					Object.entries(vv[1]!).map((vvv) => [parseInt(vvv[0]), vvv[1]])
+				);
+				return [vv[0], innerMap];
+			})
+		);
+	});
+}
+
+export async function getDevicePinStatusById(
+	fetch: FetchFunction,
+	id: string
+): Promise<Map<number, boolean>> {
+	console.debug('getDevicePinStatusById...');
+	return await getRequest(fetch, `/device/${id}/pin-status`)
+		.then((v) => {
+			return new Map(Object.entries(v).map((vvv) => [parseInt(vvv[0]), vvv[1] as boolean]));
+		})
+		.catch((_) => new Map());
+}
+
 export function deviceThumbnailUrl(id: string): string {
 	return `${baseUrl}/device/${id}/thumbnail`;
 }
 
-function augmentDevice_(device: Device, toolsMap: Map<string, Tool>): AugmentedDevice {
+function augmentDevice_(
+	device: Device,
+	toolsMap: Map<string, Tool>,
+	connectionStatuses: Map<string, boolean>,
+	pinStatuses: Map<string, Map<number, boolean>>
+): AugmentedDevice {
+	let connectionStatus: boolean | null = null;
+	if (connectionStatuses.has(device.id)) {
+		connectionStatus = connectionStatuses.get(device.id)!;
+	}
+
+	let pinStatus: Map<number, boolean> | null = null;
+	if (pinStatuses.has(device.id)) {
+		pinStatus = pinStatuses.get(device.id)!;
+	}
+
 	return {
 		...device,
 		attachedTools: Object.fromEntries(
@@ -35,19 +95,40 @@ function augmentDevice_(device: Device, toolsMap: Map<string, Tool>): AugmentedD
 				Number(pin),
 				toolsMap.get(tool)
 			]).filter(([, v]) => v)
-		)
+		),
+		connectionStatus,
+		pinStatus
 	};
 }
 
-export function augmentDevice(device: Device, tools: Tool[]): AugmentedDevice {
+export function augmentDevice(
+	device: Device,
+	tools: Tool[],
+	connectionStatus: boolean | null,
+	pinStatus: Map<number, boolean>
+): AugmentedDevice {
 	const toolsMap = new Map(tools.map((t) => [t.id, t]));
-	return augmentDevice_(device, toolsMap);
+
+	const connectionStatuses = new Map<string, boolean>();
+	if (connectionStatus !== null) {
+		connectionStatuses.set(device.id, connectionStatus);
+	}
+
+	const pinStatuses = new Map<string, Map<number, boolean>>();
+	pinStatuses.set(device.id, pinStatus);
+
+	return augmentDevice_(device, toolsMap, connectionStatuses, pinStatuses);
 }
 
-export function augmentDevices(devices: Device[], tools: Tool[]): AugmentedDevice[] {
+export function augmentDevices(
+	devices: Device[],
+	tools: Tool[],
+	connectionStatuses: Map<string, boolean>,
+	pinStatuses: Map<string, Map<number, boolean>>
+): AugmentedDevice[] {
 	const toolsMap = new Map(tools.map((t) => [t.id, t]));
 
-	return devices.map((d) => augmentDevice_(d, toolsMap));
+	return devices.map((d) => augmentDevice_(d, toolsMap, connectionStatuses, pinStatuses));
 }
 
 export async function addDevice(
