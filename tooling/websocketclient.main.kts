@@ -1,25 +1,25 @@
-@file:DependsOn("io.ktor:ktor-client-core-jvm:1.6.7")
-@file:DependsOn("io.ktor:ktor-client-auth-jvm:1.6.7")
-@file:DependsOn("io.ktor:ktor-client-cio-jvm:1.6.7")
-@file:DependsOn("io.ktor:ktor-client-websockets-jvm:1.6.7")
+@file:DependsOn("io.ktor:ktor-client-core-jvm:3.4.2")
+@file:DependsOn("io.ktor:ktor-client-auth-jvm:3.4.2")
+@file:DependsOn("io.ktor:ktor-client-cio-jvm:3.4.2")
+@file:DependsOn("io.ktor:ktor-client-websockets-jvm:3.4.2")
 @file:DependsOn("com.beust:klaxon:5.6")
 
 import com.beust.klaxon.JsonObject
 import com.beust.klaxon.Parser
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
-import io.ktor.client.features.auth.Auth
-import io.ktor.client.features.auth.providers.BasicAuthCredentials
-import io.ktor.client.features.auth.providers.basic
-import io.ktor.client.features.websocket.WebSockets
-import io.ktor.client.features.websocket.webSocket
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
+import io.ktor.client.plugins.auth.providers.basic
+import io.ktor.client.plugins.websocket.WebSockets
+import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
-import io.ktor.http.cio.websocket.DefaultWebSocketSession
-import io.ktor.http.cio.websocket.Frame
-import io.ktor.http.cio.websocket.readBytes
-import io.ktor.http.cio.websocket.readReason
-import io.ktor.http.cio.websocket.readText
-import io.ktor.http.cio.websocket.send
+import io.ktor.websocket.DefaultWebSocketSession
+import io.ktor.websocket.Frame
+import io.ktor.websocket.readBytes
+import io.ktor.websocket.readReason
+import io.ktor.websocket.readText
+import io.ktor.websocket.send
 import java.lang.StringBuilder
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
