@@ -1,4 +1,5 @@
 <script lang="ts">
+	import './layout.css';
 	import { asset } from '$app/paths';
 	import { ModeWatcher } from 'mode-watcher';
 	import { Toaster } from '$lib/components/ui/sonner/index.js';
@@ -16,6 +17,7 @@
 
 <svelte:head>
 	<title>fabX</title>
+
 	<link
 		rel="preload"
 		as="font"
@@ -23,6 +25,7 @@
 		type="font/ttf"
 		crossorigin="anonymous"
 	/>
+
 	<link
 		rel="preload"
 		as="font"
@@ -34,9 +37,11 @@
 
 <ModeWatcher />
 <Toaster richColors closeButton position="top-right" />
+
 <div class="bg-background relative flex min-h-screen flex-col" id="page">
 	<svelte:boundary {onerror}>{@render children()}</svelte:boundary>
 </div>
+
 <div class="bg-background text-foreground/60 m-5 text-center font-mono text-xs">
 	fabX v{PUBLIC_FABX_VERSION}
 </div>
