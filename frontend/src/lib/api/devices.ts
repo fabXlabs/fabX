@@ -6,12 +6,14 @@ import type {
 	Device,
 	DeviceCreationDetails,
 	DeviceDetails,
+	PinStatus,
 	ToolAttachmentDetails,
 	ToolUnlockDetails
 } from '$lib/api/model/device';
 import type { Tool } from '$lib/api/model/tool';
 import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
 import { mapError } from '$lib/api/map-error';
+import type { UserSourcingEvent } from '$lib/api/model/user';
 
 export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	console.debug('getAllDevices...');
@@ -42,30 +44,41 @@ export async function getDeviceConnectionStatusById(
 
 export async function getAllDevicePinStatuses(
 	fetch: FetchFunction
-): Promise<Map<string, Map<number, boolean>>> {
-	console.debug('getAllDevicePinStatuses...');
-	return await getRequest(fetch, `/device/pin-status`).then((v) => {
-		return new Map(
-			Object.entries(v).map((vv) => {
-				const innerMap: Map<number, boolean> = new Map(
-					Object.entries(vv[1]!).map((vvv) => [parseInt(vvv[0]), vvv[1]])
-				);
-				return [vv[0], innerMap];
-			})
-		);
-	});
+): Promise<Map<string, PinStatus>> {
+	const r = await getRequest(fetch, `/device/pin-status`);
+
+	return new Map(
+		Object.entries(r).map(([id, pinStatus]) => {
+			const ps: PinStatus = {
+				inputPinStatus: new Map(Object.entries((pinStatus as PinStatus).inputPinStatus)),
+				updatedAt: formatTimestamp(pinStatus as PinStatus)
+			};
+
+			return [id, ps];
+		})
+	);
 }
 
-export async function getDevicePinStatusById(
-	fetch: FetchFunction,
-	id: string
-): Promise<Map<number, boolean>> {
+export async function getDevicePinStatusById(fetch: FetchFunction, id: string): Promise<PinStatus> {
 	console.debug('getDevicePinStatusById...');
 	return await getRequest(fetch, `/device/${id}/pin-status`)
-		.then((v) => {
-			return new Map(Object.entries(v).map((vvv) => [parseInt(vvv[0]), vvv[1] as boolean]));
+		.then((r) => {
+			return {
+				inputPinStatus: new Map(Object.entries((r as PinStatus).inputPinStatus)),
+				updatedAt: formatTimestamp(r as PinStatus)
+			};
 		})
-		.catch((_) => new Map());
+		.catch((_) => {
+			return {
+				inputPinStatus: new Map(),
+				updatedAt: ''
+			};
+		});
+}
+
+function formatTimestamp(ps: PinStatus): string {
+	const ts = new Date(Date.parse(ps.updatedAt));
+	return ts.toISOString().replace(/T/, ' ').slice(0, 16);
 }
 
 export function deviceThumbnailUrl(id: string): string {
@@ -76,14 +89,14 @@ function augmentDevice_(
 	device: Device,
 	toolsMap: Map<string, Tool>,
 	connectionStatuses: Map<string, boolean>,
-	pinStatuses: Map<string, Map<number, boolean>>
+	pinStatuses: Map<string, PinStatus>
 ): AugmentedDevice {
 	let connectionStatus: boolean | null = null;
 	if (connectionStatuses.has(device.id)) {
 		connectionStatus = connectionStatuses.get(device.id)!;
 	}
 
-	let pinStatus: Map<number, boolean> | null = null;
+	let pinStatus: PinStatus | null = null;
 	if (pinStatuses.has(device.id)) {
 		pinStatus = pinStatuses.get(device.id)!;
 	}
@@ -105,7 +118,7 @@ export function augmentDevice(
 	device: Device,
 	tools: Tool[],
 	connectionStatus: boolean | null,
-	pinStatus: Map<number, boolean>
+	pinStatus: PinStatus
 ): AugmentedDevice {
 	const toolsMap = new Map(tools.map((t) => [t.id, t]));
 
@@ -114,7 +127,7 @@ export function augmentDevice(
 		connectionStatuses.set(device.id, connectionStatus);
 	}
 
-	const pinStatuses = new Map<string, Map<number, boolean>>();
+	const pinStatuses = new Map<string, PinStatus>();
 	pinStatuses.set(device.id, pinStatus);
 
 	return augmentDevice_(device, toolsMap, connectionStatuses, pinStatuses);
@@ -124,7 +137,7 @@ export function augmentDevices(
 	devices: Device[],
 	tools: Tool[],
 	connectionStatuses: Map<string, boolean>,
-	pinStatuses: Map<string, Map<number, boolean>>
+	pinStatuses: Map<string, PinStatus>
 ): AugmentedDevice[] {
 	const toolsMap = new Map(tools.map((t) => [t.id, t]));
 

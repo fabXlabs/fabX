@@ -10,11 +10,13 @@ import cloud.fabX.fabXaccess.device.model.DeviceActor
 import cloud.fabX.fabXaccess.device.model.DevicePinStatus
 import cloud.fabX.fabXaccess.user.application.LoggingUnlockedTool
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
+import kotlin.time.Clock
 
 class DeviceNotificationHandlerImpl(
     private val loggingUnlockedTool: LoggingUnlockedTool,
     private val updatingDevicePinStatus: UpdatingDevicePinStatus,
-    private val authenticationService: AuthenticationService
+    private val authenticationService: AuthenticationService,
+    private val clock: Clock
 ) : DeviceNotificationHandler {
 
     override suspend fun handle(actor: DeviceActor, notification: ToolUnlockedNotification): Either<Error, Unit> {
@@ -40,7 +42,8 @@ class DeviceNotificationHandlerImpl(
             correlationId,
             DevicePinStatus(
                 actor.deviceId,
-                notification.inputPins
+                notification.inputPins,
+                clock.now()
             )
         )
     }

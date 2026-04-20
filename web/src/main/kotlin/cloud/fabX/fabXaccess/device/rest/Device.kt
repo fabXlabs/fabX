@@ -3,6 +3,7 @@ package cloud.fabX.fabXaccess.device.rest
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.rest.ChangeableValue
 import cloud.fabX.fabXaccess.device.model.DevicePinStatus
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -17,8 +18,7 @@ data class Device(
     val attachedTools: Map<Int, String>
 )
 
-fun cloud.fabX.fabXaccess.device.model.Device.
-        toRestModel(): Device = Device(
+fun cloud.fabX.fabXaccess.device.model.Device.toRestModel(): Device = Device(
     id = id.serialize(),
     aggregateVersion = aggregateVersion,
     name = name,
@@ -33,13 +33,34 @@ fun Map<DeviceId, Boolean>.toRestModel(): Map<String, Boolean> {
     return this.mapKeys { it.key.serialize() }
 }
 
-fun Set<DevicePinStatus>.toRestModel(): Map<String, Map<Int, Boolean>> {
-    return this.associate { it.deviceId.serialize() to it.inputPins }
+fun Set<DevicePinStatus>.toRestModel(): Map<String, PinStatus> {
+    return this.associate { it.deviceId.serialize() to it.toRestModel() }
 }
 
-fun DevicePinStatus.toRestModel(): Map<Int, Boolean> {
-    return this.inputPins
+fun DevicePinStatus.toRestModel(): PinStatus {
+    return PinStatus(
+        this.inputPins.mapValues { v ->
+            if (v.value) {
+                InputPinStatus.INPUT_HIGH
+            } else {
+                InputPinStatus.INPUT_LOW
+            }
+        },
+        this.updatedAt
+    )
 }
+
+enum class InputPinStatus {
+    INPUT_LOW,
+    INPUT_HIGH
+}
+
+@Serializable
+data class PinStatus(
+    // pin number -> input pin status (high/low/unknown)
+    val inputPinStatus: Map<Int, InputPinStatus>,
+    val updatedAt: Instant
+)
 
 @Serializable
 data class DeviceCreationDetails(

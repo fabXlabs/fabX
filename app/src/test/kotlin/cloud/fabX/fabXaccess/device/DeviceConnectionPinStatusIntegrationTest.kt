@@ -10,6 +10,8 @@ import cloud.fabX.fabXaccess.common.memberAuth
 import cloud.fabX.fabXaccess.common.rest.Error
 import cloud.fabX.fabXaccess.common.withTestApp
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.device.rest.InputPinStatus
+import cloud.fabX.fabXaccess.device.rest.PinStatus
 import cloud.fabX.fabXaccess.device.ws.DeviceToServerNotification
 import cloud.fabX.fabXaccess.device.ws.PinStatusNotification
 import io.ktor.client.call.body
@@ -88,17 +90,18 @@ internal class DeviceConnectionPinStatusIntegrationTest {
 
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-            assertThat(response.body<Map<String, Map<Int, Boolean>>>())
+            assertThat(response.body<Map<String, PinStatus>>())
+                .transform { it.mapValues { entry -> entry.value.inputPinStatus } }
                 .containsOnly(
                     deviceId1 to mapOf(
-                        1 to true,
-                        2 to false,
-                        3 to true,
-                        4 to false,
-                        5 to false,
-                        6 to false,
-                        7 to false,
-                        8 to false
+                        1 to InputPinStatus.INPUT_HIGH,
+                        2 to InputPinStatus.INPUT_LOW,
+                        3 to InputPinStatus.INPUT_HIGH,
+                        4 to InputPinStatus.INPUT_LOW,
+                        5 to InputPinStatus.INPUT_LOW,
+                        6 to InputPinStatus.INPUT_LOW,
+                        7 to InputPinStatus.INPUT_LOW,
+                        8 to InputPinStatus.INPUT_LOW
                     )
                 )
         }
@@ -170,17 +173,18 @@ internal class DeviceConnectionPinStatusIntegrationTest {
 
             // then
             assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-            assertThat(response.body<Map<Int, Boolean>>())
+            assertThat(response.body<PinStatus>())
+                .transform { it.inputPinStatus }
                 .isEqualTo(
                     mapOf(
-                        1 to true,
-                        2 to false,
-                        3 to true,
-                        4 to false,
-                        5 to false,
-                        6 to false,
-                        7 to false,
-                        8 to false
+                        1 to InputPinStatus.INPUT_HIGH,
+                        2 to InputPinStatus.INPUT_LOW,
+                        3 to InputPinStatus.INPUT_HIGH,
+                        4 to InputPinStatus.INPUT_LOW,
+                        5 to InputPinStatus.INPUT_LOW,
+                        6 to InputPinStatus.INPUT_LOW,
+                        7 to InputPinStatus.INPUT_LOW,
+                        8 to InputPinStatus.INPUT_LOW
                     )
                 )
         }

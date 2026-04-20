@@ -22,8 +22,16 @@ export interface AugmentedDevice {
 	desiredFirmwareVersion: string | null;
 	attachedTools: Record<number, Tool>;
 	connectionStatus: boolean | null;
-	pinStatus: Map<number, boolean> | null;
+	pinStatus: PinStatus | null;
 }
+
+export interface PinStatus {
+	inputPinStatus: Map<string, InputPinStatus>;
+	updatedAt: string;
+}
+
+export const inputPinStatus = ['INPUT_LOW', 'INPUT_HIGH'];
+export type InputPinStatus = (typeof inputPinStatus)[number];
 
 export interface DeviceCreationDetails {
 	name: string;

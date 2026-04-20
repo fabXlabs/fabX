@@ -12,6 +12,7 @@ import cloud.fabX.fabXaccess.device.model.DevicePinStatus
 import cloud.fabX.fabXaccess.device.model.DevicePinStatusRepository
 import isLeft
 import isRight
+import kotlin.time.Clock
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -23,6 +24,8 @@ import org.mockito.kotlin.whenever
 internal class UpdatingDevicePinStatusTest {
     private val deviceId = DeviceIdFixture.arbitrary()
     private val correlationId = CorrelationIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
 
     private lateinit var logger: Logger
     private lateinit var devicePinStatusRepository: DevicePinStatusRepository
@@ -52,7 +55,8 @@ internal class UpdatingDevicePinStatusTest {
                 2 to false,
                 3 to false,
                 4 to true
-            )
+            ),
+            fixedInstant
         )
 
         whenever(devicePinStatusRepository.store(pinStatus))
@@ -83,7 +87,8 @@ internal class UpdatingDevicePinStatusTest {
                 2 to false,
                 3 to false,
                 4 to true
-            )
+            ),
+            fixedInstant
         )
 
         // when

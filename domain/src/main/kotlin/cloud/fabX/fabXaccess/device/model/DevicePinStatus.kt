@@ -1,9 +1,10 @@
 package cloud.fabX.fabXaccess.device.model
 
 import cloud.fabX.fabXaccess.common.model.DeviceId
+import kotlin.time.Instant
 
-// TODO extend by creation/update timestamp
 data class DevicePinStatus(
     val deviceId: DeviceId,
-    val inputPins: Map<Int, Boolean>
+    val inputPins: Map<Int, Boolean>,
+    val updatedAt: Instant
 )

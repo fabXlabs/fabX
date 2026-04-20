@@ -43,6 +43,13 @@ data class Device internal constructor(
     internal val identity: MacSecretIdentity
 ) : AggregateRootEntity<DeviceId> {
 
+    // TODO change device input configuration
+    //      - pin
+    //      - displayValue high
+    //      - displayValue low
+    //      - displayColour high
+    //      - displayColour low
+
     companion object {
         fun addNew(
             deviceIdFactory: DeviceIdFactory,

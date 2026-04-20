@@ -11,10 +11,13 @@ import cloud.fabX.fabXaccess.device.model.DevicePinStatus
 import cloud.fabX.fabXaccess.device.model.DevicePinStatusRepository
 import isLeft
 import isRight
+import kotlin.time.Clock
 import org.junit.jupiter.api.Test
 import org.kodein.di.instance
 
 internal class DevicePinStatusInMemoryRepositoryTest {
+    private val fixedInstant = Clock.System.now()
+
     @Test
     fun `given empty repository when getting device pin status then returns empty`() = withTestApp { di ->
         // given
@@ -55,12 +58,14 @@ internal class DevicePinStatusInMemoryRepositoryTest {
 
         val status1 = DevicePinStatus(
             DeviceIdFixture.arbitrary(),
-            mapOf(1 to true, 2 to false)
+            mapOf(1 to true, 2 to false),
+            fixedInstant
         )
 
         val status2 = DevicePinStatus(
             DeviceIdFixture.arbitrary(),
-            mapOf(1 to false, 2 to true)
+            mapOf(1 to false, 2 to true),
+            fixedInstant
         )
 
         repository.store(status1)
@@ -86,7 +91,8 @@ internal class DevicePinStatusInMemoryRepositoryTest {
 
         val status = DevicePinStatus(
             deviceId,
-            mapOf(1 to true, 2 to false)
+            mapOf(1 to true, 2 to false),
+            fixedInstant
         )
 
         repository.store(status)
@@ -109,12 +115,14 @@ internal class DevicePinStatusInMemoryRepositoryTest {
 
         val status1 = DevicePinStatus(
             deviceId,
-            mapOf(1 to true, 2 to false)
+            mapOf(1 to true, 2 to false),
+            fixedInstant
         )
 
         val status2 = DevicePinStatus(
             deviceId,
-            mapOf(1 to false, 2 to true)
+            mapOf(1 to false, 2 to true),
+            fixedInstant
         )
 
         repository.store(status1)
@@ -139,12 +147,14 @@ internal class DevicePinStatusInMemoryRepositoryTest {
 
         val status1 = DevicePinStatus(
             deviceId,
-            mapOf(1 to true, 2 to false)
+            mapOf(1 to true, 2 to false),
+            fixedInstant
         )
 
         val status2 = DevicePinStatus(
             deviceId,
-            mapOf(1 to false, 2 to true)
+            mapOf(1 to false, 2 to true),
+            fixedInstant
         )
 
         repository.store(status1)

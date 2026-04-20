@@ -14,6 +14,7 @@ import cloud.fabX.fabXaccess.device.model.DevicePinStatusRepository
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import isLeft
 import isRight
+import kotlin.time.Clock
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,6 +26,8 @@ import org.mockito.kotlin.whenever
 internal class GettingDevicePinStatusTest {
     private val memberActor = UserFixture.arbitrary().asMember()
     private val correlationId = CorrelationIdFixture.arbitrary()
+
+    private val fixedInstant = Clock.System.now()
 
     private lateinit var logger: Logger
     private lateinit var devicePinStatusRepository: DevicePinStatusRepository
@@ -48,11 +51,13 @@ internal class GettingDevicePinStatusTest {
         val data = setOf(
             DevicePinStatus(
                 DeviceIdFixture.arbitrary(),
-                mapOf(1 to true, 2 to false)
+                mapOf(1 to true, 2 to false),
+                fixedInstant
             ),
             DevicePinStatus(
                 DeviceIdFixture.arbitrary(),
-                mapOf(1 to false, 2 to true)
+                mapOf(1 to false, 2 to true),
+                fixedInstant
             )
         )
 
@@ -73,11 +78,13 @@ internal class GettingDevicePinStatusTest {
         val data = setOf(
             DevicePinStatus(
                 DeviceIdFixture.arbitrary(),
-                mapOf(1 to true, 2 to false)
+                mapOf(1 to true, 2 to false),
+                fixedInstant
             ),
             DevicePinStatus(
                 DeviceIdFixture.arbitrary(),
-                mapOf(1 to false, 2 to true)
+                mapOf(1 to false, 2 to true),
+                fixedInstant
             )
         )
 
@@ -99,7 +106,8 @@ internal class GettingDevicePinStatusTest {
 
         val devicePinStatus = DevicePinStatus(
             deviceId,
-            mapOf(1 to false, 2 to true)
+            mapOf(1 to false, 2 to true),
+            fixedInstant
         )
 
         whenever { devicePinStatusRepository.getById(deviceId) }

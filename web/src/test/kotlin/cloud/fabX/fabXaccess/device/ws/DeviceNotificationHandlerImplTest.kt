@@ -16,6 +16,8 @@ import cloud.fabX.fabXaccess.user.rest.CardIdentity
 import cloud.fabX.fabXaccess.user.rest.PhoneNrIdentity
 import isLeft
 import isRight
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -31,6 +33,7 @@ internal class DeviceNotificationHandlerImplTest {
     private lateinit var loggingUnlockedTool: LoggingUnlockedTool
     private lateinit var updatingDevicePinStatus: UpdatingDevicePinStatus
     private lateinit var authenticationService: AuthenticationService
+    private lateinit var clock: Clock
 
     private lateinit var notificationHandler: DeviceNotificationHandler
 
@@ -38,13 +41,15 @@ internal class DeviceNotificationHandlerImplTest {
     fun `configure WebModule`(
         @Mock loggingUnlockedTool: LoggingUnlockedTool,
         @Mock updatingDevicePinStatus: UpdatingDevicePinStatus,
-        @Mock authenticationService: AuthenticationService
+        @Mock authenticationService: AuthenticationService,
+        @Mock clock: Clock
     ) {
         this.loggingUnlockedTool = loggingUnlockedTool
         this.updatingDevicePinStatus = updatingDevicePinStatus
         this.authenticationService = authenticationService
+        this.clock = clock
         notificationHandler =
-            DeviceNotificationHandlerImpl(loggingUnlockedTool, updatingDevicePinStatus, authenticationService)
+            DeviceNotificationHandlerImpl(loggingUnlockedTool, updatingDevicePinStatus, authenticationService, clock)
     }
 
     @Test
@@ -174,6 +179,11 @@ internal class DeviceNotificationHandlerImplTest {
         )
         val notification = PinStatusNotification(inputPins)
 
+        val instant = Instant.fromEpochMilliseconds(1776663334_123)
+
+        whenever(clock.now())
+            .thenReturn(instant)
+
         whenever(
             updatingDevicePinStatus.updateDevicePinStatus(
                 eq(device.asActor()),
@@ -181,7 +191,8 @@ internal class DeviceNotificationHandlerImplTest {
                 eq(
                     DevicePinStatus(
                         device.id,
-                        inputPins
+                        inputPins,
+                        instant
                     )
                 )
             )
@@ -209,6 +220,12 @@ internal class DeviceNotificationHandlerImplTest {
         )
         val notification = PinStatusNotification(inputPins)
 
+        val instant = Instant.fromEpochMilliseconds(1776663334_123)
+
+        whenever(clock.now())
+            .thenReturn(instant)
+
+
         val error = ErrorFixture.arbitrary()
 
         whenever(
@@ -218,7 +235,8 @@ internal class DeviceNotificationHandlerImplTest {
                 eq(
                     DevicePinStatus(
                         device.id,
-                        inputPins
+                        inputPins,
+                        instant
                     )
                 )
             )

@@ -23,6 +23,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.UserPasswordCredential
 import io.ktor.server.testing.ApplicationTestBuilder
 import kotlin.test.Test
+import kotlin.time.Instant
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.kodein.di.bindInstance
@@ -90,6 +91,10 @@ internal class DeviceControllerPinStatusTest {
         val deviceId2 = DeviceIdFixture.arbitrary()
         val deviceId3 = DeviceIdFixture.arbitrary()
 
+        val instant1 = Instant.fromEpochMilliseconds(1776663334_101)
+        val instant2 = Instant.fromEpochMilliseconds(1776663334_102)
+        val instant3 = Instant.fromEpochMilliseconds(1776663334_103)
+
         whenever(
             gettingDevicePinStatus.getAll(
                 eq(actingUser.asMember()),
@@ -100,15 +105,18 @@ internal class DeviceControllerPinStatusTest {
                 setOf(
                     DevicePinStatus(
                         deviceId1,
-                        mapOf(1 to true, 2 to false)
+                        mapOf(1 to true, 2 to false),
+                        instant1
                     ),
                     DevicePinStatus(
                         deviceId2,
-                        mapOf(1 to true)
+                        mapOf(1 to true),
+                        instant2
                     ),
                     DevicePinStatus(
                         deviceId3,
-                        mapOf(4 to true)
+                        mapOf(4 to true),
+                        instant3
                     )
                 )
             )
@@ -120,11 +128,11 @@ internal class DeviceControllerPinStatusTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.body<Map<String, Map<Int, Boolean>>>())
+        assertThat(response.body<Map<String, PinStatus>>())
             .containsOnly(
-                deviceId1.serialize() to mapOf(1 to true, 2 to false),
-                deviceId2.serialize() to mapOf(1 to true),
-                deviceId3.serialize() to mapOf(4 to true)
+                deviceId1.serialize() to PinStatus(mapOf(1 to InputPinStatus.INPUT_HIGH, 2 to InputPinStatus.INPUT_LOW), instant1),
+                deviceId2.serialize() to PinStatus(mapOf(1 to InputPinStatus.INPUT_HIGH), instant2),
+                deviceId3.serialize() to PinStatus(mapOf(4 to InputPinStatus.INPUT_HIGH), instant3)
             )
     }
 
@@ -132,6 +140,8 @@ internal class DeviceControllerPinStatusTest {
     fun `when get device pin status by id then returns status map`() = withConfiguredTestApp {
         // given
         val deviceId = DeviceIdFixture.arbitrary()
+
+        val instant = Instant.fromEpochMilliseconds(1776663334_999)
 
         whenever(
             gettingDevicePinStatus.getById(
@@ -143,7 +153,8 @@ internal class DeviceControllerPinStatusTest {
             .thenReturn(
                     DevicePinStatus(
                         deviceId,
-                        mapOf(1 to true, 2 to false)
+                        mapOf(1 to true, 2 to false),
+                        instant
                     ).right()
             )
 
@@ -154,8 +165,11 @@ internal class DeviceControllerPinStatusTest {
 
         // then
         assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.body<Map<Int, Boolean>>())
-            .isEqualTo(mapOf(1 to true, 2 to false))
+        assertThat(response.body<PinStatus>())
+            .isEqualTo(PinStatus(
+                mapOf(1 to InputPinStatus.INPUT_HIGH, 2 to InputPinStatus.INPUT_LOW),
+                instant
+            ))
     }
 
     @Test
