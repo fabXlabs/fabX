@@ -1,8 +1,8 @@
 [versions]
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 arrow = "2.2.2.1"
 kodein = "7.31.0"
-ktor = "3.4.2"
+ktor = "3.4.3"
 micrometer = "1.16.5"
 kotlinx-coroutines = "1.10.2"
 kotlinx-serialization-json = "1.11.0"
@@ -21,7 +21,7 @@ assertk = "0.28.1"
 mockito-kotlin = "6.3.0"
 mockito-junit5 = "5.23.0"
 kotlin-wiremock = "2.1.1"
-testcontainers = "2.0.4"
+testcontainers = "2.0.5"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
