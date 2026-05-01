@@ -15,7 +15,8 @@ data class Device(
     val backupBackendUrl: String,
     val actualFirmwareVersion: String?,
     val desiredFirmwareVersion: String?,
-    val attachedTools: Map<Int, String>
+    val attachedTools: Map<Int, String>,
+    val attachedInputs: Map<Int, InputDescription>
 )
 
 fun cloud.fabX.fabXaccess.device.model.Device.toRestModel(): Device = Device(
@@ -26,7 +27,16 @@ fun cloud.fabX.fabXaccess.device.model.Device.toRestModel(): Device = Device(
     backupBackendUrl = backupBackendUrl,
     actualFirmwareVersion = actualFirmwareVersion,
     desiredFirmwareVersion = desiredFirmwareVersion,
-    attachedTools = attachedTools.mapValues { it.value.serialize() }
+    attachedTools = attachedTools.mapValues { it.value.serialize() },
+    attachedInputs = attachedInputs.mapValues { it.value.toRestModel() }
+)
+
+fun cloud.fabX.fabXaccess.device.model.InputDescription.toRestModel(): InputDescription = InputDescription(
+    name = name,
+    descriptionLow = descriptionLow,
+    descriptionHigh = descriptionHigh,
+    colourLow = colourLow,
+    colourHigh = colourHigh
 )
 
 fun Map<DeviceId, Boolean>.toRestModel(): Map<String, Boolean> {
@@ -54,6 +64,15 @@ enum class InputPinStatus {
     INPUT_LOW,
     INPUT_HIGH
 }
+
+@Serializable
+data class InputDescription(
+    val name: String,
+    val descriptionLow: String,
+    val descriptionHigh: String,
+    val colourLow: String,
+    val colourHigh: String
+)
 
 @Serializable
 data class PinStatus(
@@ -86,6 +105,15 @@ data class DesiredFirmwareVersion(
 @Serializable
 data class ToolAttachmentDetails(
     val toolId: String
+)
+
+@Serializable
+data class InputAttachmentDetails(
+    val name: String,
+    val descriptionLow: String,
+    val descriptionHigh: String,
+    val colourLow: String,
+    val colourHigh: String
 )
 
 @Serializable

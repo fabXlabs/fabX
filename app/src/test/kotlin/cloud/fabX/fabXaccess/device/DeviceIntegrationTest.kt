@@ -16,6 +16,8 @@ import cloud.fabX.fabXaccess.device.rest.DesiredFirmwareVersion
 import cloud.fabX.fabXaccess.device.rest.Device
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
 import cloud.fabX.fabXaccess.device.rest.DeviceDetails
+import cloud.fabX.fabXaccess.device.rest.InputAttachmentDetails
+import cloud.fabX.fabXaccess.device.rest.InputDescription
 import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
 import cloud.fabX.fabXaccess.tool.givenTool
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
@@ -119,6 +121,7 @@ internal class DeviceIntegrationTest {
                     "https://backup.example.com",
                     null,
                     null,
+                    mapOf(),
                     mapOf()
                 )
             )
@@ -203,6 +206,7 @@ internal class DeviceIntegrationTest {
                     "https://backup.example.com",
                     null,
                     null,
+                    mapOf(),
                     mapOf()
                 )
             )
@@ -350,7 +354,8 @@ internal class DeviceIntegrationTest {
                     "https://backup.example.com",
                     null,
                     null,
-                    mapOf(2 to toolId)
+                    mapOf(2 to toolId),
+                    mapOf()
                 )
             )
     }
@@ -432,6 +437,177 @@ internal class DeviceIntegrationTest {
 
         // when
         val response = c().delete("/api/v1/device/$deviceId/attached-tool/$pin") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
+            )
+    }
+
+    @Test
+    fun `when attaching input then returns http no content`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "AABBCCDDEEFF")
+        val pin = 4
+        val name = "input name"
+        val descriptionLow = "description low"
+        val descriptionHigh = "description high"
+        val colourLow = "#aabbcc"
+        val colourHigh = "#ddeeff"
+
+        val requestBody = InputAttachmentDetails(
+            name,
+            descriptionLow,
+            descriptionHigh,
+            colourLow,
+            colourHigh
+        )
+
+        // when
+        val response = c().put("/api/v1/device/$deviceId/attached-input/$pin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
+
+        val responseGet = c().get("/api/v1/device/$deviceId") {
+            adminAuth()
+        }
+        assertThat(responseGet.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(responseGet.body<Device>())
+            .isEqualTo(
+                Device(
+                    deviceId,
+                    2,
+                    "device",
+                    "https://example.com/bg.bmp",
+                    "https://backup.example.com",
+                    null,
+                    null,
+                    mapOf(),
+                    mapOf(
+                        pin to InputDescription(
+                            name,
+                            descriptionLow,
+                            descriptionHigh,
+                            colourLow,
+                            colourHigh,
+                        )
+                    )
+                )
+            )
+    }
+
+    @Test
+    fun `given attached input when attaching input to same pin then returns http unprocessable entity`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "AABBCCDDEEFF")
+        val pin = 4
+
+        givenInputAttachedToDevice(deviceId, pin)
+
+        val name = "another input name"
+        val descriptionLow = "another description low"
+        val descriptionHigh = "another description high"
+        val colourLow = "#424242"
+        val colourHigh = "#434343"
+
+        val requestBody = InputAttachmentDetails(
+            name,
+            descriptionLow,
+            descriptionHigh,
+            colourLow,
+            colourHigh
+        )
+
+        // when
+        val response = c().put("/api/v1/device/$deviceId/attached-input/$pin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.UnprocessableEntity)
+        assertThat(response.body<Error>())
+            .isError(
+                "InputPinInUse",
+                "Input already attached at pin $pin.",
+                mapOf("pin" to pin.toString())
+            )
+    }
+
+    @Test
+    fun `given non-admin authentication when attaching input then returns http forbidden`() = withTestApp {
+        // given
+        val deviceId = givenDevice(mac = "AABBCCDDEEFF")
+        val pin = 4
+        val name = "input name"
+        val descriptionLow = "description low"
+        val descriptionHigh = "description high"
+        val colourLow = "#aabbcc"
+        val colourHigh = "#ddeeff"
+
+        val requestBody = InputAttachmentDetails(
+            name,
+            descriptionLow,
+            descriptionHigh,
+            colourLow,
+            colourHigh
+        )
+
+        // when
+        val response = c().put("/api/v1/device/$deviceId/attached-input/$pin") {
+            memberAuth()
+            contentType(ContentType.Application.Json)
+            setBody(requestBody)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.Forbidden)
+        assertThat(response.body<Error>())
+            .isError(
+                "UserNotAdmin",
+                "User UserId(value=c63b3a7d-bd18-4272-b4ed-4bcf9683c602) is not an admin."
+            )
+    }
+
+    @Test
+    fun `when detaching input then returns http no content`() = withTestApp {
+        // given
+        val pin = 2
+        val deviceId = givenDevice(mac = "0011223344AA")
+        givenInputAttachedToDevice(deviceId, pin)
+
+        // when
+        val response = c().delete("/api/v1/device/$deviceId/attached-input/$pin") {
+            adminAuth()
+            contentType(ContentType.Application.Json)
+        }
+
+        // then
+        assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+        assertThat(response.bodyAsText()).isEmpty()
+    }
+
+    @Test
+    fun `given non-admin authentication when detaching input then returns http forbidden`() = withTestApp {
+        // given
+        val pin = 2
+        val deviceId = DeviceIdFixture.arbitrary().serialize()
+
+        // when
+        val response = c().delete("/api/v1/device/$deviceId/attached-input/$pin") {
             memberAuth()
             contentType(ContentType.Application.Json)
         }

@@ -4,11 +4,13 @@ import cloud.fabX.fabXaccess.WebApp
 import cloud.fabX.fabXaccess.common.application.domainSerializersModule
 import cloud.fabX.fabXaccess.device.application.AddingCardIdentityAtDevice
 import cloud.fabX.fabXaccess.device.application.AddingDevice
+import cloud.fabX.fabXaccess.device.application.AttachingInput
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
 import cloud.fabX.fabXaccess.device.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
+import cloud.fabX.fabXaccess.device.application.DetachingInput
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingConfiguration
 import cloud.fabX.fabXaccess.device.application.GettingDevice
@@ -159,6 +161,8 @@ internal fun withTestApp(
         bindInstance { Mockito.mock(DeletingDevice::class.java) }
         bindInstance { Mockito.mock(AttachingTool::class.java) }
         bindInstance { Mockito.mock(DetachingTool::class.java) }
+        bindInstance { Mockito.mock(AttachingInput::class.java) }
+        bindInstance { Mockito.mock(DetachingInput::class.java) }
         bindInstance { Mockito.mock(GettingConfiguration::class.java) }
         bindInstance { Mockito.mock(UnlockingTool::class.java) }
         bindInstance { Mockito.mock(RestartingDevice::class.java) }

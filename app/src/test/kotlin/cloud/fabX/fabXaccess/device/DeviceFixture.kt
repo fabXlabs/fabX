@@ -6,6 +6,7 @@ import cloud.fabX.fabXaccess.common.adminAuth
 import cloud.fabX.fabXaccess.common.c
 import cloud.fabX.fabXaccess.device.rest.DesiredFirmwareVersion
 import cloud.fabX.fabXaccess.device.rest.DeviceCreationDetails
+import cloud.fabX.fabXaccess.device.rest.InputAttachmentDetails
 import cloud.fabX.fabXaccess.device.rest.ToolAttachmentDetails
 import io.ktor.client.call.body
 import io.ktor.client.request.post
@@ -49,6 +50,32 @@ internal suspend fun ApplicationTestBuilder.givenToolAttachedToDevice(
     val requestBody = ToolAttachmentDetails(toolId)
 
     val response = c().put("/api/v1/device/$deviceId/attached-tool/$pin") {
+        adminAuth()
+        contentType(ContentType.Application.Json)
+        setBody(requestBody)
+    }
+
+    assertThat(response.status).isEqualTo(HttpStatusCode.NoContent)
+}
+
+internal suspend fun ApplicationTestBuilder.givenInputAttachedToDevice(
+    deviceId: String,
+    pin: Int,
+    name: String = "input name",
+    descriptionLow: String = "description low",
+    descriptionHigh: String = "description high",
+    colourLow: String = "#aabbcc",
+    colourHigh: String = "#ddeeff"
+) {
+    val requestBody = InputAttachmentDetails(
+        name,
+        descriptionLow,
+        descriptionHigh,
+        colourLow,
+        colourHigh
+    )
+
+    val response = c().put("/api/v1/device/$deviceId/attached-input/$pin") {
         adminAuth()
         contentType(ContentType.Application.Json)
         setBody(requestBody)

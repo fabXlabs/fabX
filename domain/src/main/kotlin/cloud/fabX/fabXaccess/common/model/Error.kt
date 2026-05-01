@@ -257,6 +257,18 @@ sealed class Error(
         override val correlationId: CorrelationId
     ) : Error(message, mapOf("pin" to pin.toString()), correlationId)
 
+    data class InputPinInUse(
+        override val message: String,
+        val pin: Int,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("pin" to pin.toString()), correlationId)
+
+    data class InputPinNotInUse(
+        override val message: String,
+        val pin: Int,
+        override val correlationId: CorrelationId
+    ) : Error(message, mapOf("pin" to pin.toString()), correlationId)
+
     data class VersionConflict(override val message: String) : Error(message)
 
     data class UserIdInvalid(

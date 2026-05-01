@@ -24,9 +24,9 @@ import isNone
 import isRight
 import isSome
 import java.awt.Color
-import kotlinx.coroutines.test.runTest
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
@@ -57,6 +57,7 @@ internal class DeviceTest {
             "https://fabx-backup.example.com",
             null,
             null,
+            mapOf(),
             mapOf(),
             MacSecretIdentity("aabbccddeeff", "supersecret")
         )
@@ -194,6 +195,7 @@ internal class DeviceTest {
                     "backupUrl3",
                     null,
                     null,
+                    mapOf(),
                     mapOf(),
                     MacSecretIdentity("aabbccddeeff", "supersecret")
                 )
@@ -774,7 +776,170 @@ internal class DeviceTest {
                     correlationId
                 )
             )
+    }
 
+    @Test
+    fun `when attaching input then returns expected sourcing event`() {
+        // given
+        val pin = 4
+        val name = "input name"
+        val descriptionLow = "description low"
+        val descriptionHigh = "description high"
+        val colourLow = "#aabbcc"
+        val colourHigh = "#ddeeff"
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion = aggregateVersion,
+            attachedTools = mapOf()
+        )
+
+        val expectedSourcingEvent = InputAttached(
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
+            pin = pin,
+            name = name,
+            descriptionLow = descriptionLow,
+            descriptionHigh = descriptionHigh,
+            colourLow = colourLow,
+            colourHigh = colourHigh
+        )
+
+        // when
+        val result = device.attachInput(
+            adminActor,
+            fixedClock,
+            correlationId,
+            pin,
+            name,
+            descriptionLow,
+            descriptionHigh,
+            colourLow,
+            colourHigh
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given input pin is already in use when attaching input then returns error`() {
+        // given
+        val pin = 4
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion = aggregateVersion,
+            inputDescriptions = mapOf(
+                pin to InputDescription(
+                    "input name",
+                    "description low",
+                    "description high",
+                    "#aabbcc",
+                    "#ddeeff"
+                )
+            )
+        )
+
+        // when
+        val result = device.attachInput(
+            adminActor,
+            fixedClock,
+            correlationId,
+            pin,
+            "input name",
+            "other desc low",
+            "other desc high",
+            "#aaaaaa",
+            "#bbbbbb"
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.InputPinInUse(
+                    "Input already attached at pin 4.",
+                    pin,
+                    correlationId
+                )
+            )
+    }
+
+    @Test
+    fun `when detaching input then returns expected sourcing event`() {
+        // given
+        val pin = 4
+
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion = aggregateVersion,
+            inputDescriptions = mapOf(
+                pin to InputDescription(
+                    "input name",
+                    "description low",
+                    "description high",
+                    "#aabbcc",
+                    "#ddeeff"
+                )
+            )
+        )
+
+        val expectedSourcingEvent = InputDetached(
+            deviceId,
+            aggregateVersion + 1,
+            adminActor.id,
+            fixedInstant,
+            correlationId,
+            pin = pin
+        )
+
+        // when
+        val result = device.detachInput(
+            adminActor,
+            fixedClock,
+            correlationId,
+            pin
+        )
+
+        // then
+        assertThat(result)
+            .isRight()
+            .isEqualTo(expectedSourcingEvent)
+    }
+
+    @Test
+    fun `given input pin not in use when detaching input then returns error`() {
+        // given
+        val device = DeviceFixture.arbitrary(
+            deviceId,
+            aggregateVersion = aggregateVersion,
+            inputDescriptions = mapOf()
+        )
+
+        // when
+        val result = device.detachInput(
+            adminActor,
+            fixedClock,
+            correlationId,
+            4
+        )
+
+        // then
+        assertThat(result)
+            .isLeft()
+            .isEqualTo(
+                Error.InputPinNotInUse(
+                    "No input attached at pin 4.",
+                    pin = 4,
+                    correlationId
+                )
+            )
     }
 
     @Test
@@ -863,6 +1028,15 @@ internal class DeviceTest {
             "1.2.3",
             "4.5.6",
             mapOf(3 to ToolIdFixture.static(345)),
+            mapOf(
+                7 to InputDescription(
+                    "input name",
+                    "description for low input",
+                    "description for high input",
+                    "#aabbcc",
+                    "#ddeeff",
+                )
+            ),
             MacSecretIdentity("aabbccddeeff", "supersecret")
         )
 
@@ -879,6 +1053,7 @@ internal class DeviceTest {
                     "actualFirmwareVersion=1.2.3, " +
                     "desiredFirmwareVersion=4.5.6, " +
                     "attachedTools={3=ToolId(value=00000000-0000-0059-0000-000000000000)}, " +
+                    "attachedInputs={7=InputDescription(name=input name, descriptionLow=description for low input, descriptionHigh=description for high input, colourLow=#aabbcc, colourHigh=#ddeeff)}, " +
                     "identity=MacSecretIdentity(mac=aabbccddeeff, secret=supersecret))"
         )
     }

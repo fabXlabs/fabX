@@ -13,6 +13,7 @@ import cloud.fabX.fabXaccess.common.rest.withTestApp
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.device.model.InputDescription
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import cloud.fabX.fabXaccess.user.model.UserFixture
 import cloud.fabX.fabXaccess.user.rest.AuthenticationService
@@ -101,7 +102,14 @@ internal class DeviceControllerGetTest {
             "secret1",
             "1.2.3",
             "4.5.6",
-            mapOf(1 to toolId1)
+            mapOf(1 to toolId1),
+            mapOf(2 to InputDescription(
+                "input name",
+                "description low",
+                "description high",
+                "#000000",
+                "#ffffff"
+            ))
         )
 
         val deviceId2 = DeviceIdFixture.arbitrary()
@@ -134,7 +142,14 @@ internal class DeviceControllerGetTest {
             "https://backup.example.com",
             "1.2.3",
             "4.5.6",
-            mapOf(1 to toolId1.serialize())
+            mapOf(1 to toolId1.serialize()),
+            mapOf(2 to cloud.fabX.fabXaccess.device.rest.InputDescription(
+                "input name",
+                "description low",
+                "description high",
+                "#000000",
+                "#ffffff"
+            ))
         )
 
         val mappedDevice2 = Device(
@@ -145,7 +160,8 @@ internal class DeviceControllerGetTest {
             "https://backup.example.com",
             "1.2.3",
             "42.0.0",
-            mapOf(1 to toolId1.serialize(), 2 to toolId2.serialize())
+            mapOf(1 to toolId1.serialize(), 2 to toolId2.serialize()),
+            mapOf()
         )
 
         // when
@@ -175,7 +191,14 @@ internal class DeviceControllerGetTest {
             "secret00",
             "1.2.3",
             "42.0.0",
-            mapOf(1 to toolId)
+            mapOf(1 to toolId),
+            mapOf(7 to InputDescription(
+                "input name",
+                "description low",
+                "description high",
+                "#000000",
+                "#ffffff"
+            ))
         )
 
         whenever(
@@ -194,7 +217,15 @@ internal class DeviceControllerGetTest {
             "https://backup.example.com",
             "1.2.3",
             "42.0.0",
-            mapOf(1 to toolId.serialize())
+            mapOf(1 to toolId.serialize()),
+            mapOf(7 to cloud.fabX.fabXaccess.device.rest.InputDescription(
+                "input name",
+                "description low",
+                "description high",
+                "#000000",
+                "#ffffff"
+            ))
+
         )
 
         // when

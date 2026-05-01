@@ -29,6 +29,8 @@ sealed class DeviceSourcingEvent : SourcingEvent {
         fun handle(event: DesiredFirmwareVersionChanged, device: Option<Device>): Option<Device>
         fun handle(event: ToolAttached, device: Option<Device>): Option<Device>
         fun handle(event: ToolDetached, device: Option<Device>): Option<Device>
+        fun handle(event: InputAttached, device: Option<Device>): Option<Device>
+        fun handle(event: InputDetached, device: Option<Device>): Option<Device>
         fun handle(event: DeviceDeleted, device: Option<Device>): Option<Device>
     }
 }
@@ -118,6 +120,41 @@ data class ToolAttached(
 @OptIn(ExperimentalTime::class)
 @Serializable
 data class ToolDetached(
+    override val aggregateRootId: DeviceId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val pin: Int
+) : DeviceSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, device: Option<Device>): Option<Device> =
+        eventHandler.handle(this, device)
+}
+
+@OptIn(ExperimentalTime::class)
+@Serializable
+data class InputAttached(
+    override val aggregateRootId: DeviceId,
+    override val aggregateVersion: Long,
+    override val actorId: ActorId,
+    override val timestamp: Instant,
+    override val correlationId: CorrelationId,
+    val pin: Int,
+    val name: String,
+    val descriptionLow: String,
+    val descriptionHigh: String,
+    val colourLow: String,
+    val colourHigh: String
+) : DeviceSourcingEvent() {
+
+    override fun processBy(eventHandler: EventHandler, device: Option<Device>): Option<Device> =
+        eventHandler.handle(this, device)
+}
+
+@OptIn(ExperimentalTime::class)
+@Serializable
+data class InputDetached(
     override val aggregateRootId: DeviceId,
     override val aggregateVersion: Long,
     override val actorId: ActorId,

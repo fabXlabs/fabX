@@ -15,11 +15,13 @@ import cloud.fabX.fabXaccess.common.rest.toDomain
 import cloud.fabX.fabXaccess.common.rest.withAdminAuthRespond
 import cloud.fabX.fabXaccess.device.application.AddingCardIdentityAtDevice
 import cloud.fabX.fabXaccess.device.application.AddingDevice
+import cloud.fabX.fabXaccess.device.application.AttachingInput
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
 import cloud.fabX.fabXaccess.device.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
+import cloud.fabX.fabXaccess.device.application.DetachingInput
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.GettingDevice
 import cloud.fabX.fabXaccess.device.application.GettingDeviceConnectionStatus
@@ -48,6 +50,8 @@ class DeviceController(
     private val attachingTool: AttachingTool,
     private val detachingTool: DetachingTool,
     private val unlockingTool: UnlockingTool,
+    private val attachingInput: AttachingInput,
+    private val detachingInput: DetachingInput,
     private val restartingDevice: RestartingDevice,
     private val addingCardIdentityAtDevice: AddingCardIdentityAtDevice,
     private val updatingDeviceFirmware: UpdatingDeviceFirmware
@@ -196,6 +200,45 @@ class DeviceController(
                         readIntParameter("pin")?.let { pin ->
                             withAdminAuthRespond { admin ->
                                 detachingTool.detachTool(
+                                    admin,
+                                    newCorrelationId(),
+                                    id,
+                                    pin
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            route("/{id}/attached-input") {
+                put("/{pin}") {
+                    readBody<InputAttachmentDetails>()?.let {
+                        readId { id ->
+                            readIntParameter("pin")?.let { pin ->
+                                withAdminAuthRespond { admin ->
+                                    attachingInput.attachInput(
+                                        admin,
+                                        newCorrelationId(),
+                                        id,
+                                        pin,
+                                        it.name,
+                                        it.descriptionLow,
+                                        it.descriptionHigh,
+                                        it.colourLow,
+                                        it.colourHigh
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                delete("/{pin}") {
+                    readId { id ->
+                        readIntParameter("pin")?.let { pin ->
+                            withAdminAuthRespond { admin ->
+                                detachingInput.detachInput(
                                     admin,
                                     newCorrelationId(),
                                     id,

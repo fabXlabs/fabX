@@ -25,7 +25,8 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
                 actualFirmwareVersion = null,
                 desiredFirmwareVersion = null,
                 identity = MacSecretIdentity(event.mac, event.secret),
-                attachedTools = mapOf()
+                attachedTools = mapOf(),
+                attachedInputs = mapOf()
             )
         )
     }
@@ -88,6 +89,36 @@ internal class DeviceEventHandler : DeviceSourcingEvent.EventHandler {
             d.copy(
                 aggregateVersion = e.aggregateVersion,
                 attachedTools = d.attachedTools - e.pin
+            )
+        )
+    }
+
+    override fun handle(
+        event: InputAttached,
+        device: Option<Device>
+    ): Option<Device> = requireSomeDeviceWithSameIdAnd(event, device) { e, d ->
+        Some(
+            d.copy(
+                aggregateVersion = e.aggregateVersion,
+                attachedInputs = d.attachedInputs + (e.pin to InputDescription(
+                    e.name,
+                    e.descriptionLow,
+                    e.descriptionHigh,
+                    e.colourLow,
+                    e.colourHigh,
+                ))
+            )
+        )
+    }
+
+    override fun handle(
+        event: InputDetached,
+        device: Option<Device>
+    ): Option<Device> = requireSomeDeviceWithSameIdAnd(event, device) { e, d ->
+        Some(
+            d.copy(
+                aggregateVersion = e.aggregateVersion,
+                attachedInputs = d.attachedInputs - e.pin
             )
         )
     }

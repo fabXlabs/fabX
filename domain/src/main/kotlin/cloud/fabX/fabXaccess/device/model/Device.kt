@@ -18,6 +18,7 @@ import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.DeviceIdFactory
 import cloud.fabX.fabXaccess.common.model.DomainEvent
 import cloud.fabX.fabXaccess.common.model.Error
+import cloud.fabX.fabXaccess.common.model.Error.InputPinNotInUse
 import cloud.fabX.fabXaccess.common.model.Error.PinInUse
 import cloud.fabX.fabXaccess.common.model.Error.PinNotInUse
 import cloud.fabX.fabXaccess.common.model.ToolId
@@ -40,15 +41,9 @@ data class Device internal constructor(
     val actualFirmwareVersion: String?,
     val desiredFirmwareVersion: String?,
     val attachedTools: Map<Int, ToolId>,
+    val attachedInputs: Map<Int, InputDescription>,
     internal val identity: MacSecretIdentity
 ) : AggregateRootEntity<DeviceId> {
-
-    // TODO change device input configuration
-    //      - pin
-    //      - displayValue high
-    //      - displayValue low
-    //      - displayColour high
-    //      - displayColour low
 
     companion object {
         fun addNew(
@@ -282,6 +277,71 @@ data class Device internal constructor(
                     id,
                     aggregateVersion + 1,
                     actorId,
+                    clock.now(),
+                    correlationId,
+                    pin
+                )
+            }
+    }
+
+    fun attachInput(
+        actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+        pin: Int,
+        name: String,
+        descriptionLow: String,
+        descriptionHigh: String,
+        colourLow: String,
+        colourHigh: String
+    ): Either<Error, DeviceSourcingEvent> {
+        return requireInputPinNotInUse(correlationId, pin)
+            .map {
+                InputAttached(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
+                    clock.now(),
+                    correlationId,
+                    pin,
+                    name,
+                    descriptionLow,
+                    descriptionHigh,
+                    colourLow,
+                    colourHigh
+                )
+            }
+    }
+
+    private fun requireInputPinNotInUse(
+        correlationId: CorrelationId,
+        pin: Int
+    ): Either<Error, Unit> {
+        return attachedInputs.getOrNone(pin)
+            .toEither {
+                Unit
+            }
+            .map {
+                Error.InputPinInUse("Input already attached at pin $pin.", pin, correlationId)
+            }
+            .swap()
+    }
+
+    fun detachInput(
+        actor: Admin,
+        clock: Clock,
+        correlationId: CorrelationId,
+        pin: Int
+    ): Either<Error, DeviceSourcingEvent> {
+        return attachedInputs.getOrNone(pin)
+            .toEither {
+                InputPinNotInUse("No input attached at pin $pin.", pin, correlationId)
+            }
+            .map {
+                InputDetached(
+                    id,
+                    aggregateVersion + 1,
+                    actor.id,
                     clock.now(),
                     correlationId,
                     pin

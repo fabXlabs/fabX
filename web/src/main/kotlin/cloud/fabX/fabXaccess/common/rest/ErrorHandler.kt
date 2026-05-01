@@ -54,6 +54,8 @@ internal suspend fun ApplicationCall.handleError(error: Error) {
         is Error.DeviceThumbnailNotFound -> HttpStatusCode.NotFound
         is Error.DeviceNotFoundByIdentity -> HttpStatusCode.NotFound
         is Error.PinInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.InputPinInUse -> HttpStatusCode.UnprocessableEntity
+        is Error.InputPinNotInUse -> HttpStatusCode.NotFound
         is Error.DevicePinStatusUnknown -> HttpStatusCode.NotFound
         is Error.ToolNotAttachedToDevice -> HttpStatusCode.UnprocessableEntity
         is Error.ToolAlreadyAttachedToDevice -> HttpStatusCode.UnprocessableEntity

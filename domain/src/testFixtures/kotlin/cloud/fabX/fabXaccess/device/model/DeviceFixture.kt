@@ -15,7 +15,8 @@ object DeviceFixture {
         secret: String = "supersecret42",
         actualFirmwareVersion: String? = "1.2.3",
         desiredFirmwareVersion: String? = "4.5.6",
-        attachedTools: Map<Int, ToolId> = mapOf()
+        attachedTools: Map<Int, ToolId> = mapOf(),
+        inputDescriptions: Map<Int, InputDescription> = mapOf()
     ): Device = Device(
         deviceId,
         aggregateVersion,
@@ -25,6 +26,7 @@ object DeviceFixture {
         actualFirmwareVersion,
         desiredFirmwareVersion,
         attachedTools,
+        inputDescriptions,
         MacSecretIdentity(mac, secret)
     )
 

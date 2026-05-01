@@ -6,11 +6,13 @@ import cloud.fabX.fabXaccess.common.model.newToolId
 import cloud.fabX.fabXaccess.common.model.newUserId
 import cloud.fabX.fabXaccess.device.application.AddingCardIdentityAtDevice
 import cloud.fabX.fabXaccess.device.application.AddingDevice
+import cloud.fabX.fabXaccess.device.application.AttachingInput
 import cloud.fabX.fabXaccess.device.application.AttachingTool
 import cloud.fabX.fabXaccess.device.application.ChangingDevice
 import cloud.fabX.fabXaccess.device.application.ChangingFirmwareVersion
 import cloud.fabX.fabXaccess.device.application.ChangingThumbnail
 import cloud.fabX.fabXaccess.device.application.DeletingDevice
+import cloud.fabX.fabXaccess.device.application.DetachingInput
 import cloud.fabX.fabXaccess.device.application.DetachingTool
 import cloud.fabX.fabXaccess.device.application.DeviceDomainEventHandler
 import cloud.fabX.fabXaccess.device.application.GettingConfiguration
@@ -70,11 +72,13 @@ val domainModule = DI.Module("domain") {
     bindSingleton { AddingCardIdentityAtDevice(instance(), instance(), instance(), instance(), instance(), instance()) }
     bindSingleton { AddingDevice(instance(), instance(), instance(), instance()) }
     bindSingleton { AttachingTool(instance(), instance(), instance(), instance()) }
+    bindSingleton { AttachingInput(instance(), instance(), instance()) }
     bindSingleton { ChangingDevice(instance(), instance(), instance()) }
     bindSingleton { ChangingThumbnail(instance(), instance()) }
     bindSingleton { ChangingFirmwareVersion(instance(), instance(), instance()) }
     bindSingleton { DeletingDevice(instance(), instance(), instance()) }
     bindSingleton { DetachingTool(instance(), instance(), instance()) }
+    bindSingleton { DetachingInput(instance(), instance(), instance()) }
     bindSingleton { DeviceDomainEventHandler(instance(), instance(), instance()) }
     bindSingleton {
         GettingConfiguration(

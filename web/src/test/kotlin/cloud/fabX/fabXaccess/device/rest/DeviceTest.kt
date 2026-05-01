@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import cloud.fabX.fabXaccess.device.model.DeviceFixture
 import cloud.fabX.fabXaccess.device.model.DeviceIdFixture
+import cloud.fabX.fabXaccess.device.model.InputDescription
 import cloud.fabX.fabXaccess.tool.model.ToolIdFixture
 import org.junit.jupiter.api.Test
 
@@ -31,6 +32,15 @@ internal class DeviceTest {
                 1 to toolId1,
                 2 to toolId2,
                 3 to toolId3
+            ),
+            mapOf(
+                1 to InputDescription(
+                    "input name",
+                    "description low",
+                    "description high",
+                    "#000000",
+                    "#ffffff"
+                )
             )
         )
 
@@ -46,6 +56,15 @@ internal class DeviceTest {
                 1 to toolId1.serialize(),
                 2 to toolId2.serialize(),
                 3 to toolId3.serialize(),
+            ),
+            mapOf(
+                1 to cloud.fabX.fabXaccess.device.rest.InputDescription(
+                    "input name",
+                    "description low",
+                    "description high",
+                    "#000000",
+                    "#ffffff"
+                )
             )
         )
 

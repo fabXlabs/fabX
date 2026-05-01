@@ -5,40 +5,29 @@ import cloud.fabX.fabXaccess.common.application.LoggerFactory
 import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.DeviceId
 import cloud.fabX.fabXaccess.common.model.Error
-import cloud.fabX.fabXaccess.common.model.ToolId
 import cloud.fabX.fabXaccess.device.model.DeviceRepository
-import cloud.fabX.fabXaccess.tool.model.GettingToolById
 import cloud.fabX.fabXaccess.user.model.Admin
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 /**
- * Service for attaching a tool to a device.
+ * Service for detaching an input from a device.
  */
 @OptIn(ExperimentalTime::class)
-class AttachingTool(
+class DetachingInput(
     loggerFactory: LoggerFactory,
     private val deviceRepository: DeviceRepository,
-    private val gettingToolById: GettingToolById,
     private val clock: Clock
 ) {
     private val log = loggerFactory.invoke(this::class.java)
 
-    suspend fun attachTool(
+    suspend fun detachInput(
         actor: Admin,
         correlationId: CorrelationId,
         deviceId: DeviceId,
-        pin: Int,
-        toolId: ToolId
+        pin: Int
     ): Either<Error, Unit> =
-        deviceRepository.getAndStoreFlatMap(deviceId, actor, correlationId, log, "attachTool") {
-            it.attachTool(
-                actor,
-                clock,
-                correlationId,
-                pin,
-                toolId,
-                gettingToolById
-            )
+        deviceRepository.getAndStoreFlatMap(deviceId, actor, correlationId, log, "detachInput") {
+            it.detachInput(actor, clock, correlationId, pin)
         }
 }
