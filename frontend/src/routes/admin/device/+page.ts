@@ -18,9 +18,15 @@ export const load: PageLoad = async ({ fetch }) => {
 		return [];
 	});
 
-	const deviceConnectionStatuses = getAllDeviceConnectionStatuses(fetch);
+	const deviceConnectionStatuses = getAllDeviceConnectionStatuses(fetch).catch((error) => {
+		console.log('getAllDeviceConnectionStatuses failed:', error);
+		return new Map();
+	});
 
-	const devicePinStatuses = getAllDevicePinStatuses(fetch);
+	const devicePinStatuses = getAllDevicePinStatuses(fetch).catch((error) => {
+		console.log('getAllDevicePinStatuses failed:', error);
+		return new Map();
+	});
 
 	const augmentedDevices = augmentDevices(
 		await devices,
