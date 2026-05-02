@@ -1,13 +1,26 @@
 <script lang="ts">
-	import type { Tool } from '$lib/api/model/tool';
+	import type { AugmentedInputDescription } from '$lib/api/model/device';
+	import InputStatusRow from './InputStatusRow.svelte';
 
 	interface Props {
-		attachedTools: Record<number, Tool>;
+		attachedInputs: Record<number, AugmentedInputDescription>;
+		pinStatusUpdatedAt: string | null;
 	}
 
-	let { attachedTools }: Props = $props();
+	let { attachedInputs, pinStatusUpdatedAt }: Props = $props();
 </script>
 
-{#each Object.entries(attachedTools) as [pin, tool] (pin)}
-	<div>{pin}: {tool.name}</div>
-{/each}
+<table class="border-spacing-1">
+	<tbody>
+		{#each Object.entries(attachedInputs) as [pin, inputDescription] (pin)}
+			<InputStatusRow {pin} {inputDescription} />
+		{/each}
+		{#if pinStatusUpdatedAt}
+			<tr>
+				<td colspan="3" class="text-center" style="font-size: 6pt;">
+					{pinStatusUpdatedAt}
+				</td>
+			</tr>
+		{/if}
+	</tbody>
+</table>

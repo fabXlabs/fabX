@@ -2,10 +2,13 @@ import { baseUrl, type FetchFunction } from '$lib/api/index';
 import type {
 	AtDeviceCardCreationDetails,
 	AugmentedDevice,
+	AugmentedInputDescription,
 	DesiredFirmwareVersion,
 	Device,
 	DeviceCreationDetails,
 	DeviceDetails,
+	InputAttachmentDetails,
+	InputPinStatus,
 	PinStatus,
 	ToolAttachmentDetails,
 	ToolUnlockDetails
@@ -13,7 +16,6 @@ import type {
 import type { Tool } from '$lib/api/model/tool';
 import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
 import { mapError } from '$lib/api/map-error';
-import type { UserSourcingEvent } from '$lib/api/model/user';
 
 export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	console.debug('getAllDevices...');
@@ -101,6 +103,23 @@ function augmentDevice_(
 		pinStatus = pinStatuses.get(device.id)!;
 	}
 
+	const attachedInputs: Record<number, AugmentedInputDescription> = Object.fromEntries(
+		Object.entries(device.attachedInputs).map(([pin, inputDescription]) => {
+			let inputPinStatus: InputPinStatus | null = null;
+			if (pinStatus !== null && pinStatus.inputPinStatus.has(pin)) {
+				inputPinStatus = pinStatus.inputPinStatus.get(pin) || null;
+			}
+
+			return [
+				pin,
+				{
+					...inputDescription,
+					inputPinStatus
+				}
+			];
+		})
+	);
+
 	return {
 		...device,
 		attachedTools: Object.fromEntries(
@@ -109,6 +128,7 @@ function augmentDevice_(
 				toolsMap.get(tool)
 			]).filter(([, v]) => v)
 		),
+		attachedInputs,
 		connectionStatus,
 		pinStatus
 	};
@@ -186,6 +206,30 @@ export async function attachTool(
 
 export async function detachTool(fetch: FetchFunction, id: string, pin: number): Promise<string> {
 	return await deleteRequest(fetch, `/device/${id}/attached-tool/${pin}`, id);
+}
+
+export async function attachInput(
+	fetch: FetchFunction,
+	id: string,
+	pin: number,
+	name: string,
+	descriptionLow: string,
+	descriptionHigh: string,
+	colourLow: string,
+	colourHigh: string
+): Promise<string> {
+	const details: InputAttachmentDetails = {
+		name,
+		descriptionLow,
+		descriptionHigh,
+		colourLow,
+		colourHigh
+	};
+	return await putRequest(fetch, `/device/${id}/attached-input/${pin}`, id, details);
+}
+
+export async function detachInput(fetch: FetchFunction, id: string, pin: number): Promise<string> {
+	return await deleteRequest(fetch, `/device/${id}/attached-input/${pin}`, id);
 }
 
 export async function unlockTool(

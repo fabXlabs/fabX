@@ -10,6 +10,15 @@ export interface Device {
 	actualFirmwareVersion: string | null;
 	desiredFirmwareVersion: string | null;
 	attachedTools: Record<number, string>;
+	attachedInputs: Record<number, InputDescription>;
+}
+
+export interface InputDescription {
+	name: string;
+	descriptionLow: string;
+	descriptionHigh: string;
+	colourLow: string;
+	colourHigh: string;
 }
 
 export interface AugmentedDevice {
@@ -21,6 +30,7 @@ export interface AugmentedDevice {
 	actualFirmwareVersion: string | null;
 	desiredFirmwareVersion: string | null;
 	attachedTools: Record<number, Tool>;
+	attachedInputs: Record<number, AugmentedInputDescription>;
 	connectionStatus: boolean | null;
 	pinStatus: PinStatus | null;
 }
@@ -32,6 +42,15 @@ export interface PinStatus {
 
 export const inputPinStatus = ['INPUT_LOW', 'INPUT_HIGH'];
 export type InputPinStatus = (typeof inputPinStatus)[number];
+
+export interface AugmentedInputDescription {
+	name: string;
+	descriptionLow: string;
+	descriptionHigh: string;
+	colourLow: string;
+	colourHigh: string;
+	inputPinStatus: InputPinStatus | null;
+}
 
 export interface DeviceCreationDetails {
 	name: string;
@@ -53,6 +72,14 @@ export interface DesiredFirmwareVersion {
 
 export interface ToolAttachmentDetails {
 	toolId: string;
+}
+
+export interface InputAttachmentDetails {
+	name: string;
+	descriptionLow: string;
+	descriptionHigh: string;
+	colourLow: string;
+	colourHigh: string;
 }
 
 export interface ToolUnlockDetails {

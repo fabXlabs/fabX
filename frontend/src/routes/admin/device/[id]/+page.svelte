@@ -7,8 +7,7 @@
 	import DangerZoneCard from './DangerZoneCard.svelte';
 	import DeviceImage from '../DeviceImage.svelte';
 	import ChangeImageSheet from './ChangeImageSheet.svelte';
-	import DeviceConnectionStatus from '../DeviceConnectionStatus.svelte';
-	import PinStatus from '../PinStatus.svelte';
+	import AttachedInputsCard from './AttachedInputsCard.svelte';
 
 	let { data }: PageProps = $props();
 
@@ -18,25 +17,16 @@
 <ChangeImageSheet id={data.augmentedDevice?.id || ''} bind:open={changeImageSheetOpen} />
 <div class="relative container mt-5 max-w-(--breakpoint-2xl)">
 	{#if data.augmentedDevice}
-		<div class="flex items-end justify-between">
+		<div class="flex justify-between">
 			<div>
 				<Crumbs device={data.augmentedDevice} />
 				<h1 class="font-accent mt-4 mb-2 text-3xl">
 					{data.augmentedDevice.name}
-					<span class="inline-block"
-						><DeviceConnectionStatus
-							size={28}
-							connectionStatus={data.augmentedDevice.connectionStatus}
-						/></span
-					>
 				</h1>
-				<div class="mt-4">
-					<PinStatus pinStatus={data.augmentedDevice.pinStatus} />
-				</div>
 			</div>
 			<DeviceImage
 				id={data.augmentedDevice.id}
-				class="h-19 w-19"
+				class="w-19"
 				onclick={() => {
 					changeImageSheetOpen = true;
 				}}
@@ -46,6 +36,7 @@
 			<DeviceDetailsCard device={data.augmentedDevice} />
 			<DeviceFirmwareCard device={data.augmentedDevice} />
 			<AttachedToolsCard device={data.augmentedDevice} tools={data.tools} />
+			<AttachedInputsCard device={data.augmentedDevice} />
 			<DangerZoneCard device={data.augmentedDevice} />
 		</div>
 	{/if}

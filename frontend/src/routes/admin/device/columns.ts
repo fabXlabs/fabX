@@ -4,7 +4,7 @@ import { renderComponent } from '$lib/components/ui/data-table';
 import AttachedToolsList from './AttachedToolsList.svelte';
 import DeviceImage from './DeviceImage.svelte';
 import DeviceConnectionStatus from './DeviceConnectionStatus.svelte';
-import PinStatus from './PinStatus.svelte';
+import AttachedInputsList from './AttachedInputsList.svelte';
 
 export const columns: ColumnDef<AugmentedDevice>[] = [
 	{
@@ -49,11 +49,12 @@ export const columns: ColumnDef<AugmentedDevice>[] = [
 		}
 	},
 	{
-		accessorKey: 'pinStatus',
+		accessorKey: 'attachedInputs',
 		header: 'Inputs',
 		cell: ({ row }) => {
-			return renderComponent(PinStatus, {
-				pinStatus: row.original.pinStatus
+			return renderComponent(AttachedInputsList, {
+				attachedInputs: row.original.attachedInputs,
+				pinStatusUpdatedAt: row.original.pinStatus?.updatedAt || null
 			});
 		}
 	},
