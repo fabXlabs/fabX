@@ -8,7 +8,13 @@
 	let { attachedTools }: Props = $props();
 </script>
 
-<!-- TODO make table (like AttachedInputsList) -->
-{#each Object.entries(attachedTools) as [pin, tool] (pin)}
-	<div>{pin}: {tool.name}</div>
-{/each}
+<table class="border-spacing-1">
+	<tbody>
+		{#each Object.entries(attachedTools) as [pin, tool] (pin)}
+			<tr>
+				<td class="px-1 text-right">{pin}: </td>
+				<td>{tool.name}</td>
+			</tr>
+		{/each}
+	</tbody>
+</table>
