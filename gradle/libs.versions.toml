@@ -1,6 +1,6 @@
 [versions]
-kotlin = "2.3.21"
-arrow = "2.2.2.1"
+kotlin = "2.4.0"
+arrow = "2.2.3"
 kodein = "7.32.0"
 ktor = "3.5.0"
 micrometer = "1.16.5"
