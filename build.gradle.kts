@@ -4,7 +4,6 @@ plugins {
     base
     alias(libs.plugins.kotlin.jvm)
     jacoco
-    alias(libs.plugins.versions)
 }
 
 tasks.register<GradleBuild>("stage") {
@@ -54,7 +53,6 @@ allprojects {
     }
 
     dependencies {
-        implementation(rootProject.libs.kotlin.stdlib)
         implementation(rootProject.libs.arrow.core)
         implementation(rootProject.libs.kodein)
         implementation(rootProject.libs.kotlinx.serialization.json)

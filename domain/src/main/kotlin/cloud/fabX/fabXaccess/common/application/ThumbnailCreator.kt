@@ -7,6 +7,7 @@ import cloud.fabX.fabXaccess.common.model.CorrelationId
 import cloud.fabX.fabXaccess.common.model.Error
 import com.sksamuel.scrimage.ImageParseException
 import com.sksamuel.scrimage.ImmutableImage
+import com.sksamuel.scrimage.UnsupportedFormatException
 import com.sksamuel.scrimage.nio.JpegWriter
 import java.awt.Color
 
@@ -30,6 +31,11 @@ object ThumbnailCreator {
         } catch (e: ImageParseException) {
             Error.ThumbnailInvalid(
                 "Invalid Thumbnail: ${e.message}",
+                correlationId
+            ).left()
+        } catch (e: UnsupportedFormatException) {
+            Error.ThumbnailInvalid(
+                "Invalid Thumbnail (unsupported format): ${e.message}",
                 correlationId
             ).left()
         }
