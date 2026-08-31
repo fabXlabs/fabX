@@ -90,6 +90,8 @@ class WebApp(
                 allowHost(corsHost)
             }
 
+            allowOrigins {o -> o == "https://github.com/gilmaimon/TinyWebsockets" }
+
             allowCredentials = true
             allowNonSimpleContentTypes = true
         }
