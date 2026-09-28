@@ -51,7 +51,7 @@
 	}
 </script>
 
-// TODO sort missing qualifications by name
+<!-- TODO sort missing qualifications by name -->
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
