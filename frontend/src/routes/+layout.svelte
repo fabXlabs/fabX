@@ -2,8 +2,8 @@
 	import './layout.css';
 	import { asset } from '$app/paths';
 	import { ModeWatcher } from 'mode-watcher';
-	import { Toaster } from '$lib/components/ui/sonner/index.js';
-	import { PUBLIC_FABX_VERSION } from '$env/static/public';
+	import { Toaster } from '#lib/components/ui/sonner/index.js';
+	import { PUBLIC_FABX_VERSION } from '$app/env/public';
 	import '../app.css';
 
 	let { children } = $props();
@@ -21,7 +21,7 @@
 	<link
 		rel="preload"
 		as="font"
-		href={asset('/fonts/routed-gothic.ttf')}
+		href={asset('fonts/routed-gothic.ttf')}
 		type="font/ttf"
 		crossorigin="anonymous"
 	/>
@@ -29,7 +29,7 @@
 	<link
 		rel="preload"
 		as="font"
-		href={asset('/fonts/routed-gothic-half-italic.ttf')}
+		href={asset('fonts/routed-gothic-half-italic.ttf')}
 		type="font/ttf"
 		crossorigin="anonymous"
 	/>

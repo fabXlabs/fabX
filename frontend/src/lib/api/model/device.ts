@@ -1,5 +1,5 @@
 import type { ChangeableValue } from './changeable-value';
-import type { Tool } from '$lib/api/model/tool';
+import type { Tool } from '#lib/api/model/tool.js';
 
 export interface Device {
 	id: string;

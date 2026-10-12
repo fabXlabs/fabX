@@ -5,9 +5,9 @@ import {
 	getMe,
 	getUserById,
 	getUserSourcingEventsById
-} from '$lib/api/users';
-import { getAllQualifications } from '$lib/api/qualifications';
-import { getAllDevices } from '$lib/api/devices';
+} from '#lib/api/users.js';
+import { getAllQualifications } from '#lib/api/qualifications.js';
+import { getAllDevices } from '#lib/api/devices.js';
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	const user_ = getUserById(fetch, params.id).catch((error) => {

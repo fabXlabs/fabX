@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));

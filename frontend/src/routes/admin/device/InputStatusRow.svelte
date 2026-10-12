@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AugmentedInputDescription } from '$lib/api/model/device';
+	import type { AugmentedInputDescription } from '#lib/api/model/device.js';
 	import { CircleQuestionMark, ToggleLeft, ToggleRight } from 'lucide-svelte';
 
 	interface Props {

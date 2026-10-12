@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button';
-	import { addWebauthnIdentity } from '$lib/api/users';
-	import type { FabXError } from '$lib/api/model/error';
-	import type { User } from '$lib/api/model/user';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { addWebauthnIdentity } from '#lib/api/users.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import type { User } from '#lib/api/model/user.js';
 
 	interface Props {
 		me: User;

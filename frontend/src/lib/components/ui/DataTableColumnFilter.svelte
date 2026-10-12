@@ -1,16 +1,16 @@
 <script lang="ts" generics="TData, TValue">
 	// noinspection ES6UnusedImports
-	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Popover from '#lib/components/ui/popover/index.js';
 	// noinspection ES6UnusedImports
-	import * as Command from '$lib/components/ui/command/index.js';
-	import { cn } from '$lib/utils';
+	import * as Command from '#lib/components/ui/command/index.js';
+	import { cn } from '#lib/utils.js';
 	import type { Column } from '@tanstack/table-core';
 	import type { Component } from 'svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import { CheckIcon, CirclePlusIcon } from 'lucide-svelte';
 	import { SvelteSet } from 'svelte/reactivity';
-	import { Separator } from '$lib/components/ui/separator';
-	import { Badge } from '$lib/components/ui/badge';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import { Badge } from '#lib/components/ui/badge/index.js';
 
 	interface Props {
 		column: Column<TData, TValue>;

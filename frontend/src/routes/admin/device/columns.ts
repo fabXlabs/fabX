@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import type { AugmentedDevice } from '$lib/api/model/device';
-import { renderComponent } from '$lib/components/ui/data-table';
+import type { AugmentedDevice } from '#lib/api/model/device.js';
+import { renderComponent } from '#lib/components/ui/data-table/index.js';
 import AttachedToolsList from './AttachedToolsList.svelte';
 import DeviceImage from './DeviceImage.svelte';
 import DeviceConnectionStatus from './DeviceConnectionStatus.svelte';

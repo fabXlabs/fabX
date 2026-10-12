@@ -1,13 +1,13 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button, buttonVariants } from '#lib/components/ui/button/index.js';
 	import { Plus } from 'lucide-svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { addQualification } from '$lib/api/qualifications';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { addQualification } from '#lib/api/qualifications.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 

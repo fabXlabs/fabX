@@ -1,5 +1,5 @@
-import { baseUrl } from '$lib/api';
-import { mapError } from '$lib/api/map-error';
+import { baseUrl } from '#lib/api/index.js';
+import { mapError } from '#lib/api/map-error.js';
 
 export async function loginBasicAuth(username: string, password: string) {
 	console.debug(`login...`);

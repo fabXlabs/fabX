@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import type { Device } from '$lib/api/model/device';
-	import type { DeviceActorId, SystemActorId, User, UserActorId } from '$lib/api/model/user';
+	import type { Device } from '#lib/api/model/device.js';
+	import type { DeviceActorId, SystemActorId, User, UserActorId } from '#lib/api/model/user.js';
 
 	interface Props {
 		actor: SystemActorId | Device | DeviceActorId | User | UserActorId;

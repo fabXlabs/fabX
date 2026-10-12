@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FabXError } from '$lib/api/model/error';
+	import type { FabXError } from '#lib/api/model/error.js';
 
 	interface Props {
 		error: FabXError | null;

@@ -1,11 +1,11 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	import { resolve } from '$app/paths';
 	// noinspection ES6UnusedImports
 	import NavLink from './NavLink.svelte';
 	import { Menu } from 'lucide-svelte';
-	import SiteHeaderDropdownMenu from '$lib/components/SiteHeaderDropdownMenu.svelte';
+	import SiteHeaderDropdownMenu from '#lib/components/SiteHeaderDropdownMenu.svelte';
 
 	interface Props {
 		showMenu: boolean;
@@ -37,26 +37,26 @@
 						<span class="font-accent text-4xl font-bold text-violet-800 italic transition-colors"
 							>fabX</span
 						>
-						<NavLink bind:sheetOpen classes="mt-4" href={resolve('/admin/user')}>Users</NavLink>
-						<NavLink bind:sheetOpen classes="mt-4" href={resolve('/admin/tool')}>Tools</NavLink>
-						<NavLink bind:sheetOpen classes="mt-4" href={resolve('/admin/qualification')}
+						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/user')}>Users</NavLink>
+						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/tool')}>Tools</NavLink>
+						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/qualification')}
 							>Qualifications</NavLink
 						>
-						<NavLink bind:sheetOpen classes="mt-4" href={resolve('/admin/device')}>Devices</NavLink>
+						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/device')}>Devices</NavLink>
 					</Sheet.Content>
 				</Sheet.Root>
 
 				<!-- Main Nav -->
-				<a href={resolve('/admin')} class="mr-6 flex items-center space-x-2">
+				<a href={resolve('admin')} class="mr-6 flex items-center space-x-2">
 					<span class="font-accent font-bold italic transition-colors hover:text-violet-800"
 						>fabX</span
 					>
 				</a>
 				<nav class="hidden items-center gap-6 text-base sm:flex">
-					<NavLink href={resolve('/admin/user')}>Users</NavLink>
-					<NavLink href={resolve('/admin/tool')}>Tools</NavLink>
-					<NavLink href={resolve('/admin/qualification')}>Qualifications</NavLink>
-					<NavLink href={resolve('/admin/device')}>Devices</NavLink>
+					<NavLink href={resolve('admin/user')}>Users</NavLink>
+					<NavLink href={resolve('admin/tool')}>Tools</NavLink>
+					<NavLink href={resolve('admin/qualification')}>Qualifications</NavLink>
+					<NavLink href={resolve('admin/device')}>Devices</NavLink>
 				</nav>
 			{:else}
 				<a href={resolve('/')} class="mr-6 flex items-center space-x-2">

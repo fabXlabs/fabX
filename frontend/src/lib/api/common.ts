@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
-import { baseUrl, type FetchFunction } from '$lib/api/index';
-import { mapError } from '$lib/api/map-error';
+import { baseUrl, type FetchFunction } from '#lib/api/index.js';
+import { mapError } from '#lib/api/map-error.js';
 
 export async function getRequest(fetch: FetchFunction, path: string): Promise<any> {
 	const res = await fetch(`${baseUrl}${path}`, { credentials: 'include' }).then(mapError);

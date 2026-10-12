@@ -1,10 +1,10 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { AugmentedDevice } from '$lib/api/model/device';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
 	import DetachInputAlert from './DetachInputAlert.svelte';
 
 	interface Props {

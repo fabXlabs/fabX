@@ -1,12 +1,12 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-	import { Button } from '$lib/components/ui/button';
+	import { Button } from '#lib/components/ui/button/index.js';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import type { FabXError } from '$lib/api/model/error';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
 	import { invalidateAll } from '$app/navigation';
-	import type { FetchFunction } from '$lib/api';
+	import type { FetchFunction } from '#lib/api/index.js';
 
 	interface Props {
 		removeFunction: (

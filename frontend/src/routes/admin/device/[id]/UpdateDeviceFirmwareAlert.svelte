@@ -1,11 +1,11 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import type { AugmentedDevice } from '$lib/api/model/device';
-	import { updateDeviceFirmware } from '$lib/api/devices';
+	import * as AlertDialog from '#lib/components/ui/alert-dialog/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button, buttonVariants } from '#lib/components/ui/button/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
+	import { updateDeviceFirmware } from '#lib/api/devices.js';
 
 	interface Props {
 		device: AugmentedDevice;

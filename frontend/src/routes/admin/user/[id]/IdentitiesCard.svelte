@@ -5,17 +5,17 @@
 		PhoneNrIdentity,
 		UserIdentity,
 		WebauthnIdentity
-	} from '$lib/api/model/user';
-	import type { FabXError } from '$lib/api/model/error';
+	} from '#lib/api/model/user.js';
+	import type { FabXError } from '#lib/api/model/error.js';
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Table from '$lib/components/ui/table/index.js';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as Table from '#lib/components/ui/table/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import IdentitiesCardTableActions from './IdentitiesCardTableActions.svelte';
 	import IdentitiesCardAddDropdown from './IdentitiesCardAddDropdown.svelte';
-	import type { Device } from '$lib/api/model/device';
-	import { toHexString } from '$lib/utils';
+	import type { Device } from '#lib/api/model/device.js';
+	import { toHexString } from '#lib/utils.js';
 
 	interface Props {
 		user: AugmentedUser;

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
 	import { resolve } from '$app/paths';
-	import DataTable from '$lib/components/ui/DataTable.svelte';
+	import DataTable from '#lib/components/ui/DataTable.svelte';
 	import { columns } from './columns';
 	import { goto } from '$app/navigation';
-	import type { AugmentedDevice } from '$lib/api/model/device';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
 	import type { SortingState } from '@tanstack/table-core';
 	import Crumbs from './Crumbs.svelte';
 	import AddDeviceSheet from './AddDeviceSheet.svelte';

@@ -1,8 +1,8 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import type { AugmentedUser } from '$lib/api/model/user';
-import { renderComponent } from '$lib/components/ui/data-table';
+import type { AugmentedUser } from '#lib/api/model/user.js';
+import { renderComponent } from '#lib/components/ui/data-table/index.js';
 import AdminShield from './AdminShield.svelte';
-import QualificationTagList from '$lib/components/QualificationTagList.svelte';
+import QualificationTagList from '#lib/components/QualificationTagList.svelte';
 
 export const columns: ColumnDef<AugmentedUser>[] = [
 	{

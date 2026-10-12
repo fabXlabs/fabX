@@ -1,6 +1,6 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import type {
 		AugmentedUserSourcingEvent,
 		DeviceActorId,
@@ -8,13 +8,13 @@
 		User,
 		UserActorId,
 		UserSourcingEvent
-	} from '$lib/api/model/user';
+	} from '#lib/api/model/user.js';
 	import HiddenPin from './HiddenPin.svelte';
-	import type { Qualification } from '$lib/api/model/qualification';
-	import type { Device } from '$lib/api/model/device';
+	import type { Qualification } from '#lib/api/model/qualification.js';
+	import type { Device } from '#lib/api/model/device.js';
 	import Actor from './Actor.svelte';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
-	import type { EntityId } from '$lib/api/model/entity';
+	import QualificationTag from '#lib/components/QualificationTag.svelte';
+	import type { EntityId } from '#lib/api/model/entity.js';
 
 	interface Props {
 		events: UserSourcingEvent[];

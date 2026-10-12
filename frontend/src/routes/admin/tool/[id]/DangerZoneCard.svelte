@@ -1,7 +1,7 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { AugmentedTool } from '$lib/api/model/tool';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import type { AugmentedTool } from '#lib/api/model/tool.js';
 	import DeleteToolAlert from './DeleteToolAlert.svelte';
 
 	interface Props {

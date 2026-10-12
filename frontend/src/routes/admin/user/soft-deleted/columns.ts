@@ -1,6 +1,6 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import type { User } from '$lib/api/model/user';
-import { renderComponent } from '$lib/components/ui/data-table';
+import type { User } from '#lib/api/model/user.js';
+import { renderComponent } from '#lib/components/ui/data-table/index.js';
 import DataTableActions from './DataTableActions.svelte';
 
 export const columns: ColumnDef<User>[] = [

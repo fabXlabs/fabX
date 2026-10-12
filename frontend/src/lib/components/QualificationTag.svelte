@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Qualification } from '$lib/api/model/qualification';
+	import type { Qualification } from '#lib/api/model/qualification.js';
 
 	interface Props {
 		qualification: Qualification;

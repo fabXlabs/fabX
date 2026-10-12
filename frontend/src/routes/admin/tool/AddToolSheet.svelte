@@ -1,20 +1,20 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	// noinspection ES6UnusedImports
-	import * as Select from '$lib/components/ui/select/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { addTool } from '$lib/api/tools';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { addTool } from '#lib/api/tools.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { Button, buttonVariants } from '#lib/components/ui/button/index.js';
 	import { Plus } from 'lucide-svelte';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
-	import { Switch } from '$lib/components/ui/switch';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
-	import type { Qualification } from '$lib/api/model/qualification';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Switch } from '#lib/components/ui/switch/index.js';
+	import QualificationTag from '#lib/components/QualificationTag.svelte';
+	import type { Qualification } from '#lib/api/model/qualification.js';
 
 	interface Props {
 		qualifications: Qualification[];

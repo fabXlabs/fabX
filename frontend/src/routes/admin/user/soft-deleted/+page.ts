@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { getSoftDeletedUsers } from '$lib/api/users';
+import { getSoftDeletedUsers } from '#lib/api/users.js';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const users = await getSoftDeletedUsers(fetch).catch((error) => {

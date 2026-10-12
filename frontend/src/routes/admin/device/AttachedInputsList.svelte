@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AugmentedInputDescription } from '$lib/api/model/device';
+	import type { AugmentedInputDescription } from '#lib/api/model/device.js';
 	import InputStatusRow from './InputStatusRow.svelte';
 
 	interface Props {

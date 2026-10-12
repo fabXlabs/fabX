@@ -1,12 +1,12 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import type { User } from '$lib/api/model/user';
-	import type { FabXError } from '$lib/api/model/error';
-	import { buttonVariants } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as AlertDialog from '#lib/components/ui/alert-dialog/index.js';
+	import type { User } from '#lib/api/model/user.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { buttonVariants } from '#lib/components/ui/button/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import { invalidateAll } from '$app/navigation';
-	import { hardDeleteUser } from '$lib/api/users.js';
+	import { hardDeleteUser } from '#lib/api/users.js';
 
 	interface Props {
 		user: User;

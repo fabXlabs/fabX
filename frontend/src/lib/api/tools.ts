@@ -1,9 +1,9 @@
-import { baseUrl, type FetchFunction } from '$lib/api';
-import type { AugmentedTool, Tool, ToolCreationDetails, ToolDetails } from '$lib/api/model/tool';
-import type { Qualification } from '$lib/api/model/qualification';
-import { augmentQualifications } from '$lib/api/model/augment-qualifications';
-import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
-import { mapError } from '$lib/api/map-error';
+import { baseUrl, type FetchFunction } from '#lib/api/index.js';
+import type { AugmentedTool, Tool, ToolCreationDetails, ToolDetails } from '#lib/api/model/tool.js';
+import type { Qualification } from '#lib/api/model/qualification.js';
+import { augmentQualifications } from '#lib/api/model/augment-qualifications.js';
+import { deleteRequest, getRequest, postRequest, putRequest } from '#lib/api/common.js';
+import { mapError } from '#lib/api/map-error.js';
 
 export async function getAllTools(fetch: FetchFunction): Promise<Tool[]> {
 	console.debug('getAllTools...');

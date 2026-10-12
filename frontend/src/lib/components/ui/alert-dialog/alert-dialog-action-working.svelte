@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Action } from '$lib/components/ui/alert-dialog/index.js';
-	import type { AlertActionProps } from '$lib/components/ui/alert-dialog/index.js';
-	import { Spinner } from '$lib/components/ui/spinner';
-	import { cn } from '$lib/utils';
-	import { buttonVariants } from '$lib/components/ui/button';
+	import { Action } from '#lib/components/ui/alert-dialog/index.js';
+	import type { AlertActionProps } from '#lib/components/ui/alert-dialog/index.js';
+	import { Spinner } from '#lib/components/ui/spinner/index.js';
+	import { cn } from '#lib/utils.js';
+	import { buttonVariants } from '#lib/components/ui/button/index.js';
 
 	let {
 		ref = $bindable(null),

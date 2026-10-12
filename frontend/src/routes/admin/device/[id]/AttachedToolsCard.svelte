@@ -1,14 +1,14 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Table from '$lib/components/ui/table/index.js';
-	import type { AugmentedDevice } from '$lib/api/model/device';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as Table from '#lib/components/ui/table/index.js';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import AttachedToolsCardTableActions from './AttachedToolsCardTableActions.svelte';
 	import AttachToolSheet from './AttachToolSheet.svelte';
-	import type { Tool } from '$lib/api/model/tool';
+	import type { Tool } from '#lib/api/model/tool.js';
 
 	interface Props {
 		device: AugmentedDevice;

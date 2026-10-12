@@ -1,8 +1,8 @@
 import type { PageLoad } from './$types';
-import { getAllUsers } from '$lib/api/users';
-import { getAllDevices } from '$lib/api/devices';
-import { getAllQualifications } from '$lib/api/qualifications';
-import { getAllTools } from '$lib/api/tools';
+import { getAllUsers } from '#lib/api/users.js';
+import { getAllDevices } from '#lib/api/devices.js';
+import { getAllQualifications } from '#lib/api/qualifications.js';
+import { getAllTools } from '#lib/api/tools.js';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const devices_ = getAllDevices(fetch).catch(() => {

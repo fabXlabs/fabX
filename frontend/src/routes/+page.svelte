@@ -1,7 +1,7 @@
 <script>
 	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 	import { LoaderCircle } from 'lucide-svelte';
 
 	let { data } = $props();
@@ -10,11 +10,11 @@
 	if (data.me) {
 		if (data.me.isAdmin) {
 			if (browser) {
-				goto(resolve('/admin'));
+				goto(resolve('admin'));
 			}
 		} else {
 			if (browser) {
-				goto(resolve('/instructor'));
+				goto(resolve('instructor'));
 			}
 		}
 	}
@@ -24,7 +24,7 @@
 	src="/static/bg/3.jpeg"
 	alt="an art installation"
 	class="pointer-events-none absolute h-full w-full object-cover"
-/>
+></enhanced:img>
 
 <div class="flex grow bg-cover bg-center">
 	<div class="flex w-full items-center justify-center">

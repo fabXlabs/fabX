@@ -1,13 +1,13 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as AlertDialog from '#lib/components/ui/alert-dialog/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button, buttonVariants } from '#lib/components/ui/button/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import type { AugmentedDevice } from '$lib/api/model/device';
-	import { deleteDevice } from '$lib/api/devices';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
+	import { deleteDevice } from '#lib/api/devices.js';
 
 	interface Props {
 		device: AugmentedDevice;
@@ -36,7 +36,7 @@
 			});
 
 		if (res) {
-			await goto(resolve(`/admin/device/`));
+			await goto(resolve(`admin/device/`));
 		}
 	}
 
@@ -68,10 +68,8 @@
 			<AlertDialog.ActionWorking
 				onclick={deleteDevice_}
 				class={buttonVariants({ variant: 'destructive' })}
-				{working}
+				{working}>Continue</AlertDialog.ActionWorking
 			>
-				Continue
-			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

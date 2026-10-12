@@ -1,16 +1,16 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	import { UserRoundPlus } from 'lucide-svelte';
-	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
-	import { addUser } from '$lib/api/users';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { addUser } from '#lib/api/users.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { buttonVariants } from '#lib/components/ui/button/index.js';
 
 	let sheetOpen = $state(false);
 

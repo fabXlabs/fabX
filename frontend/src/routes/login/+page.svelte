@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { loginBasicAuth, loginWebauthn } from '$lib/api/auth';
+	import { loginBasicAuth, loginWebauthn } from '#lib/api/auth.js';
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card';
-	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-	import { Separator } from '$lib/components/ui/separator';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { deleteRedirectAfterLoginCookie, getRedirectAfterLoginCookie } from '$lib/utils';
-	import { browser } from '$app/environment';
+	import { Separator } from '#lib/components/ui/separator/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { deleteRedirectAfterLoginCookie, getRedirectAfterLoginCookie } from '#lib/utils.js';
+	import { browser } from '$app/env';
 
 	let username = $state('');
 	let password = $state('');
@@ -65,7 +65,7 @@
 	src="/static/bg/3.jpeg"
 	alt="an art installation"
 	class="pointer-events-none absolute h-full w-full object-cover"
-/>
+></enhanced:img>
 
 <div class="flex h-screen w-full items-center justify-center px-4">
 	<Card.Root class="z-50 w-72">

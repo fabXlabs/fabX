@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Tool } from '$lib/api/model/tool';
+	import type { Tool } from '#lib/api/model/tool.js';
 
 	interface Props {
 		attachedTools: Record<number, Tool>;

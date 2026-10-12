@@ -1,4 +1,4 @@
-import { baseUrl, type FetchFunction } from '$lib/api/index';
+import { baseUrl, type FetchFunction } from '#lib/api/index.js';
 import type {
 	AtDeviceCardCreationDetails,
 	AugmentedDevice,
@@ -12,10 +12,10 @@ import type {
 	PinStatus,
 	ToolAttachmentDetails,
 	ToolUnlockDetails
-} from '$lib/api/model/device';
-import type { Tool } from '$lib/api/model/tool';
-import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
-import { mapError } from '$lib/api/map-error';
+} from '#lib/api/model/device.js';
+import type { Tool } from '#lib/api/model/tool.js';
+import { deleteRequest, getRequest, postRequest, putRequest } from '#lib/api/common.js';
+import { mapError } from '#lib/api/map-error.js';
 
 export async function getAllDevices(fetch: FetchFunction): Promise<Device[]> {
 	console.debug('getAllDevices...');

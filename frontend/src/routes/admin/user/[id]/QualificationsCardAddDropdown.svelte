@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { FabXError } from '$lib/api/model/error';
+	import type { FabXError } from '#lib/api/model/error.js';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button } from '$lib/components/ui/button';
-	import type { AugmentedUser } from '$lib/api/model/user';
-	import type { Qualification } from '$lib/api/model/qualification';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import type { AugmentedUser } from '#lib/api/model/user.js';
+	import type { Qualification } from '#lib/api/model/qualification.js';
 	import { invalidateAll } from '$app/navigation';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
-	import type { FetchFunction } from '$lib/api';
+	import QualificationTag from '#lib/components/QualificationTag.svelte';
+	import type { FetchFunction } from '#lib/api/index.js';
 
 	interface Props {
 		user: AugmentedUser;

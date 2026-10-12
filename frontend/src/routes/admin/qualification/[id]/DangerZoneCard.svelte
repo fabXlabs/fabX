@@ -1,8 +1,8 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	import DeleteQualificationAlert from './DeleteQualificationAlert.svelte';
-	import type { Qualification } from '$lib/api/model/qualification';
+	import type { Qualification } from '#lib/api/model/qualification.js';
 
 	interface Props {
 		qualification: Qualification;

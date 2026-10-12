@@ -1,10 +1,10 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
-	import { changeThumbnail } from '$lib/api/tools';
-	import type { FabXError } from '$lib/api/model/error';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
+	import { changeThumbnail } from '#lib/api/tools.js';
+	import type { FabXError } from '#lib/api/model/error.js';
 	import { invalidateAll } from '$app/navigation';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 
 	interface Props {
 		id: string;

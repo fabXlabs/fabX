@@ -1,14 +1,14 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	// noinspection ES6UnusedImports
-	import * as Select from '$lib/components/ui/select/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import { Loader2Icon } from 'lucide-svelte';
-	import type { Device } from '$lib/api/model/device';
-	import { addCardIdentityAtDevice } from '$lib/api/devices';
+	import type { Device } from '#lib/api/model/device.js';
+	import { addCardIdentityAtDevice } from '#lib/api/devices.js';
 	import { invalidateAll } from '$app/navigation';
 
 	interface Props {

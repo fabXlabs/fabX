@@ -1,20 +1,20 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
-	import type { AugmentedTool, ToolDetails } from '$lib/api/model/tool';
-	import type { Qualification } from '$lib/api/model/qualification';
-	import type { FabXError } from '$lib/api/model/error';
-	import { changeToolDetails } from '$lib/api/tools';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import { Switch } from '#lib/components/ui/switch/index.js';
+	import type { AugmentedTool, ToolDetails } from '#lib/api/model/tool.js';
+	import type { Qualification } from '#lib/api/model/qualification.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { changeToolDetails } from '#lib/api/tools.js';
 	import { invalidateAll } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
-	import { areSetsEqual } from '$lib/utils';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import QualificationTag from '#lib/components/QualificationTag.svelte';
+	import { areSetsEqual } from '#lib/utils.js';
 
 	interface Props {
 		tool: AugmentedTool;

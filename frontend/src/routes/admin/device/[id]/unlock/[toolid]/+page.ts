@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
-import { getDeviceById } from '$lib/api/devices';
-import { getToolById } from '$lib/api/tools';
+import { getDeviceById } from '#lib/api/devices.js';
+import { getToolById } from '#lib/api/tools.js';
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	const device_ = getDeviceById(fetch, params.id).catch((error) => {

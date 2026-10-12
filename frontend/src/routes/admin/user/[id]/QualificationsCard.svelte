@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { AugmentedUser } from '$lib/api/model/user';
-	import type { FabXError } from '$lib/api/model/error';
+	import type { AugmentedUser } from '#lib/api/model/user.js';
+	import type { FabXError } from '#lib/api/model/error.js';
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Table from '$lib/components/ui/table/index.js';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import type { Qualification } from '$lib/api/model/qualification';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
+	import * as Table from '#lib/components/ui/table/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import type { Qualification } from '#lib/api/model/qualification.js';
+	import QualificationTag from '#lib/components/QualificationTag.svelte';
 	import QualificationTableActions from './QualificationTableActions.svelte';
 	import QualificationsCardAddDropdown from './QualificationsCardAddDropdown.svelte';
-	import type { FetchFunction } from '$lib/api';
+	import type { FetchFunction } from '#lib/api/index.js';
 
 	interface Props {
 		qualificationType: string;
