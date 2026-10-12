@@ -1,5 +1,5 @@
 import type { ChangeableValue } from './changeable-value';
-import type { Qualification } from '$lib/api/model/qualification';
+import type { Qualification } from '#lib/api/model/qualification.js';
 
 export interface Tool {
 	id: string;

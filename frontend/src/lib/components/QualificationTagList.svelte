@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Qualification } from '$lib/api/model/qualification';
-	import QualificationTag from '$lib/components/QualificationTag.svelte';
+	import type { Qualification } from '#lib/api/model/qualification.js';
+	import QualificationTag from '#lib/components/QualificationTag.svelte';
 
 	interface Props {
 		qualifications: Qualification[];

@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
-import { augmentTool, getToolById } from '$lib/api/tools';
-import { getAllQualifications } from '$lib/api/qualifications';
+import { augmentTool, getToolById } from '#lib/api/tools.js';
+import { getAllQualifications } from '#lib/api/qualifications.js';
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	const tool_ = getToolById(fetch, params.id).catch((error) => {

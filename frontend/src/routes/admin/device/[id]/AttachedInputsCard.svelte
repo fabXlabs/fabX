@@ -1,11 +1,11 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Table from '$lib/components/ui/table/index.js';
-	import type { AugmentedDevice } from '$lib/api/model/device';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as Table from '#lib/components/ui/table/index.js';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import AttachInputSheet from './AttachInputSheet.svelte';
 	import AttachedInputsCardTableActions from './AttachedInputsCardTableActions.svelte';
 	import InputStatusRow from '../InputStatusRow.svelte';

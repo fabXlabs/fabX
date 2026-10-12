@@ -1,9 +1,9 @@
 <script lang="ts">
-	import type { FabXError } from '$lib/api/model/error';
-	import { unlockTool } from '$lib/api/devices';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { unlockTool } from '#lib/api/devices.js';
 	import { CircleCheckBigIcon, LoaderCircle } from 'lucide-svelte';
 	import type { PageProps } from './$types';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 
 	let { data }: PageProps = $props();
 

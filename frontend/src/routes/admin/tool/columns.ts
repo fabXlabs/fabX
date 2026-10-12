@@ -1,7 +1,7 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import type { AugmentedTool } from '$lib/api/model/tool';
-import { renderComponent } from '$lib/components/ui/data-table';
-import QualificationTagList from '$lib/components/QualificationTagList.svelte';
+import type { AugmentedTool } from '#lib/api/model/tool.js';
+import { renderComponent } from '#lib/components/ui/data-table/index.js';
+import QualificationTagList from '#lib/components/QualificationTagList.svelte';
 import ToolImage from './ToolImage.svelte';
 
 export const columns: ColumnDef<AugmentedTool>[] = [

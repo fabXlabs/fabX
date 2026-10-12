@@ -1,4 +1,4 @@
-import { type FabXError, UNAUTHORIZED_ERROR } from '$lib/api/model/error';
+import { type FabXError, UNAUTHORIZED_ERROR } from '#lib/api/model/error.js';
 
 export async function mapError(response: Response): Promise<Response> {
 	if (response.ok) {

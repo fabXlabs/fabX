@@ -1,6 +1,5 @@
 <script lang="ts">
-	/* eslint-disable svelte/no-navigation-without-resolve */
-	import { cn } from '$lib/utils';
+	import { cn } from '#lib/utils.js';
 	import { page } from '$app/state';
 
 	let { sheetOpen = $bindable(false), href, children, classes = '', ...others } = $props();

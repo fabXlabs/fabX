@@ -1,4 +1,4 @@
-import type { Qualification } from '$lib/api/model/qualification';
+import type { Qualification } from '#lib/api/model/qualification.js';
 
 export function augmentQualifications(
 	qualifications: Qualification[]

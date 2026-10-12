@@ -1,11 +1,11 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
 	import EllipsisIcon from '@lucide/svelte/icons/ellipsis';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import HardDeleteUserAlert from './HardDeleteUserAlert.svelte';
-	import type { User } from '$lib/api/model/user';
+	import type { User } from '#lib/api/model/user.js';
 
 	interface Props {
 		user: User;

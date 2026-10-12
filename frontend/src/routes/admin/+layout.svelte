@@ -1,7 +1,7 @@
 <script lang="ts">
-	import SiteHeader from '$lib/components/SiteHeader.svelte';
+	import SiteHeader from '#lib/components/SiteHeader.svelte';
 	import type { LayoutProps } from './$types';
-	import { setMeContext } from '$lib/context';
+	import { setMeContext } from '#lib/context.js';
 
 	let { data, children }: LayoutProps = $props();
 

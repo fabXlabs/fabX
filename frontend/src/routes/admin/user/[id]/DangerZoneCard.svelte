@@ -1,7 +1,7 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { AugmentedUser } from '$lib/api/model/user';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import type { AugmentedUser } from '#lib/api/model/user.js';
 	import ChangeIsAdminAlert from './ChangeIsAdminAlert.svelte';
 	import DeleteUserAlert from './DeleteUserAlert.svelte';
 

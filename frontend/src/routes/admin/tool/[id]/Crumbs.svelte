@@ -1,8 +1,8 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { base } from '$app/paths';
-	import type { AugmentedTool } from '$lib/api/model/tool';
+	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
+	import { resolve } from '$app/paths';
+	import type { AugmentedTool } from '#lib/api/model/tool.js';
 
 	interface Props {
 		tool: AugmentedTool;
@@ -13,16 +13,13 @@
 
 <Breadcrumb.Root>
 	<Breadcrumb.List>
-		<Breadcrumb.Item>
-			<Breadcrumb.Link href="{base}/admin">Admin</Breadcrumb.Link>
-		</Breadcrumb.Item>
-
+		<Breadcrumb.Item
+			><Breadcrumb.Link href={resolve('/admin')}>Admin</Breadcrumb.Link></Breadcrumb.Item
+		>
 		<Breadcrumb.Separator />
-
-		<Breadcrumb.Item>
-			<Breadcrumb.Link href="{base}/admin/tool">Tools</Breadcrumb.Link>
-		</Breadcrumb.Item>
-
+		<Breadcrumb.Item
+			><Breadcrumb.Link href={resolve('/admin/tool')}>Tools</Breadcrumb.Link></Breadcrumb.Item
+		>
 		<Breadcrumb.Separator />
 
 		<Breadcrumb.Item>

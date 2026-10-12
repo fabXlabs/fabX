@@ -1,8 +1,8 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Breadcrumb from '$lib/components/ui/breadcrumb/index.js';
-	import { base } from '$app/paths';
-	import type { AugmentedDevice } from '$lib/api/model/device';
+	import * as Breadcrumb from '#lib/components/ui/breadcrumb/index.js';
+	import { resolve } from '$app/paths';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
 
 	interface Props {
 		device: AugmentedDevice;
@@ -13,16 +13,13 @@
 
 <Breadcrumb.Root>
 	<Breadcrumb.List>
-		<Breadcrumb.Item>
-			<Breadcrumb.Link href="{base}/admin">Admin</Breadcrumb.Link>
-		</Breadcrumb.Item>
-
+		<Breadcrumb.Item
+			><Breadcrumb.Link href={resolve('/admin')}>Admin</Breadcrumb.Link></Breadcrumb.Item
+		>
 		<Breadcrumb.Separator />
-
-		<Breadcrumb.Item>
-			<Breadcrumb.Link href="{base}/admin/device">Devices</Breadcrumb.Link>
-		</Breadcrumb.Item>
-
+		<Breadcrumb.Item
+			><Breadcrumb.Link href={resolve('/admin/device')}>Devices</Breadcrumb.Link></Breadcrumb.Item
+		>
 		<Breadcrumb.Separator />
 
 		<Breadcrumb.Item>

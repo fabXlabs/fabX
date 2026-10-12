@@ -10,7 +10,7 @@
 		addMemberQualification,
 		removeInstructorQualification,
 		removeMemberQualification
-	} from '$lib/api/users';
+	} from '#lib/api/users.js';
 	import DangerZoneCard from './DangerZoneCard.svelte';
 	import UserSourcingEventsCard from './UserSourcingEventsCard.svelte';
 

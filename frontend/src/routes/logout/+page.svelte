@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { logout } from '$lib/api/auth';
+	import { logout } from '#lib/api/auth.js';
 
 	async function doLogout() {
 		const res = await logout();

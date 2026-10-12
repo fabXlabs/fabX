@@ -1,7 +1,7 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { AugmentedDevice } from '$lib/api/model/device';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
 	import DeleteDeviceAlert from './DeleteDeviceAlert.svelte';
 	import RestartDeviceAlert from './RestartDeviceAlert.svelte';
 	import UpdateDeviceFirmwareAlert from './UpdateDeviceFirmwareAlert.svelte';

@@ -8,14 +8,14 @@
 		type SortingState,
 		type VisibilityState
 	} from '@tanstack/table-core';
-	import { createSvelteTable, FlexRender } from '$lib/components/ui/data-table/';
+	import { createSvelteTable, FlexRender } from '#lib/components/ui/data-table//index.js';
 	import type { Snippet } from 'svelte';
 	// noinspection ES6UnusedImports
-	import * as Table from '$lib/components/ui/table';
+	import * as Table from '#lib/components/ui/table/index.js';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
 	import { SlidersHorizontal, XIcon } from 'lucide-svelte';
 
 	type DataTableProps<TData, TValue> = {

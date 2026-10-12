@@ -1,14 +1,14 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { AugmentedDevice, DeviceDetails } from '$lib/api/model/device';
-	import type { FabXError } from '$lib/api/model/error';
-	import { changeDeviceDetails } from '$lib/api/devices';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import type { AugmentedDevice, DeviceDetails } from '#lib/api/model/device.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { changeDeviceDetails } from '#lib/api/devices.js';
 	import { invalidateAll } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 
 	interface Props {
 		device: AugmentedDevice;

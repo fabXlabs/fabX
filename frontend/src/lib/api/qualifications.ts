@@ -1,10 +1,10 @@
-import { type FetchFunction } from '$lib/api';
+import { type FetchFunction } from '#lib/api/index.js';
 import type {
 	Qualification,
 	QualificationCreationDetails,
 	QualificationDetails
-} from '$lib/api/model/qualification';
-import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
+} from '#lib/api/model/qualification.js';
+import { deleteRequest, getRequest, postRequest, putRequest } from '#lib/api/common.js';
 
 export async function getAllQualifications(fetch: FetchFunction): Promise<Qualification[]> {
 	console.debug('getAllQualifications...');

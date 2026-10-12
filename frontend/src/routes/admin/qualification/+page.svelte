@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import type { PageProps } from './$types';
-	import DataTable from '$lib/components/ui/DataTable.svelte';
+	import DataTable from '#lib/components/ui/DataTable.svelte';
 	import { columns } from './columns';
 	import type { SortingState } from '@tanstack/table-core';
 	import { goto } from '$app/navigation';
-	import type { Qualification } from '$lib/api/model/qualification';
+	import type { Qualification } from '#lib/api/model/qualification.js';
 	import Crumbs from './Crumbs.svelte';
 	import AddQualificationSheet from './AddQualificationSheet.svelte';
 

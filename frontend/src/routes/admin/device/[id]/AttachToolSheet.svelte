@@ -1,17 +1,17 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
 	// noinspection ES6UnusedImports
-	import * as Select from '$lib/components/ui/select/index.js';
-	import { Button } from '$lib/components/ui/button';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
-	import { attachTool } from '$lib/api/devices';
-	import type { AugmentedDevice } from '$lib/api/model/device';
-	import type { Tool } from '$lib/api/model/tool';
+	import * as Select from '#lib/components/ui/select/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { buttonVariants } from '#lib/components/ui/button/index.js';
+	import { attachTool } from '#lib/api/devices.js';
+	import type { AugmentedDevice } from '#lib/api/model/device.js';
+	import type { Tool } from '#lib/api/model/tool.js';
 	import { invalidateAll } from '$app/navigation';
 
 	interface Props {

@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
-import { augmentUsers, getAllUsers } from '$lib/api/users';
-import { getAllQualifications } from '$lib/api/qualifications';
+import { augmentUsers, getAllUsers } from '#lib/api/users.js';
+import { getAllQualifications } from '#lib/api/qualifications.js';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const users = await getAllUsers(fetch).catch((error) => {

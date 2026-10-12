@@ -1,12 +1,12 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as AlertDialog from '$lib/components/ui/alert-dialog/index.js';
-	import type { AugmentedUser } from '$lib/api/model/user';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import * as AlertDialog from '#lib/components/ui/alert-dialog/index.js';
+	import type { AugmentedUser } from '#lib/api/model/user.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button, buttonVariants } from '#lib/components/ui/button/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	import { goto } from '$app/navigation';
-	import { deleteUser } from '$lib/api/users.js';
+	import { deleteUser } from '#lib/api/users.js';
 	import { resolve } from '$app/paths';
 
 	interface Props {
@@ -32,7 +32,7 @@
 
 		if (res) {
 			reset();
-			await goto(resolve(`/admin/user/`));
+			await goto(resolve(`admin/user/`));
 		}
 	}
 
@@ -66,10 +66,8 @@
 			<AlertDialog.ActionWorking
 				onclick={deleteUser_}
 				class={buttonVariants({ variant: 'destructive' })}
-				{working}
+				{working}>Continue</AlertDialog.ActionWorking
 			>
-				Continue
-			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

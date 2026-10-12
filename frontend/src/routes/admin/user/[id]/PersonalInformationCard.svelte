@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { Label } from '$lib/components/ui/label/index.js';
-	import { Input } from '$lib/components/ui/input/index.js';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { AugmentedUser, UserDetails } from '$lib/api/model/user';
-	import type { FabXError } from '$lib/api/model/error';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { changePersonalInformation } from '$lib/api/users';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import type { AugmentedUser, UserDetails } from '#lib/api/model/user.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { changePersonalInformation } from '#lib/api/users.js';
 	import { invalidateAll } from '$app/navigation';
 
 	interface Props {

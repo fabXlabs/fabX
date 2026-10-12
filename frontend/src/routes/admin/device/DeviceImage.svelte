@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { deviceThumbnailUrl } from '$lib/api/devices';
+	import { deviceThumbnailUrl } from '#lib/api/devices.js';
 	import type { ClassValue } from 'clsx';
-	import { cn } from '$lib/utils.js';
+	import { cn } from '#lib/utils.js';
 
 	interface Props {
 		id: string;

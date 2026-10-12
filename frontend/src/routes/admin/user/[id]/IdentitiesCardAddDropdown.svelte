@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type { FabXError } from '$lib/api/model/error';
+	import type { FabXError } from '#lib/api/model/error.js';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button } from '$lib/components/ui/button';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
 	import AddUsernamePasswordIdentitySheet from './AddUsernamePasswordIdentitySheet.svelte';
 	import AddCardIdentitySheet from './AddCardIdentitySheet.svelte';
 	import AddCardIdentityAtDeviceSheet from './AddCardIdentityAtDeviceSheet.svelte';
-	import type { Device } from '$lib/api/model/device';
+	import type { Device } from '#lib/api/model/device.js';
 	import AddPinIdentitySheet from './AddPinIdentitySheet.svelte';
 	import AddPhoneNrIdentitySheet from './AddPhoneNrIdentitySheet.svelte';
-	import type { AugmentedUser } from '$lib/api/model/user';
+	import type { AugmentedUser } from '#lib/api/model/user.js';
 
 	interface Props {
 		user: AugmentedUser;

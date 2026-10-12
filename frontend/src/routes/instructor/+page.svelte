@@ -1,20 +1,20 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
+	import * as Card from '#lib/components/ui/card/index.js';
 	// noinspection ES6UnusedImports
-	import * as Popover from '$lib/components/ui/popover/index.js';
+	import * as Popover from '#lib/components/ui/popover/index.js';
 	// noinspection ES6UnusedImports
-	import * as Command from '$lib/components/ui/command/index.js';
+	import * as Command from '#lib/components/ui/command/index.js';
 	import type { PageProps } from './$types';
-	import { addMemberQualification } from '$lib/api/users';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button } from '$lib/components/ui/button';
-	import { Badge } from '$lib/components/ui/badge';
+	import { addMemberQualification } from '#lib/api/users.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Badge } from '#lib/components/ui/badge/index.js';
 	import Crumbs from './Crumbs.svelte';
 	import { toast } from 'svelte-sonner';
 	import { CheckIcon, CirclePlusIcon } from 'lucide-svelte';
-	import { cn } from '$lib/utils';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { cn } from '#lib/utils.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 
 	let { data }: PageProps = $props();
 

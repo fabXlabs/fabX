@@ -1,12 +1,12 @@
 import type { LayoutLoad } from './$types';
-import { getMe } from '$lib/api/users';
+import { getMe } from '#lib/api/users.js';
 import { redirect } from '@sveltejs/kit';
-import { UNAUTHORIZED_ERROR, type FabXError } from '$lib/api/model/error';
+import { UNAUTHORIZED_ERROR, type FabXError } from '#lib/api/model/error.js';
 import { resolve } from '$app/paths';
 import { error } from '@sveltejs/kit';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { goto } from '$app/navigation';
-import { setRedirectAfterLoginCookie } from '$lib/utils';
+import { setRedirectAfterLoginCookie } from '#lib/utils.js';
 
 export const ssr = true;
 
@@ -22,11 +22,11 @@ export const load: LayoutLoad = async ({ url, fetch }) => {
 		if (e === UNAUTHORIZED_ERROR) {
 			setRedirectAfterLoginCookie(url.pathname);
 			if (browser) {
-				await goto(resolve('/login'));
+				await goto(resolve('login'));
 				return {};
 			} else {
 				console.log('redirecting to /login on server side');
-				redirect(302, resolve('/login'));
+				redirect(302, resolve('login'));
 			}
 		}
 		// if error is other than UNAUTHORIZED_ERROR, backend is in unexpected state

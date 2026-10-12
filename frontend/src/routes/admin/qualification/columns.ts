@@ -1,7 +1,7 @@
 import type { ColumnDef } from '@tanstack/table-core';
-import { renderComponent } from '$lib/components/ui/data-table';
-import type { Qualification } from '$lib/api/model/qualification';
-import QualificationTag from '$lib/components/QualificationTag.svelte';
+import { renderComponent } from '#lib/components/ui/data-table/index.js';
+import type { Qualification } from '#lib/api/model/qualification.js';
+import QualificationTag from '#lib/components/QualificationTag.svelte';
 
 export const columns: ColumnDef<Qualification>[] = [
 	{

@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type { AugmentedUser, UserLockDetails } from '$lib/api/model/user';
-	import type { FabXError } from '$lib/api/model/error';
-	import { changeLockState } from '$lib/api/users';
+	import type { AugmentedUser, UserLockDetails } from '#lib/api/model/user.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { changeLockState } from '#lib/api/users.js';
 	import { invalidateAll } from '$app/navigation';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
-	import { Button } from '$lib/components/ui/button';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import { Switch } from '$lib/components/ui/switch';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import { Switch } from '#lib/components/ui/switch/index.js';
 
 	interface Props {
 		user: AugmentedUser;

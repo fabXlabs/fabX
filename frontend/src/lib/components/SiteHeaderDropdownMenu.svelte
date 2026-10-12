@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	// noinspection ES6UnusedImports
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
+	import * as DropdownMenu from '#lib/components/ui/dropdown-menu/index.js';
 	import LogOut from 'lucide-svelte/icons/log-out';
 	import { CircleUserRound, User } from 'lucide-svelte';
-	import { logout } from '$lib/api/auth';
+	import { logout } from '#lib/api/auth.js';
 	import { goto } from '$app/navigation';
-	import { getMeContext } from '$lib/context';
+	import { getMeContext } from '#lib/context.js';
 
 	const me = getMeContext();
 

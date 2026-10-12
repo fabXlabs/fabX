@@ -1,4 +1,4 @@
-import { baseUrl, type FetchFunction } from '$lib/api';
+import { baseUrl, type FetchFunction } from '#lib/api/index.js';
 import type {
 	AugmentedUser,
 	CardIdentityAdditionDetails,
@@ -13,13 +13,13 @@ import type {
 	UserLockDetails,
 	UsernamePasswordIdentityAdditionDetails,
 	UserSourcingEvent
-} from '$lib/api/model/user';
-import { mapError } from '$lib/api/map-error';
-import type { Qualification } from '$lib/api/model/qualification';
-import { augmentQualifications } from '$lib/api/model/augment-qualifications';
-import { deleteRequest, getRequest, postRequest, putRequest } from '$lib/api/common';
-import { validatePassword } from '$lib/api/auth';
-import { INVALID_PASSWORD_ERROR } from '$lib/api/model/error';
+} from '#lib/api/model/user.js';
+import { mapError } from '#lib/api/map-error.js';
+import type { Qualification } from '#lib/api/model/qualification.js';
+import { augmentQualifications } from '#lib/api/model/augment-qualifications.js';
+import { deleteRequest, getRequest, postRequest, putRequest } from '#lib/api/common.js';
+import { validatePassword } from '#lib/api/auth.js';
+import { INVALID_PASSWORD_ERROR } from '#lib/api/model/error.js';
 
 export async function getMe(fetch: FetchFunction): Promise<User> {
 	console.debug('getMe...');

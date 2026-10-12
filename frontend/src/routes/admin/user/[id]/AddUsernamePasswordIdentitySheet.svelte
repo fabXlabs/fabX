@@ -1,12 +1,12 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Sheet from '$lib/components/ui/sheet/index.js';
-	import type { FabXError } from '$lib/api/model/error';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import { Label } from '$lib/components/ui/label';
-	import { addUsernamePasswordIdentity } from '$lib/api/users';
+	import * as Sheet from '#lib/components/ui/sheet/index.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import { addUsernamePasswordIdentity } from '#lib/api/users.js';
 	import { invalidateAll } from '$app/navigation';
 
 	interface Props {

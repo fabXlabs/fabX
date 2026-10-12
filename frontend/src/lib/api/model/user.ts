@@ -1,6 +1,6 @@
 import type { ChangeableValue } from './changeable-value';
-import type { Qualification } from '$lib/api/model/qualification';
-import type { Device } from '$lib/api/model/device';
+import type { Qualification } from '#lib/api/model/qualification.js';
+import type { Device } from '#lib/api/model/device.js';
 
 export interface User {
 	id: string;
@@ -125,11 +125,7 @@ export interface WebauthnIdentity {
 }
 
 export type UserIdentity =
-	| UsernamePasswordIdentity
-	| CardIdentity
-	| PhoneNrIdentity
-	| PinIdentity
-	| WebauthnIdentity;
+	UsernamePasswordIdentity | CardIdentity | PhoneNrIdentity | PinIdentity | WebauthnIdentity;
 
 export interface TokenResponse {
 	token: string;

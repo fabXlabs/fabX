@@ -1,5 +1,5 @@
 import { getContext, setContext } from 'svelte';
-import type { User } from '$lib/api/model/user';
+import type { User } from '#lib/api/model/user.js';
 
 const key = 'me';
 

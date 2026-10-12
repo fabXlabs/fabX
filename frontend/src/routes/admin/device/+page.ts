@@ -4,8 +4,8 @@ import {
 	getAllDeviceConnectionStatuses,
 	getAllDevicePinStatuses,
 	getAllDevices
-} from '$lib/api/devices';
-import { getAllTools } from '$lib/api/tools';
+} from '#lib/api/devices.js';
+import { getAllTools } from '#lib/api/tools.js';
 
 export const load: PageLoad = async ({ fetch }) => {
 	const devices = getAllDevices(fetch).catch((error) => {

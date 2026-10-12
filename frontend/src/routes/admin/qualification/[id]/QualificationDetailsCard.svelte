@@ -1,14 +1,14 @@
 <script lang="ts">
 	// noinspection ES6UnusedImports
-	import * as Card from '$lib/components/ui/card/index.js';
-	import type { Qualification, QualificationDetails } from '$lib/api/model/qualification';
-	import type { FabXError } from '$lib/api/model/error';
-	import { changeQualificationDetails } from '$lib/api/qualifications';
+	import * as Card from '#lib/components/ui/card/index.js';
+	import type { Qualification, QualificationDetails } from '#lib/api/model/qualification.js';
+	import type { FabXError } from '#lib/api/model/error.js';
+	import { changeQualificationDetails } from '#lib/api/qualifications.js';
 	import { invalidateAll } from '$app/navigation';
-	import { Button } from '$lib/components/ui/button';
-	import { Input } from '$lib/components/ui/input';
-	import { Label } from '$lib/components/ui/label';
-	import ErrorText from '$lib/components/ErrorText.svelte';
+	import { Button } from '#lib/components/ui/button/index.js';
+	import { Input } from '#lib/components/ui/input/index.js';
+	import { Label } from '#lib/components/ui/label/index.js';
+	import ErrorText from '#lib/components/ErrorText.svelte';
 
 	interface Props {
 		qualification: Qualification;

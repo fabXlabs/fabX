@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import { getQualificationById } from '$lib/api/qualifications';
+import { getQualificationById } from '#lib/api/qualifications.js';
 
 export const load: PageLoad = async ({ fetch, params }) => {
 	const qualification = await getQualificationById(fetch, params.id).catch((error) => {

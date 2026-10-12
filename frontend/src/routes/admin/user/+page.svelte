@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import DataTable from '$lib/components/ui/DataTable.svelte';
+	import DataTable from '#lib/components/ui/DataTable.svelte';
 	import { columns } from './columns';
-	import type { AugmentedUser } from '$lib/api/model/user';
+	import type { AugmentedUser } from '#lib/api/model/user.js';
 	import { goto } from '$app/navigation';
 	import type { SortingState } from '@tanstack/table-core';
 	import { resolve } from '$app/paths';
 	import AddUserSheet from './AddUserSheet.svelte';
 	import Crumbs from './Crumbs.svelte';
-	import DataTableColumnFilter from '$lib/components/ui/DataTableColumnFilter.svelte';
+	import DataTableColumnFilter from '#lib/components/ui/DataTableColumnFilter.svelte';
 
 	let { data }: PageProps = $props();
 

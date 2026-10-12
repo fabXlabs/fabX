@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { PageProps } from './$types';
-	import ErrorText from '$lib/components/ErrorText.svelte';
-	import type { FabXError } from '$lib/api/model/error';
+	import ErrorText from '#lib/components/ErrorText.svelte';
+	import type { FabXError } from '#lib/api/model/error.js';
 	import Crumbs from './Crumbs.svelte';
-	import AddPasskeyButton from '$lib/components/AddPasskeyButton.svelte';
+	import AddPasskeyButton from '#lib/components/AddPasskeyButton.svelte';
 
 	let { data }: PageProps = $props();
 
