@@ -138,6 +138,7 @@ internal class DeviceControllerPutTest {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             // empty body
+            setBody("{}")
         }
 
         // then

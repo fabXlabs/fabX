@@ -130,6 +130,7 @@ internal class UserControllerChangeIsAdminTest {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             // empty body
+            setBody("{}")
         }
 
         // then

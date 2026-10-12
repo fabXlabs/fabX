@@ -129,6 +129,7 @@ internal class UserControllerAddMemberQualificationTest {
                 basicAuth(username, password)
                 contentType(ContentType.Application.Json)
                 // no body
+                setBody("{}")
             }
 
             // then

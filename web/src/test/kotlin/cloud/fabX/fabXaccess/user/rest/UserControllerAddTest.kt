@@ -133,6 +133,7 @@ internal class UserControllerAddTest {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             // empty body
+            setBody("{}")
         }
 
         // then

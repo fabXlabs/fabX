@@ -124,6 +124,7 @@ internal class UserControllerAddWebauthnIdentityTest {
             basicAuth(username, password)
             contentType(ContentType.Application.Json)
             // empty body
+            setBody("{}")
         }
 
         // then
