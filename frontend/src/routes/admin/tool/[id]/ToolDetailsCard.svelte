@@ -219,9 +219,9 @@
 					/>
 				</div>
 				<div class="grid gap-2">
-					<Label for="requiredQualifications" class="text-muted-foreground"
-						>Required Qualifications</Label
-					>
+					<Label for="requiredQualifications" class="text-muted-foreground">
+						Required Qualifications
+					</Label>
 					<Select.Root
 						type="multiple"
 						name="requiredQualifications"

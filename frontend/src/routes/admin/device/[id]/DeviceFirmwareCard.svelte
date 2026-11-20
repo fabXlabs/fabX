@@ -82,9 +82,9 @@
 					/>
 				</div>
 				<div class="grid gap-2">
-					<Label for="desiredFirmwareVersion" class="text-muted-foreground"
-						>Desired Firmware Version</Label
-					>
+					<Label for="desiredFirmwareVersion" class="text-muted-foreground">
+						Desired Firmware Version
+					</Label>
 					<Input
 						id="desiredFirmwareVersion"
 						class="disabled:border-transparent disabled:opacity-100"

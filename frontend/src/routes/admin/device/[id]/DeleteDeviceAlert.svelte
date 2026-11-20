@@ -68,8 +68,10 @@
 			<AlertDialog.ActionWorking
 				onclick={deleteDevice_}
 				class={buttonVariants({ variant: 'destructive' })}
-				{working}>Continue</AlertDialog.ActionWorking
+				{working}
 			>
+				Continue
+			</AlertDialog.ActionWorking>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>

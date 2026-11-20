@@ -65,17 +65,17 @@
 			</AlertDialog.Title>
 			<AlertDialog.Description>
 				{#if user.isAdmin}
-					<span
-						>This action fully removes admin rights from {user.firstName}
+					<span>
+						This action fully removes admin rights from {user.firstName}
 						{user.lastName}. They may still be instructor for qualifications and be able to add
-						these qualifications as member qualifications to other users.</span
-					>
+						these qualifications as member qualifications to other users.
+					</span>
 				{:else}
-					<span
-						>This gives full admin rights to {user.firstName}
+					<span>
+						This gives full admin rights to {user.firstName}
 						{user.lastName}. Enables them to see all data in this fabX installation, change all
-						configuration and add instructor qualifications to themselves or other members.</span
-					>
+						configuration and add instructor qualifications to themselves or other members.
+					</span>
 				{/if}
 				<ErrorText {error} />
 			</AlertDialog.Description>

@@ -11,11 +11,12 @@
 </script>
 
 {#if hidden}
-	<span class="font-mono"
-		>**** <Eye class="inline" size={20} onclick={() => (hidden = false)} /></span
-	>
+	<span class="font-mono">
+		**** <Eye class="inline" size={20} onclick={() => (hidden = false)} />
+	</span>
 {:else}
-	<span class="font-mono"
-		>{pin} <EyeOff class="inline" size={20} onclick={() => (hidden = true)} /></span
-	>
+	<span class="font-mono">
+		{pin}
+		<EyeOff class="inline" size={20} onclick={() => (hidden = true)} />
+	</span>
 {/if}

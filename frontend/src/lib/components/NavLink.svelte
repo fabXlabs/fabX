@@ -17,5 +17,7 @@
 	)}
 	onclick={closeSheet}
 	{href}
-	{...others}>{@render children()}</a
+	{...others}
 >
+	{@render children()}
+</a>

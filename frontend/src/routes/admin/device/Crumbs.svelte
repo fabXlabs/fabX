@@ -6,12 +6,12 @@
 
 <Breadcrumb.Root>
 	<Breadcrumb.List>
-		<Breadcrumb.Item
-			><Breadcrumb.Link href={resolve('/admin')}>Admin</Breadcrumb.Link></Breadcrumb.Item
-		>
+		<Breadcrumb.Item>
+			<Breadcrumb.Link href={resolve('/admin')}>Admin</Breadcrumb.Link>
+		</Breadcrumb.Item>
 		<Breadcrumb.Separator />
-		<Breadcrumb.Item
-			><Breadcrumb.Link href={resolve('/admin/device')}>Devices</Breadcrumb.Link></Breadcrumb.Item
-		>
+		<Breadcrumb.Item>
+			<Breadcrumb.Link href={resolve('/admin/device')}>Devices</Breadcrumb.Link>
+		</Breadcrumb.Item>
 	</Breadcrumb.List>
 </Breadcrumb.Root>

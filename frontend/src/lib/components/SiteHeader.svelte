@@ -34,23 +34,23 @@
 						<span class="sr-only">Toggle Menu</span>
 					</Sheet.Trigger>
 					<Sheet.Content side="left" class="flex flex-col text-2xl">
-						<span class="font-accent text-4xl font-bold text-violet-800 italic transition-colors"
-							>fabX</span
-						>
+						<span class="font-accent text-4xl font-bold text-violet-800 italic transition-colors">
+							fabX
+						</span>
 						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/user')}>Users</NavLink>
 						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/tool')}>Tools</NavLink>
-						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/qualification')}
-							>Qualifications</NavLink
-						>
+						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/qualification')}>
+							Qualifications
+						</NavLink>
 						<NavLink bind:sheetOpen classes="mt-4" href={resolve('admin/device')}>Devices</NavLink>
 					</Sheet.Content>
 				</Sheet.Root>
 
 				<!-- Main Nav -->
 				<a href={resolve('admin')} class="mr-6 flex items-center space-x-2">
-					<span class="font-accent font-bold italic transition-colors hover:text-violet-800"
-						>fabX</span
-					>
+					<span class="font-accent font-bold italic transition-colors hover:text-violet-800">
+						fabX
+					</span>
 				</a>
 				<nav class="hidden items-center gap-6 text-base sm:flex">
 					<NavLink href={resolve('admin/user')}>Users</NavLink>
@@ -60,9 +60,9 @@
 				</nav>
 			{:else}
 				<a href={resolve('/')} class="mr-6 flex items-center space-x-2">
-					<span class="font-accent font-bold italic transition-colors hover:text-violet-800"
-						>fabX</span
-					>
+					<span class="font-accent font-bold italic transition-colors hover:text-violet-800">
+						fabX
+					</span>
 				</a>
 			{/if}
 		</div>

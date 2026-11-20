@@ -63,7 +63,7 @@
 		</a>
 	</div>
 
-	<Button href={resolve('admin/user/soft-deleted')} variant="outline" size="sm"
-		>Soft-Deleted Users</Button
-	>
+	<Button href={resolve('admin/user/soft-deleted')} variant="outline" size="sm">
+		Soft-Deleted Users
+	</Button>
 </div>

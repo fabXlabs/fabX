@@ -13,14 +13,13 @@
 
 <Breadcrumb.Root>
 	<Breadcrumb.List>
-		<Breadcrumb.Item
-			><Breadcrumb.Link href={resolve('/admin')}>Admin</Breadcrumb.Link></Breadcrumb.Item
-		>
+		<Breadcrumb.Item>
+			<Breadcrumb.Link href={resolve('/admin')}>Admin</Breadcrumb.Link>
+		</Breadcrumb.Item>
 		<Breadcrumb.Separator />
-		<Breadcrumb.Item
-			><Breadcrumb.Link href={resolve('/admin/qualification')}>Qualifications</Breadcrumb.Link
-			></Breadcrumb.Item
-		>
+		<Breadcrumb.Item>
+			<Breadcrumb.Link href={resolve('/admin/qualification')}>Qualifications</Breadcrumb.Link>
+		</Breadcrumb.Item>
 		<Breadcrumb.Separator />
 
 		<Breadcrumb.Item>
